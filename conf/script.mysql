@@ -1,4 +1,4 @@
-/usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd -e "grant all privileges on ftpusers.* to ftp@localhost identified by 'mysqlftppwd'"
+grant all privileges on ftpusers.* to ftp@localhost identified by 'mysqlftppwd';
 FLUSH PRIVILEGES;
 
 CREATE DATABASE ftpusers;

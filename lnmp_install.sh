@@ -2,8 +2,6 @@
 # Check if user is root
 [ $(id -u) != "0" ] && echo "Error: You must be root to run this script, please use root to install lnmp" && exit 1
 
-yum -y install gcc gcc-c++ autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel nss_ldap openldap openldap-devel openldap-clients openldap-servers libxslt-devel libevent-devel ntp libtool-ltdl bison libtool vim-enhanced
-
 # Set password
 while :
 do
@@ -16,11 +14,13 @@ do
     fi
 done
 
+yum -y install gcc gcc-c++ autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel nss_ldap openldap openldap-devel openldap-clients openldap-servers libxslt-devel libevent-devel ntp libtool-ltdl bison libtool vim-enhanced
+
 # install MySQL 
 mkdir -p /root/lnmp/source
 cd /root/lnmp/source
 wget -c http://www.cmake.org/files/v2.8/cmake-2.8.10.2.tar.gz
-wget -c http://sourceforge.net/projects/mysql.mirror/files/MySQL%205.5.30/mysql-5.5.30.tar.gz/download
+wget -c http://iweb.dl.sourceforge.net/project/mysql.mirror/MySQL%205.5.30/mysql-5.5.30.tar.gz
 useradd -M -s /sbin/nologin mysql
 mkdir -p /data/mysql;chown mysql.mysql -R /data/mysql
 tar xzf cmake-2.8.10.2.tar.gz 
@@ -69,13 +69,13 @@ sed -i '49a ##############' /etc/my.cnf
 
 chown mysql.mysql -R /data/mysql
 /sbin/service mysqld start
+export PATH=$PATH:/usr/local/mysql/bin
 echo 'export PATH=$PATH:/usr/local/mysql/bin' >> /etc/profile
 source /etc/profile
 
 /usr/local/mysql/bin/mysql -e "grant all privileges on *.* to root@'localhost' identified by \"$mysqlrootpwd\" with grant option;"
 /usr/local/mysql/bin/mysql -e "flush privileges;"
-/usr/local/mysql/bin/mysql -e "delete from mysql.user where password='';"
-
+/usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd -e "delete from mysql.user where Password='';"
 /sbin/service mysqld restart
 
 # install PHP 
@@ -86,7 +86,7 @@ cd libiconv-1.14
 make && make install
 cd ../
 
-wget -c http://sourceforge.net/projects/mcrypt/files/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz/download
+wget -c http://iweb.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz
 tar xzf libmcrypt-2.5.8.tar.gz
 cd libmcrypt-2.5.8
 ./configure
@@ -97,7 +97,7 @@ cd libltdl/
 make && make install
 cd ../../
 
-wget -c http://sourceforge.net/projects/mhash/files/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz/download
+wget -c http://iweb.dl.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz
 tar xzf mhash-0.9.9.9.tar.gz
 cd mhash-0.9.9.9
 ./configure
@@ -116,6 +116,8 @@ if [ `getconf WORD_BIT` = '32' ] && [ `getconf LONG_BIT` = '64' ] ; then
 	ln -s /usr/local/lib/libmhash.so.2.0.1 /usr/lib64/libmhash.so.2.0.1
 	ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config
 	ln -s /usr/local/mysql/lib/libmysqlclient.so.18 /lib64/libmysqlclient.so.18
+        ln -s  /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1
+        cp -frp /usr/lib64/libldap* /usr/lib
 else
 	ln -s /usr/local/lib/libmcrypt.la /usr/lib/libmcrypt.la
 	ln -s /usr/local/lib/libmcrypt.so /usr/lib/libmcrypt.so
@@ -130,7 +132,7 @@ else
 	ln -s /usr/local/mysql/lib/libmysqlclient.so.18 /lib/libmysqlclient.so.18
 fi
 
-wget -c http://downloads.sourceforge.net/project/mcrypt/MCrypt/2.6.8/mcrypt-2.6.8.tar.gz?r=&ts=1364652239&use_mirror=jaist
+wget -c http://vps.googlecode.com/files/mcrypt-2.6.8.tar.gz
 tar xzf mcrypt-2.6.8.tar.gz
 cd mcrypt-2.6.8
 /sbin/ldconfig
@@ -138,7 +140,7 @@ cd mcrypt-2.6.8
 make && make install
 cd ../
 
-wget -c http://www.php.net/get/php-5.3.23.tar.gz/from/cn2.php.net/mirror
+wget -c http://cn2.php.net/distributions/php-5.3.23.tar.gz
 tar xzf php-5.3.23.tar.gz
 useradd -M -s /sbin/nologin www
 cd php-5.3.23
@@ -156,7 +158,7 @@ cd memcache-2.2.5
 make && make install
 cd ../
 
-wget -c http://sourceforge.net/projects/eaccelerator/files/eaccelerator/eAccelerator%200.9.6.1/eaccelerator-0.9.6.1.tar.bz2/download
+wget -c  http://superb-dca2.dl.sourceforge.net/project/eaccelerator/eaccelerator/eAccelerator%200.9.6.1/eaccelerator-0.9.6.1.tar.bz2
 tar xjf eaccelerator-0.9.6.1.tar.bz2
 cd eaccelerator-0.9.6.1
 /usr/local/php/bin/phpize
@@ -207,6 +209,7 @@ sed -i '812a extension = "http.so"' /usr/local/php/lib/php.ini
 sed -i '135a output_buffering = On' /usr/local/php/lib/php.ini 
 sed -i '848a cgi.fix_pathinfo=0' /usr/local/php/lib/php.ini 
 sed -i 's@short_open_tag = Off@short_open_tag = On@g' /usr/local/php/lib/php.ini
+sed -i 's@expose_php = On@expose_php = Off@g' /usr/local/php/lib/php.ini
 sed -i 's@;date.timezone =@date.timezone = Asia/Shanghai@g' /usr/local/php/lib/php.ini
 sed -i 's@#sendmail_path.*@#sendmail_path = /usr/sbin/sendmail -t@g' /usr/local/php/lib/php.ini
 echo '[eaccelerator]
@@ -287,7 +290,7 @@ EOF
 # /etc/init.d/php-fpm
 mkdir ../conf
 cd ../conf
-wget -c https://github.com/lj2007331/lnmp/blob/master/conf/php-fpm.sh
+wget -c https://raw.github.com/lj2007331/lnmp/master/conf/php-fpm.sh
 cp php-fpm.sh /etc/init.d/php-fpm
 chmod 755 /etc/init.d/php-fpm
 chkconfig php-fpm on
@@ -295,7 +298,7 @@ service php-fpm start
 
 # install Nginx
 cd ../source 
-wget -c http://sourceforge.net/projects/pcre/files/pcre/8.32/pcre-8.32.tar.gz/download
+wget -c  http://iweb.dl.sourceforge.net/project/pcre/pcre/8.32/pcre-8.32.tar.gz
 tar xzf pcre-8.32.tar.gz
 cd pcre-8.32
 ./configure
@@ -315,15 +318,16 @@ sed -i 's@#define NGINX_VER.*NGINX_VERSION$@#define NGINX_VER          "Apache/"
 ./configure --prefix=/usr/local/nginx --user=www --group=www --with-http_stub_status_module --with-http_ssl_module
 make && make install
 cd ../../conf
-wget -c https://github.com/lj2007331/lnmp/blob/master/conf/nginx.sh
+wget -c https://raw.github.com/lj2007331/lnmp/master/conf/nginx.sh
 cp nginx.sh /etc/init.d/nginx
 chmod 755 /etc/init.d/nginx
 chkconfig --add nginx
 chkconfig nginx on
 mv /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf_bk
-wget -c https://github.com/lj2007331/lnmp/blob/master/conf/nginx.conf
+wget -c https://raw.github.com/lj2007331/lnmp/master/conf/nginx.conf
 cp nginx.conf /usr/local/nginx/conf/nginx.conf
 echo "Modify nginx.conf"
+service nginx restart
 
 # install Pureftpd and pureftpd_php_manager 
 cd ../source
@@ -343,21 +347,22 @@ chkconfig --add pureftpd
 chkconfig pureftpd on
 
 cd ../conf
-wget -c https://github.com/lj2007331/lnmp/blob/master/conf/pure-ftpd.conf
+wget -c https://raw.github.com/lj2007331/lnmp/master/conf/pure-ftpd.conf
 cp pure-ftpd.conf /usr/local/pureftpd/
-wget -c https://github.com/lj2007331/lnmp/blob/master/conf/pureftpd-mysql.conf
+wget -c https://raw.github.com/lj2007331/lnmp/master/conf/pureftpd-mysql.conf
 cp pureftpd-mysql.conf /usr/local/pureftpd/
 mysqlftppwd=`cat /dev/urandom | head -1 | md5sum | head -c 8`
 sed -i 's/tmppasswd/'$mysqlftppwd'/g' /usr/local/pureftpd/pureftpd-mysql.conf
-wget -c https://github.com/lj2007331/lnmp/blob/master/conf/script.mysql 
-sed -i "1i\mysqlrootpwd=$mysqlrootpwd" script.mysql
+wget -c https://raw.github.com/lj2007331/lnmp/master/conf/script.mysql 
 sed -i 's/mysqlftppwd/'$mysqlftppwd'/g' script.mysql
 sed -i 's/ftpmanagerpwd/'$ftpmanagerpwd'/g' script.mysql
 /usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd< script.mysql
+service pureftpd start
 
 mkdir -p /data/admin
+cd ..
 wget -c http://acelnmp.googlecode.com/files/ftp_v2.1.tar.gz
-unzip -q ftp_v2.1.tar.gz
+tar xzf ftp_v2.1.tar.gz
 mv ftp /data/admin;chown -R www.www /data/admin
 sed -i 's/tmppasswd/'$mysqlftppwd'/g' /data/admin/ftp/config.php
 sed -i "s/myipaddress.com/`ifconfig | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'`/g" /data/admin/ftp/config.php

@@ -360,7 +360,7 @@ sed -i 's/ftpmanagerpwd/'$ftpmanagerpwd'/g' script.mysql
 service pureftpd start
 
 mkdir -p /data/admin
-cd ..
+cd ../source
 wget -c http://acelnmp.googlecode.com/files/ftp_v2.1.tar.gz
 tar xzf ftp_v2.1.tar.gz
 mv ftp /data/admin;chown -R www.www /data/admin

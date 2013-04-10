@@ -130,6 +130,9 @@ else
 	ln -s /usr/local/lib/libmhash.so.2.0.1 /usr/lib/libmhash.so.2.0.1
 	ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config
 	ln -s /usr/local/mysql/lib/libmysqlclient.so.18 /lib/libmysqlclient.so.18
+        ln -s /usr/local/include/ImageMagick-6 /usr/local/include/ImageMagick
+        ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1
+        export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 fi
 
 wget -c http://vps.googlecode.com/files/mcrypt-2.6.8.tar.gz
@@ -348,12 +351,12 @@ chkconfig pureftpd on
 
 cd ../conf
 wget -c https://raw.github.com/lj2007331/lnmp/master/conf/pure-ftpd.conf
-cp pure-ftpd.conf /usr/local/pureftpd/
 wget -c https://raw.github.com/lj2007331/lnmp/master/conf/pureftpd-mysql.conf
-cp pureftpd-mysql.conf /usr/local/pureftpd/
+wget -c https://raw.github.com/lj2007331/lnmp/master/conf/script.mysql 
+/bin/cp pure-ftpd.conf /usr/local/pureftpd/
+/bin/cp pureftpd-mysql.conf /usr/local/pureftpd/
 mysqlftppwd=`cat /dev/urandom | head -1 | md5sum | head -c 8`
 sed -i 's/tmppasswd/'$mysqlftppwd'/g' /usr/local/pureftpd/pureftpd-mysql.conf
-wget -c https://raw.github.com/lj2007331/lnmp/master/conf/script.mysql 
 sed -i 's/mysqlftppwd/'$mysqlftppwd'/g' script.mysql
 sed -i 's/ftpmanagerpwd/'$ftpmanagerpwd'/g' script.mysql
 /usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd< script.mysql
@@ -365,7 +368,8 @@ wget -c http://acelnmp.googlecode.com/files/ftp_v2.1.tar.gz
 tar xzf ftp_v2.1.tar.gz
 mv ftp /data/admin;chown -R www.www /data/admin
 sed -i 's/tmppasswd/'$mysqlftppwd'/g' /data/admin/ftp/config.php
-sed -i "s/myipaddress.com/`ifconfig | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'`/g" /data/admin/ftp/config.php
+IP=`ifconfig | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'`
+sed -i 's/myipaddress.com/'$IP'/g' /data/admin/ftp/config.php
 sed -i 's/127.0.0.1/localhost/g' /data/admin/ftp/config.php
 sed -i 's@iso-8859-1@UTF-8@' /data/admin/ftp/language/english.php
 rm -rf  /data/admin/ftp/install.php
@@ -381,6 +385,6 @@ echo "PHP dir:                       /usr/local/php"
 echo "Pureftpd dir:                  /usr/local/pureftpd"
 echo "Pureftp_php_manager  dir :     /data/admin"
 echo "MySQL Password:                $mysqlrootpwd"
-echo "Pureftp_manager  url :         http://`ifconfig | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'`/ftp"
+echo "Pureftp_manager  url :         http://$IP/ftp"
 echo "Pureftp_manager Password:      $ftpmanagerpwd"
 echo "###################################################"

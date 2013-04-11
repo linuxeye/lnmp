@@ -14,7 +14,7 @@ do
     fi
 done
 
-yum -y install gcc gcc-c++ autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel nss_ldap openldap openldap-devel openldap-clients openldap-servers libxslt-devel libevent-devel ntp libtool-ltdl bison libtool vim-enhanced
+yum -y install gcc gcc-c++ autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel nss_ldap openldap openldap-devel openldap-clients openldap-servers libxslt-devel libevent-devel ntp libtool-ltdl bison libtool vim-enhanced zip unzip
 
 # install MySQL 
 mkdir -p /root/lnmp/source
@@ -74,7 +74,6 @@ echo 'export PATH=$PATH:/usr/local/mysql/bin' >> /etc/profile
 source /etc/profile
 
 /usr/local/mysql/bin/mysql -e "grant all privileges on *.* to root@'localhost' identified by \"$mysqlrootpwd\" with grant option;"
-/usr/local/mysql/bin/mysql -e "flush privileges;"
 /usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd -e "delete from mysql.user where Password='';"
 /sbin/service mysqld restart
 
@@ -132,7 +131,6 @@ else
 	ln -s /usr/local/mysql/lib/libmysqlclient.so.18 /lib/libmysqlclient.so.18
         ln -s /usr/local/include/ImageMagick-6 /usr/local/include/ImageMagick
         ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1
-        export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 fi
 
 wget -c http://vps.googlecode.com/files/mcrypt-2.6.8.tar.gz
@@ -186,6 +184,7 @@ cd ../
 
 wget -c http://pecl.php.net/get/imagick-3.0.1.tgz
 tar xzf imagick-3.0.1.tgz
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 cd imagick-3.0.1
 /usr/local/php/bin/phpize
 ./configure --with-php-config=/usr/local/php/bin/php-config

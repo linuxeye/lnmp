@@ -142,7 +142,7 @@ cd mcrypt-2.6.8
 make && make install
 cd ../
 
-wget -c http://cn2.php.net/distributions/php-5.3.24.tar.gz
+wget -c http://kr1.php.net/distributions/php-5.3.24.tar.gz
 tar xzf php-5.3.24.tar.gz
 useradd -M -s /sbin/nologin www
 cd php-5.3.24

@@ -115,7 +115,7 @@ if [ `getconf WORD_BIT` = '32' ] && [ `getconf LONG_BIT` = '64' ] ; then
 	ln -s /usr/local/lib/libmhash.so.2.0.1 /usr/lib64/libmhash.so.2.0.1
 	ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config
 	ln -s /usr/local/mysql/lib/libmysqlclient.so.18 /lib64/libmysqlclient.so.18
-        ln -s  /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1
+        ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1
         cp -frp /usr/lib64/libldap* /usr/lib
 else
 	ln -s /usr/local/lib/libmcrypt.la /usr/lib/libmcrypt.la
@@ -131,6 +131,7 @@ else
 	ln -s /usr/local/mysql/lib/libmysqlclient.so.18 /lib/libmysqlclient.so.18
         ln -s /usr/local/include/ImageMagick-6 /usr/local/include/ImageMagick
         ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1
+        export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 fi
 
 wget -c http://vps.googlecode.com/files/mcrypt-2.6.8.tar.gz
@@ -184,7 +185,6 @@ cd ../
 
 wget -c http://pecl.php.net/get/imagick-3.0.1.tgz
 tar xzf imagick-3.0.1.tgz
-export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 cd imagick-3.0.1
 /usr/local/php/bin/phpize
 ./configure --with-php-config=/usr/local/php/bin/php-config

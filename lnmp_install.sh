@@ -348,7 +348,7 @@ chmod +x /etc/init.d/pureftpd
 chkconfig --add pureftpd
 chkconfig pureftpd on
 
-cd ../conf
+cd ../../conf
 wget -c https://raw.github.com/lj2007331/lnmp/master/conf/pure-ftpd.conf
 wget -c https://raw.github.com/lj2007331/lnmp/master/conf/pureftpd-mysql.conf
 wget -c https://raw.github.com/lj2007331/lnmp/master/conf/script.mysql 

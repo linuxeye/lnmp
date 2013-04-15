@@ -17,7 +17,7 @@ done
 yum -y install gcc gcc-c++ autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel nss_ldap openldap openldap-devel openldap-clients openldap-servers libxslt-devel libevent-devel ntp libtool-ltdl bison libtool vim-enhanced zip unzip
 
 # install MySQL 
-mkdir -p /root/lnmp/source
+mkdir -p /root/lnmp/{source,conf}
 cd /root/lnmp/source
 wget -c http://www.cmake.org/files/v2.8/cmake-2.8.10.2.tar.gz
 wget -c http://iweb.dl.sourceforge.net/project/mysql.mirror/MySQL%205.5.30/mysql-5.5.30.tar.gz
@@ -291,7 +291,6 @@ env[TEMP] = /tmp
 EOF
 
 # /etc/init.d/php-fpm
-mkdir ../conf
 cd ../conf
 wget -c https://raw.github.com/lj2007331/lnmp/master/conf/php-fpm.sh
 cp php-fpm.sh /etc/init.d/php-fpm
@@ -329,7 +328,23 @@ chkconfig nginx on
 mv /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf_bk
 wget -c https://raw.github.com/lj2007331/lnmp/master/conf/nginx.conf
 cp nginx.conf /usr/local/nginx/conf/nginx.conf
-echo "Modify nginx.conf"
+
+#logrotate nginx log
+cat > /etc/logrotate.d/nginx <<EOF
+/usr/local/nginx/logs/*.log {
+daily
+rotate 5
+missingok
+dateext
+compress
+notifempty
+sharedscripts
+postrotate
+    [ -f /usr/local/nginx/logs/nginx.pid ] && kill -USR1 `cat /usr/local/nginx/logs/nginx.pid`
+endscript
+}
+EOF 
+
 service nginx restart
 
 # install Pureftpd and pureftpd_php_manager 

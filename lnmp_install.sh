@@ -20,7 +20,7 @@ yum -y install gcc gcc-c++ autoconf libjpeg libjpeg-devel libpng libpng-devel fr
 mkdir -p /root/lnmp/{source,conf}
 cd /root/lnmp/source
 wget -c http://www.cmake.org/files/v2.8/cmake-2.8.10.2.tar.gz
-wget -c http://iweb.dl.sourceforge.net/project/mysql.mirror/MySQL%205.5.30/mysql-5.5.30.tar.gz
+wget -c http://fossies.org/linux/misc/mysql-5.5.31.tar.gz
 useradd -M -s /sbin/nologin mysql
 mkdir -p /data/mysql;chown mysql.mysql -R /data/mysql
 tar xzf cmake-2.8.10.2.tar.gz 
@@ -28,8 +28,8 @@ cd cmake-2.8.10.2
 ./configure
 make &&  make install
 cd ..
-tar zxf mysql-5.5.30.tar.gz
-cd mysql-5.5.30
+tar zxf mysql-5.5.31.tar.gz
+cd mysql-5.5.31
 cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/mysql/ \
 -DMYSQL_DATADIR=/data/mysql  \
 -DMYSQL_UNIX_ADDR=/data/mysql/mysqld.sock \
@@ -146,7 +146,7 @@ wget -c http://kr1.php.net/distributions/php-5.3.24.tar.gz
 tar xzf php-5.3.24.tar.gz
 useradd -M -s /sbin/nologin www
 cd php-5.3.24
-./configure  --prefix=/usr/local/php --with-mysql=/usr/local/mysql --with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-safe-mode --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --with-curl --with-curlwrappers --enable-mbregex --enable-fpm --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl --with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc --enable-ftp --enable-zip --enable-soap --disable-debug
+./configure  --prefix=/usr/local/php --with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-safe-mode --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --with-curl --with-curlwrappers --enable-mbregex --enable-fpm --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl --with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc --enable-ftp --enable-zip --enable-soap --disable-debug
 make ZEND_EXTRA_LIBS='-liconv'
 make install
 cp php.ini-production /usr/local/php/lib/php.ini

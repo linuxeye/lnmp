@@ -1,6 +1,6 @@
 Source packages version:
 cmake-2.8.10.2.tar.gz
-mysql-5.5.30.tar.gz
+mysql-5.5.31.tar.gz
 libiconv-1.14.tar.gz
 libmcrypt-2.5.8.tar.gz
 mhash-0.9.9.9.tar.gz

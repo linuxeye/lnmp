@@ -36,7 +36,6 @@ cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/mysql/ \
 -DWITH_INNOBASE_STORAGE_ENGINE=1 \
 -DENABLED_LOCAL_INFILE=1 \
 -DMYSQL_TCP_PORT=3306 \
--DCMAKE_THREAD_PREFER_PTHREAD=1 \
 -DEXTRA_CHARSETS=all \
 -DDEFAULT_CHARSET=utf8 \
 -DDEFAULT_COLLATION=utf8_general_ci \
@@ -309,9 +308,9 @@ cd ../
 
 #wget -c http://labs.frickle.com/files/ngx_cache_purge-2.1.tar.gz
 #tar xzf ngx_cache_purge-2.1.tar.gz 
-wget -c http://nginx.org/download/nginx-1.2.8.tar.gz
-tar xzf nginx-1.2.8.tar.gz
-cd nginx-1.2.8
+wget -c http://nginx.org/download/nginx-1.4.0.tar.gz
+tar xzf nginx-1.4.0.tar.gz
+cd nginx-1.4.0
 
 # Modify Nginx version
 sed -i 's@#define NGINX_VERSION.*$@#define NGINX_VERSION      "2.2.14"@g' src/core/nginx.h 

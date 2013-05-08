@@ -14,6 +14,6 @@ imagick-3.0.1.tgz
 pecl_http-1.7.5.tgz
 pcre-8.32.tar.gz
 ngx_cache_purge-2.1.tar.gz
-nginx-1.2.8.tar.gz
+nginx-1.4.1.tar.gz
 pure-ftpd-1.0.36.tar.gz
 ftp_v2.1.tar.gz

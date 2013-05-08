@@ -149,6 +149,12 @@ cd php-5.3.24
 make ZEND_EXTRA_LIBS='-liconv'
 make install
 cp php.ini-production /usr/local/php/lib/php.ini
+
+#php-fpm Init Script
+cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
+chmod +x /etc/init.d/php-fpm
+chkconfig --add php-fpm
+chkconfig php-fpm on
 cd ../
 
 wget -c http://pecl.php.net/get/memcache-2.2.5.tgz
@@ -289,16 +295,10 @@ env[TMPDIR] = /tmp
 env[TEMP] = /tmp
 EOF
 
-# /etc/init.d/php-fpm
-cd ../conf
-wget -c https://raw.github.com/lj2007331/lnmp/master/conf/php-fpm.sh
-cp php-fpm.sh /etc/init.d/php-fpm
-chmod 755 /etc/init.d/php-fpm
-chkconfig php-fpm on
+#i#php-fpm start
 service php-fpm start
 
 # install Nginx
-cd ../source 
 wget -c  http://iweb.dl.sourceforge.net/project/pcre/pcre/8.32/pcre-8.32.tar.gz
 tar xzf pcre-8.32.tar.gz
 cd pcre-8.32
@@ -319,8 +319,8 @@ sed -i 's@#define NGINX_VER.*NGINX_VERSION$@#define NGINX_VER          "Apache/"
 ./configure --prefix=/usr/local/nginx --user=www --group=www --with-http_stub_status_module --with-http_ssl_module
 make && make install
 cd ../../conf
-wget -c https://raw.github.com/lj2007331/lnmp/master/conf/nginx.sh
-cp nginx.sh /etc/init.d/nginx
+wget -c https://raw.github.com/lj2007331/lnmp/master/conf/init.d.nginx
+cp init.d.nginx /etc/init.d/nginx
 chmod 755 /etc/init.d/nginx
 chkconfig --add nginx
 chkconfig nginx on

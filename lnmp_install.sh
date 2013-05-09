@@ -339,7 +339,7 @@ compress
 notifempty
 sharedscripts
 postrotate
-    [ -f /usr/local/nginx/logs/nginx.pid ] && kill -USR1 `cat /usr/local/nginx/logs/nginx.pid`
+    [ -f /usr/local/nginx/logs/nginx.pid ] && kill -USR1 \`cat /usr/local/nginx/logs/nginx.pid\`
 endscript
 }
 EOF 
@@ -383,7 +383,7 @@ tar xzf ftp_v2.1.tar.gz
 mv ftp /data/admin;chown -R www.www /data/admin
 sed -i 's/tmppasswd/'$mysqlftppwd'/g' /data/admin/ftp/config.php
 IP=`ifconfig | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'`
-sed -i 's/myipaddress.com/'$IP'/g' /data/admin/ftp/config.php
+sed -i "s/myipaddress.com/`echo $IP`/g" /data/admin/ftp/config.php
 sed -i 's/127.0.0.1/localhost/g' /data/admin/ftp/config.php
 sed -i 's@iso-8859-1@UTF-8@' /data/admin/ftp/language/english.php
 rm -rf  /data/admin/ftp/install.php

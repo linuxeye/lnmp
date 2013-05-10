@@ -5,7 +5,7 @@ libiconv-1.14.tar.gz
 libmcrypt-2.5.8.tar.gz
 mhash-0.9.9.9.tar.gz
 mcrypt-2.6.8.tar.gz
-php-5.3.24.tar.gz
+php-5.3.25.tar.gz
 memcache-2.2.5.tgz
 eaccelerator-0.9.6.1.tar.bz2
 PDO_MYSQL-1.0.2.tgz

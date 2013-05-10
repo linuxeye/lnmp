@@ -141,10 +141,10 @@ cd mcrypt-2.6.8
 make && make install
 cd ../
 
-wget -c http://kr1.php.net/distributions/php-5.3.24.tar.gz
-tar xzf php-5.3.24.tar.gz
+wget -c http://kr1.php.net/distributions/php-5.3.25.tar.gz
+tar xzf php-5.3.25.tar.gz
 useradd -M -s /sbin/nologin www
-cd php-5.3.24
+cd php-5.3.25
 ./configure  --prefix=/usr/local/php --with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-safe-mode --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --with-curl --with-curlwrappers --enable-mbregex --enable-fpm --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl --with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc --enable-ftp --with-gettext --enable-zip --enable-soap --disable-debug
 make ZEND_EXTRA_LIBS='-liconv'
 make install

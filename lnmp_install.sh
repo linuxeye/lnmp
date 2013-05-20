@@ -14,13 +14,38 @@ do
     fi
 done
 
+#download packages
+mkdir -p /root/lnmp/{source,conf}
+cd /root/lnmp/source
+[ -s cmake-2.8.10.2.tar.gz ] && echo 'cmake-2.8.10.2.tar.gz found' || wget http://www.cmake.org/files/v2.8/cmake-2.8.10.2.tar.gz
+[ -s mysql-5.5.31.tar.gz ] && echo 'mysql-5.5.31.tar.gz found' || wget http://fossies.org/linux/misc/mysql-5.5.31.tar.gz
+[ -s libiconv-1.14.tar.gz ] && echo 'libiconv-1.14.tar.gz found' || wget http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
+[ -s bmcrypt-2.5.8.tar.gz ] && echo 'bmcrypt-2.5.8.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz
+[ -s mhash-0.9.9.9.tar.gz ] && echo 'mhash-0.9.9.9.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz
+[ -s mcrypt-2.6.8.tar.gz ] && echo 'mcrypt-2.6.8.tar.gz found' || wget http://vps.googlecode.com/files/mcrypt-2.6.8.tar.gz
+[ -s php-5.3.25.tar.gz ] && echo 'php-5.3.25.tar.gz found' || wget http://kr1.php.net/distributions/php-5.3.25.tar.gz
+[ -s memcache-2.2.5.tgz ] && echo 'memcache-2.2.5.tgz found' || wget http://pecl.php.net/get/memcache-2.2.5.tgz
+[ -s eaccelerator-0.9.6.1.tar.bz2 ] && echo 'eaccelerator-0.9.6.1.tar.bz2 found' || wget http://superb-dca2.dl.sourceforge.net/project/eaccelerator/eaccelerator/eAccelerator%200.9.6.1/eaccelerator-0.9.6.1.tar.bz2
+[ -s PDO_MYSQL-1.0.2.tgz ] && echo 'PDO_MYSQL-1.0.2.tgz found' || wget http://pecl.php.net/get/PDO_MYSQL-1.0.2.tgz
+[ -s ImageMagick-6.8.3-10.tar.gz ] && echo 'ImageMagick-6.8.3-10.tar.gz found' || wget http://www.imagemagick.org/download/legacy/ImageMagick-6.8.3-10.tar.gz
+[ -s imagick-3.0.1.tgz ] && echo 'imagick-3.0.1.tgz found' || wget http://pecl.php.net/get/imagick-3.0.1.tgz
+[ -s pecl_http-1.7.5.tgz ] && echo 'pecl_http-1.7.5.tgz found' || wget http://pecl.php.net/get/pecl_http-1.7.5.tgz
+[ -s pcre-8.32.tar.gz ] && echo 'pcre-8.32.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/pcre/pcre/8.32/pcre-8.32.tar.gz
+[ -s nginx-1.4.1.tar.gz ] && echo 'nginx-1.4.1.tar.gz found' || wget http://nginx.org/download/nginx-1.4.1.tar.gz
+[ -s pure-ftpd-1.0.36.tar.gz ] && echo 'pure-ftpd-1.0.36.tar.gz found' || wget ftp://ftp.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.36.tar.gz
+[ -s ftp_v2.1.tar.gz ] && echo 'ftp_v2.1.tar.gz found' || wget http://acelnmp.googlecode.com/files/ftp_v2.1.tar.gz
+cd ../conf
+[ -s init.d.nginx ] && echo 'init.d.nginx found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/init.d.nginx
+[-s nginx.conf ] && echo 'nginx.conf found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/nginx.conf
+[-s pure-ftpd.conf ] && echo 'pure-ftpd.conf found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/pure-ftpd.conf
+[-s pureftpd-mysql.conf ] && echo 'pureftpd-mysql.conf found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/pureftpd-mysql.conf
+[-s script.mysql ] && echo 'script.mysql found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/script.mysql
+
+# install dependent packages
 yum -y install gcc gcc-c++ autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel nss_ldap openldap openldap-devel openldap-clients openldap-servers libxslt-devel libevent-devel ntp libtool-ltdl bison gd-devel libtool vim-enhanced pcre-devel zip unzip
 
 # install MySQL 
-mkdir -p /root/lnmp/{source,conf}
-cd /root/lnmp/source
-wget -c http://www.cmake.org/files/v2.8/cmake-2.8.10.2.tar.gz
-wget -c http://fossies.org/linux/misc/mysql-5.5.31.tar.gz
+cd ../source
 useradd -M -s /sbin/nologin mysql
 mkdir -p /data/mysql;chown mysql.mysql -R /data/mysql
 tar xzf cmake-2.8.10.2.tar.gz 
@@ -77,14 +102,12 @@ source /etc/profile
 /sbin/service mysqld restart
 
 # install PHP 
-wget -c http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
 tar xzf libiconv-1.14.tar.gz
 cd libiconv-1.14
 ./configure --prefix=/usr/local
 make && make install
 cd ../
 
-wget -c http://iweb.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz
 tar xzf libmcrypt-2.5.8.tar.gz
 cd libmcrypt-2.5.8
 ./configure
@@ -95,7 +118,6 @@ cd libltdl/
 make && make install
 cd ../../
 
-wget -c http://iweb.dl.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz
 tar xzf mhash-0.9.9.9.tar.gz
 cd mhash-0.9.9.9
 ./configure
@@ -133,7 +155,6 @@ else
         ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1
 fi
 
-wget -c http://vps.googlecode.com/files/mcrypt-2.6.8.tar.gz
 tar xzf mcrypt-2.6.8.tar.gz
 cd mcrypt-2.6.8
 /sbin/ldconfig
@@ -141,7 +162,6 @@ cd mcrypt-2.6.8
 make && make install
 cd ../
 
-wget -c http://kr1.php.net/distributions/php-5.3.25.tar.gz
 tar xzf php-5.3.25.tar.gz
 useradd -M -s /sbin/nologin www
 cd php-5.3.25
@@ -157,7 +177,6 @@ chkconfig --add php-fpm
 chkconfig php-fpm on
 cd ../
 
-wget -c http://pecl.php.net/get/memcache-2.2.5.tgz
 tar xzf memcache-2.2.5.tgz
 cd memcache-2.2.5
 /usr/local/php/bin/phpize
@@ -165,7 +184,6 @@ cd memcache-2.2.5
 make && make install
 cd ../
 
-wget -c  http://superb-dca2.dl.sourceforge.net/project/eaccelerator/eaccelerator/eAccelerator%200.9.6.1/eaccelerator-0.9.6.1.tar.bz2
 tar xjf eaccelerator-0.9.6.1.tar.bz2
 cd eaccelerator-0.9.6.1
 /usr/local/php/bin/phpize
@@ -173,7 +191,6 @@ cd eaccelerator-0.9.6.1
 make && make install
 cd ../
 
-wget -c http://pecl.php.net/get/PDO_MYSQL-1.0.2.tgz
 tar xzf PDO_MYSQL-1.0.2.tgz
 cd PDO_MYSQL-1.0.2
 /usr/local/php/bin/phpize
@@ -181,14 +198,12 @@ cd PDO_MYSQL-1.0.2
 make && make install
 cd ../
 
-wget -c http://www.imagemagick.org/download/legacy/ImageMagick-6.8.3-10.tar.gz
 tar xzf ImageMagick-6.8.3-10.tar.gz
 cd ImageMagick-6.8.3-10
 ./configure
 make && make install
 cd ../
 
-wget -c http://pecl.php.net/get/imagick-3.0.1.tgz
 tar xzf imagick-3.0.1.tgz
 cd imagick-3.0.1
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
@@ -198,7 +213,6 @@ make && make install
 cd ../
 
 # Support HTTP request curls
-wget -c http://pecl.php.net/get/pecl_http-1.7.5.tgz
 tar xzf pecl_http-1.7.5.tgz
 cd pecl_http-1.7.5 
 /usr/local/php/bin/phpize
@@ -299,16 +313,13 @@ EOF
 service php-fpm start
 
 # install Nginx
-wget -c  http://iweb.dl.sourceforge.net/project/pcre/pcre/8.32/pcre-8.32.tar.gz
 tar xzf pcre-8.32.tar.gz
 cd pcre-8.32
 ./configure
 make && make install
 cd ../
 
-#wget -c http://labs.frickle.com/files/ngx_cache_purge-2.1.tar.gz
 #tar xzf ngx_cache_purge-2.1.tar.gz 
-wget -c http://nginx.org/download/nginx-1.4.1.tar.gz
 tar xzf nginx-1.4.1.tar.gz
 cd nginx-1.4.1
 
@@ -319,13 +330,11 @@ sed -i 's@#define NGINX_VER.*NGINX_VERSION$@#define NGINX_VER          "Apache/"
 ./configure --prefix=/usr/local/nginx --user=www --group=www --with-http_stub_status_module --with-http_ssl_module
 make && make install
 cd ../../conf
-wget -c https://raw.github.com/lj2007331/lnmp/master/conf/init.d.nginx
 cp init.d.nginx /etc/init.d/nginx
 chmod 755 /etc/init.d/nginx
 chkconfig --add nginx
 chkconfig nginx on
 mv /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf_bk
-wget -c https://raw.github.com/lj2007331/lnmp/master/conf/nginx.conf
 cp nginx.conf /usr/local/nginx/conf/nginx.conf
 
 #logrotate nginx log
@@ -348,7 +357,6 @@ service nginx restart
 
 # install Pureftpd and pureftpd_php_manager 
 cd ../source
-wget -c ftp://ftp.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.36.tar.gz
 tar xzf pure-ftpd-1.0.36.tar.gz
 cd pure-ftpd-1.0.36
 ./configure --prefix=/usr/local/pureftpd CFLAGS=-O2 --with-mysql=/usr/local/mysql --with-quotas --with-cookie --with-virtualhosts --with-virtualchroot --with-diraliases --with-sysquotas --with-ratios --with-altlog --with-paranoidmsg --with-shadow --with-welcomemsg  --with-throttling --with-uploadscript --with-language=simplified-chinese
@@ -364,9 +372,6 @@ chkconfig --add pureftpd
 chkconfig pureftpd on
 
 cd ../../conf
-wget -c https://raw.github.com/lj2007331/lnmp/master/conf/pure-ftpd.conf
-wget -c https://raw.github.com/lj2007331/lnmp/master/conf/pureftpd-mysql.conf
-wget -c https://raw.github.com/lj2007331/lnmp/master/conf/script.mysql 
 /bin/cp pure-ftpd.conf /usr/local/pureftpd/
 /bin/cp pureftpd-mysql.conf /usr/local/pureftpd/
 mysqlftppwd=`cat /dev/urandom | head -1 | md5sum | head -c 8`
@@ -378,7 +383,6 @@ service pureftpd start
 
 mkdir -p /data/admin
 cd ../source
-wget -c http://acelnmp.googlecode.com/files/ftp_v2.1.tar.gz
 tar xzf ftp_v2.1.tar.gz
 mv ftp /data/admin;chown -R www.www /data/admin
 sed -i 's/tmppasswd/'$mysqlftppwd'/g' /data/admin/ftp/config.php

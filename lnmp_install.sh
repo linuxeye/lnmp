@@ -14,16 +14,16 @@ do
     fi
 done
 
-#download packages
+# Download packages
 mkdir -p /root/lnmp/{source,conf}
 cd /root/lnmp/source
 [ -s cmake-2.8.10.2.tar.gz ] && echo 'cmake-2.8.10.2.tar.gz found' || wget http://www.cmake.org/files/v2.8/cmake-2.8.10.2.tar.gz
-[ -s mysql-5.5.31.tar.gz ] && echo 'mysql-5.5.31.tar.gz found' || wget http://fossies.org/linux/misc/mysql-5.5.31.tar.gz
+[ -s mysql-5.5.32.tar.gz ] && echo 'mysql-5.5.32.tar.gz found' || wget http://fossies.org/linux/misc/mysql-5.5.32.tar.gz
 [ -s libiconv-1.14.tar.gz ] && echo 'libiconv-1.14.tar.gz found' || wget http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
 [ -s bmcrypt-2.5.8.tar.gz ] && echo 'bmcrypt-2.5.8.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz
 [ -s mhash-0.9.9.9.tar.gz ] && echo 'mhash-0.9.9.9.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz
 [ -s mcrypt-2.6.8.tar.gz ] && echo 'mcrypt-2.6.8.tar.gz found' || wget http://vps.googlecode.com/files/mcrypt-2.6.8.tar.gz
-[ -s php-5.3.25.tar.gz ] && echo 'php-5.3.25.tar.gz found' || wget http://kr1.php.net/distributions/php-5.3.25.tar.gz
+[ -s php-5.3.26.tar.gz ] && echo 'php-5.3.26.tar.gz found' || wget http://kr1.php.net/distributions/php-5.3.26.tar.gz
 [ -s memcache-2.2.5.tgz ] && echo 'memcache-2.2.5.tgz found' || wget http://pecl.php.net/get/memcache-2.2.5.tgz
 [ -s eaccelerator-0.9.6.1.tar.bz2 ] && echo 'eaccelerator-0.9.6.1.tar.bz2 found' || wget http://superb-dca2.dl.sourceforge.net/project/eaccelerator/eaccelerator/eAccelerator%200.9.6.1/eaccelerator-0.9.6.1.tar.bz2
 [ -s PDO_MYSQL-1.0.2.tgz ] && echo 'PDO_MYSQL-1.0.2.tgz found' || wget http://pecl.php.net/get/PDO_MYSQL-1.0.2.tgz
@@ -53,8 +53,8 @@ cd cmake-2.8.10.2
 ./configure
 make &&  make install
 cd ..
-tar zxf mysql-5.5.31.tar.gz
-cd mysql-5.5.31
+tar zxf mysql-5.5.32.tar.gz
+cd mysql-5.5.32
 cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/mysql/ \
 -DMYSQL_DATADIR=/data/mysql  \
 -DMYSQL_UNIX_ADDR=/data/mysql/mysqld.sock \
@@ -162,9 +162,9 @@ cd mcrypt-2.6.8
 make && make install
 cd ../
 
-tar xzf php-5.3.25.tar.gz
+tar xzf php-5.3.26.tar.gz
 useradd -M -s /sbin/nologin www
-cd php-5.3.25
+cd php-5.3.26
 ./configure  --prefix=/usr/local/php --with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-safe-mode --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --with-curl --with-curlwrappers --enable-mbregex --enable-fpm --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl --with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc --enable-ftp --with-gettext --enable-zip --enable-soap --disable-debug
 make ZEND_EXTRA_LIBS='-liconv'
 make install
@@ -395,6 +395,28 @@ echo '<?php
 phpinfo()
 ?>' > /data/admin/index.php
 cd ../
+
+# set iptables 
+cat > /etc/sysconfig/iptables << EOF
+# Firewall configuration written by system-config-securitylevel
+# Manual customization of this file is not recommended.
+*filter
+:INPUT DROP [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -i lo -j ACCEPT
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
+-A INPUT -p icmp -m limit --limit 100/sec --limit-burst 100 -j ACCEPT
+-A INPUT -p icmp -m limit --limit 1/s --limit-burst 10 -j ACCEPT
+COMMIT
+EOF
+chkconfig iptables on
+service iptables restart
+
 echo "################Congratulations####################"
 echo "The path of some dirs:"
 echo "Nginx dir:                     /usr/local/nginx"

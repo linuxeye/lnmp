@@ -34,12 +34,12 @@ cd /root/lnmp/source
 [ -s nginx-1.4.1.tar.gz ] && echo 'nginx-1.4.1.tar.gz found' || wget http://nginx.org/download/nginx-1.4.1.tar.gz
 [ -s pure-ftpd-1.0.36.tar.gz ] && echo 'pure-ftpd-1.0.36.tar.gz found' || wget ftp://ftp.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.36.tar.gz
 [ -s ftp_v2.1.tar.gz ] && echo 'ftp_v2.1.tar.gz found' || wget http://acelnmp.googlecode.com/files/ftp_v2.1.tar.gz
-cd ../conf
+cd /root/lnmp/conf
 [ -s init.d.nginx ] && echo 'init.d.nginx found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/init.d.nginx
-[-s nginx.conf ] && echo 'nginx.conf found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/nginx.conf
-[-s pure-ftpd.conf ] && echo 'pure-ftpd.conf found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/pure-ftpd.conf
-[-s pureftpd-mysql.conf ] && echo 'pureftpd-mysql.conf found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/pureftpd-mysql.conf
-[-s script.mysql ] && echo 'script.mysql found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/script.mysql
+[ -s nginx.conf ] && echo 'nginx.conf found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/nginx.conf
+[ -s pure-ftpd.conf ] && echo 'pure-ftpd.conf found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/pure-ftpd.conf
+[ -s pureftpd-mysql.conf ] && echo 'pureftpd-mysql.conf found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/pureftpd-mysql.conf
+[ -s script.mysql ] && echo 'script.mysql found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/script.mysql
 
 # install dependent packages
 yum -y install gcc gcc-c++ autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel nss_ldap openldap openldap-devel openldap-clients openldap-servers libxslt-devel libevent-devel ntp libtool-ltdl bison gd-devel libtool vim-enhanced pcre-devel zip unzip
@@ -329,7 +329,7 @@ sed -i 's@#define NGINX_VER.*NGINX_VERSION$@#define NGINX_VER          "Apache/"
 #./configure --prefix=/usr/local/nginx --user=www --group=www --with-http_stub_status_module --with-http_ssl_module --add-module=../ngx_cache_purge-2.1
 ./configure --prefix=/usr/local/nginx --user=www --group=www --with-http_stub_status_module --with-http_ssl_module
 make && make install
-cd ../../conf
+cd /root/lnmp/conf
 cp init.d.nginx /etc/init.d/nginx
 chmod 755 /etc/init.d/nginx
 chkconfig --add nginx
@@ -371,7 +371,7 @@ chmod +x /etc/init.d/pureftpd
 chkconfig --add pureftpd
 chkconfig pureftpd on
 
-cd ../../conf
+cd /root/lnmp/conf
 /bin/cp pure-ftpd.conf /usr/local/pureftpd/
 /bin/cp pureftpd-mysql.conf /usr/local/pureftpd/
 mysqlftppwd=`cat /dev/urandom | head -1 | md5sum | head -c 8`

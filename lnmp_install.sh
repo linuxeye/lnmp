@@ -386,7 +386,7 @@ cd ../source
 tar xzf ftp_v2.1.tar.gz
 mv ftp /data/admin;chown -R www.www /data/admin
 sed -i 's/tmppasswd/'$mysqlftppwd'/g' /data/admin/ftp/config.php
-IP=`ifconfig | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'`
+IP=`ifconfig | grep 'inet addr:' | cut -d: -f2 | grep -v ^10. | grep -v ^192.168 | grep -v ^172. | grep -v ^127. | awk '{print  $1}' | awk '{print;exit}'`
 sed -i "s/myipaddress.com/`echo $IP`/g" /data/admin/ftp/config.php
 sed -i 's/127.0.0.1/localhost/g' /data/admin/ftp/config.php
 sed -i 's@iso-8859-1@UTF-8@' /data/admin/ftp/language/english.php

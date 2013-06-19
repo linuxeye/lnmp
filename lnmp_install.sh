@@ -34,7 +34,7 @@ cd /root/lnmp/source
 [ -s nginx-1.4.1.tar.gz ] && echo 'nginx-1.4.1.tar.gz found' || wget http://nginx.org/download/nginx-1.4.1.tar.gz
 [ -s pure-ftpd-1.0.36.tar.gz ] && echo 'pure-ftpd-1.0.36.tar.gz found' || wget ftp://ftp.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.36.tar.gz
 [ -s ftp_v2.1.tar.gz ] && echo 'ftp_v2.1.tar.gz found' || wget http://acelnmp.googlecode.com/files/ftp_v2.1.tar.gz
-cd /root/lnmp/conf
+cd ../conf
 [ -s init.d.nginx ] && echo 'init.d.nginx found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/init.d.nginx
 [ -s nginx.conf ] && echo 'nginx.conf found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/nginx.conf
 [ -s pure-ftpd.conf ] && echo 'pure-ftpd.conf found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/pure-ftpd.conf
@@ -338,7 +338,7 @@ mv /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf_bk
 cp nginx.conf /usr/local/nginx/conf/nginx.conf
 
 #logrotate nginx log
-cat > /etc/logrotate.d/nginx <<EOF
+cat > /etc/logrotate.d/nginx << EOF
 /usr/local/nginx/logs/*.log {
 daily
 rotate 5

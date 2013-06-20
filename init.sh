@@ -32,6 +32,7 @@ sed -i '^s/id:.*$/id:3:initdefault:/g' /etc/inittab
 /sbin/init q
 # PS1
 echo 'PS1="\[\e[37;40m\][\[\e[32;40m\]\u\[\e[37;40m\]@\h \[\e[35;40m\]\W\[\e[0m\]]\\$ \[\e[33;40m\]"' >> /etc/profile
+export PS1="\[\e[37;40m\][\[\e[32;40m\]\u\[\e[37;40m\]@\h \[\e[35;40m\]\W\[\e[0m\]]\\$ \[\e[33;40m\]"
 
 # Record command
 sed -i 's/HISTSIZE=.*$/HISTSIZE=100/g' /etc/profile
@@ -42,6 +43,7 @@ sed -i '4a auth        required      pam_tally2.so deny=5 unlock_time=180' /etc/
 
 # alias vi
 sed -i '7a alias vi=vim' /root/.bashrc
+alias vi=vim
 echo 'syntax on' >> /etc/vimrc
 
 # /etc/security/limits.conf

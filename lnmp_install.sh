@@ -2,6 +2,12 @@
 # Check if user is root
 [ $(id -u) != "0" ] && echo "Error: You must be root to run this script, please use root to install lnmp" && exit 1
 
+echo -e "\033[37m#######################################################################\033[0m"
+echo -e "\033[37m#\033[0m                    \033[32mLNMP for CentOS/RadHat Linux\033[0m                     #" 
+echo -e "\033[37m#\033[0m\033[36m For more information please visit\033[0m \033[35mhttps://github.com/lj2007331/lnmp\033[0m #"
+echo -e "\033[37m#######################################################################\033[0m"
+echo ''
+
 # Set password
 while :
 do
@@ -16,6 +22,10 @@ done
 
 # Download packages
 mkdir -p /root/lnmp/{source,conf}
+function Download()
+{
+cd /root/lnmp
+[ -s init.sh ] && echo 'init.sh found' || wget https://raw.github.com/lj2007331/lnmp/master/init.sh 
 cd /root/lnmp/source
 [ -s cmake-2.8.10.2.tar.gz ] && echo 'cmake-2.8.10.2.tar.gz found' || wget http://www.cmake.org/files/v2.8/cmake-2.8.10.2.tar.gz
 [ -s mysql-5.5.32.tar.gz ] && echo 'mysql-5.5.32.tar.gz found' || wget http://fossies.org/linux/misc/mysql-5.5.32.tar.gz
@@ -40,12 +50,13 @@ cd ../conf
 [ -s pure-ftpd.conf ] && echo 'pure-ftpd.conf found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/pure-ftpd.conf
 [ -s pureftpd-mysql.conf ] && echo 'pureftpd-mysql.conf found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/pureftpd-mysql.conf
 [ -s script.mysql ] && echo 'script.mysql found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/script.mysql
+}
 
-# install dependent packages
-yum -y install gcc gcc-c++ autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel nss_ldap openldap openldap-devel openldap-clients openldap-servers libxslt-devel libevent-devel ntp libtool-ltdl bison gd-devel libtool vim-enhanced pcre-devel zip unzip
 
+function MySQL()
 # install MySQL 
-cd ../source
+{
+cd /root/lnmp/source
 useradd -M -s /sbin/nologin mysql
 mkdir -p /data/mysql;chown mysql.mysql -R /data/mysql
 tar xzf cmake-2.8.10.2.tar.gz 
@@ -75,7 +86,7 @@ chkconfig --add mysqld
 chkconfig mysqld on
 cd ..
 
-# Modify my.cf
+# my.cf
 sed -i '38a ##############' /etc/my.cnf
 sed -i '39a skip-name-resolve' /etc/my.cnf
 sed -i '40a basedir=/usr/local/mysql' /etc/my.cnf
@@ -100,8 +111,12 @@ source /etc/profile
 /usr/local/mysql/bin/mysql -e "grant all privileges on *.* to root@'localhost' identified by \"$mysqlrootpwd\" with grant option;"
 /usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd -e "delete from mysql.user where Password='';"
 /sbin/service mysqld restart
+}
 
+function PHP()
 # install PHP 
+{
+cd /root/lnmp/source
 tar xzf libiconv-1.14.tar.gz
 cd libiconv-1.14
 ./configure --prefix=/usr/local
@@ -309,10 +324,14 @@ env[TMPDIR] = /tmp
 env[TEMP] = /tmp
 EOF
 
-#i#php-fpm start
+# php start
 service php-fpm start
+}
 
+function Nginx()
 # install Nginx
+{
+cd /root/lnmp/source
 tar xzf pcre-8.32.tar.gz
 cd pcre-8.32
 ./configure
@@ -354,9 +373,12 @@ endscript
 EOF 
 
 service nginx restart
+}
 
+function Pureftp()
 # install Pureftpd and pureftpd_php_manager 
-cd ../source
+{
+cd /root/lnmp/source
 tar xzf pure-ftpd-1.0.36.tar.gz
 cd pure-ftpd-1.0.36
 ./configure --prefix=/usr/local/pureftpd CFLAGS=-O2 --with-mysql=/usr/local/mysql --with-quotas --with-cookie --with-virtualhosts --with-virtualchroot --with-diraliases --with-sysquotas --with-ratios --with-altlog --with-paranoidmsg --with-shadow --with-welcomemsg  --with-throttling --with-uploadscript --with-language=simplified-chinese
@@ -395,8 +417,10 @@ echo '<?php
 phpinfo()
 ?>' > /data/admin/index.php
 cd ../
+}
 
-# set iptables 
+function Iptables()
+{
 cat > /etc/sysconfig/iptables << EOF
 # Firewall configuration written by system-config-securitylevel
 # Manual customization of this file is not recommended.
@@ -414,17 +438,31 @@ cat > /etc/sysconfig/iptables << EOF
 -A INPUT -p icmp -m limit --limit 1/s --limit-burst 10 -j ACCEPT
 COMMIT
 EOF
-chkconfig iptables on
 service iptables restart
+}
+
+sh init.sh 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+echo 'initialized successfully'
+Download 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+Download
+MySQL 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+[ -d "/usr/local/mysql" ] && echo 'MySQL install successfully' || echo "MySQL install failed";exit
+PHP 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+[ -d "/usr/local/php" ] && echo 'PHP install successfully' || echo "PHP install failed";exit
+Nginx 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+[ -d "/usr/local/nginx" ] && echo 'Nginx install successfully' || echo "Nginx install failed";exit
+Pureftp 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+[ -d "/usr/local/pureftpd" ] && echo 'Pureftpd install successfully' || echo "Pureftpd install failed";exit
+Iptables 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 
 echo "################Congratulations####################"
 echo "The path of some dirs:"
-echo "Nginx dir:                     /usr/local/nginx"
-echo "MySQL dir:                     /usr/local/mysql"
-echo "PHP dir:                       /usr/local/php"
-echo "Pureftpd dir:                  /usr/local/pureftpd"
-echo "Pureftp_php_manager  dir :     /data/admin"
-echo "MySQL Password:                $mysqlrootpwd"
-echo "Pureftp_manager  url :         http://$IP/ftp"
-echo "Pureftp_manager Password:      $ftpmanagerpwd"
+echo -e "Nginx dir:                     \033[32m/usr/local/nginx\033[0m"
+echo -e "MySQL dir:                     \033[32m/usr/local/mysql\033[0m"
+echo -e "PHP dir:                       \033[32m/usr/local/php\033[0m"
+echo -e "Pureftpd dir:                  \033[32m/usr/local/pureftpd\033[0m"
+echo -e "Pureftp_php_manager  dir:      \033[32m/data/admin\033[0m"
+echo -e "MySQL Password:                \033[32m${mysqlrootpwd}\033[0m"
+echo -e "Pureftp_manager  url:          \033[32mhttp://$IP/ftp\033[0m"
+echo -e "Pureftp_manager Password:      \033[32m${ftpmanagerpwd}\033[0m"
 echo "###################################################"

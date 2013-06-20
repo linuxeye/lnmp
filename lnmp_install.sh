@@ -25,7 +25,7 @@ mkdir -p /root/lnmp/{source,conf}
 function Download()
 {
 cd /root/lnmp
-[ -s init.sh ] && echo 'init.sh found' || wget https://raw.github.com/lj2007331/lnmp/master/init.sh 
+[ -s init.sh ] && echo 'init.sh found' || wget https://raw.github.com/lj2007331/lnmp/master/init.sh
 cd /root/lnmp/source
 [ -s cmake-2.8.10.2.tar.gz ] && echo 'cmake-2.8.10.2.tar.gz found' || wget http://www.cmake.org/files/v2.8/cmake-2.8.10.2.tar.gz
 [ -s mysql-5.5.32.tar.gz ] && echo 'mysql-5.5.32.tar.gz found' || wget http://fossies.org/linux/misc/mysql-5.5.32.tar.gz
@@ -443,16 +443,17 @@ service iptables restart
 
 Download 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 Download
-sh /root/lnmp/init.sh 2>&1 | tee -a /root/lnmp/lnmp_install.log 
-echo 'initialized successfully'
+chmod +x /root/lnmp/init.sh
+/root/lnmp/init.sh 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+echo -e "\033[32minitialized successfully\033[0m"
 MySQL 2>&1 | tee -a /root/lnmp/lnmp_install.log 
-[ -d "/usr/local/mysql" ] && echo 'MySQL install successfully' || echo "MySQL install failed";exit
+[ -d "/usr/local/mysql" ] && echo -e "\033[32mMySQL install successfully\033[0m" || echo "MySQL install failed"
 PHP 2>&1 | tee -a /root/lnmp/lnmp_install.log 
-[ -d "/usr/local/php" ] && echo 'PHP install successfully' || echo "PHP install failed";exit
+[ -d "/usr/local/php" ] && echo -e "\033[32mPHP install successfully\033[0m" || echo "PHP install failed"
 Nginx 2>&1 | tee -a /root/lnmp/lnmp_install.log 
-[ -d "/usr/local/nginx" ] && echo 'Nginx install successfully' || echo "Nginx install failed";exit
+[ -d "/usr/local/nginx" ] && echo -e "\033[32mNginx install successfully\033[0m" || echo "Nginx install failed"
 Pureftp 2>&1 | tee -a /root/lnmp/lnmp_install.log 
-[ -d "/usr/local/pureftpd" ] && echo 'Pureftpd install successfully' || echo "Pureftpd install failed";exit
+[ -d "/usr/local/pureftpd" ] && echo -e "\033[32mPureftpd install successfully\033[0m" || echo "Pureftpd install failed"
 Iptables 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 
 echo "################Congratulations####################"

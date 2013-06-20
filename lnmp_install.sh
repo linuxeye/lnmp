@@ -2,11 +2,14 @@
 # Check if user is root
 [ $(id -u) != "0" ] && echo "Error: You must be root to run this script, please use root to install lnmp" && exit 1
 
-echo -e "\033[37m#######################################################################\033[0m"
-echo -e "\033[37m#\033[0m                    \033[32mLNMP for CentOS/RadHat Linux\033[0m                     #" 
-echo -e "\033[37m#\033[0m\033[36m For more information please visit\033[0m \033[35mhttps://github.com/lj2007331/lnmp\033[0m #"
-echo -e "\033[37m#######################################################################\033[0m"
+echo "#######################################################################"
+echo "#                    LNMP for CentOS/RadHat Linux                     #" 
+echo "# For more information please visit https://github.com/lj2007331/lnmp #"
+echo "#######################################################################"
 echo ''
+
+# get IP
+IP=`ifconfig | grep 'inet addr:' | cut -d: -f2 | grep -v ^10. | grep -v ^192.168 | grep -v ^172. | grep -v ^127. | awk '{print  $1}' | awk '{print;exit}'`
 
 # Set password
 while :
@@ -357,8 +360,7 @@ mv /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf_bk
 cp nginx.conf /usr/local/nginx/conf/nginx.conf
 
 #logrotate nginx log
-cat > /etc/logrotate.d/nginx << EOF
-/usr/local/nginx/logs/*.log {
+echo '/usr/local/nginx/logs/*.log {
 daily
 rotate 5
 missingok
@@ -367,10 +369,9 @@ compress
 notifempty
 sharedscripts
 postrotate
-    [ -f /usr/local/nginx/logs/nginx.pid ] && kill -USR1 \`cat /usr/local/nginx/logs/nginx.pid\`
+    [ -f /usr/local/nginx/logs/nginx.pid ] && kill -USR1 `cat /usr/local/nginx/logs/nginx.pid`
 endscript
-}
-EOF 
+}' > /etc/logrotate.d/nginx
 
 service nginx restart
 }
@@ -408,7 +409,6 @@ cd ../source
 tar xzf ftp_v2.1.tar.gz
 mv ftp /data/admin;chown -R www.www /data/admin
 sed -i 's/tmppasswd/'$mysqlftppwd'/g' /data/admin/ftp/config.php
-IP=`ifconfig | grep 'inet addr:' | cut -d: -f2 | grep -v ^10. | grep -v ^192.168 | grep -v ^172. | grep -v ^127. | awk '{print  $1}' | awk '{print;exit}'`
 sed -i "s/myipaddress.com/`echo $IP`/g" /data/admin/ftp/config.php
 sed -i 's/127.0.0.1/localhost/g' /data/admin/ftp/config.php
 sed -i 's@iso-8859-1@UTF-8@' /data/admin/ftp/language/english.php
@@ -462,8 +462,8 @@ echo -e "Nginx dir:                     \033[32m/usr/local/nginx\033[0m"
 echo -e "MySQL dir:                     \033[32m/usr/local/mysql\033[0m"
 echo -e "PHP dir:                       \033[32m/usr/local/php\033[0m"
 echo -e "Pureftpd dir:                  \033[32m/usr/local/pureftpd\033[0m"
-echo -e "Pureftp_php_manager  dir:      \033[32m/data/admin\033[0m"
+echo -e "Pureftp_php_manager dir:       \033[32m/data/admin\033[0m"
 echo -e "MySQL Password:                \033[32m${mysqlrootpwd}\033[0m"
-echo -e "Pureftp_manager  url:          \033[32mhttp://$IP/ftp\033[0m"
+echo -e "Pureftp_manager url:           \033[32mhttp://$IP/ftp\033[0m"
 echo -e "Pureftp_manager Password:      \033[32m${ftpmanagerpwd}\033[0m"
 echo "###################################################"

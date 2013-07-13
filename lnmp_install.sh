@@ -36,7 +36,7 @@ cd /root/lnmp/source
 [ -s libmcrypt-2.5.8.tar.gz ] && echo 'bmcrypt-2.5.8.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz
 [ -s mhash-0.9.9.9.tar.gz ] && echo 'mhash-0.9.9.9.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz
 [ -s mcrypt-2.6.8.tar.gz ] && echo 'mcrypt-2.6.8.tar.gz found' || wget http://vps.googlecode.com/files/mcrypt-2.6.8.tar.gz
-[ -s php-5.3.26.tar.gz ] && echo 'php-5.3.26.tar.gz found' || wget http://kr1.php.net/distributions/php-5.3.26.tar.gz
+[ -s php-5.3.27.tar.gz ] && echo 'php-5.3.27.tar.gz found' || wget http://kr1.php.net/distributions/php-5.3.27.tar.gz
 [ -s memcache-2.2.5.tgz ] && echo 'memcache-2.2.5.tgz found' || wget http://pecl.php.net/get/memcache-2.2.5.tgz
 [ -s eaccelerator-0.9.6.1.tar.bz2 ] && echo 'eaccelerator-0.9.6.1.tar.bz2 found' || wget http://superb-dca2.dl.sourceforge.net/project/eaccelerator/eaccelerator/eAccelerator%200.9.6.1/eaccelerator-0.9.6.1.tar.bz2
 [ -s PDO_MYSQL-1.0.2.tgz ] && echo 'PDO_MYSQL-1.0.2.tgz found' || wget http://pecl.php.net/get/PDO_MYSQL-1.0.2.tgz
@@ -180,9 +180,9 @@ cd mcrypt-2.6.8
 make && make install
 cd ../
 
-tar xzf php-5.3.26.tar.gz
+tar xzf php-5.3.27.tar.gz
 useradd -M -s /sbin/nologin www
-cd php-5.3.26
+cd php-5.3.27
 ./configure  --prefix=/usr/local/php --with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-safe-mode --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --with-curl --with-curlwrappers --enable-mbregex --enable-fpm --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl --with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc --enable-ftp --with-gettext --enable-zip --enable-soap --disable-debug
 make ZEND_EXTRA_LIBS='-liconv'
 make install

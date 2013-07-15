@@ -248,10 +248,11 @@ sed -i '811a extension = "imagick.so"' /usr/local/php/lib/php.ini
 sed -i '812a extension = "http.so"' /usr/local/php/lib/php.ini 
 sed -i '135a output_buffering = On' /usr/local/php/lib/php.ini 
 sed -i '848a cgi.fix_pathinfo=0' /usr/local/php/lib/php.ini 
-sed -i 's@short_open_tag = Off@short_open_tag = On@g' /usr/local/php/lib/php.ini
-sed -i 's@expose_php = On@expose_php = Off@g' /usr/local/php/lib/php.ini
-sed -i 's@;date.timezone =@date.timezone = Asia/Shanghai@g' /usr/local/php/lib/php.ini
-sed -i 's@#sendmail_path.*@#sendmail_path = /usr/sbin/sendmail -t@g' /usr/local/php/lib/php.ini
+sed -i 's@short_open_tag = Off@short_open_tag = On@' /usr/local/php/lib/php.ini
+sed -i 's@expose_php = On@expose_php = Off@' /usr/local/php/lib/php.ini
+sed -i 's@^request_order.*@request_order = "CGP"@' /usr/local/php/lib/php.ini
+sed -i 's@;date.timezone =@date.timezone = Asia/Shanghai@' /usr/local/php/lib/php.ini
+sed -i 's@#sendmail_path.*@#sendmail_path = /usr/sbin/sendmail -t@' /usr/local/php/lib/php.ini
 echo '[eaccelerator]
 zend_extension="/usr/local/php/lib/php/extensions/no-debug-non-zts-20090626/eaccelerator.so"
 eaccelerator.shm_size="64"

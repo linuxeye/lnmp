@@ -28,7 +28,7 @@ mkdir -p /root/lnmp/{source,conf}
 function Download()
 {
 cd /root/lnmp
-[ -s init.sh ] && echo 'init.sh found' || wget https://raw.github.com/lj2007331/lnmp/master/init.sh
+[ -s init.sh ] && echo 'init.sh found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/init.sh
 cd /root/lnmp/source
 [ -s cmake-2.8.10.2.tar.gz ] && echo 'cmake-2.8.10.2.tar.gz found' || wget http://www.cmake.org/files/v2.8/cmake-2.8.10.2.tar.gz
 [ -s mysql-5.6.12.tar.gz ] && echo 'mysql-5.6.12.tar.gz found' || wget http://fossies.org/linux/misc/mysql-5.6.12.tar.gz
@@ -47,11 +47,11 @@ cd /root/lnmp/source
 [ -s pure-ftpd-1.0.36.tar.gz ] && echo 'pure-ftpd-1.0.36.tar.gz found' || wget ftp://ftp.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.36.tar.gz
 [ -s ftp_v2.1.tar.gz ] && echo 'ftp_v2.1.tar.gz found' || wget http://acelnmp.googlecode.com/files/ftp_v2.1.tar.gz
 cd ../conf
-[ -s init.d.nginx ] && echo 'init.d.nginx found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/init.d.nginx
-[ -s nginx.conf ] && echo 'nginx.conf found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/nginx.conf
-[ -s pure-ftpd.conf ] && echo 'pure-ftpd.conf found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/pure-ftpd.conf
-[ -s pureftpd-mysql.conf ] && echo 'pureftpd-mysql.conf found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/pureftpd-mysql.conf
-[ -s script.mysql ] && echo 'script.mysql found' || wget https://raw.github.com/lj2007331/lnmp/master/conf/script.mysql
+[ -s init.d.nginx ] && echo 'init.d.nginx found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/init.d.nginx
+[ -s nginx.conf ] && echo 'nginx.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/nginx.conf
+[ -s pure-ftpd.conf ] && echo 'pure-ftpd.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/pure-ftpd.conf
+[ -s pureftpd-mysql.conf ] && echo 'pureftpd-mysql.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/pureftpd-mysql.conf
+[ -s script.mysql ] && echo 'script.mysql found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/script.mysql
 }
 
 

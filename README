@@ -1,17 +1,16 @@
 Source packages version:
 cmake-2.8.10.2.tar.gz
-mysql-5.5.32.tar.gz
+mysql-5.6.12.tar.gz
 libiconv-1.14.tar.gz
-libmcrypt-2.5.8.tar.gz
+bmcrypt-2.5.8.tar.gz
 mhash-0.9.9.9.tar.gz
 mcrypt-2.6.8.tar.gz
-php-5.3.27.tar.gz
-memcache-2.2.5.tgz
-eaccelerator-0.9.6.1.tar.bz2
+php-5.5.0.tar.gz
+memcache-2.2.7.tgz
 PDO_MYSQL-1.0.2.tgz
 ImageMagick-6.8.3-10.tar.gz
-imagick-3.0.1.tgz
-pecl_http-1.7.5.tgz
+imagick-3.1.0RC2.tgz
+pecl_http-1.7.6.tgz
 pcre-8.32.tar.gz
 nginx-1.4.1.tar.gz
 pure-ftpd-1.0.36.tar.gz

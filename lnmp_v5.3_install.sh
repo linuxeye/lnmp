@@ -31,16 +31,17 @@ cd /root/lnmp
 [ -s init.sh ] && echo 'init.sh found' || wget https://raw.github.com/lj2007331/lnmp/master/init.sh
 cd /root/lnmp/source
 [ -s cmake-2.8.10.2.tar.gz ] && echo 'cmake-2.8.10.2.tar.gz found' || wget http://www.cmake.org/files/v2.8/cmake-2.8.10.2.tar.gz
-[ -s mysql-5.6.12.tar.gz ] && echo 'mysql-5.6.12.tar.gz found' || wget http://fossies.org/linux/misc/mysql-5.6.12.tar.gz
+[ -s mysql-5.5.32.tar.gz ] && echo 'mysql-5.5.32.tar.gz found' || wget http://fossies.org/linux/misc/mysql-5.5.32.tar.gz
 [ -s libiconv-1.14.tar.gz ] && echo 'libiconv-1.14.tar.gz found' || wget http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
 [ -s libmcrypt-2.5.8.tar.gz ] && echo 'bmcrypt-2.5.8.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz
 [ -s mhash-0.9.9.9.tar.gz ] && echo 'mhash-0.9.9.9.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz
 [ -s mcrypt-2.6.8.tar.gz ] && echo 'mcrypt-2.6.8.tar.gz found' || wget http://vps.googlecode.com/files/mcrypt-2.6.8.tar.gz
-[ -s php-5.5.0.tar.gz ] && echo 'php-5.5.0.tar.gz found' || wget http://kr1.php.net/distributions/php-5.5.0.tar.gz
+[ -s php-5.3.27.tar.gz ] && echo 'php-5.3.27.tar.gz found' || wget http://kr1.php.net/distributions/php-5.3.27.tar.gz
 [ -s memcache-2.2.7.tgz ] && echo 'memcache-2.2.7.tgz found' || wget http://pecl.php.net/get/memcache-2.2.7.tgz
+[ -s eaccelerator-0.9.6.1.tar.bz2 ] && echo 'eaccelerator-0.9.6.1.tar.bz2 found' || wget http://superb-dca2.dl.sourceforge.net/project/eaccelerator/eaccelerator/eAccelerator%200.9.6.1/eaccelerator-0.9.6.1.tar.bz2
 [ -s PDO_MYSQL-1.0.2.tgz ] && echo 'PDO_MYSQL-1.0.2.tgz found' || wget http://pecl.php.net/get/PDO_MYSQL-1.0.2.tgz
 [ -s ImageMagick-6.8.3-10.tar.gz ] && echo 'ImageMagick-6.8.3-10.tar.gz found' || wget http://www.imagemagick.org/download/legacy/ImageMagick-6.8.3-10.tar.gz
-[ -s imagick-3.1.0RC2.tgz ] && echo 'imagick-3.1.0RC2.tgz found' || wget http://pecl.php.net/get/imagick-3.1.0RC2.tgz
+[ -s imagick-3.0.1.tgz ] && echo 'imagick-3.0.1.tgz found' || wget http://pecl.php.net/get/imagick-3.0.1.tgz
 [ -s pecl_http-1.7.6.tgz ] && echo 'pecl_http-1.7.6.tgz found' || wget http://pecl.php.net/get/pecl_http-1.7.6.tgz
 [ -s pcre-8.32.tar.gz ] && echo 'pcre-8.32.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/pcre/pcre/8.32/pcre-8.32.tar.gz
 [ -s nginx-1.4.1.tar.gz ] && echo 'nginx-1.4.1.tar.gz found' || wget http://nginx.org/download/nginx-1.4.1.tar.gz
@@ -66,27 +67,22 @@ cd cmake-2.8.10.2
 ./configure
 make &&  make install
 cd ..
-tar zxf mysql-5.6.12.tar.gz
-cd mysql-5.6.12
+tar zxf mysql-5.5.32.tar.gz
+cd mysql-5.5.32
 cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/mysql/ \
--DMYSQL_UNIX_ADDR=/data/mysql/mysqld.sock \
--DDEFAULT_CHARSET=utf8 \
--DDEFAULT_COLLATION=utf8_general_ci \
--DWITH_INNOBASE_STORAGE_ENGINE=1 \
--DWITH_MYISAM_STORAGE_ENGINE=1 \
--DWITH_MEMORY_STORAGE_ENGINE=1 \
--DWITH_BLACKHOLE_STORAGE_ENGINE=1 \
--DWITH_MEMORY_STORAGE_ENGINE=1 \
--DWITH_READLINE=1 \
--DENABLED_LOCAL_INFILE=1 \
 -DMYSQL_DATADIR=/data/mysql  \
--DMYSQL_USER=mysql \
+-DMYSQL_UNIX_ADDR=/data/mysql/mysqld.sock \
+-DWITH_INNOBASE_STORAGE_ENGINE=1 \
+-DENABLED_LOCAL_INFILE=1 \
 -DMYSQL_TCP_PORT=3306 \
 -DEXTRA_CHARSETS=all \
+-DDEFAULT_CHARSET=utf8 \
+-DDEFAULT_COLLATION=utf8_general_ci \
+-DMYSQL_UNIX_ADDR=/data/mysql/mysql.sock \
 -DWITH_DEBUG=0
 make && make install
 
-/bin/cp support-files/my-default.cnf /etc/my.cnf
+/bin/cp support-files/my-medium.cnf /etc/my.cnf
 cp support-files/mysql.server /etc/init.d/mysqld 
 chmod 755 /etc/init.d/mysqld
 chkconfig --add mysqld
@@ -94,55 +90,18 @@ chkconfig mysqld on
 cd ..
 
 # my.cf
-cat > /etc/my.cnf << EOF
-[mysqld]
-basedir = /usr/local/mysql
-datadir = /data/mysql
-socket = /data/mysql/mysql.sock
-character-set-server=utf8
-collation-server=utf8_general_ci
-user=mysql
-port = 3306
-default_storage_engine = InnoDB
-server_id = 1
-log_bin=mysql-bin
-binlog_format=mixed
-expire_logs_days = 7
-
-# name-resolve
-skip-name-resolve
-skip-host-cache
-
-#lower_case_table_names = 1
-ft_min_word_len=1
-query_cache_size=64M
-query_cache_type=1
-
-skip-external-locking
-key_buffer_size = 16M
-max_allowed_packet = 1M
-table_open_cache = 64
-sort_buffer_size = 512K
-net_buffer_length = 8K
-read_buffer_size = 256K
-read_rnd_buffer_size = 512K
-
-# LOG
-log_error = /data/mysql/mysql-error.log
-long_query_time = 1
-slow_query_log
-slow_query_log_file = /data/mysql/mysql-slow.log
-
-# Oher
-explicit_defaults_for_timestamp=true
-#max_connections = 1000
-open_files_limit = 65535
-sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
-
-[client]
-port = 3306
-socket = /data/mysql/mysql.sock
-EOF
+sed -i '38a ##############' /etc/my.cnf
+sed -i '39a skip-name-resolve' /etc/my.cnf
+sed -i '40a basedir=/usr/local/mysql' /etc/my.cnf
+sed -i '41a datadir=/data/mysql' /etc/my.cnf
+sed -i '42a user=mysql' /etc/my.cnf
+sed -i '43a #lower_case_table_names = 1' /etc/my.cnf
+sed -i '44a max_connections=1000' /etc/my.cnf
+sed -i '45a ft_min_word_len=1' /etc/my.cnf
+sed -i '46a expire_logs_days = 7' /etc/my.cnf
+sed -i '47a query_cache_size=64M' /etc/my.cnf
+sed -i '48a query_cache_type=1' /etc/my.cnf
+sed -i '49a ##############' /etc/my.cnf
 
 /usr/local/mysql/scripts/mysql_install_db --user=mysql --basedir=/usr/local/mysql/ --datadir=/data/mysql
 
@@ -202,7 +161,6 @@ if [ `getconf WORD_BIT` = '32' ] && [ `getconf LONG_BIT` = '64' ] ; then
 	ln -s /usr/local/lib/libmhash.so.2.0.1 /usr/lib64/libmhash.so.2.0.1
 	ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config
 	ln -s /usr/local/mysql/lib/libmysqlclient.so.18 /lib64/libmysqlclient.so.18
-	ln -s /usr/local/mysql/include/* /usr/local/include/
         ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1
         ln -s /usr/local/include/ImageMagick-6 /usr/local/include/ImageMagick
         cp -frp /usr/lib64/libldap* /usr/lib
@@ -218,7 +176,6 @@ else
 	ln -s /usr/local/lib/libmhash.so.2.0.1 /usr/lib/libmhash.so.2.0.1
 	ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config
 	ln -s /usr/local/mysql/lib/libmysqlclient.so.18 /lib/libmysqlclient.so.18
-	ln -s /usr/local/mysql/include/* /usr/local/include/
         ln -s /usr/local/include/ImageMagick-6 /usr/local/include/ImageMagick
         ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1
 fi
@@ -230,23 +187,13 @@ cd mcrypt-2.6.8
 make && make install
 cd ../
 
-tar xzf php-5.5.0.tar.gz
+tar xzf php-5.3.27.tar.gz
 useradd -M -s /sbin/nologin www
-cd php-5.5.0
-./configure  --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --enable-opcache \
---with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config \
---with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
---with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop \
---enable-sysvsem --enable-inline-optimization --with-curl --with-kerberos --enable-mbregex --enable-fpm \
---enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-xsl --with-openssl \
---with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc \
---enable-ftp --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
+cd php-5.3.27
+./configure  --prefix=/usr/local/php --with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-safe-mode --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --with-curl --with-curlwrappers --enable-mbregex --enable-fpm --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl --with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc --enable-ftp --with-gettext --enable-zip --enable-soap --disable-debug
 make ZEND_EXTRA_LIBS='-liconv'
 make install
-#wget http://pear.php.net/go-pear.phar
-#/usr/local/php/bin/php go-pear.phar
-
-cp php.ini-production /usr/local/php/etc/php.ini
+cp php.ini-production /usr/local/php/lib/php.ini
 
 #php-fpm Init Script
 cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
@@ -262,6 +209,13 @@ cd memcache-2.2.7
 make && make install
 cd ../
 
+tar xjf eaccelerator-0.9.6.1.tar.bz2
+cd eaccelerator-0.9.6.1
+/usr/local/php/bin/phpize
+./configure --enable-eaccelerator=shared --with-php-config=/usr/local/php/bin/php-config
+make && make install
+cd ../
+
 tar xzf PDO_MYSQL-1.0.2.tgz
 cd PDO_MYSQL-1.0.2
 /usr/local/php/bin/phpize
@@ -269,8 +223,8 @@ cd PDO_MYSQL-1.0.2
 make && make install
 cd ../
 
-tar xzf imagick-3.1.0RC2.tgz
-cd imagick-3.1.0RC2
+tar xzf imagick-3.0.1.tgz
+cd imagick-3.0.1
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 /usr/local/php/bin/phpize
 ./configure --with-php-config=/usr/local/php/bin/php-config
@@ -286,26 +240,38 @@ make && make install
 cd ../
 
 # Modify php.ini
-sed -i '730a extension_dir = "/usr/local/php/lib/php/extensions/no-debug-non-zts-20121212/"' /usr/local/php/etc/php.ini 
-sed -i '731a extension = "memcache.so"' /usr/local/php/etc/php.ini 
-sed -i '732a extension = "pdo_mysql.so"' /usr/local/php/etc/php.ini 
-sed -i '733a extension = "imagick.so"' /usr/local/php/etc/php.ini 
-sed -i '734a extension = "http.so"' /usr/local/php/etc/php.ini 
-sed -i '242a output_buffering = On' /usr/local/php/etc/php.ini 
-sed -i 's@^;cgi.fix_pathinfo.*@cgi.fix_pathinfo=0@' /usr/local/php/etc/php.ini 
-sed -i 's@^short_open_tag = Off@short_open_tag = On@' /usr/local/php/etc/php.ini
-sed -i 's@^expose_php = On@expose_php = Off@' /usr/local/php/etc/php.ini
-sed -i 's@^request_order.*@request_order = "CGP"@' /usr/local/php/etc/php.ini
-sed -i 's@;date.timezone =@date.timezone = Asia/Shanghai@' /usr/local/php/etc/php.ini
-sed -i 's@#sendmail_path.*@#sendmail_path = /usr/sbin/sendmail -t@' /usr/local/php/etc/php.ini
-
-sed -i 's@^;opcache.enable.*@opcache.enable=1@' /usr/local/php/etc/php.ini
-sed -i 's@^;opcache.memory_consumption.*@opcache.memory_consumption=128@' /usr/local/php/etc/php.ini
-sed -i 's@^;opcache.interned_strings_buffer.*@opcache.interned_strings_buffer=8@' /usr/local/php/etc/php.ini
-sed -i 's@^;opcache.max_accelerated_files.*@opcache.max_accelerated_files=4000@' /usr/local/php/etc/php.ini
-sed -i 's@^;opcache.revalidate_freq.*@opcache.revalidate_freq=60@' /usr/local/php/etc/php.ini
-sed -i 's@^;opcache.fast_shutdown.*@opcache.fast_shutdown=1@' /usr/local/php/etc/php.ini
-sed -i 's@^;opcache.enable_cli.*@opcache.enable_cli=1@' /usr/local/php/etc/php.ini
+mkdir /tmp/eaccelerator
+/bin/chown -R www.www /tmp/eaccelerator/
+sed -i '808a extension_dir = "/usr/local/php/lib/php/extensions/no-debug-non-zts-20090626/"' /usr/local/php/lib/php.ini 
+sed -i '809a extension = "memcache.so"' /usr/local/php/lib/php.ini 
+sed -i '810a extension = "pdo_mysql.so"' /usr/local/php/lib/php.ini 
+sed -i '811a extension = "imagick.so"' /usr/local/php/lib/php.ini 
+sed -i '812a extension = "http.so"' /usr/local/php/lib/php.ini 
+sed -i '135a output_buffering = On' /usr/local/php/lib/php.ini 
+sed -i '848a cgi.fix_pathinfo=0' /usr/local/php/lib/php.ini 
+sed -i 's@short_open_tag = Off@short_open_tag = On@' /usr/local/php/lib/php.ini
+sed -i 's@expose_php = On@expose_php = Off@' /usr/local/php/lib/php.ini
+sed -i 's@^request_order.*@request_order = "CGP"@' /usr/local/php/lib/php.ini
+sed -i 's@;date.timezone =@date.timezone = Asia/Shanghai@' /usr/local/php/lib/php.ini
+sed -i 's@#sendmail_path.*@#sendmail_path = /usr/sbin/sendmail -t@' /usr/local/php/lib/php.ini
+echo '[eaccelerator]
+zend_extension="/usr/local/php/lib/php/extensions/no-debug-non-zts-20090626/eaccelerator.so"
+eaccelerator.shm_size="64"
+eaccelerator.cache_dir="/tmp/eaccelerator"
+eaccelerator.enable="1"
+eaccelerator.optimizer="1"
+eaccelerator.check_mtime="1"
+eaccelerator.debug="0"
+eaccelerator.filter=""
+eaccelerator.shm_max="0"
+eaccelerator.shm_ttl="0"
+eaccelerator.shm_prune_period="0"
+eaccelerator.shm_only="0"
+eaccelerator.compress="0"
+eaccelerator.compress_level="9"
+eaccelerator.keys = "disk_only"
+eaccelerator.sessions = "disk_only"
+eaccelerator.content = "disk_only"' >> /usr/local/php/lib/php.ini
 
 cat > /usr/local/php/etc/php-fpm.conf <<EOF 
 ;;;;;;;;;;;;;;;;;;;;;

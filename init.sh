@@ -1,5 +1,11 @@
 #!/bin/bash
 # Configure yum source
+wget http://yum.baseurl.org/download/3.4/yum-3.4.3.tar.gz
+tar zxf yum-3.4.3.tar.gz
+cd yum-3.4.3
+./yummain.py install yum
+rm -rf yum-3.4.3*
+yum check-update
 mv /etc/yum.repos.d/CentOS-Debuginfo.repo /etc/yum.repos.d/CentOS-Debuginfo.repo$(date +%m%d)
 mv /etc/yum.repos.d/CentOS-Media.repo /etc/yum.repos.d/CentOS-Media.repo$(date +%m%d)
 mv /etc/yum.repos.d/CentOS-Vault.repo /etc/yum.repos.d/CentOS-Vault.repo$(date +%m%d)

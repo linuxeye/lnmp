@@ -30,22 +30,23 @@ function Download()
 cd /root/lnmp
 [ -s init.sh ] && echo 'init.sh found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/init.sh
 cd /root/lnmp/source
-[ -s cmake-2.8.10.2.tar.gz ] && echo 'cmake-2.8.10.2.tar.gz found' || wget http://www.cmake.org/files/v2.8/cmake-2.8.10.2.tar.gz
+[ -s cmake-2.8.11.2.tar.gz ] && echo 'cmake-2.8.11.2.tar.gz found' || wget http://www.cmake.org/files/v2.8/cmake-2.8.11.2.tar.gz
 [ -s mysql-5.6.12.tar.gz ] && echo 'mysql-5.6.12.tar.gz found' || wget http://fossies.org/linux/misc/mysql-5.6.12.tar.gz
 [ -s libiconv-1.14.tar.gz ] && echo 'libiconv-1.14.tar.gz found' || wget http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
-[ -s libmcrypt-2.5.8.tar.gz ] && echo 'bmcrypt-2.5.8.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz
+[ -s libmcrypt-2.5.8.tar.gz ] && echo 'libmcrypt-2.5.8.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz
 [ -s mhash-0.9.9.9.tar.gz ] && echo 'mhash-0.9.9.9.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz
 [ -s mcrypt-2.6.8.tar.gz ] && echo 'mcrypt-2.6.8.tar.gz found' || wget http://vps.googlecode.com/files/mcrypt-2.6.8.tar.gz
 [ -s php-5.5.0.tar.gz ] && echo 'php-5.5.0.tar.gz found' || wget http://kr1.php.net/distributions/php-5.5.0.tar.gz
 [ -s memcache-2.2.7.tgz ] && echo 'memcache-2.2.7.tgz found' || wget http://pecl.php.net/get/memcache-2.2.7.tgz
 [ -s PDO_MYSQL-1.0.2.tgz ] && echo 'PDO_MYSQL-1.0.2.tgz found' || wget http://pecl.php.net/get/PDO_MYSQL-1.0.2.tgz
-[ -s ImageMagick-6.8.3-10.tar.gz ] && echo 'ImageMagick-6.8.3-10.tar.gz found' || wget http://www.imagemagick.org/download/legacy/ImageMagick-6.8.3-10.tar.gz
+[ -s ImageMagick-6.8.6-5.tar.gz ] && echo 'ImageMagick-6.8.6-5.tar.gz found' || wget ftp://mirror.aarnet.edu.au/pub/imagemagick/ImageMagick-6.8.6-5.tar.gz 
 [ -s imagick-3.1.0RC2.tgz ] && echo 'imagick-3.1.0RC2.tgz found' || wget http://pecl.php.net/get/imagick-3.1.0RC2.tgz
 [ -s pecl_http-1.7.6.tgz ] && echo 'pecl_http-1.7.6.tgz found' || wget http://pecl.php.net/get/pecl_http-1.7.6.tgz
-[ -s pcre-8.32.tar.gz ] && echo 'pcre-8.32.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/pcre/pcre/8.32/pcre-8.32.tar.gz
+[ -s pcre-8.33.tar.gz ] && echo 'pcre-8.33.tar.gz found' || wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.33.tar.gz 
 [ -s nginx-1.4.1.tar.gz ] && echo 'nginx-1.4.1.tar.gz found' || wget http://nginx.org/download/nginx-1.4.1.tar.gz
 [ -s pure-ftpd-1.0.36.tar.gz ] && echo 'pure-ftpd-1.0.36.tar.gz found' || wget ftp://ftp.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.36.tar.gz
 [ -s ftp_v2.1.tar.gz ] && echo 'ftp_v2.1.tar.gz found' || wget http://acelnmp.googlecode.com/files/ftp_v2.1.tar.gz
+[ -s phpMyAdmin-4.0.4.1-all-languages.tar.gz ] && echo 'phpMyAdmin-4.0.4.1-all-languages.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.0.4.1/phpMyAdmin-4.0.4.1-all-languages.tar.gz 
 cd ../conf
 [ -s init.d.nginx ] && echo 'init.d.nginx found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/init.d.nginx
 [ -s nginx.conf ] && echo 'nginx.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/nginx.conf
@@ -61,8 +62,8 @@ function MySQL()
 cd /root/lnmp/source
 useradd -M -s /sbin/nologin mysql
 mkdir -p /data/mysql;chown mysql.mysql -R /data/mysql
-tar xzf cmake-2.8.10.2.tar.gz 
-cd cmake-2.8.10.2
+tar xzf cmake-2.8.11.2.tar.gz 
+cd cmake-2.8.11.2
 ./configure
 make &&  make install
 cd ..
@@ -184,8 +185,8 @@ cd mhash-0.9.9.9
 make && make install
 cd ../
 
-tar xzf ImageMagick-6.8.3-10.tar.gz
-cd ImageMagick-6.8.3-10
+tar xzf ImageMagick-6.8.6-5.tar.gz
+cd ImageMagick-6.8.6-5
 ./configure
 make && make install
 cd ../
@@ -371,8 +372,8 @@ function Nginx()
 # install Nginx
 {
 cd /root/lnmp/source
-tar xzf pcre-8.32.tar.gz
-cd pcre-8.32
+tar xzf pcre-8.33.tar.gz
+cd pcre-8.33
 ./configure
 make && make install
 cd ../
@@ -442,6 +443,8 @@ service pureftpd start
 
 mkdir -p /data/admin
 cd ../source
+tar xzf phpMyAdmin-4.0.4.1-all-languages.tar.gz
+mv phpMyAdmin-4.0.4.1-all-languages /data/admin/phpMyAdmin
 tar xzf ftp_v2.1.tar.gz
 mv ftp /data/admin;chown -R www.www /data/admin
 sed -i 's/tmppasswd/'$mysqlftppwd'/g' /data/admin/ftp/config.php
@@ -502,4 +505,5 @@ echo -e "Pureftp_php_manager dir:       \033[32m/data/admin\033[0m"
 echo -e "MySQL Password:                \033[32m${mysqlrootpwd}\033[0m"
 echo -e "Pureftp_manager url:           \033[32mhttp://$IP/ftp\033[0m"
 echo -e "Pureftp_manager Password:      \033[32m${ftpmanagerpwd}\033[0m"
+echo -e "MySQL_manager url:             \033[32mhttp://$IP/phpMyAdmin\033[0m"
 echo "###################################################"

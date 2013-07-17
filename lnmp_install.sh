@@ -29,6 +29,7 @@ function Download()
 {
 cd /root/lnmp
 [ -s init.sh ] && echo 'init.sh found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/init.sh
+[ -s vhost.sh ] && echo 'vhost.sh found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/vhost.sh
 cd /root/lnmp/source
 [ -s cmake-2.8.11.2.tar.gz ] && echo 'cmake-2.8.11.2.tar.gz found' || wget http://www.cmake.org/files/v2.8/cmake-2.8.11.2.tar.gz
 [ -s mysql-5.6.12.tar.gz ] && echo 'mysql-5.6.12.tar.gz found' || wget http://fossies.org/linux/misc/mysql-5.6.12.tar.gz

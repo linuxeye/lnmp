@@ -47,9 +47,9 @@ if [ "$add_more_domainame" == 'y' ]; then
 fi
 
 echo "Please input the directory for the domain:$domain :"
-read -p "(Default directory: /data/wwwroot/$domain):" vhostdir
+read -p "(Default directory: /home/wwwroot/$domain):" vhostdir
 if [ -z "$vhostdir" ]; then
-	vhostdir="/data/wwwroot/$domain"
+	vhostdir="/home/wwwroot/$domain"
 fi
 echo "################################"
 echo Virtual Host Directory="$vhostdir"

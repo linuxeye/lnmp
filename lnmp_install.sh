@@ -9,18 +9,42 @@ echo "#######################################################################"
 echo ''
 
 # get IP
-IP=`ifconfig | grep 'inet addr:' | cut -d: -f2 | grep -v ^10. | grep -v ^192.168 | grep -v ^172. | grep -v ^127. | awk '{print  $1}' | awk '{print;exit}'`
+IP=`ifconfig | grep 'inet addr:' | cut -d: -f2 | grep -v ^10\. | grep -v ^192\.168 | grep -v ^172\. | grep -v ^127\. | awk '{print  $1}' | awk '{print;exit}'`
 
-# Set password
+# start 
 while :
 do
-    read -p "Please input the root password of MySQL:" mysqlrootpwd
-    read -p "Please input the manager password of Pureftpd:" ftpmanagerpwd
-    if (( ${#mysqlrootpwd} >= 5 && ${#ftpmanagerpwd} >=5 ));then
-        break
-    else
-       echo "least 5 characters"
-    fi
+        read -p "Please input the root password of MySQL:" mysqlrootpwd
+        FTP_yn='y'
+        echo -e "\033[32mDefault install Pure-FTPd\033[0m"
+        read -p "Do you want to install Pure-FTPd? (y/n)" FTP_yn
+        if [ $FTP_yn != 'y' ] && [ $FTP_yn != 'n' ];then
+                echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
+                break
+        fi
+        if [ $FTP_yn == 'y' ];then
+                read -p "Please input the manager password of Pureftpd:" ftpmanagerpwd
+        fi
+        phpMyAdmin_yn='y'
+        echo -e "\033[32mDefault install phpMyAdmin\033[0m"
+        read -p "Do you want to install phpMyAdmin? (y/n)" phpMyAdmin_yn
+        if [ $phpMyAdmin_yn != 'y' ] && [ $phpMyAdmin_yn != 'n' ];then
+                echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
+                break
+        fi
+        if [ $FTP_yn == 'y' ];then
+                if (( ${#mysqlrootpwd} >= 5 && ${#ftpmanagerpwd} >=5 ));then
+                        break
+                else
+                        echo -e "\033[31mpassword least 5 characters\033[0m"
+                fi
+        else
+                if (( ${#mysqlrootpwd} >= 5 ));then
+                        break
+                else
+                        echo -e "\033[31mpassword least 5 characters\033[0m"
+                fi
+        fi
 done
 
 # Download packages
@@ -30,6 +54,14 @@ function Download()
 cd /root/lnmp
 [ -s init.sh ] && echo 'init.sh found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/init.sh
 [ -s vhost.sh ] && echo 'vhost.sh found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/vhost.sh
+cd conf
+[ -s tz.php ] && echo 'tz.php found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/tz.php
+[ -s index.html ] && echo 'index.html found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/index.html
+[ -s init.d.nginx ] && echo 'init.d.nginx found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/init.d.nginx
+[ -s nginx.conf ] && echo 'nginx.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/nginx.conf
+[ -s pure-ftpd.conf ] && echo 'pure-ftpd.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/pure-ftpd.conf
+[ -s pureftpd-mysql.conf ] && echo 'pureftpd-mysql.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/pureftpd-mysql.conf
+[ -s script.mysql ] && echo 'script.mysql found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/script.mysql
 cd /root/lnmp/source
 [ -s cmake-2.8.11.2.tar.gz ] && echo 'cmake-2.8.11.2.tar.gz found' || wget http://www.cmake.org/files/v2.8/cmake-2.8.11.2.tar.gz
 [ -s mysql-5.6.12.tar.gz ] && echo 'mysql-5.6.12.tar.gz found' || wget http://fossies.org/linux/misc/mysql-5.6.12.tar.gz
@@ -48,14 +80,7 @@ cd /root/lnmp/source
 [ -s pure-ftpd-1.0.36.tar.gz ] && echo 'pure-ftpd-1.0.36.tar.gz found' || wget ftp://ftp.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.36.tar.gz
 [ -s ftp_v2.1.tar.gz ] && echo 'ftp_v2.1.tar.gz found' || wget http://machiel.generaal.net/files/pureftpd/ftp_v2.1.tar.gz 
 [ -s phpMyAdmin-4.0.4.1-all-languages.tar.gz ] && echo 'phpMyAdmin-4.0.4.1-all-languages.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.0.4.1/phpMyAdmin-4.0.4.1-all-languages.tar.gz 
-cd ../conf
-[ -s init.d.nginx ] && echo 'init.d.nginx found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/init.d.nginx
-[ -s nginx.conf ] && echo 'nginx.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/nginx.conf
-[ -s pure-ftpd.conf ] && echo 'pure-ftpd.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/pure-ftpd.conf
-[ -s pureftpd-mysql.conf ] && echo 'pureftpd-mysql.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/pureftpd-mysql.conf
-[ -s script.mysql ] && echo 'script.mysql found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/script.mysql
 }
-
 
 function MySQL()
 # install MySQL 
@@ -447,27 +472,32 @@ sed -i 's/ftpmanagerpwd/'$ftpmanagerpwd'/g' script.mysql
 /usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd< script.mysql
 service pureftpd start
 
-mkdir -p /data/admin
-cd ../source
-tar xzf phpMyAdmin-4.0.4.1-all-languages.tar.gz
-mv phpMyAdmin-4.0.4.1-all-languages /data/admin/phpMyAdmin
-sed -i 's@localhost@127.0.0.1@' /data/admin/phpMyAdmin/libraries/config.default.php
-tar xzf ftp_v2.1.tar.gz
-mv ftp /data/admin
-sed -i 's/tmppasswd/'$mysqlftppwd'/' /data/admin/ftp/config.php
-sed -i "s/myipaddress.com/`echo $IP`/" /data/admin/ftp/config.php
-sed -i 's@\$DEFUserID.*;@\$DEFUserID = "501";@' /data/admin/ftp/config.php
-sed -i 's@\$DEFGroupID.*;@\$DEFGroupID = "501";@' /data/admin/ftp/config.php
-sed -i 's@iso-8859-1@UTF-8@' /data/admin/ftp/language/english.php
-rm -rf  /data/admin/ftp/install.php
-cd /data/admin
+tar xzf ftp_v2.1.tar.gz -C /home/wwwroot
+sed -i 's/tmppasswd/'$mysqlftppwd'/' /home/wwwroot/ftp/config.php
+sed -i "s/myipaddress.com/`echo $IP`/" /home/wwwroot/ftp/config.php
+sed -i 's@\$DEFUserID.*;@\$DEFUserID = "501";@' /home/wwwroot/ftp/config.php
+sed -i 's@\$DEFGroupID.*;@\$DEFGroupID = "501";@' /home/wwwroot/ftp/config.php
+sed -i 's@iso-8859-1@UTF-8@' /home/wwwroot/ftp/language/english.php
+rm -rf  /home/wwwroot/ftp/install.php
+}
+
+function phpMyAdmin()
+{ 
+mkdir -p /home/wwwroot
+cd /home/wwwroot
+tar xzf /root/lnmp/source/phpMyAdmin-4.0.4.1-all-languages.tar.gz
+mv phpMyAdmin-4.0.4.1-all-languages phpMyAdmin
+sed -i 's@localhost@127.0.0.1@' phpMyAdmin/libraries/config.default.php
+}
+
+function TEST()
+{
 echo '<?php
 phpinfo()
-?>' > /data/admin/phpinfo.php
-wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/index.html
-wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/tz.php
-chown -R www.www /data/admin
-cd ../
+?>' > /home/wwwroot/phpinfo.php
+cp /root/lnmp/conf/index.html /home/wwwroot
+cp /root/lnmp/conf/tz.php /home/wwwroot
+chown -R www.www /home/wwwroot
 }
 
 function Iptables()
@@ -496,16 +526,18 @@ Download 2>&1 | tee -a /root/lnmp/lnmp_install.log
 Download
 chmod +x /root/lnmp/init.sh
 /root/lnmp/init.sh 2>&1 | tee -a /root/lnmp/lnmp_install.log 
-echo -e "\033[32minitialized successfully\033[0m"
 MySQL 2>&1 | tee -a /root/lnmp/lnmp_install.log 
-[ -d "/usr/local/mysql" ] && echo -e "\033[32mMySQL install successfully\033[0m" || echo "MySQL install failed"
 PHP 2>&1 | tee -a /root/lnmp/lnmp_install.log 
-[ -d "/usr/local/php" ] && echo -e "\033[32mPHP install successfully\033[0m" || echo "PHP install failed"
 Nginx 2>&1 | tee -a /root/lnmp/lnmp_install.log 
-[ -d "/usr/local/nginx" ] && echo -e "\033[32mNginx install successfully\033[0m" || echo "Nginx install failed"
-Pureftp 2>&1 | tee -a /root/lnmp/lnmp_install.log 
-[ -d "/usr/local/pureftpd" ] && echo -e "\033[32mPureftpd install successfully\033[0m" || echo "Pureftpd install failed"
-Iptables 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+
+if [ $FTP_yn == 'y' ];then
+	Pureftp 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+	Iptables 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+fi
+
+if [ $phpMyAdmin_yn == 'y' ];then
+	TEST 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+fi
 
 echo "################Congratulations####################"
 echo "The path of some dirs:"
@@ -513,9 +545,8 @@ echo -e "Nginx dir:                     \033[32m/usr/local/nginx\033[0m"
 echo -e "MySQL dir:                     \033[32m/usr/local/mysql\033[0m"
 echo -e "PHP dir:                       \033[32m/usr/local/php\033[0m"
 echo -e "Pureftpd dir:                  \033[32m/usr/local/pureftpd\033[0m"
-echo -e "Pureftp_php_manager dir:       \033[32m/data/admin\033[0m"
 echo -e "MySQL Password:                \033[32m${mysqlrootpwd}\033[0m"
 echo -e "Pureftp_manager url:           \033[32mhttp://$IP/ftp\033[0m"
 echo -e "Pureftp_manager Password:      \033[32m${ftpmanagerpwd}\033[0m"
 echo -e "MySQL_manager url:             \033[32mhttp://$IP/phpMyAdmin\033[0m"
-echo "###################################################"
+echo "################Congratulations####################"

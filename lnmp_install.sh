@@ -524,7 +524,7 @@ service iptables restart
 
 Download 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 Download
-chmod +x /root/lnmp/init.sh
+chmod +x /root/lnmp/{init,vhost}.sh
 /root/lnmp/init.sh 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 MySQL 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 PHP 2>&1 | tee -a /root/lnmp/lnmp_install.log 

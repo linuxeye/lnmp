@@ -3,7 +3,7 @@
 [ $(id -u) != "0" ] && echo "Error: You must be root to run this script, please use root to install lnmp" && exit 1
 
 echo "#######################################################################"
-echo "#                    LNMP for CentOS/RadHat Linux                     #" 
+echo "#                    LNMP for CentOS/RadHat 5/6                       #"
 echo "# For more information please visit https://github.com/lj2007331/lnmp #"
 echo "#######################################################################"
 echo ''
@@ -45,7 +45,7 @@ cd /root/lnmp/source
 [ -s pcre-8.33.tar.gz ] && echo 'pcre-8.33.tar.gz found' || wget http://ftp.exim.llorien.org/pcre/pcre-8.33.tar.gz 
 [ -s nginx-1.4.1.tar.gz ] && echo 'nginx-1.4.1.tar.gz found' || wget http://nginx.org/download/nginx-1.4.1.tar.gz
 [ -s pure-ftpd-1.0.36.tar.gz ] && echo 'pure-ftpd-1.0.36.tar.gz found' || wget ftp://ftp.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.36.tar.gz
-[ -s ftp_v2.1.tar.gz ] && echo 'ftp_v2.1.tar.gz found' || wget http://acelnmp.googlecode.com/files/ftp_v2.1.tar.gz
+[ -s ftp_v2.1.tar.gz ] && echo 'ftp_v2.1.tar.gz found' || wget http://machiel.generaal.net/files/pureftpd/ftp_v2.1.tar.gz 
 [ -s phpMyAdmin-4.0.4.1-all-languages.tar.gz ] && echo 'phpMyAdmin-4.0.4.1-all-languages.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.0.4.1/phpMyAdmin-4.0.4.1-all-languages.tar.gz 
 cd ../conf
 [ -s init.d.nginx ] && echo 'init.d.nginx found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/init.d.nginx
@@ -153,6 +153,7 @@ export PATH=$PATH:/usr/local/mysql/bin
 echo 'export PATH=$PATH:/usr/local/mysql/bin' >> /etc/profile
 source /etc/profile
 
+/usr/local/mysql/bin/mysql -e "grant all privileges on *.* to root@'127.0.0.1' identified by \"$mysqlrootpwd\" with grant option;"
 /usr/local/mysql/bin/mysql -e "grant all privileges on *.* to root@'localhost' identified by \"$mysqlrootpwd\" with grant option;"
 /usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd -e "delete from mysql.user where Password='';"
 /usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd -e "drop database test;"
@@ -356,7 +357,7 @@ pm.max_requests = 512
 request_terminate_timeout = 0
 request_slowlog_timeout = 0
 
-slowlog = log/pool.log.slow
+slowlog = log/slow.log
 rlimit_files = 51200
 rlimit_core = 0
 
@@ -423,7 +424,7 @@ function Pureftp()
 cd /root/lnmp/source
 tar xzf pure-ftpd-1.0.36.tar.gz
 cd pure-ftpd-1.0.36
-./configure --prefix=/usr/local/pureftpd CFLAGS=-O2 --with-mysql=/usr/local/mysql --with-quotas --with-cookie --with-virtualhosts --with-virtualchroot --with-diraliases --with-sysquotas --with-ratios --with-altlog --with-paranoidmsg --with-shadow --with-welcomemsg  --with-throttling --with-uploadscript --with-language=simplified-chinese
+./configure --prefix=/usr/local/pureftpd CFLAGS=-O2 --with-mysql=/usr/local/mysql --with-quotas --with-cookie --with-virtualhosts --with-virtualchroot --with-diraliases --with-sysquotas --with-ratios --with-altlog --with-paranoidmsg --with-shadow --with-welcomemsg  --with-throttling --with-uploadscript --with-language=english 
 make && make install
 cp configuration-file/pure-config.pl /usr/local/pureftpd/sbin
 chmod +x /usr/local/pureftpd/sbin/pure-config.pl
@@ -450,18 +451,21 @@ cd ../source
 tar xzf phpMyAdmin-4.0.4.1-all-languages.tar.gz
 mv phpMyAdmin-4.0.4.1-all-languages /data/admin/phpMyAdmin
 sed -i 's@localhost@127.0.0.1@' /data/admin/phpMyAdmin/libraries/config.default.php
-/usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd -e "update mysql.user set host = '%' where user ='root';"
-/usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd -e "flush privileges;"
 tar xzf ftp_v2.1.tar.gz
-mv ftp /data/admin;chown -R www.www /data/admin
-sed -i 's/tmppasswd/'$mysqlftppwd'/g' /data/admin/ftp/config.php
-sed -i "s/myipaddress.com/`echo $IP`/g" /data/admin/ftp/config.php
-sed -i 's/127.0.0.1/localhost/g' /data/admin/ftp/config.php
+mv ftp /data/admin
+sed -i 's/tmppasswd/'$mysqlftppwd'/' /data/admin/ftp/config.php
+sed -i "s/myipaddress.com/`echo $IP`/" /data/admin/ftp/config.php
+sed -i 's@\$DEFUserID.*;@\$DEFUserID = "501";@' /data/admin/ftp/config.php
+sed -i 's@\$DEFGroupID.*;@\$DEFGroupID = "501";@' /data/admin/ftp/config.php
 sed -i 's@iso-8859-1@UTF-8@' /data/admin/ftp/language/english.php
 rm -rf  /data/admin/ftp/install.php
+cd /data/admin
 echo '<?php
 phpinfo()
 ?>' > /data/admin/phpinfo.php
+wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/index.html
+wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/tz.php
+chown -R www.www /data/admin
 cd ../
 }
 

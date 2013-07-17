@@ -42,7 +42,7 @@ cd /root/lnmp/source
 [ -s ImageMagick-6.8.6-5.tar.gz ] && echo 'ImageMagick-6.8.6-5.tar.gz found' || wget ftp://mirror.aarnet.edu.au/pub/imagemagick/ImageMagick-6.8.6-5.tar.gz 
 [ -s imagick-3.1.0RC2.tgz ] && echo 'imagick-3.1.0RC2.tgz found' || wget http://pecl.php.net/get/imagick-3.1.0RC2.tgz
 [ -s pecl_http-1.7.6.tgz ] && echo 'pecl_http-1.7.6.tgz found' || wget http://pecl.php.net/get/pecl_http-1.7.6.tgz
-[ -s pcre-8.33.tar.gz ] && echo 'pcre-8.33.tar.gz found' || wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.33.tar.gz 
+[ -s pcre-8.33.tar.gz ] && echo 'pcre-8.33.tar.gz found' || wget http://ftp.exim.llorien.org/pcre/pcre-8.33.tar.gz 
 [ -s nginx-1.4.1.tar.gz ] && echo 'nginx-1.4.1.tar.gz found' || wget http://nginx.org/download/nginx-1.4.1.tar.gz
 [ -s pure-ftpd-1.0.36.tar.gz ] && echo 'pure-ftpd-1.0.36.tar.gz found' || wget ftp://ftp.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.36.tar.gz
 [ -s ftp_v2.1.tar.gz ] && echo 'ftp_v2.1.tar.gz found' || wget http://acelnmp.googlecode.com/files/ftp_v2.1.tar.gz
@@ -297,7 +297,11 @@ sed -i 's@^;cgi.fix_pathinfo.*@cgi.fix_pathinfo=0@' /usr/local/php/etc/php.ini
 sed -i 's@^short_open_tag = Off@short_open_tag = On@' /usr/local/php/etc/php.ini
 sed -i 's@^expose_php = On@expose_php = Off@' /usr/local/php/etc/php.ini
 sed -i 's@^request_order.*@request_order = "CGP"@' /usr/local/php/etc/php.ini
-sed -i 's@;date.timezone =@date.timezone = Asia/Shanghai@' /usr/local/php/etc/php.ini
+sed -i 's@^;date.timezone.*@date.timezone = Asia/Shanghai@' /usr/local/php/etc/php.ini
+sed -i 's@^post_max_size.*@post_max_size = 50M@' /usr/local/php/etc/php.ini
+sed -i 's@^upload_max_filesize.*@upload_max_filesize = 50M@' /usr/local/php/etc/php.ini
+sed -i 's@^max_execution_time.*@max_execution_time = 300@' /usr/local/php/etc/php.ini
+sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,scandir,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,stream_socket_server,fsocket@' /usr/local/php/etc/php.ini
 sed -i 's@#sendmail_path.*@#sendmail_path = /usr/sbin/sendmail -t@' /usr/local/php/etc/php.ini
 
 sed -i 's@^;opcache.enable.*@opcache.enable=1@' /usr/local/php/etc/php.ini
@@ -352,7 +356,7 @@ pm.max_requests = 512
 request_terminate_timeout = 0
 request_slowlog_timeout = 0
 
-slowlog = log/$pool.log.slow
+slowlog = log/pool.log.slow
 rlimit_files = 51200
 rlimit_core = 0
 
@@ -384,7 +388,7 @@ cd nginx-1.4.1
 
 # Modify Nginx version
 sed -i 's@#define NGINX_VERSION.*$@#define NGINX_VERSION      "2.2.14"@g' src/core/nginx.h 
-sed -i 's@#define NGINX_VER.*NGINX_VERSION$@#define NGINX_VER          "Apache/" NGINX_VERSION@g' src/core/nginx.h 
+sed -i 's@#define NGINX_VER.*NGINX_VERSION$@#define NGINX_VER          "Linuxeye/" NGINX_VERSION@g' src/core/nginx.h 
 #./configure --prefix=/usr/local/nginx --user=www --group=www --with-http_stub_status_module --with-http_ssl_module --add-module=../ngx_cache_purge-2.1
 ./configure --prefix=/usr/local/nginx --user=www --group=www --with-http_stub_status_module --with-http_ssl_module
 make && make install
@@ -445,6 +449,9 @@ mkdir -p /data/admin
 cd ../source
 tar xzf phpMyAdmin-4.0.4.1-all-languages.tar.gz
 mv phpMyAdmin-4.0.4.1-all-languages /data/admin/phpMyAdmin
+sed -i 's@localhost@127.0.0.1@' /data/admin/phpMyAdmin/libraries/config.default.php
+/usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd -e "update mysql.user set host = '%' where user ='root';"
+/usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd -e "flush privileges;"
 tar xzf ftp_v2.1.tar.gz
 mv ftp /data/admin;chown -R www.www /data/admin
 sed -i 's/tmppasswd/'$mysqlftppwd'/g' /data/admin/ftp/config.php
@@ -454,7 +461,7 @@ sed -i 's@iso-8859-1@UTF-8@' /data/admin/ftp/language/english.php
 rm -rf  /data/admin/ftp/install.php
 echo '<?php
 phpinfo()
-?>' > /data/admin/index.php
+?>' > /data/admin/phpinfo.php
 cd ../
 }
 

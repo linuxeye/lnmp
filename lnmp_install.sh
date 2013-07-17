@@ -55,8 +55,8 @@ cd /root/lnmp
 [ -s init.sh ] && echo 'init.sh found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/init.sh
 [ -s vhost.sh ] && echo 'vhost.sh found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/vhost.sh
 cd conf
-[ -s tz.php ] && echo 'tz.php found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/tz.php
-[ -s index.html ] && echo 'index.html found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/index.html
+[ -s tz.php ] && echo 'tz.php found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/tz.php
+[ -s index.html ] && echo 'index.html found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/index.html
 [ -s init.d.nginx ] && echo 'init.d.nginx found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/init.d.nginx
 [ -s nginx.conf ] && echo 'nginx.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/nginx.conf
 [ -s pure-ftpd.conf ] && echo 'pure-ftpd.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/pure-ftpd.conf
@@ -472,7 +472,8 @@ sed -i 's/ftpmanagerpwd/'$ftpmanagerpwd'/g' script.mysql
 /usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd< script.mysql
 service pureftpd start
 
-tar xzf ftp_v2.1.tar.gz -C /home/wwwroot
+mkdir -p /home/wwwroot
+tar xzf /root/lnmp/source/ftp_v2.1.tar.gz -C /home/wwwroot
 sed -i 's/tmppasswd/'$mysqlftppwd'/' /home/wwwroot/ftp/config.php
 sed -i "s/myipaddress.com/`echo $IP`/" /home/wwwroot/ftp/config.php
 sed -i 's@\$DEFUserID.*;@\$DEFUserID = "501";@' /home/wwwroot/ftp/config.php
@@ -483,7 +484,6 @@ rm -rf  /home/wwwroot/ftp/install.php
 
 function phpMyAdmin()
 { 
-mkdir -p /home/wwwroot
 cd /home/wwwroot
 tar xzf /root/lnmp/source/phpMyAdmin-4.0.4.1-all-languages.tar.gz
 mv phpMyAdmin-4.0.4.1-all-languages phpMyAdmin
@@ -546,7 +546,5 @@ echo -e "MySQL dir:                     \033[32m/usr/local/mysql\033[0m"
 echo -e "PHP dir:                       \033[32m/usr/local/php\033[0m"
 echo -e "Pureftpd dir:                  \033[32m/usr/local/pureftpd\033[0m"
 echo -e "MySQL Password:                \033[32m${mysqlrootpwd}\033[0m"
-echo -e "Pureftp_manager url:           \033[32mhttp://$IP/ftp\033[0m"
-echo -e "Pureftp_manager Password:      \033[32m${ftpmanagerpwd}\033[0m"
-echo -e "MySQL_manager url:             \033[32mhttp://$IP/phpMyAdmin\033[0m"
+echo -e "Manager url:                   \033[32mhttp://$IP/\033[0m"
 echo "################Congratulations####################"

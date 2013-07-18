@@ -8,6 +8,7 @@ cd yum-3.4.3
 cd ..
 rm -rf yum-3.4.3*
 yum check-update
+
 mv /etc/yum.repos.d/CentOS-Debuginfo.repo /etc/yum.repos.d/CentOS-Debuginfo.repo$(date +%m%d)
 mv /etc/yum.repos.d/CentOS-Media.repo /etc/yum.repos.d/CentOS-Media.repo$(date +%m%d)
 mv /etc/yum.repos.d/CentOS-Vault.repo /etc/yum.repos.d/CentOS-Vault.repo$(date +%m%d)

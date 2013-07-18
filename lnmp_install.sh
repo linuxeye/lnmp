@@ -536,15 +536,16 @@ if [ $FTP_yn == 'y' ];then
 fi
 
 if [ $phpMyAdmin_yn == 'y' ];then
-	TEST 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+	phpMyAdmin 2>&1 | tee -a /root/lnmp/lnmp_install.log
 fi
+TEST 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 
 echo "################Congratulations####################"
 echo "The path of some dirs:"
 echo -e "Nginx dir:                     \033[32m/usr/local/nginx\033[0m"
 echo -e "MySQL dir:                     \033[32m/usr/local/mysql\033[0m"
 echo -e "PHP dir:                       \033[32m/usr/local/php\033[0m"
-echo -e "Pureftpd dir:                  \033[32m/usr/local/pureftpd\033[0m"
+echo -e "MySQL User:                    \033[32mroot\033[0m"
 echo -e "MySQL Password:                \033[32m${mysqlrootpwd}\033[0m"
 echo -e "Manager url:                   \033[32mhttp://$IP/\033[0m"
 echo "################Congratulations####################"

@@ -72,7 +72,7 @@ cd /root/lnmp/source
 [ -s php-5.5.0.tar.gz ] && echo 'php-5.5.0.tar.gz found' || wget http://kr1.php.net/distributions/php-5.5.0.tar.gz
 [ -s memcache-2.2.7.tgz ] && echo 'memcache-2.2.7.tgz found' || wget http://pecl.php.net/get/memcache-2.2.7.tgz
 [ -s PDO_MYSQL-1.0.2.tgz ] && echo 'PDO_MYSQL-1.0.2.tgz found' || wget http://pecl.php.net/get/PDO_MYSQL-1.0.2.tgz
-[ -s ImageMagick-6.8.6-6.tar.gz ] && echo 'ImageMagick-6.8.6-6.tar.gz found' || wget http://ftp.vim.org/ImageMagick/ImageMagick-6.8.6-6.tar.gz 
+[ -s ImageMagick-6.8.6-6.tar.gz ] && echo 'ImageMagick-6.8.6-6.tar.gz found' || wget ftp://sunsite.icm.edu.pl/packages/ImageMagick/ImageMagick-6.8.6-6.tar.gz 
 [ -s imagick-3.1.0RC2.tgz ] && echo 'imagick-3.1.0RC2.tgz found' || wget http://pecl.php.net/get/imagick-3.1.0RC2.tgz
 [ -s pecl_http-1.7.6.tgz ] && echo 'pecl_http-1.7.6.tgz found' || wget http://pecl.php.net/get/pecl_http-1.7.6.tgz
 [ -s pcre-8.33.tar.gz ] && echo 'pcre-8.33.tar.gz found' || wget http://ftp.exim.llorien.org/pcre/pcre-8.33.tar.gz 

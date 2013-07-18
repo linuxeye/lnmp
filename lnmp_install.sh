@@ -76,7 +76,7 @@ cd /root/lnmp/source
 [ -s imagick-3.1.0RC2.tgz ] && echo 'imagick-3.1.0RC2.tgz found' || wget http://pecl.php.net/get/imagick-3.1.0RC2.tgz
 [ -s pecl_http-1.7.6.tgz ] && echo 'pecl_http-1.7.6.tgz found' || wget http://pecl.php.net/get/pecl_http-1.7.6.tgz
 [ -s pcre-8.33.tar.gz ] && echo 'pcre-8.33.tar.gz found' || wget http://ftp.exim.llorien.org/pcre/pcre-8.33.tar.gz 
-[ -s nginx-1.4.1.tar.gz ] && echo 'nginx-1.4.1.tar.gz found' || wget http://nginx.org/download/nginx-1.4.1.tar.gz
+[ -s nginx-1.4.2.tar.gz ] && echo 'nginx-1.4.2.tar.gz found' || wget http://nginx.org/download/nginx-1.4.2.tar.gz
 [ -s pure-ftpd-1.0.36.tar.gz ] && echo 'pure-ftpd-1.0.36.tar.gz found' || wget ftp://ftp.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.36.tar.gz
 [ -s ftp_v2.1.tar.gz ] && echo 'ftp_v2.1.tar.gz found' || wget http://machiel.generaal.net/files/pureftpd/ftp_v2.1.tar.gz 
 [ -s phpMyAdmin-4.0.4.1-all-languages.tar.gz ] && echo 'phpMyAdmin-4.0.4.1-all-languages.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.0.4.1/phpMyAdmin-4.0.4.1-all-languages.tar.gz 
@@ -410,8 +410,8 @@ make && make install
 cd ../
 
 #tar xzf ngx_cache_purge-2.1.tar.gz 
-tar xzf nginx-1.4.1.tar.gz
-cd nginx-1.4.1
+tar xzf nginx-1.4.2.tar.gz
+cd nginx-1.4.2
 
 # Modify Nginx version
 sed -i 's@#define NGINX_VERSION.*$@#define NGINX_VERSION      "2.2.14"@g' src/core/nginx.h 

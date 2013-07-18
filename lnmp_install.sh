@@ -523,7 +523,15 @@ service iptables restart
 }
 
 Download 2>&1 | tee -a /root/lnmp/lnmp_install.log 
-Download
+
+for src in `cat ./lnmp_install.sh | grep found.*wget | awk '{print $3}' | grep gz`
+do
+        if [ ! -f "/root/lnmp/source/$src" ];then
+                echo -e "\033[31m$src no found!!!\033[0m"
+                exit 1
+        fi
+done
+
 chmod +x /root/lnmp/{init,vhost}.sh
 /root/lnmp/init.sh 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 MySQL 2>&1 | tee -a /root/lnmp/lnmp_install.log 

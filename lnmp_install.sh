@@ -418,6 +418,7 @@ sed -i 's@#define NGINX_VER.*NGINX_VERSION$@#define NGINX_VER          "Linuxeye
 ./configure --prefix=/usr/local/nginx --user=www --group=www --with-http_stub_status_module --with-http_ssl_module
 make && make install
 cd /root/lnmp/conf
+sed -i "s@/home/wwwroot@$home_dir@" nginx.conf
 cp init.d.nginx /etc/init.d/nginx
 chmod 755 /etc/init.d/nginx
 chkconfig --add nginx
@@ -529,6 +530,7 @@ do
 done
 
 chmod +x /root/lnmp/{init,vhost}.sh
+sed -i "s@/home/wwwroot@$home_dir@g" /root/lnmp/vhost.sh
 /root/lnmp/init.sh 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 Install_MySQL 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 if [ -d "/usr/local/mysql" ];then

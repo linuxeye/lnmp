@@ -45,9 +45,12 @@ do
         fi
 done
 
-# Download packages
+#Definition Directory
 mkdir -p /root/lnmp/{source,conf}
-function Download()
+home_dir='/home/wwwroot'
+mkdir -p $home_dir
+# Download packages
+function Download_src()
 {
 cd /root/lnmp
 [ -s init.sh ] && echo 'init.sh found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/init.sh
@@ -80,7 +83,7 @@ cd /root/lnmp/source
 [ -s phpMyAdmin-4.0.4.1-all-languages.tar.gz ] && echo 'phpMyAdmin-4.0.4.1-all-languages.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.0.4.1/phpMyAdmin-4.0.4.1-all-languages.tar.gz 
 }
 
-function MySQL()
+function Install_MySQL()
 # install MySQL 
 {
 cd /root/lnmp/source
@@ -184,7 +187,7 @@ source /etc/profile
 /sbin/service mysqld restart
 }
 
-function PHP()
+function Install_PHP()
 # install PHP 
 {
 cd /root/lnmp/source
@@ -394,14 +397,11 @@ env[TMPDIR] = /tmp
 env[TEMP] = /tmp
 EOF
 
-# php start
 service php-fpm start
 }
 
-function Nginx()
-# install Nginx
+function Install_Nginx()
 {
-mkdir -p /home/wwwroot
 cd /root/lnmp/source
 tar xzf pcre-8.33.tar.gz
 cd pcre-8.33
@@ -444,8 +444,7 @@ endscript
 service nginx restart
 }
 
-function Pureftp()
-# install Pureftpd and pureftpd_php_manager 
+function Install_Pureftp()
 {
 cd /root/lnmp/source
 tar xzf pure-ftpd-1.0.36.tar.gz
@@ -472,18 +471,18 @@ sed -i 's/ftpmanagerpwd/'$ftpmanagerpwd'/g' script.mysql
 /usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd< script.mysql
 service pureftpd start
 
-tar xzf /root/lnmp/source/ftp_v2.1.tar.gz -C /home/wwwroot
-sed -i 's/tmppasswd/'$mysqlftppwd'/' /home/wwwroot/ftp/config.php
-sed -i "s/myipaddress.com/`echo $IP`/" /home/wwwroot/ftp/config.php
-sed -i 's@\$DEFUserID.*;@\$DEFUserID = "501";@' /home/wwwroot/ftp/config.php
-sed -i 's@\$DEFGroupID.*;@\$DEFGroupID = "501";@' /home/wwwroot/ftp/config.php
-sed -i 's@iso-8859-1@UTF-8@' /home/wwwroot/ftp/language/english.php
-rm -rf  /home/wwwroot/ftp/install.php
+tar xzf /root/lnmp/source/ftp_v2.1.tar.gz -C $home_dir 
+sed -i 's/tmppasswd/'$mysqlftppwd'/' $home_dir/ftp/config.php
+sed -i "s/myipaddress.com/`echo $IP`/" $home_dir/ftp/config.php
+sed -i 's@\$DEFUserID.*;@\$DEFUserID = "501";@' $home_dir/ftp/config.php
+sed -i 's@\$DEFGroupID.*;@\$DEFGroupID = "501";@' $home_dir/ftp/config.php
+sed -i 's@iso-8859-1@UTF-8@' $home_dir/ftp/language/english.php
+rm -rf  $home_dir/ftp/install.php
 }
 
-function phpMyAdmin()
+function Install_phpMyAdmin()
 { 
-cd /home/wwwroot
+cd $home_dir
 tar xzf /root/lnmp/source/phpMyAdmin-4.0.4.1-all-languages.tar.gz
 mv phpMyAdmin-4.0.4.1-all-languages phpMyAdmin
 sed -i 's@localhost@127.0.0.1@' phpMyAdmin/libraries/config.default.php
@@ -493,10 +492,10 @@ function TEST()
 {
 echo '<?php
 phpinfo()
-?>' > /home/wwwroot/phpinfo.php
-cp /root/lnmp/conf/index.html /home/wwwroot
-cp /root/lnmp/conf/tz.php /home/wwwroot
-chown -R www.www /home/wwwroot
+?>' > $home_dir/phpinfo.php
+cp /root/lnmp/conf/index.html $home_dir
+cp /root/lnmp/conf/tz.php $home_dir
+chown -R www.www $home_dir
 }
 
 function Iptables()
@@ -521,7 +520,7 @@ EOF
 service iptables restart
 }
 
-Download 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+Download_src 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 
 for src in `cat ./lnmp_install.sh | grep found.*wget | awk '{print $3}' | grep gz`
 do
@@ -533,23 +532,31 @@ done
 
 chmod +x /root/lnmp/{init,vhost}.sh
 /root/lnmp/init.sh 2>&1 | tee -a /root/lnmp/lnmp_install.log 
-MySQL 2>&1 | tee -a /root/lnmp/lnmp_install.log 
-PHP 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+Install_MySQL 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+if [ -d "/usr/local/mysql" ];then
+        echo -e "\033[32mMySQL install successfully!\033[0m"
+else
+        echo -e "\033[31mMySQL install failed,Please Contact Author!\033[0m"
+        exit 1
+fi
+
+Install_PHP 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 if [ -d "/usr/local/php" ];then
 	echo -e "\033[32mPHP install successfully!\033[0m"
 else
 	echo -e "\033[31mPHP install failed,Please Contact Author!\033[0m"
 	exit 1
 fi
-Nginx 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+
+Install_Nginx 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 
 if [ $FTP_yn == 'y' ];then
-	Pureftp 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+	Install_Pureftp 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 	Iptables 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 fi
 
 if [ $phpMyAdmin_yn == 'y' ];then
-	phpMyAdmin 2>&1 | tee -a /root/lnmp/lnmp_install.log
+	Install_phpMyAdmin 2>&1 | tee -a /root/lnmp/lnmp_install.log
 fi
 TEST 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 

@@ -536,6 +536,12 @@ chmod +x /root/lnmp/{init,vhost}.sh
 /root/lnmp/init.sh 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 MySQL 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 PHP 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+if [ -d "/usr/local/php" ];then
+	echo -e "\033[32mPHP install successfully!\033[0m"
+else
+	echo -e "\033[31mPHP install failed,Please Contact Author!\033[0m"
+	exit 1
+fi
 Nginx 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 
 if [ $FTP_yn == 'y' ];then

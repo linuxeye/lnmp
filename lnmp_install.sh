@@ -44,9 +44,9 @@ do
 done
 
 #Definition Directory
-mkdir -p /root/lnmp/{source,conf}
-home_dir='/home/wwwroot'
+home_dir=/home/wwwroot
 mkdir -p $home_dir
+mkdir -p /root/lnmp/{source,conf}
 # Download packages
 function Download_src()
 {

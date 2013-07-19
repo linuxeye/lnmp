@@ -18,21 +18,19 @@ do
         FTP_yn='y'
         echo -e "\033[32mDefault install Pure-FTPd\033[0m"
         read -p "Do you want to install Pure-FTPd? (y/n)" FTP_yn
-        if [ $FTP_yn != 'y' ] && [ $FTP_yn != 'n' ];then
+        if [ "$FTP_yn" != 'y' ] && [ "$FTP_yn" != 'n' ];then
                 echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
-                break
+                exit 1 
         fi
-        if [ $FTP_yn == 'y' ];then
-                read -p "Please input the manager password of Pureftpd:" ftpmanagerpwd
-        fi
+        [ $FTP_yn == 'y' ] && read -p "Please input the manager password of Pureftpd:" ftpmanagerpwd
         phpMyAdmin_yn='y'
         echo -e "\033[32mDefault install phpMyAdmin\033[0m"
         read -p "Do you want to install phpMyAdmin? (y/n)" phpMyAdmin_yn
-        if [ $phpMyAdmin_yn != 'y' ] && [ $phpMyAdmin_yn != 'n' ];then
+        if [ "$phpMyAdmin_yn" != 'y' ] && [ "$phpMyAdmin_yn" != 'n' ];then
                 echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
-                break
+                exit 1 
         fi
-        if [ $FTP_yn == 'y' ];then
+        if [ "$FTP_yn" == 'y' ];then
                 if (( ${#mysqlrootpwd} >= 5 && ${#ftpmanagerpwd} >=5 ));then
                         break
                 else
@@ -261,11 +259,12 @@ cd ../
 tar xzf php-5.5.1.tar.gz
 useradd -M -s /sbin/nologin www
 cd php-5.5.1
-./configure  --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --enable-opcache \
---with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config \
+./configure  --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc \
+--with-fpm-user=www --with-fpm-group=www --enable-opcache --enable-fpm \
+--with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config --with-pdo-mysql=/usr/local/mysql \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop \
---enable-sysvsem --enable-inline-optimization --with-curl --with-kerberos --enable-mbregex --enable-fpm \
+--enable-sysvsem --enable-inline-optimization --with-curl --with-kerberos --enable-mbregex \
 --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-xsl --with-openssl \
 --with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc \
 --enable-ftp --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug

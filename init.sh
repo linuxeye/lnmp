@@ -55,15 +55,22 @@ sed -i '7a alias vi=vim' /root/.bashrc
 echo 'syntax on' >> /etc/vimrc
 
 # /etc/security/limits.conf
-echo "* soft nofile 60000" >> /etc/security/limits.conf
-echo "* hard nofile 65535" >> /etc/security/limits.conf
+cat >> /etc/security/limits.conf <<EOF
+* soft nproc 65535
+* hard nproc 65535
+* soft nofile 65535
+* hard nofile 65535
+EOF
 echo "ulimit -SH 65535" >> /etc/rc.local
 
 # /etc/sysctl.conf
 sed -i 's/net.ipv4.tcp_syncookies.*$/net.ipv4.tcp_syncookies = 1/g' /etc/sysctl.conf
-echo 'net.ipv4.tcp_tw_reuse = 1' >> /etc/sysctl.conf
-echo 'net.ipv4.tcp_tw_recycle = 1' >> /etc/sysctl.conf
-echo 'net.ipv4.ip_local_port_range = 1024 65000' >> /etc/sysctl.conf
+cat >> /etc/sysctl.conf << EOF
+fs.file-max=65535
+net.ipv4.tcp_tw_reuse = 1
+net.ipv4.tcp_tw_recycle = 1
+net.ipv4.ip_local_port_range = 1024 65000
+EOF
 sysctl -p
 
 if [ -z "$(cat /etc/redhat-release | grep '6\.')" ];then

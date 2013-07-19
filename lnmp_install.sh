@@ -16,7 +16,6 @@ while :
 do
         read -p "Please input the root password of MySQL:" mysqlrootpwd
         FTP_yn='y'
-        echo -e "\033[32mDefault install Pure-FTPd\033[0m"
         read -p "Do you want to install Pure-FTPd? (y/n)" FTP_yn
         if [ "$FTP_yn" != 'y' ] && [ "$FTP_yn" != 'n' ];then
                 echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
@@ -24,7 +23,6 @@ do
         fi
         [ $FTP_yn == 'y' ] && read -p "Please input the manager password of Pureftpd:" ftpmanagerpwd
         phpMyAdmin_yn='y'
-        echo -e "\033[32mDefault install phpMyAdmin\033[0m"
         read -p "Do you want to install phpMyAdmin? (y/n)" phpMyAdmin_yn
         if [ "$phpMyAdmin_yn" != 'y' ] && [ "$phpMyAdmin_yn" != 'n' ];then
                 echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"

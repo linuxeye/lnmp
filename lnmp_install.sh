@@ -47,7 +47,7 @@ done
 home_dir=/home/wwwroot
 mkdir -p $home_dir
 mkdir -p /root/lnmp/{source,conf}
-# Download packages
+
 function Download_src()
 {
 cd /root/lnmp
@@ -79,10 +79,17 @@ cd /root/lnmp/source
 [ -s pure-ftpd-1.0.36.tar.gz ] && echo 'pure-ftpd-1.0.36.tar.gz found' || wget ftp://ftp.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.36.tar.gz
 [ -s ftp_v2.1.tar.gz ] && echo 'ftp_v2.1.tar.gz found' || wget http://machiel.generaal.net/files/pureftpd/ftp_v2.1.tar.gz 
 [ -s phpMyAdmin-4.0.4.1-all-languages.tar.gz ] && echo 'phpMyAdmin-4.0.4.1-all-languages.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.0.4.1/phpMyAdmin-4.0.4.1-all-languages.tar.gz 
+# check source packages
+for src in `cat ./lnmp_install.sh | grep found.*wget | awk '{print $3}' | grep gz`
+do
+        if [ ! -f "/root/lnmp/source/$src" ];then
+                echo -e "\033[31m$src no found!!!\033[0m"
+                exit 1
+        fi
+done
 }
 
 function Install_MySQL()
-# install MySQL 
 {
 cd /root/lnmp/source
 useradd -M -s /sbin/nologin mysql
@@ -111,6 +118,13 @@ cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/mysql/ \
 -DEXTRA_CHARSETS=all \
 -DWITH_DEBUG=0
 make && make install
+
+if [ -d "/usr/local/mysql" ];then
+        echo -e "\033[32mMySQL install successfully!\033[0m"
+else
+        echo -e "\033[31mMySQL install failed,Please Contact Author!\033[0m"
+        exit 1
+fi
 
 /bin/cp support-files/my-default.cnf /etc/my.cnf
 cp support-files/mysql.server /etc/init.d/mysqld 
@@ -186,7 +200,6 @@ source /etc/profile
 }
 
 function Install_PHP()
-# install PHP 
 {
 cd /root/lnmp/source
 tar xzf libiconv-1.14.tar.gz
@@ -271,6 +284,13 @@ cd php-5.5.1
 --enable-ftp --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
 make ZEND_EXTRA_LIBS='-liconv'
 make install
+
+if [ -d "/usr/local/php" ];then
+        echo -e "\033[32mPHP install successfully!\033[0m"
+else
+        echo -e "\033[31mPHP install failed,Please Contact Author!\033[0m"
+        exit 1
+fi
 #wget http://pear.php.net/go-pear.phar
 #/usr/local/php/bin/php go-pear.phar
 
@@ -520,34 +540,11 @@ service iptables restart
 }
 
 Download_src 2>&1 | tee -a /root/lnmp/lnmp_install.log 
-
-for src in `cat ./lnmp_install.sh | grep found.*wget | awk '{print $3}' | grep gz`
-do
-        if [ ! -f "/root/lnmp/source/$src" ];then
-                echo -e "\033[31m$src no found!!!\033[0m"
-                exit 1
-        fi
-done
-
 chmod +x /root/lnmp/{init,vhost}.sh
 sed -i "s@/home/wwwroot@$home_dir@g" /root/lnmp/vhost.sh
 /root/lnmp/init.sh 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 Install_MySQL 2>&1 | tee -a /root/lnmp/lnmp_install.log 
-if [ -d "/usr/local/mysql" ];then
-        echo -e "\033[32mMySQL install successfully!\033[0m"
-else
-        echo -e "\033[31mMySQL install failed,Please Contact Author!\033[0m"
-        exit 1
-fi
-
 Install_PHP 2>&1 | tee -a /root/lnmp/lnmp_install.log 
-if [ -d "/usr/local/php" ];then
-	echo -e "\033[32mPHP install successfully!\033[0m"
-else
-	echo -e "\033[31mPHP install failed,Please Contact Author!\033[0m"
-	exit 1
-fi
-
 Install_Nginx 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 
 if [ $FTP_yn == 'y' ];then

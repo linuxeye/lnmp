@@ -32,13 +32,13 @@ do
                 if (( ${#mysqlrootpwd} >= 5 && ${#ftpmanagerpwd} >=5 ));then
                         break
                 else
-                        echo -e "\033[31mpassword least 5 characters\033[0m"
+                        echo -e "\033[31mpassword least 5 characters! \033[0m"
                 fi
         else
                 if (( ${#mysqlrootpwd} >= 5 ));then
                         break
                 else
-                        echo -e "\033[31mpassword least 5 characters\033[0m"
+                        echo -e "\033[31mpassword least 5 characters! \033[0m"
                 fi
         fi
 done
@@ -83,7 +83,7 @@ cd /root/lnmp/source
 for src in `cat ./lnmp_install.sh | grep found.*wget | awk '{print $3}' | grep gz`
 do
         if [ ! -f "/root/lnmp/source/$src" ];then
-                echo -e "\033[31m$src no found!!!\033[0m"
+                echo -e "\033[31m$src no found! \033[0m"
                 exit 1
         fi
 done
@@ -120,9 +120,9 @@ cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/mysql/ \
 make && make install
 
 if [ -d "/usr/local/mysql" ];then
-        echo -e "\033[32mMySQL install successfully!\033[0m"
+        echo -e "\033[32mMySQL install successfully! \033[0m"
 else
-        echo -e "\033[31mMySQL install failed,Please Contact Author!\033[0m"
+        echo -e "\033[31mMySQL install failed,Please Contact Author! \033[0m"
         exit 1
 fi
 
@@ -286,9 +286,9 @@ make ZEND_EXTRA_LIBS='-liconv'
 make install
 
 if [ -d "/usr/local/php" ];then
-        echo -e "\033[32mPHP install successfully!\033[0m"
+        echo -e "\033[32mPHP install successfully! \033[0m"
 else
-        echo -e "\033[31mPHP install failed,Please Contact Author!\033[0m"
+        echo -e "\033[31mPHP install failed,Please Contact Author! \033[0m"
         exit 1
 fi
 #wget http://pear.php.net/go-pear.phar
@@ -432,7 +432,7 @@ tar xzf nginx-1.4.2.tar.gz
 cd nginx-1.4.2
 
 # Modify Nginx version
-sed -i 's@#define NGINX_VERSION.*$@#define NGINX_VERSION      "2.2.14"@g' src/core/nginx.h 
+sed -i 's@#define NGINX_VERSION.*$@#define NGINX_VERSION      "1.2"@g' src/core/nginx.h 
 sed -i 's@#define NGINX_VER.*NGINX_VERSION$@#define NGINX_VER          "Linuxeye/" NGINX_VERSION@g' src/core/nginx.h 
 #./configure --prefix=/usr/local/nginx --user=www --group=www --with-http_stub_status_module --with-http_ssl_module --add-module=../ngx_cache_purge-2.1
 ./configure --prefix=/usr/local/nginx --user=www --group=www --with-http_stub_status_module --with-http_ssl_module
@@ -565,4 +565,4 @@ echo -e "PHP dir:                       \033[32m/usr/local/php\033[0m"
 echo -e "MySQL User:                    \033[32mroot\033[0m"
 echo -e "MySQL Password:                \033[32m${mysqlrootpwd}\033[0m"
 echo -e "Manager url:                   \033[32mhttp://$IP/\033[0m"
-echo "################Congratulations####################"
+echo "###################################################"

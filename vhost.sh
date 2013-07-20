@@ -84,7 +84,7 @@ cat >/usr/local/nginx/conf/vhost/$domain.conf<<EOF
         server_name     $domain$moredomainame;
 	$al
         root $vhostdir;
-        error_page  404  /404.html;
+        #error_page  404  /404.html;
         index index.html index.htm index.jsp index.php ;
         location ~ .*\.(php|php5)?$  {
         #fastcgi_pass  unix:/tmp/php-cgi.sock;

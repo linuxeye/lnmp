@@ -230,36 +230,21 @@ cd ImageMagick-6.8.6-6
 make && make install
 cd ../
 
+# linked library
+cat >> /etc/ld.so.conf.d/local.conf <<EOF
+/usr/local/lib
+EOF
+cat >> /etc/ld.so.conf.d/mysql.conf <<EOF
+/usr/local/mysql/lib
+EOF
+/sbin/ldconfig
+ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config
+ln -s /usr/local/mysql/include/* /usr/local/include/
+ln -s /usr/local/include/ImageMagick-6 /usr/local/include/ImageMagick
 if [ `getconf WORD_BIT` = '32' ] && [ `getconf LONG_BIT` = '64' ] ; then
-	ln -s /usr/local/lib/libmcrypt.la /usr/lib64/libmcrypt.la
-	ln -s /usr/local/lib/libmcrypt.so /usr/lib64/libmcrypt.so
-	ln -s /usr/local/lib/libmcrypt.so.4 /usr/lib64/libmcrypt.so.4
-	ln -s /usr/local/lib/libmcrypt.so.4.4.8 /usr/lib64/libmcrypt.so.4.4.8
-	ln -s /usr/local/lib/libmhash.a /usr/lib64/libmhash.a
-	ln -s /usr/local/lib/libmhash.la /usr/lib64/libmhash.la
-	ln -s /usr/local/lib/libmhash.so /usr/lib64/libmhash.so
-	ln -s /usr/local/lib/libmhash.so.2 /usr/lib64/libmhash.so.2
-	ln -s /usr/local/lib/libmhash.so.2.0.1 /usr/lib64/libmhash.so.2.0.1
-	ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config
-	ln -s /usr/local/mysql/lib/libmysqlclient.so.18 /lib64/libmysqlclient.so.18
-	ln -s /usr/local/mysql/include/* /usr/local/include/
         ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1
-        ln -s /usr/local/include/ImageMagick-6 /usr/local/include/ImageMagick
         cp -frp /usr/lib64/libldap* /usr/lib
 else
-	ln -s /usr/local/lib/libmcrypt.la /usr/lib/libmcrypt.la
-	ln -s /usr/local/lib/libmcrypt.so /usr/lib/libmcrypt.so
-	ln -s /usr/local/lib/libmcrypt.so.4 /usr/lib/libmcrypt.so.4
-	ln -s /usr/local/lib/libmcrypt.so.4.4.8 /usr/lib/libmcrypt.so.4.4.8
-	ln -s /usr/local/lib/libmhash.a /usr/lib/libmhash.a
-	ln -s /usr/local/lib/libmhash.la /usr/lib/libmhash.la
-	ln -s /usr/local/lib/libmhash.so /usr/lib/libmhash.so
-	ln -s /usr/local/lib/libmhash.so.2 /usr/lib/libmhash.so.2
-	ln -s /usr/local/lib/libmhash.so.2.0.1 /usr/lib/libmhash.so.2.0.1
-	ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config
-	ln -s /usr/local/mysql/lib/libmysqlclient.so.18 /lib/libmysqlclient.so.18
-	ln -s /usr/local/mysql/include/* /usr/local/include/
-        ln -s /usr/local/include/ImageMagick-6 /usr/local/include/ImageMagick
         ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1
 fi
 
@@ -275,7 +260,7 @@ useradd -M -s /sbin/nologin www
 cd php-5.5.1
 ./configure  --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc \
 --with-fpm-user=www --with-fpm-group=www --enable-opcache --enable-fpm \
---with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config --with-pdo-mysql=/usr/local/mysql \
+--with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop \
 --enable-sysvsem --enable-inline-optimization --with-curl --with-kerberos --enable-mbregex \
@@ -351,7 +336,8 @@ sed -i 's@^max_execution_time.*@max_execution_time = 300@' /usr/local/php/etc/ph
 sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,scandir,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,stream_socket_server,fsocket@' /usr/local/php/etc/php.ini
 sed -i 's@#sendmail_path.*@#sendmail_path = /usr/sbin/sendmail -t@' /usr/local/php/etc/php.ini
 
-sed -i 's@^;opcache.enable.*@opcache.enable=1@' /usr/local/php/etc/php.ini
+sed -i '1863a zend_extension=opcache.so' /usr/local/php/etc/php.ini 
+sed -i 's@^;opcache.enable=.*@opcache.enable=1@' /usr/local/php/etc/php.ini
 sed -i 's@^;opcache.memory_consumption.*@opcache.memory_consumption=128@' /usr/local/php/etc/php.ini
 sed -i 's@^;opcache.interned_strings_buffer.*@opcache.interned_strings_buffer=8@' /usr/local/php/etc/php.ini
 sed -i 's@^;opcache.max_accelerated_files.*@opcache.max_accelerated_files=4000@' /usr/local/php/etc/php.ini

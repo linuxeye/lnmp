@@ -196,6 +196,7 @@ source /etc/profile
 /usr/local/mysql/bin/mysql -e "grant all privileges on *.* to root@'localhost' identified by \"$mysqlrootpwd\" with grant option;"
 /usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd -e "delete from mysql.user where Password='';"
 /usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd -e "drop database test;"
+[ "$(hostname -i)" != "127.0.0.1" ] && sed -i "s@^127.0.0.1\(.*\)@127.0.0.1   `hostname` \1@" /etc/hosts 
 /sbin/service mysqld restart
 }
 

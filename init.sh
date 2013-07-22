@@ -38,6 +38,9 @@ chkconfig  rsyslog on #CentOS 6
 chkconfig  syslog on #CentOS/RHEL 5
 chkconfig  iptables on
 
+# /etc/hosts
+[ "$(hostname -i)" != "127.0.0.1" ] && sed -i "s@^127.0.0.1\(.*\)@127.0.0.1   `hostname` \1@" /etc/hosts
+
 # Close SELINUX
 setenforce 0
 sed -i 's/^SELINUX=.*$/SELINUX=disabled/g' /etc/selinux/config

@@ -138,25 +138,25 @@ cat > /etc/my.cnf << EOF
 [mysqld]
 basedir = /usr/local/mysql
 datadir = /data/mysql
-socket = /data/mysql/mysql.sock
 character-set-server=utf8
 collation-server=utf8_general_ci
 user=mysql
 port = 3306
 default_storage_engine = InnoDB
 server_id = 1
-log_bin=mysql-bin
-binlog_format=mixed
+log_bin = mysql-bin
+binlog_format = mixed
 expire_logs_days = 7
+bind-address = 0.0.0.0
 
 # name-resolve
-#skip-name-resolve
-#skip-host-cache
+skip-name-resolve
+skip-host-cache
 
 #lower_case_table_names = 1
-ft_min_word_len=1
-query_cache_size=64M
-query_cache_type=1
+ft_min_word_len = 1
+query_cache_size = 64M
+query_cache_type = 1
 
 skip-external-locking
 key_buffer_size = 16M
@@ -181,7 +181,6 @@ sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
 
 [client]
 port = 3306
-socket = /data/mysql/mysql.sock
 EOF
 
 /usr/local/mysql/scripts/mysql_install_db --user=mysql --basedir=/usr/local/mysql/ --datadir=/data/mysql
@@ -196,7 +195,6 @@ source /etc/profile
 /usr/local/mysql/bin/mysql -e "grant all privileges on *.* to root@'localhost' identified by \"$mysqlrootpwd\" with grant option;"
 /usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd -e "delete from mysql.user where Password='';"
 /usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd -e "drop database test;"
-[ "$(hostname -i)" != "127.0.0.1" ] && sed -i "s@^127.0.0.1\(.*\)@127.0.0.1   `hostname` \1@" /etc/hosts 
 /sbin/service mysqld restart
 }
 

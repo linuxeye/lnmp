@@ -5,7 +5,7 @@
 
 echo "#######################################################################"
 echo "#                    LNMP for CentOS/RadHat 5/6                       #"
-echo "# For more information please visit https://github.com/lj2007331/lnmp #"
+echo "# For more information please visit http://blog.linuxeye.com/31.html  #"
 echo "#######################################################################"
 echo ''
 
@@ -86,6 +86,9 @@ cat >/usr/local/nginx/conf/vhost/$domain.conf<<EOF
         root $vhostdir;
         #error_page  404  /404.html;
         index index.html index.htm index.jsp index.php ;
+	if ( \$query_string ~* ".*[\;'\<\>].*" ){
+		return 404;
+	}
         location ~ .*\.(php|php5)?$  {
         #fastcgi_pass  unix:/tmp/php-cgi.sock;
               fastcgi_pass  127.0.0.1:9000;
@@ -110,7 +113,7 @@ echo "Restart Nginx......"
 
 echo "#######################################################################"
 echo "#                    LNMP for CentOS/RadHat 5/6                       #"
-echo "# For more information please visit https://github.com/lj2007331/lnmp #"
+echo "# For more information please visit http://blog.linuxeye.com/31.html  #"
 echo "#######################################################################"
 echo ''
 echo "Your domain:$domain"

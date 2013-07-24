@@ -4,7 +4,7 @@
 
 echo "#######################################################################"
 echo "#                    LNMP for CentOS/RadHat 5/6                       #"
-echo "# For more information please visit https://github.com/lj2007331/lnmp #"
+echo "# For more information please visit http://blog.linuxeye.com/31.html  #"
 echo "#######################################################################"
 echo ''
 

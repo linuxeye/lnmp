@@ -17,7 +17,7 @@ make clean
 --add-module=../ngx_pagespeed-release-1.6.29.3-beta \
 --with-cc-opt='-DLINUX=2 -D_REENTRANT -D_LARGEFILE64_SOURCE -march=i686 -pthread'
 make
-mv /usr/local/nginx/sbin/nginx /usr/local/nginx/sbin/nginx$(date +%m%d)
+/bin/mv /usr/local/nginx/sbin/nginx /usr/local/nginx/sbin/nginx$(date +%m%d)
 /bin/cp objs/nginx /usr/local/nginx/sbin/nginx
 kill -USR2 `cat /usr/local/nginx/logs/nginx.pid`
 kill -QUIT `cat /usr/local/nginx/logs/nginx.pid.oldbin`

@@ -4,7 +4,7 @@ echo "#                    LNMP for CentOS/RadHat 5/6                       #"
 echo "# For more information please visit http://blog.linuxeye.com/318.html #"
 echo "#######################################################################"
 echo ''
-read -p "Do you want to install ngx_PageSpeed? (y/n)" nps_yn
+read -p "Do you want to install ngx_pagespeed? (y/n)" nps_yn
 if [ $nps_yn == 'y' ];then
 cd /root/lnmp/source
 wget --no-check-certificate https://github.com/pagespeed/ngx_pagespeed/archive/release-1.6.29.3-beta.zip

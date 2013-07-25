@@ -4,7 +4,7 @@ cd /tmp
 wget http://yum.baseurl.org/download/3.4/yum-3.4.3.tar.gz
 tar zxf yum-3.4.3.tar.gz
 cd yum-3.4.3
-./yummain.py install yum
+./yummain.py install yum -y
 cd ..
 rm -rf yum-3.4.3*
 sed -i 's@^exclude@#exclude@' /etc/yum.conf

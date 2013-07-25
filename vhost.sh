@@ -11,7 +11,7 @@ echo ''
 
 while :
 do
-	read -p "Please input domain(example: www.test.com test.com):" domain
+	read -p "Please input domain(example: www.linuxeye.com linuxeye.com):" domain
 	if [ -z "`echo $domain | grep '.*\..*'`" ]; then
 		echo -e "\033[31minput error\033[0m"
 	else
@@ -33,7 +33,7 @@ read -p "Do you want to add more domain name? (y/n)" add_more_domainame
 if [ "$add_more_domainame" == 'y' ]; then
 	while :
 	do
-		read -p "Type domainname,example(test.com bbs.test.com):" moredomain
+		read -p "Type domainname,example(blog.linuxeye.com bbs.linuxeye.com):" moredomain
 		if [ -z "`echo $moredomain | grep '.*\..*'`" ]; then
 			echo -e "\033[31minput error\033[0m"
 		else
@@ -69,9 +69,7 @@ else
 fi
 
 
-if [ ! -d /usr/local/nginx/conf/vhost ]; then
-	mkdir /usr/local/nginx/conf/vhost
-fi
+[ ! -d /usr/local/nginx/conf/vhost ] && mkdir /usr/local/nginx/conf/vhost
 
 echo "Create Virtul Host directory......"
 mkdir -p $vhostdir

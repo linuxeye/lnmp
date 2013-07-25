@@ -16,4 +16,5 @@ kill -USR2 `cat /usr/local/nginx/logs/nginx.pid`
 kill -QUIT `cat /usr/local/nginx/logs/nginx.pid.oldbin`
 mkdir /var/ngx_pagespeed_cache
 chown www.www /var/ngx_pagespeed_cache
+cp /root/lnmp/vhost.sh /root/lnmp/vhost_no_ngx_pagespeed.sh
 sed -i 's@root $vhostdir;@root $vhostdir;\n\tpagespeed on;\n\tpagespeed FileCachePath /var/ngx_pagespeed_cache;\n\tlocation ~ "\\.pagespeed\\.([a-z]\\.)?[a-z]{2}\\.[^.]{10}\\.[^.]+" { add_header "" ""; }\n\tlocation ~ "^/ngx_pagespeed_static/" { }\n\tlocation ~ "^/ngx_pagespeed_beacon$" { }\n\tlocation /ngx_pagespeed_statistics { allow 127.0.0.1; deny all; }\n\tlocation /ngx_pagespeed_message { allow 127.0.0.1; deny all; }@' /root/lnmp/vhost.sh

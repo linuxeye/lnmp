@@ -85,7 +85,7 @@ else
 	echo "################################"
 	echo -e "You choose rewrite=\033[32m$rewrite\033[0m" 
 	echo "################################"
-	if [ -s /root/lnmp/conf/$rewrite.conf ];then
+	if [ -s "/root/lnmp/conf/$rewrite.conf" ];then
 		/bin/cp /root/lnmp/conf/$rewrite.conf /usr/local/nginx/conf/$rewrite.conf
 	else
 		touch "/usr/local/nginx/conf/$rewrite.conf"

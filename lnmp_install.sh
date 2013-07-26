@@ -11,7 +11,7 @@ echo ''
 # get IP
 IP=`ifconfig | grep 'inet addr:' | cut -d: -f2 | grep -v ^10\. | grep -v ^192\.168 | grep -v ^172\. | grep -v ^127\. | awk '{print  $1}' | awk '{print;exit}'`
 
-# eheck 
+# check 
 while :
 do
         read -p "Please input the root password of MySQL:" mysqlrootpwd

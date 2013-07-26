@@ -11,35 +11,38 @@ echo ''
 # get IP
 IP=`ifconfig | grep 'inet addr:' | cut -d: -f2 | grep -v ^10\. | grep -v ^192\.168 | grep -v ^172\. | grep -v ^127\. | awk '{print  $1}' | awk '{print;exit}'`
 
-# start 
+# eheck 
 while :
 do
         read -p "Please input the root password of MySQL:" mysqlrootpwd
-        FTP_yn='y'
+        (( ${#mysqlrootpwd} >= 5 )) && break || echo -e "\033[31mMySQL root password least 5 characters! \033[0m"
+done
+
+while :
+do
         read -p "Do you want to install Pure-FTPd? (y/n)" FTP_yn
         if [ "$FTP_yn" != 'y' ] && [ "$FTP_yn" != 'n' ];then
                 echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
-                exit 1 
+        else
+                break
         fi
-        [ $FTP_yn == 'y' ] && read -p "Please input the manager password of Pureftpd:" ftpmanagerpwd
-        phpMyAdmin_yn='y'
+done
+
+if [ $FTP_yn == 'y' ];then
+        while :
+        do
+                read -p "Please input the manager password of Pureftpd:" ftpmanagerpwd
+                (( ${#ftpmanagerpwd} >= 5 )) && break || echo -e "\033[31mFtp manager password least 5 characters! \033[0m"
+        done
+fi
+
+while :
+do
         read -p "Do you want to install phpMyAdmin? (y/n)" phpMyAdmin_yn
         if [ "$phpMyAdmin_yn" != 'y' ] && [ "$phpMyAdmin_yn" != 'n' ];then
                 echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
-                exit 1 
-        fi
-        if [ "$FTP_yn" == 'y' ];then
-                if (( ${#mysqlrootpwd} >= 5 && ${#ftpmanagerpwd} >=5 ));then
-                        break
-                else
-                        echo -e "\033[31mpassword least 5 characters! \033[0m"
-                fi
         else
-                if (( ${#mysqlrootpwd} >= 5 ));then
-                        break
-                else
-                        echo -e "\033[31mpassword least 5 characters! \033[0m"
-                fi
+                break
         fi
 done
 
@@ -57,6 +60,12 @@ cd /root/lnmp
 cd conf
 [ -s tz.php ] && echo 'tz.php found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/tz.php
 [ -s index.html ] && echo 'index.html found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/index.html
+[ -s wordpress.conf ] && echo 'wordpress.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/wordpress.conf
+[ -s discuz.conf ] && echo 'discuz.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/discuz.conf
+[ -s phpwind.conf ] && echo 'phpwind.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/phpwind.conf
+[ -s typecho.conf ] && echo 'typecho.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/typecho.conf
+[ -s ecshop.conf ] && echo 'ecshop.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/ecshop.conf
+[ -s drupal.conf ] && echo 'drupal.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/drupal.conf
 [ -s init.d.nginx ] && echo 'init.d.nginx found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/init.d.nginx
 [ -s nginx.conf ] && echo 'nginx.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/nginx.conf
 [ -s pure-ftpd.conf ] && echo 'pure-ftpd.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/pure-ftpd.conf

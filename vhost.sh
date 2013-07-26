@@ -29,8 +29,16 @@ else
 	exit 1
 fi
 
-read -p "Do you want to add more domain name? (y/n)" add_more_domainame
-if [ "$add_more_domainame" == 'y' ]; then
+while :
+do
+        read -p "Do you want to add more domain name? (y/n)" moredomainame_yn 
+        if [ "$moredomainame_yn" != 'y' ] && [ "$moredomainame_yn" != 'n' ];then
+                echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
+        else
+                break 
+        fi
+done
+if [ "$moredomainame_yn" == 'y' ]; then
 	while :
 	do
 		read -p "Type domainname,example(blog.linuxeye.com bbs.linuxeye.com):" moredomain
@@ -38,7 +46,7 @@ if [ "$add_more_domainame" == 'y' ]; then
 			echo -e "\033[31minput error\033[0m"
 		else
 			echo "################################"
-			echo domain list="$moredomain"
+			echo -e "domain list=\033[32m$moredomain\033[0m"
 			echo "################################"
 			moredomainame=" $moredomain"
 			break
@@ -50,21 +58,56 @@ echo "Please input the directory for the domain:$domain :"
 read -p "(Default directory: /home/wwwroot/$domain):" vhostdir
 if [ -z "$vhostdir" ]; then
 	vhostdir="/home/wwwroot/$domain"
+	echo "################################"
+	echo -e "Virtual Host Directory=\033[32m$vhostdir\033[0m"
+	echo "################################"
 fi
-echo "################################"
-echo Virtual Host Directory="$vhostdir"
-echo "################################"
 
-echo "################################"
-read -p "Allow access_log? (y/n)" access_log
-echo "################################"
+while :
+do
+        read -p "Allow Rewrite rule? (y/n)" rewrite_yn
+        if [ "$rewrite_yn" != 'y' ] && [ "$rewrite_yn" != 'n' ];then
+                echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
+        else
+                break 
+        fi
+done
+if [ "$rewrite_yn" == 'n' ];then
+	rewrite="none"
+	touch "/usr/local/nginx/conf/$rewrite.conf"
+else
+	echo "Please input the rewrite of programme :"
+	echo -e "\033[32mwordpress\033[0m,\033[32mdiscuz\033[0m,\033[32mphpwind\033[0m,\033[32mtypecho\033[0m,\033[32mecshop\033[0m,\033[32mdrupal\033[0m rewrite was exist."
+	read -p "(Default rewrite: other):" rewrite
+	if [ "$rewrite" == "" ]; then
+		rewrite="other"
+	fi
+	echo "################################"
+	echo -e "You choose rewrite=\033[32m$rewrite\033[0m" 
+	echo "################################"
+	if [ -s /root/lnmp/conf/$rewrite.conf ];then
+		/bin/cp /root/lnmp/conf/$rewrite.conf /usr/local/nginx/conf/$rewrite.conf
+	else
+		touch "/usr/local/nginx/conf/$rewrite.conf"
+	fi
+fi
 
-if [ "$access_log" == 'n' ]; then
+
+while :
+do
+        read -p "Allow access_log? (y/n)" access_yn 
+        if [ "$access_yn" != 'y' ] && [ "$access_yn" != 'n' ];then
+                echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
+        else
+                break 
+        fi
+done
+if [ "$access_yn" == 'n' ]; then
 	al="access_log off;"
 else
-	al="access_log  logs/$domain.log;"
+	al="access_log  logs/$domain.log combined;"
 	echo "################################"
-	echo You access log file="/usr/local/nginx/logs/$domain.log"
+	echo -e "You access log file=\033[32m/usr/local/nginx/logs/$domain.log\033[0m"
 	echo "################################"
 fi
 
@@ -81,9 +124,10 @@ cat >/usr/local/nginx/conf/vhost/$domain.conf<<EOF
         listen  80;
         server_name     $domain$moredomainame;
 	$al
+        index index.html index.htm index.jsp index.php ;
+	include $rewrite.conf;
         root $vhostdir;
         #error_page  404  /404.html;
-        index index.html index.htm index.jsp index.php ;
 	if ( \$query_string ~* ".*[\;'\<\>].*" ){
 		return 404;
 	}
@@ -114,7 +158,7 @@ echo "#                    LNMP for CentOS/RadHat 5/6                       #"
 echo "# For more information please visit http://blog.linuxeye.com/31.html  #"
 echo "#######################################################################"
 echo ''
-echo "Your domain:$domain"
-echo "Directory of $domain:$vhostdir"
+echo -e "Your domain:\033[32m$domain\033[0m"
+echo -e "Directory of \033[32m$domain\033[0m:\033[32m$vhostdir\033[0m"
+[ "$rewrite_yn" == 'y' ] && echo -e "Rewrite rule:\033[32m$rewrite\033[0m"
 echo ''
-echo "#######################################################################"

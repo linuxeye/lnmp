@@ -7,20 +7,20 @@ echo ''
 read -p "Do you want to install ngx_pagespeed? (y/n)" nps_yn
 if [ $nps_yn == 'y' ];then
 cd /root/lnmp/source
-rm -rf release-1.6.29.3-beta* ngx_pagespeed-release*
-wget --no-check-certificate https://github.com/pagespeed/ngx_pagespeed/archive/release-1.6.29.3-beta.zip
-unzip -q release-1.6.29.3-beta
-wget https://dl.google.com/dl/page-speed/psol/1.6.29.3.tar.gz
-tar xzf 1.6.29.3.tar.gz -C ngx_pagespeed-release-1.6.29.3-beta
+rm -rf release* ngx_pagespeed-release*
+wget --no-check-certificate https://github.com/pagespeed/ngx_pagespeed/archive/release-1.6.29.5-beta.zip
+unzip -q release-1.6.29.5-beta
+wget https://dl.google.com/dl/page-speed/psol/1.6.29.5.tar.gz
+tar xzf 1.6.29.5.tar.gz -C ngx_pagespeed-release-1.6.29.5-beta
 cd nginx-1.4.2/
 make clean
 if [ `getconf WORD_BIT` = '32' ] && [ `getconf LONG_BIT` = '64' ] ;then
 ./configure --prefix=/usr/local/nginx --user=www --group=www --with-http_stub_status_module --with-http_ssl_module \
---add-module=../ngx_pagespeed-release-1.6.29.3-beta \
+--add-module=../ngx_pagespeed-release-1.6.29.5-beta \
 --with-cc-opt='-DLINUX=2 -D_REENTRANT -D_LARGEFILE64_SOURCE -pthread'
 else
 ./configure --prefix=/usr/local/nginx --user=www --group=www --with-http_stub_status_module --with-http_ssl_module \
---add-module=../ngx_pagespeed-release-1.6.29.3-beta \
+--add-module=../ngx_pagespeed-release-1.6.29.5-beta \
 --with-cc-opt='-DLINUX=2 -D_REENTRANT -D_LARGEFILE64_SOURCE -march=i686 -pthread'
 fi
 make

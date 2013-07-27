@@ -438,6 +438,7 @@ sed -i 's@^prog=.*@prog="/usr/local/memcached/bin/memcached"@' /etc/init.d/memca
 chmod +x /etc/init.d/memcached
 chkconfig --add memcached
 chkconfig memcached on
+service php-fpm restart
 service memcached start
 cd ..
 }

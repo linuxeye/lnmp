@@ -6,6 +6,7 @@ libmcrypt-2.5.8.tar.gz
 mhash-0.9.9.9.tar.gz
 mcrypt-2.6.8.tar.gz
 php-5.5.1.tar.gz
+memcached-1.4.15.tar.gz
 memcache-2.2.7.tgz
 PDO_MYSQL-1.0.2.tgz
 ImageMagick-6.8.6-6.tar.gz

@@ -20,6 +20,16 @@ done
 
 while :
 do
+        read -p "Do you want to install Memcache? (y/n)" Memcache_yn
+        if [ "$Memcache_yn" != 'y' ] && [ "$Memcache_yn" != 'n' ];then
+                echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
+        else
+                break
+        fi
+done
+
+while :
+do
         read -p "Do you want to install Pure-FTPd? (y/n)" FTP_yn
         if [ "$FTP_yn" != 'y' ] && [ "$FTP_yn" != 'n' ];then
                 echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
@@ -79,6 +89,7 @@ cd /root/lnmp/source
 [ -s mhash-0.9.9.9.tar.gz ] && echo 'mhash-0.9.9.9.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz
 [ -s mcrypt-2.6.8.tar.gz ] && echo 'mcrypt-2.6.8.tar.gz found' || wget http://vps.googlecode.com/files/mcrypt-2.6.8.tar.gz
 [ -s php-5.5.1.tar.gz ] && echo 'php-5.5.1.tar.gz found' || wget http://kr1.php.net/distributions/php-5.5.1.tar.gz
+[ -s memcached-1.4.15.tar.gz ] && echo 'memcached-1.4.15.tar.gz found' || wget http://memcached.googlecode.com/files/memcached-1.4.15.tar.gz 
 [ -s memcache-2.2.7.tgz ] && echo 'memcache-2.2.7.tgz found' || wget http://pecl.php.net/get/memcache-2.2.7.tgz
 [ -s PDO_MYSQL-1.0.2.tgz ] && echo 'PDO_MYSQL-1.0.2.tgz found' || wget http://pecl.php.net/get/PDO_MYSQL-1.0.2.tgz
 [ -s ImageMagick-6.8.6-6.tar.gz ] && echo 'ImageMagick-6.8.6-6.tar.gz found' || wget ftp://sunsite.icm.edu.pl/packages/ImageMagick/ImageMagick-6.8.6-6.tar.gz 
@@ -138,7 +149,7 @@ fi
 
 /bin/cp support-files/my-default.cnf /etc/my.cnf
 cp support-files/mysql.server /etc/init.d/mysqld 
-chmod 755 /etc/init.d/mysqld
+chmod +x /etc/init.d/mysqld
 chkconfig --add mysqld
 chkconfig mysqld on
 cd ..
@@ -297,13 +308,6 @@ chkconfig --add php-fpm
 chkconfig php-fpm on
 cd ../
 
-tar xzf memcache-2.2.7.tgz
-cd memcache-2.2.7
-/usr/local/php/bin/phpize
-./configure --with-php-config=/usr/local/php/bin/php-config
-make && make install
-cd ../
-
 tar xzf PDO_MYSQL-1.0.2.tgz
 cd PDO_MYSQL-1.0.2
 /usr/local/php/bin/phpize
@@ -328,12 +332,8 @@ make && make install
 cd ../
 
 # Modify php.ini
-sed -i '730a extension_dir = "/usr/local/php/lib/php/extensions/no-debug-non-zts-20121212/"' /usr/local/php/etc/php.ini 
-sed -i '731a extension = "memcache.so"' /usr/local/php/etc/php.ini 
-sed -i '732a extension = "pdo_mysql.so"' /usr/local/php/etc/php.ini 
-sed -i '733a extension = "imagick.so"' /usr/local/php/etc/php.ini 
-sed -i '734a extension = "http.so"' /usr/local/php/etc/php.ini 
-sed -i '242a output_buffering = On' /usr/local/php/etc/php.ini 
+sed -i 's@extension_dir = "ext"@extension_dir = "ext"\nextension_dir = "/usr/local/php/lib/php/extensions/no-debug-non-zts-20121212/"\nextension = "pdo_mysql.so"\nextension = "imagick.so"\nextension = "http.so"@' /usr/local/php/etc/php.ini
+sed -i 's@^output_buffering =@output_buffering = On\noutput_buffering =@' /usr/local/php/etc/php.ini 
 sed -i 's@^;cgi.fix_pathinfo.*@cgi.fix_pathinfo=0@' /usr/local/php/etc/php.ini 
 sed -i 's@^short_open_tag = Off@short_open_tag = On@' /usr/local/php/etc/php.ini
 sed -i 's@^expose_php = On@expose_php = Off@' /usr/local/php/etc/php.ini
@@ -345,7 +345,7 @@ sed -i 's@^max_execution_time.*@max_execution_time = 300@' /usr/local/php/etc/ph
 sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,stream_socket_server,fsocket@' /usr/local/php/etc/php.ini
 sed -i 's@#sendmail_path.*@#sendmail_path = /usr/sbin/sendmail -t@' /usr/local/php/etc/php.ini
 
-sed -i '1863a zend_extension=opcache.so' /usr/local/php/etc/php.ini 
+sed -i 's@^\[opcache\]@[opcache]\nzend_extension=opcache.so@' /usr/local/php/etc/php.ini
 sed -i 's@^;opcache.enable=.*@opcache.enable=1@' /usr/local/php/etc/php.ini
 sed -i 's@^;opcache.memory_consumption.*@opcache.memory_consumption=128@' /usr/local/php/etc/php.ini
 sed -i 's@^;opcache.interned_strings_buffer.*@opcache.interned_strings_buffer=8@' /usr/local/php/etc/php.ini
@@ -411,6 +411,35 @@ env[TEMP] = /tmp
 EOF
 
 service php-fpm start
+}
+
+function Install_Memcache()
+{
+cd /root/lnmp/source
+tar xzf memcache-2.2.7.tgz
+cd memcache-2.2.7
+/usr/local/php/bin/phpize
+./configure --with-php-config=/usr/local/php/bin/php-config
+make && make install
+sed -i 's@"/usr/local/php/lib/php/extensions/no-debug-non-zts-20121212/"@"/usr/local/php/lib/php/extensions/no-debug-non-zts-20121212/"\nextension = "memcache.so"@' /usr/local/php/etc/php.ini
+cd ../
+
+tar xzf memcached-1.4.15.tar.gz
+cd memcached-1.4.15
+./configure --prefix=/usr/local/memcached
+make && make install
+
+ln -s /usr/local/memcached/bin/memcached /usr/bin/memcached
+/bin/cp scripts/memcached.sysv /etc/init.d/memcached
+sed -i 's@^USER=.*@USER=root@' /etc/init.d/memcached
+sed -i 's@chown@#chown@' /etc/init.d/memcached
+sed -i 's@/var/run/memcached/memcached.pid@/var/run/memcached.pid@' /etc/init.d/memcached
+sed -i 's@^prog=.*@prog="/usr/local/memcached/bin/memcached"@' /etc/init.d/memcached
+chmod +x /etc/init.d/memcached
+chkconfig --add memcached
+chkconfig memcached on
+service memcached start
+cd ..
 }
 
 function Install_Nginx()
@@ -541,6 +570,10 @@ sed -i "s@/home/wwwroot@$home_dir@g" /root/lnmp/vhost.sh
 Install_MySQL 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 Install_PHP 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 Install_Nginx 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+
+if [ $Memcache_yn == 'y' ];then
+	Install_Memcache 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+fi
 
 if [ $FTP_yn == 'y' ];then
 	Install_Pureftp 2>&1 | tee -a /root/lnmp/lnmp_install.log 

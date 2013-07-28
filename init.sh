@@ -26,17 +26,19 @@ fi
 yum -y update
 
 # Install dependencies package
-yum -y install gcc gcc-c++ make autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel nss_ldap openldap openldap-devel openldap-clients openldap-servers libxslt-devel libevent-devel ntp libtool libtool-ltdl bison gd-devel vim-enhanced pcre-devel zip unzip ncurses-devel
+yum -y install gcc gcc-c++ make autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel nss_ldap openldap openldap-devel openldap-clients openldap-servers libxslt-devel libevent-devel ntp libtool libtool-ltdl bison gd-devel vim-enhanced pcre-devel zip unzip ncurses-devel sendmail
 
 # chkconfig 
 chkconfig --list | awk '{print "chkconfig " $1 " off"}' > /tmp/chkconfiglist.sh;/bin/sh /tmp/chkconfiglist.sh;rm -rf /tmp/chkconfiglist.sh
-chkconfig  crond on
-chkconfig  irqbalance on
-chkconfig  network on
-chkconfig  sshd on
-chkconfig  rsyslog on #CentOS 6
-chkconfig  syslog on #CentOS/RHEL 5
-chkconfig  iptables on
+chkconfig crond on
+chkconfig irqbalance on
+chkconfig network on
+chkconfig sshd on
+chkconfig rsyslog on #CentOS 6
+chkconfig syslog on #CentOS/RHEL 5
+chkconfig iptables on
+chkconfig sendmail on
+service sendmail restart
 
 # /etc/hosts
 [ "$(hostname -i)" != "127.0.0.1" ] && sed -i "s@^127.0.0.1\(.*\)@127.0.0.1   `hostname` \1@" /etc/hosts

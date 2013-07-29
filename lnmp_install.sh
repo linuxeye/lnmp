@@ -64,44 +64,44 @@ mkdir -p /root/lnmp/{source,conf}
 function Download_src()
 {
 cd /root/lnmp
-[ -s init.sh ] && echo 'init.sh found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/init.sh
-[ -s vhost.sh ] && echo 'vhost.sh found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/vhost.sh
-[ -s ngx_pagespeed.sh ] && echo 'ngx_pagespeed.sh found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/ngx_pagespeed.sh
+[ -s init.sh ] && echo 'init.sh found' || wget -T 60 --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/init.sh
+[ -s vhost.sh ] && echo 'vhost.sh found' || wget -T 60 --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/vhost.sh
+[ -s ngx_pagespeed.sh ] && echo 'ngx_pagespeed.sh found' || wget -T 60 --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/ngx_pagespeed.sh
 cd conf
-[ -s tz.php ] && echo 'tz.php found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/tz.php
-[ -s index.html ] && echo 'index.html found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/index.html
-[ -s wordpress.conf ] && echo 'wordpress.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/wordpress.conf
-[ -s discuz.conf ] && echo 'discuz.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/discuz.conf
-[ -s phpwind.conf ] && echo 'phpwind.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/phpwind.conf
-[ -s typecho.conf ] && echo 'typecho.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/typecho.conf
-[ -s ecshop.conf ] && echo 'ecshop.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/ecshop.conf
-[ -s drupal.conf ] && echo 'drupal.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/drupal.conf
-[ -s init.d.nginx ] && echo 'init.d.nginx found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/init.d.nginx
-[ -s nginx.conf ] && echo 'nginx.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/nginx.conf
-[ -s pure-ftpd.conf ] && echo 'pure-ftpd.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/pure-ftpd.conf
-[ -s pureftpd-mysql.conf ] && echo 'pureftpd-mysql.conf found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/pureftpd-mysql.conf
-[ -s script.mysql ] && echo 'script.mysql found' || wget --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/script.mysql
+[ -s tz.php ] && echo 'tz.php found' || wget -T 60 --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/tz.php
+[ -s index.html ] && echo 'index.html found' || wget -T 60 --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/index.html
+[ -s wordpress.conf ] && echo 'wordpress.conf found' || wget -T 60 --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/wordpress.conf
+[ -s discuz.conf ] && echo 'discuz.conf found' || wget -T 60 --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/discuz.conf
+[ -s phpwind.conf ] && echo 'phpwind.conf found' || wget -T 60 --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/phpwind.conf
+[ -s typecho.conf ] && echo 'typecho.conf found' || wget -T 60 --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/typecho.conf
+[ -s ecshop.conf ] && echo 'ecshop.conf found' || wget -T 60 --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/ecshop.conf
+[ -s drupal.conf ] && echo 'drupal.conf found' || wget -T 60 --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/drupal.conf
+[ -s init.d.nginx ] && echo 'init.d.nginx found' || wget -T 60 --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/init.d.nginx
+[ -s nginx.conf ] && echo 'nginx.conf found' || wget -T 60 --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/nginx.conf
+[ -s pure-ftpd.conf ] && echo 'pure-ftpd.conf found' || wget -T 60 --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/pure-ftpd.conf
+[ -s pureftpd-mysql.conf ] && echo 'pureftpd-mysql.conf found' || wget -T 60 --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/pureftpd-mysql.conf
+[ -s script.mysql ] && echo 'script.mysql found' || wget -T 60 --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/script.mysql
 cd /root/lnmp/source
-[ -s cmake-2.8.11.2.tar.gz ] && echo 'cmake-2.8.11.2.tar.gz found' || wget http://www.cmake.org/files/v2.8/cmake-2.8.11.2.tar.gz
-[ -s mysql-5.6.12.tar.gz ] && echo 'mysql-5.6.12.tar.gz found' || wget http://fossies.org/linux/misc/mysql-5.6.12.tar.gz
-[ -s libiconv-1.14.tar.gz ] && echo 'libiconv-1.14.tar.gz found' || wget http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
-[ -s libmcrypt-2.5.8.tar.gz ] && echo 'libmcrypt-2.5.8.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz
-[ -s mhash-0.9.9.9.tar.gz ] && echo 'mhash-0.9.9.9.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz
-[ -s mcrypt-2.6.8.tar.gz ] && echo 'mcrypt-2.6.8.tar.gz found' || wget --no-check-certificate https://vps.googlecode.com/files/mcrypt-2.6.8.tar.gz
-[ -s php-5.5.1.tar.gz ] && echo 'php-5.5.1.tar.gz found' || wget http://kr1.php.net/distributions/php-5.5.1.tar.gz
-[ -s memcached-1.4.15.tar.gz ] && echo 'memcached-1.4.15.tar.gz found' || wget --no-check-certificate https://memcached.googlecode.com/files/memcached-1.4.15.tar.gz 
-[ -s memcache-2.2.7.tgz ] && echo 'memcache-2.2.7.tgz found' || wget http://pecl.php.net/get/memcache-2.2.7.tgz
-[ -s PDO_MYSQL-1.0.2.tgz ] && echo 'PDO_MYSQL-1.0.2.tgz found' || wget http://pecl.php.net/get/PDO_MYSQL-1.0.2.tgz
-[ -s ImageMagick-6.8.6-6.tar.gz ] && echo 'ImageMagick-6.8.6-6.tar.gz found' || wget ftp://sunsite.icm.edu.pl/packages/ImageMagick/ImageMagick-6.8.6-6.tar.gz 
-[ -s imagick-3.1.0RC2.tgz ] && echo 'imagick-3.1.0RC2.tgz found' || wget http://pecl.php.net/get/imagick-3.1.0RC2.tgz
-[ -s pecl_http-1.7.6.tgz ] && echo 'pecl_http-1.7.6.tgz found' || wget http://pecl.php.net/get/pecl_http-1.7.6.tgz
-[ -s pcre-8.33.tar.gz ] && echo 'pcre-8.33.tar.gz found' || wget http://ftp.exim.llorien.org/pcre/pcre-8.33.tar.gz 
-[ -s nginx-1.4.2.tar.gz ] && echo 'nginx-1.4.2.tar.gz found' || wget http://nginx.org/download/nginx-1.4.2.tar.gz
-[ -s pure-ftpd-1.0.36.tar.gz ] && echo 'pure-ftpd-1.0.36.tar.gz found' || wget ftp://ftp.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.36.tar.gz
-[ -s ftp_v2.1.tar.gz ] && echo 'ftp_v2.1.tar.gz found' || wget http://machiel.generaal.net/files/pureftpd/ftp_v2.1.tar.gz 
-[ -s phpMyAdmin-4.0.4.2-all-languages.tar.gz ] && echo 'phpMyAdmin-4.0.4.2-all-languages.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.0.4.2/phpMyAdmin-4.0.4.2-all-languages.tar.gz 
+[ -s cmake-2.8.11.2.tar.gz ] && echo 'cmake-2.8.11.2.tar.gz found' || wget -T 60 http://www.cmake.org/files/v2.8/cmake-2.8.11.2.tar.gz
+[ -s mysql-5.6.12.tar.gz ] && echo 'mysql-5.6.12.tar.gz found' || wget -T 60 http://fossies.org/linux/misc/mysql-5.6.12.tar.gz
+[ -s libiconv-1.14.tar.gz ] && echo 'libiconv-1.14.tar.gz found' || wget -T 60 http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
+[ -s libmcrypt-2.5.8.tar.gz ] && echo 'libmcrypt-2.5.8.tar.gz found' || wget -T 60 http://iweb.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz
+[ -s mhash-0.9.9.9.tar.gz ] && echo 'mhash-0.9.9.9.tar.gz found' || wget -T 60 http://iweb.dl.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz
+[ -s mcrypt-2.6.8.tar.gz ] && echo 'mcrypt-2.6.8.tar.gz found' || wget -T 60 --no-check-certificate https://vps.googlecode.com/files/mcrypt-2.6.8.tar.gz
+[ -s php-5.5.1.tar.gz ] && echo 'php-5.5.1.tar.gz found' || wget -T 60 http://kr1.php.net/distributions/php-5.5.1.tar.gz
+[ -s memcached-1.4.15.tar.gz ] && echo 'memcached-1.4.15.tar.gz found' || wget -T 60 --no-check-certificate https://memcached.googlecode.com/files/memcached-1.4.15.tar.gz 
+[ -s memcache-2.2.7.tgz ] && echo 'memcache-2.2.7.tgz found' || wget -T 60 http://pecl.php.net/get/memcache-2.2.7.tgz
+[ -s PDO_MYSQL-1.0.2.tgz ] && echo 'PDO_MYSQL-1.0.2.tgz found' || wget -T 60 http://pecl.php.net/get/PDO_MYSQL-1.0.2.tgz
+[ -s ImageMagick-6.8.6-6.tar.gz ] && echo 'ImageMagick-6.8.6-6.tar.gz found' || wget -T 60 ftp://sunsite.icm.edu.pl/packages/ImageMagick/ImageMagick-6.8.6-6.tar.gz 
+[ -s imagick-3.1.0RC2.tgz ] && echo 'imagick-3.1.0RC2.tgz found' || wget -T 60 http://pecl.php.net/get/imagick-3.1.0RC2.tgz
+[ -s pecl_http-1.7.6.tgz ] && echo 'pecl_http-1.7.6.tgz found' || wget -T 60 http://pecl.php.net/get/pecl_http-1.7.6.tgz
+[ -s pcre-8.33.tar.gz ] && echo 'pcre-8.33.tar.gz found' || wget -T 60 http://ftp.exim.llorien.org/pcre/pcre-8.33.tar.gz 
+[ -s nginx-1.4.2.tar.gz ] && echo 'nginx-1.4.2.tar.gz found' || wget -T 60 http://nginx.org/download/nginx-1.4.2.tar.gz
+[ -s pure-ftpd-1.0.36.tar.gz ] && echo 'pure-ftpd-1.0.36.tar.gz found' || wget -T 60 ftp://ftp.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.36.tar.gz
+[ -s ftp_v2.1.tar.gz ] && echo 'ftp_v2.1.tar.gz found' || wget -T 60 http://machiel.generaal.net/files/pureftpd/ftp_v2.1.tar.gz 
+[ -s phpMyAdmin-4.0.4.2-all-languages.tar.gz ] && echo 'phpMyAdmin-4.0.4.2-all-languages.tar.gz found' || wget -T 60 http://iweb.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.0.4.2/phpMyAdmin-4.0.4.2-all-languages.tar.gz 
 # check source packages
-for src in `cat ./lnmp_install.sh | grep found.*wget | awk '{print $3}' | grep gz`
+for src in `cat ./lnmp_install.sh | grep found.*wget -T 60 | awk '{print $3}' | grep gz`
 do
         if [ ! -f "/root/lnmp/source/$src" ];then
                 echo -e "\033[31m$src no found! \033[0m"
@@ -296,7 +296,7 @@ else
         echo -e "\033[31mPHP install failed,Please Contact Author! \033[0m"
         exit 1
 fi
-#wget http://pear.php.net/go-pear.phar
+#wget -T 60 http://pear.php.net/go-pear.phar
 #/usr/local/php/bin/php go-pear.phar
 
 cp php.ini-production /usr/local/php/etc/php.ini

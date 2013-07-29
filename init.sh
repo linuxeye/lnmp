@@ -1,7 +1,7 @@
 #!/bin/bash
 # Configure yum source
 cd /tmp
-wget http://yum.baseurl.org/download/3.4/yum-3.4.3.tar.gz
+wget -T 60 http://yum.baseurl.org/download/3.4/yum-3.4.3.tar.gz
 tar zxf yum-3.4.3.tar.gz
 cd yum-3.4.3
 ./yummain.py install yum -y
@@ -127,8 +127,8 @@ source /etc/profile
 ###install tmux
 mkdir tmux
 cd tmux
-wget --no-check-certificate https://github.com/downloads/libevent/libevent/libevent-2.0.21-stable.tar.gz
-wget http://downloads.sourceforge.net/tmux/tmux-1.8.tar.gz
+wget -T 60 --no-check-certificate https://github.com/downloads/libevent/libevent/libevent-2.0.21-stable.tar.gz
+wget -T 60 http://downloads.sourceforge.net/tmux/tmux-1.8.tar.gz
 tar xzf libevent-2.0.21-stable.tar.gz
 cd libevent-2.0.21-stable
 ./configure

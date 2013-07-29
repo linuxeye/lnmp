@@ -87,9 +87,9 @@ cd /root/lnmp/source
 [ -s libiconv-1.14.tar.gz ] && echo 'libiconv-1.14.tar.gz found' || wget http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
 [ -s libmcrypt-2.5.8.tar.gz ] && echo 'libmcrypt-2.5.8.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz
 [ -s mhash-0.9.9.9.tar.gz ] && echo 'mhash-0.9.9.9.tar.gz found' || wget http://iweb.dl.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz
-[ -s mcrypt-2.6.8.tar.gz ] && echo 'mcrypt-2.6.8.tar.gz found' || wget http://vps.googlecode.com/files/mcrypt-2.6.8.tar.gz
+[ -s mcrypt-2.6.8.tar.gz ] && echo 'mcrypt-2.6.8.tar.gz found' || wget --no-check-certificate https://vps.googlecode.com/files/mcrypt-2.6.8.tar.gz
 [ -s php-5.5.1.tar.gz ] && echo 'php-5.5.1.tar.gz found' || wget http://kr1.php.net/distributions/php-5.5.1.tar.gz
-[ -s memcached-1.4.15.tar.gz ] && echo 'memcached-1.4.15.tar.gz found' || wget http://memcached.googlecode.com/files/memcached-1.4.15.tar.gz 
+[ -s memcached-1.4.15.tar.gz ] && echo 'memcached-1.4.15.tar.gz found' || wget --no-check-certificate https://memcached.googlecode.com/files/memcached-1.4.15.tar.gz 
 [ -s memcache-2.2.7.tgz ] && echo 'memcache-2.2.7.tgz found' || wget http://pecl.php.net/get/memcache-2.2.7.tgz
 [ -s PDO_MYSQL-1.0.2.tgz ] && echo 'PDO_MYSQL-1.0.2.tgz found' || wget http://pecl.php.net/get/PDO_MYSQL-1.0.2.tgz
 [ -s ImageMagick-6.8.6-6.tar.gz ] && echo 'ImageMagick-6.8.6-6.tar.gz found' || wget ftp://sunsite.icm.edu.pl/packages/ImageMagick/ImageMagick-6.8.6-6.tar.gz 

@@ -547,7 +547,6 @@ function Install_phpMyAdmin()
 cd $home_dir
 tar xzf /root/lnmp/source/phpMyAdmin-4.0.4.2-all-languages.tar.gz
 mv phpMyAdmin-4.0.4.2-all-languages phpMyAdmin
-sed -i 's@localhost@127.0.0.1@' phpMyAdmin/libraries/config.default.php
 }
 
 function TEST()

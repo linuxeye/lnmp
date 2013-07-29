@@ -463,13 +463,31 @@ sed -i 's@#define NGINX_VER.*NGINX_VERSION$@#define NGINX_VER          "Linuxeye
 ./configure --prefix=/usr/local/nginx --user=www --group=www --with-http_stub_status_module --with-http_ssl_module
 make && make install
 cd /root/lnmp/conf
-sed -i "s@/home/wwwroot@$home_dir@" nginx.conf
 cp init.d.nginx /etc/init.d/nginx
 chmod 755 /etc/init.d/nginx
 chkconfig --add nginx
 chkconfig nginx on
 mv /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf_bk
 cp nginx.conf /usr/local/nginx/conf/nginx.conf
+sed -i "s@/home/wwwroot@$home_dir@" nginx.conf
+#worker_cpu_affinity
+Nginx_conf=/usr/local/nginx/conf/nginx.conf
+CPU_num=`cat /proc/cpuinfo | grep processor | wc -l`
+if [ $CPU_num == 1 ];then
+        sed -i 's@^worker_processes.*@worker_processes 1;@' $Nginx_conf 
+elif [ $CPU_num == 2 ];then
+        sed -i 's@^worker_processes.*@worker_processes 2;\nworker_cpu_affinity 10 01;@' $Nginx_conf 
+elif [ $CPU_num == 3 ];then
+        sed -i 's@^worker_processes.*@worker_processes 3;\nworker_cpu_affinity 100 010 001;@' $Nginx_conf
+elif [ $CPU_num == 4 ];then
+        sed -i 's@^worker_processes.*@worker_processes 4;\nworker_cpu_affinity 1000 0100 0010 0001;@' $Nginx_conf 
+elif [ $CPU_num == 6 ];then
+        sed -i 's@^worker_processes.*@worker_processes 6;\nworker_cpu_affinity 100000 010000 001000 000100 000010 000001;@' $Nginx_conf 
+elif [ $CPU_num == 8 ];then
+        sed -i 's@^worker_processes.*@worker_processes 8;\nworker_cpu_affinity 10000000 01000000 00100000 00010000 00001000 00000100 00000010 00000001;@' $Nginx_conf 
+else
+        echo Google worker_cpu_affinity
+fi
 
 #logrotate nginx log
 echo '/usr/local/nginx/logs/*.log {

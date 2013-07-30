@@ -282,7 +282,7 @@ cd php-5.5.1
 --with-fpm-user=www --with-fpm-group=www --enable-opcache --enable-fpm \
 --with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
---with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop \
+--with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
 --enable-sysvsem --enable-inline-optimization --with-curl --with-kerberos --enable-mbregex \
 --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-xsl --with-openssl \
 --with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc \

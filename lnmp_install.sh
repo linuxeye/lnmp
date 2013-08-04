@@ -422,7 +422,7 @@ cd memcache-2.2.7
 /usr/local/php/bin/phpize
 ./configure --with-php-config=/usr/local/php/bin/php-config
 make && make install
-sed -i 's@"/usr/local/php/lib/php/extensions/no-debug-non-zts-20121212/"@"/usr/local/php/lib/php/extensions/no-debug-non-zts-20121212/"\nextension = "memcache.so"@' /usr/local/php/etc/php.ini
+sed -i 's@-zts-20121212/"@-zts-20121212/"\nextension = "memcache.so"@' /usr/local/php/etc/php.ini
 cd ../
 
 tar xzf memcached-1.4.15.tar.gz

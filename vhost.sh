@@ -54,6 +54,33 @@ if [ "$moredomainame_yn" == 'y' ]; then
 	done
 fi
 
+while :
+do
+        read -p "Do you want to add hotlink protection? (y/n)" anti_hotlinking_yn 
+        if [ "$anti_hotlinking_yn" != 'y' ] && [ "$anti_hotlinking_yn" != 'n' ];then
+                echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
+        else
+                break
+        fi
+done
+
+if [ -n "`echo $domain | grep '.*\..*\..*'`" ];then
+        domain_allow="*.${domain#*.} $domain"
+else
+        domain_allow="*.$domain $domain"
+fi
+
+if [ "$anti_hotlinking_yn" == 'y' ];then 
+	if [ "$moredomainame_yn" == 'y' ]; then
+		domain_allow_all=$domain_allow$moredomainame
+	else
+		domain_allow_all=$domain_allow
+	fi
+	anti_hotlinking=$(echo -e "location ~ .*\.(wma|wmv|asf|mp3|mmf|zip|rar|jpg|gif|png|swf|flv)$ {\n\tvalid_referers none blocked $domain_allow_all;\n\tif (\$invalid_referer) {\n\t\t#rewrite ^/ http://www.linuxeye.com/403.html;\n\t\treturn 403;\n\t\t}\n\t}")
+else
+	anti_hotlinking=
+fi
+
 echo "Please input the directory for the domain:$domain :"
 read -p "(Default directory: /home/wwwroot/$domain):" vhostdir
 if [ -z "$vhostdir" ]; then
@@ -121,25 +148,25 @@ chown -R www.www $vhostdir
 
 cat >/usr/local/nginx/conf/vhost/$domain.conf<<EOF
         server {
-        listen  80;
-        server_name     $domain$moredomainame;
+        listen 80;
+        server_name $domain$moredomainame;
 	$al
         index index.html index.htm index.jsp index.php ;
 	include $rewrite.conf;
         root $vhostdir;
-        #error_page  404  /404.html;
+        #error_page 404 /404.html;
 	if ( \$query_string ~* ".*[\;'\<\>].*" ){
 		return 404;
 	}
+	$anti_hotlinking
         location ~ .*\.(php|php5)?$  {
-        #fastcgi_pass  unix:/tmp/php-cgi.sock;
               fastcgi_pass  127.0.0.1:9000;
               fastcgi_index index.php;
               include fastcgi.conf;
-            }
+		}
         location ~ .*\.(htm|html|gif|jpg|jpeg|png|bmp|swf|ioc|rar|zip|txt|flv|mid|doc|ppt|pdf|xls|mp3|wma)$ {
                 expires      30d;
-        }
+		}
 
         location ~ .*\.(js|css)?$ {
                 expires      1h;
@@ -159,6 +186,7 @@ echo "# For more information please visit http://blog.linuxeye.com/31.html  #"
 echo "#######################################################################"
 echo ''
 echo -e "Your domain:\033[32m$domain\033[0m"
-echo -e "Directory of \033[32m$domain\033[0m:\033[32m$vhostdir\033[0m"
+echo -e "Virtualhost conf:\033[32m/usr/local/nginx/conf/vhost/$domain.conf\033[0m"
+echo -e "Directory of:\033[32m$vhostdir\033[0m"
 [ "$rewrite_yn" == 'y' ] && echo -e "Rewrite rule:\033[32m$rewrite\033[0m"
 echo ''

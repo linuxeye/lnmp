@@ -7,7 +7,7 @@
 #               proxy and IMAP/POP3 proxy server
 # processname: nginx
 # config:      /usr/local/nginx/conf/nginx.conf 
-# pidfile:     /usr/local/nginx/var/run/nginx.pid
+# pidfile:     /var/run/nginx.pid
  
 # Source function library.
 . /etc/rc.d/init.d/functions

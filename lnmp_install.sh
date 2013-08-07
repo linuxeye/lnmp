@@ -500,7 +500,7 @@ compress
 notifempty
 sharedscripts
 postrotate
-    [ -f /usr/local/nginx/logs/nginx.pid ] && kill -USR1 `cat /usr/local/nginx/logs/nginx.pid`
+    [ -e /var/run/nginx.pid ] && kill -USR1 `cat /var/run/nginx.pid`
 endscript
 }' > /etc/logrotate.d/nginx
 

@@ -180,6 +180,7 @@ ft_min_word_len = 1
 query_cache_size = 64M
 query_cache_type = 1
 
+innodb_file_per_table = 1
 skip-external-locking
 key_buffer_size = 16M
 max_allowed_packet = 1M

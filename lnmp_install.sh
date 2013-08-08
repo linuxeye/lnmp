@@ -91,7 +91,6 @@ cd /root/lnmp/source
 [ -s php-5.5.1.tar.gz ] && echo 'php-5.5.1.tar.gz found' || wget -c http://kr1.php.net/distributions/php-5.5.1.tar.gz
 [ -s memcached-1.4.15.tar.gz ] && echo 'memcached-1.4.15.tar.gz found' || wget -c --no-check-certificate https://memcached.googlecode.com/files/memcached-1.4.15.tar.gz 
 [ -s memcache-2.2.7.tgz ] && echo 'memcache-2.2.7.tgz found' || wget -c http://pecl.php.net/get/memcache-2.2.7.tgz
-[ -s PDO_MYSQL-1.0.2.tgz ] && echo 'PDO_MYSQL-1.0.2.tgz found' || wget -c http://pecl.php.net/get/PDO_MYSQL-1.0.2.tgz
 [ -s ImageMagick-6.8.6-6.tar.gz ] && echo 'ImageMagick-6.8.6-6.tar.gz found' || wget -c ftp://sunsite.icm.edu.pl/packages/ImageMagick/ImageMagick-6.8.6-6.tar.gz 
 [ -s imagick-3.1.0RC2.tgz ] && echo 'imagick-3.1.0RC2.tgz found' || wget -c http://pecl.php.net/get/imagick-3.1.0RC2.tgz
 [ -s pecl_http-1.7.6.tgz ] && echo 'pecl_http-1.7.6.tgz found' || wget -c http://pecl.php.net/get/pecl_http-1.7.6.tgz
@@ -281,8 +280,8 @@ tar xzf php-5.5.1.tar.gz
 useradd -M -s /sbin/nologin www
 cd php-5.5.1
 ./configure  --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc \
---with-fpm-user=www --with-fpm-group=www --enable-opcache --enable-fpm \
---with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config \
+--with-fpm-user=www --with-fpm-group=www --enable-opcache --enable-fpm --with-mysql=/usr/local/mysql \
+--with-mysqli=/usr/local/mysql/bin/mysql_config --with-pdo-mysql \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
 --enable-sysvsem --enable-inline-optimization --with-curl --with-kerberos --enable-mbregex \
@@ -310,13 +309,6 @@ chkconfig --add php-fpm
 chkconfig php-fpm on
 cd ../
 
-tar xzf PDO_MYSQL-1.0.2.tgz
-cd PDO_MYSQL-1.0.2
-/usr/local/php/bin/phpize
-./configure --with-php-config=/usr/local/php/bin/php-config --with-pdo-mysql=/usr/local/mysql
-make && make install
-cd ../
-
 tar xzf imagick-3.1.0RC2.tgz
 cd imagick-3.1.0RC2
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
@@ -334,7 +326,7 @@ make && make install
 cd ../
 
 # Modify php.ini
-sed -i 's@extension_dir = "ext"@extension_dir = "ext"\nextension_dir = "/usr/local/php/lib/php/extensions/no-debug-non-zts-20121212/"\nextension = "pdo_mysql.so"\nextension = "imagick.so"\nextension = "http.so"@' /usr/local/php/etc/php.ini
+sed -i 's@extension_dir = "ext"@extension_dir = "ext"\nextension_dir = "/usr/local/php/lib/php/extensions/no-debug-non-zts-20121212/"\nextension = "imagick.so"\nextension = "http.so"@' /usr/local/php/etc/php.ini
 sed -i 's@^output_buffering =@output_buffering = On\noutput_buffering =@' /usr/local/php/etc/php.ini 
 sed -i 's@^;cgi.fix_pathinfo.*@cgi.fix_pathinfo=0@' /usr/local/php/etc/php.ini 
 sed -i 's@^short_open_tag = Off@short_open_tag = On@' /usr/local/php/etc/php.ini
@@ -345,6 +337,7 @@ sed -i 's@^post_max_size.*@post_max_size = 50M@' /usr/local/php/etc/php.ini
 sed -i 's@^upload_max_filesize.*@upload_max_filesize = 50M@' /usr/local/php/etc/php.ini
 sed -i 's@^max_execution_time.*@max_execution_time = 300@' /usr/local/php/etc/php.ini
 sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,stream_socket_server,fsocket@' /usr/local/php/etc/php.ini
+sed -i 's@^session.cookie_httponly.*@session.cookie_httponly = 1@' /usr/local/php/etc/php.ini
 sed -i 's@#sendmail_path.*@#sendmail_path = /usr/sbin/sendmail -t@' /usr/local/php/etc/php.ini
 
 sed -i 's@^\[opcache\]@[opcache]\nzend_extension=opcache.so@' /usr/local/php/etc/php.ini

@@ -98,7 +98,7 @@ cd /root/lnmp/source
 [ -s nginx-1.4.2.tar.gz ] && echo 'nginx-1.4.2.tar.gz found' || wget -c http://nginx.org/download/nginx-1.4.2.tar.gz
 [ -s pure-ftpd-1.0.36.tar.gz ] && echo 'pure-ftpd-1.0.36.tar.gz found' || wget -c ftp://ftp.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.36.tar.gz
 [ -s ftp_v2.1.tar.gz ] && echo 'ftp_v2.1.tar.gz found' || wget -c http://machiel.generaal.net/files/pureftpd/ftp_v2.1.tar.gz 
-[ -s phpMyAdmin-4.0.4.2-all-languages.tar.gz ] && echo 'phpMyAdmin-4.0.4.2-all-languages.tar.gz found' || wget -c http://iweb.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.0.4.2/phpMyAdmin-4.0.4.2-all-languages.tar.gz 
+[ -s phpMyAdmin-4.0.5-all-languages.tar.gz ] && echo 'phpMyAdmin-4.0.5-all-languages.tar.gz found' || wget -c http://iweb.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.0.5/phpMyAdmin-4.0.5-all-languages.tar.gz
 # check source packages
 for src in `cat ./lnmp_install.sh | grep found.*wget | awk '{print $3}' | grep gz`
 do
@@ -540,8 +540,8 @@ rm -rf  $home_dir/ftp/install.php
 function Install_phpMyAdmin()
 { 
 cd $home_dir
-tar xzf /root/lnmp/source/phpMyAdmin-4.0.4.2-all-languages.tar.gz
-mv phpMyAdmin-4.0.4.2-all-languages phpMyAdmin
+tar xzf /root/lnmp/source/phpMyAdmin-4.0.5-all-languages.tar.gz
+mv phpMyAdmin-4.0.5-all-languages phpMyAdmin
 }
 
 function TEST()

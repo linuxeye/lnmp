@@ -159,9 +159,10 @@ cat > /etc/my.cnf << EOF
 [mysqld]
 basedir = /usr/local/mysql
 datadir = /data/mysql
-character-set-server=utf8
-collation-server=utf8_general_ci
-user=mysql
+pid-file = /data/mysql/mysqld.pid
+character-set-server = utf8
+collation-server = utf8_general_ci
+user = mysql
 port = 3306
 default_storage_engine = InnoDB
 server_id = 1
@@ -216,6 +217,7 @@ source /etc/profile
 /usr/local/mysql/bin/mysql -e "grant all privileges on *.* to root@'127.0.0.1' identified by \"$mysqlrootpwd\" with grant option;"
 /usr/local/mysql/bin/mysql -e "grant all privileges on *.* to root@'localhost' identified by \"$mysqlrootpwd\" with grant option;"
 /usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd -e "delete from mysql.user where Password='';"
+/usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd -e "delete from mysql.db where User='';"
 /usr/local/mysql/bin/mysql -uroot -p$mysqlrootpwd -e "drop database test;"
 /sbin/service mysqld restart
 }
@@ -335,6 +337,7 @@ sed -i 's@^request_order.*@request_order = "CGP"@' /usr/local/php/etc/php.ini
 sed -i 's@^;date.timezone.*@date.timezone = Asia/Shanghai@' /usr/local/php/etc/php.ini
 sed -i 's@^post_max_size.*@post_max_size = 50M@' /usr/local/php/etc/php.ini
 sed -i 's@^upload_max_filesize.*@upload_max_filesize = 50M@' /usr/local/php/etc/php.ini
+sed -i 's@^;upload_tmp_dir.*@upload_tmp_dir = /tmp@' /usr/local/php/etc/php.ini
 sed -i 's@^max_execution_time.*@max_execution_time = 300@' /usr/local/php/etc/php.ini
 sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,stream_socket_server,fsocket@' /usr/local/php/etc/php.ini
 sed -i 's@^session.cookie_httponly.*@session.cookie_httponly = 1@' /usr/local/php/etc/php.ini

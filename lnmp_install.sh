@@ -83,7 +83,7 @@ cd conf
 [ -s script.mysql ] && echo 'script.mysql found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/script.mysql
 cd /root/lnmp/source
 [ -s cmake-2.8.11.2.tar.gz ] && echo 'cmake-2.8.11.2.tar.gz found' || wget -c http://www.cmake.org/files/v2.8/cmake-2.8.11.2.tar.gz
-[ -s mysql-5.6.13.tar.gz ] && echo 'mysql-5.6.13.tar.gz found' || wget -c http://fossies.org/linux/misc/mysql-5.6.13.tar.gz
+[ -s mysql-5.6.13.tar.gz ] && echo 'mysql-5.6.13.tar.gz found' || wget -c http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.13.tar.gz 
 [ -s libiconv-1.14.tar.gz ] && echo 'libiconv-1.14.tar.gz found' || wget -c http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
 [ -s libmcrypt-2.5.8.tar.gz ] && echo 'libmcrypt-2.5.8.tar.gz found' || wget -c http://iweb.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz
 [ -s mhash-0.9.9.9.tar.gz ] && echo 'mhash-0.9.9.9.tar.gz found' || wget -c http://iweb.dl.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz

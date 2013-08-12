@@ -147,31 +147,31 @@ echo "set permissions of Virtual Host directory......"
 chown -R www.www $vhostdir
 
 cat >/usr/local/nginx/conf/vhost/$domain.conf<<EOF
-        server {
-        listen 80;
-        server_name $domain$moredomainame;
-	$al
-        index index.html index.htm index.jsp index.php ;
-	include $rewrite.conf;
-        root $vhostdir;
-        #error_page 404 /404.html;
-	if ( \$query_string ~* ".*[\;'\<\>].*" ){
-		return 404;
+server {
+listen 80;
+server_name $domain$moredomainame;
+$al
+index index.html index.htm index.jsp index.php ;
+include $rewrite.conf;
+root $vhostdir;
+#error_page 404 /404.html;
+if ( \$query_string ~* ".*[\;'\<\>].*" ){
+	return 404;
+}
+$anti_hotlinking
+location ~ .*\.(php|php5)?$  {
+      fastcgi_pass  127.0.0.1:9000;
+      fastcgi_index index.php;
+      include fastcgi.conf;
 	}
-	$anti_hotlinking
-        location ~ .*\.(php|php5)?$  {
-              fastcgi_pass  127.0.0.1:9000;
-              fastcgi_index index.php;
-              include fastcgi.conf;
-		}
-        location ~ .*\.(htm|html|gif|jpg|jpeg|png|bmp|swf|ioc|rar|zip|txt|flv|mid|doc|ppt|pdf|xls|mp3|wma)$ {
-                expires      30d;
-		}
+location ~ .*\.(htm|html|gif|jpg|jpeg|png|bmp|swf|ioc|rar|zip|txt|flv|mid|doc|ppt|pdf|xls|mp3|wma)$ {
+        expires      30d;
+	}
 
-        location ~ .*\.(js|css)?$ {
-                expires      1h;
-                }
+location ~ .*\.(js|css)?$ {
+        expires      1h;
         }
+}
 EOF
 
 echo "Test Nginx configure file......"

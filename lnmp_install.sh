@@ -276,7 +276,7 @@ else
         exit 1
 fi
 
-/bin/cp support-files/my-small.cnf /etc/my.conf
+/bin/cp support-files/my-small.cnf /etc/my.cnf
 /bin/cp support-files/mysql.server /etc/init.d/mysqld
 chmod +x /etc/init.d/mysqld
 chkconfig --add mysqld

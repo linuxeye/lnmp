@@ -136,7 +136,7 @@ cd ..
 tar zxf mysql-5.6.13.tar.gz
 cd mysql-5.6.13
 cmake . -DCMAKE_INSTALL_PREFIX=$db_install_prefix \
--DMYSQL_UNIX_ADDR=/data/mysql/mysqld.sock \
+-DMYSQL_UNIX_ADDR=/tmp/mysql.sock \
 -DMYSQL_DATADIR=/data/mysql \
 -DSYSCONFDIR=/etc \
 -DMYSQL_USER=mysql \
@@ -249,7 +249,7 @@ cd ..
 tar zxf mariadb-5.5.32.tar.gz
 cd mariadb-5.5.32
 cmake . -DCMAKE_INSTALL_PREFIX=$db_install_prefix \
--DMYSQL_UNIX_ADDR=/data/mariadb/mariadb.sock \
+-DMYSQL_UNIX_ADDR=/tmp/mysql.sock \
 -DMYSQL_DATADIR=/data/mariadb \
 -DSYSCONFDIR=/etc \
 -DMYSQL_USER=mysql \
@@ -470,6 +470,7 @@ sed -i 's@^;upload_tmp_dir.*@upload_tmp_dir = /tmp@' /usr/local/php/etc/php.ini
 sed -i 's@^max_execution_time.*@max_execution_time = 300@' /usr/local/php/etc/php.ini
 sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,stream_socket_server,fsocket@' /usr/local/php/etc/php.ini
 sed -i 's@^session.cookie_httponly.*@session.cookie_httponly = 1@' /usr/local/php/etc/php.ini
+sed -i 's@^pdo_mysql.default_socket.*@pdo_mysql.default_socket = /tmp/mysql.sock@' /usr/local/php/etc/php.ini
 sed -i 's@#sendmail_path.*@#sendmail_path = /usr/sbin/sendmail -t@' /usr/local/php/etc/php.ini
 
 sed -i 's@^\[opcache\]@[opcache]\nzend_extension=opcache.so@' /usr/local/php/etc/php.ini

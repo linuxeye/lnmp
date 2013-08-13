@@ -412,7 +412,7 @@ useradd -M -s /sbin/nologin www
 cd php-5.5.1
 ./configure  --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc \
 --with-fpm-user=www --with-fpm-group=www --enable-opcache --enable-fpm --with-mysql=$db_install_prefix \
---with-mysqli=$db_install_prefix/bin/mysql_config --with-pdo-mysql \
+--with-mysqli=$db_install_prefix/bin/mysql_config --with-pdo-mysql --disable-fileinfo \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
 --enable-sysvsem --enable-inline-optimization --with-curl --with-kerberos --enable-mbregex \

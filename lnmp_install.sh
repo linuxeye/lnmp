@@ -78,7 +78,7 @@ function Download_src()
 cd /root/lnmp
 [ -s init.sh ] && echo 'init.sh found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/init.sh
 [ -s vhost.sh ] && echo 'vhost.sh found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/vhost.sh
-[ -s ngx_pagespeed.sh ] && echo 'ngx_pagespeed.sh found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/ngx_pagespeed.sh
+[ -s install_ngx_pagespeed.sh ] && echo 'install_ngx_pagespeed.sh found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/install_ngx_pagespeed.sh
 cd conf
 [ -s tz.php ] && echo 'tz.php found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/tz.php
 [ -s index.html ] && echo 'index.html found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/index.html

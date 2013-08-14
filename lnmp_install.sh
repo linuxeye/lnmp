@@ -81,7 +81,6 @@ cd /root/lnmp
 [ -s vhost.sh ] && echo 'vhost.sh found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/vhost.sh
 [ -s install_ngx_pagespeed.sh ] && echo 'install_ngx_pagespeed.sh found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/install_ngx_pagespeed.sh
 cd conf
-[ -s tz.zip ] && echo 'tz.zip found' || wget -c http://www.yahei.net/tz/tz.zip 
 [ -s index.html ] && echo 'index.html found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/index.html
 [ -s wordpress.conf ] && echo 'wordpress.conf found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/wordpress.conf
 [ -s discuz.conf ] && echo 'discuz.conf found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/discuz.conf
@@ -95,6 +94,7 @@ cd conf
 [ -s pureftpd-mysql.conf ] && echo 'pureftpd-mysql.conf found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/pureftpd-mysql.conf
 [ -s script.mysql ] && echo 'script.mysql found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/script.mysql
 cd /root/lnmp/source
+[ -s tz.zip ] && echo 'tz.zip found' || wget -c http://www.yahei.net/tz/tz.zip 
 [ -s cmake-2.8.11.2.tar.gz ] && echo 'cmake-2.8.11.2.tar.gz found' || wget -c http://www.cmake.org/files/v2.8/cmake-2.8.11.2.tar.gz
 [ -s mysql-5.6.13.tar.gz ] && echo 'mysql-5.6.13.tar.gz found' || wget -c http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.13.tar.gz 
 [ -s mariadb-5.5.32.tar.gz ] && echo 'mariadb-5.5.32.tar.gz found' || wget -c http://ftp.osuosl.org/pub/mariadb/mariadb-5.5.32/kvm-tarbake-jaunty-x86/mariadb-5.5.32.tar.gz 
@@ -684,7 +684,7 @@ echo '<?php
 phpinfo()
 ?>' > $home_dir/phpinfo.php
 cp /root/lnmp/conf/index.html $home_dir
-unzip -q /root/lnmp/conf/tz.zip -d $home_dir
+unzip -q /root/lnmp/source/tz.zip -d $home_dir
 chown -R www.www $home_dir
 }
 

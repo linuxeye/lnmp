@@ -27,8 +27,8 @@ make
 if [ -f "objs/nginx" ];then
 	/bin/mv /usr/local/nginx/sbin/nginx /usr/local/nginx/sbin/nginx$(date +%m%d)
 	/bin/cp objs/nginx /usr/local/nginx/sbin/nginx
-	kill -USR2 `cat /usr/local/nginx/logs/nginx.pid`
-	kill -QUIT `cat /usr/local/nginx/logs/nginx.pid.oldbin`
+	kill -USR2 `cat /var/run/nginx.pid`
+	kill -QUIT `cat /var/run/nginx.pid.oldbin`
 	mkdir /var/ngx_pagespeed_cache
 	chown www.www /var/ngx_pagespeed_cache
 	/bin/cp /root/lnmp/vhost.sh /root/lnmp/vhost_ngx_pagespeed.sh

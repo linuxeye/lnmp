@@ -132,7 +132,7 @@ source /etc/profile
 ###install tmux
 mkdir tmux
 cd tmux
-wget -c --no-check-certificate https://github.com/downloads/libevent/libevent/libevent-2.0.21-stable.tar.gz
+wget -c http://cloud.github.com/downloads/libevent/libevent/libevent-2.0.21-stable.tar.gz 
 wget -c http://downloads.sourceforge.net/tmux/tmux-1.8.tar.gz
 tar xzf libevent-2.0.21-stable.tar.gz
 cd libevent-2.0.21-stable

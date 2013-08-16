@@ -92,6 +92,7 @@ cd conf
 [ -s nginx.conf ] && echo 'nginx.conf found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/nginx.conf
 [ -s pure-ftpd.conf ] && echo 'pure-ftpd.conf found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/pure-ftpd.conf
 [ -s pureftpd-mysql.conf ] && echo 'pureftpd-mysql.conf found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/pureftpd-mysql.conf
+[ -s chinese.php ] && echo 'chinese.php found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/chinese.php
 [ -s script.mysql ] && echo 'script.mysql found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/script.mysql
 cd /root/lnmp/source
 [ -s tz.zip ] && echo 'tz.zip found' || wget -c http://www.yahei.net/tz/tz.zip 
@@ -108,14 +109,14 @@ cd /root/lnmp/source
 [ -s ImageMagick-6.8.6-8.tar.gz ] && echo 'ImageMagick-6.8.6-8.tar.gz found' || wget -c http://www.imagemagick.org/download/ImageMagick-6.8.6-8.tar.gz 
 [ -s imagick-3.1.0RC2.tgz ] && echo 'imagick-3.1.0RC2.tgz found' || wget -c http://pecl.php.net/get/imagick-3.1.0RC2.tgz
 [ -s pecl_http-1.7.6.tgz ] && echo 'pecl_http-1.7.6.tgz found' || wget -c http://pecl.php.net/get/pecl_http-1.7.6.tgz
-[ -s pcre-8.33.tar.gz ] && echo 'pcre-8.33.tar.gz found' || wget -c http://downloads.sourceforge.net/project/pcre/pcre/8.33/pcre-8.33.tar.gz 
+[ -s pcre-8.33.tar.gz ] && echo 'pcre-8.33.tar.gz found' || wget -c http://ftp.cs.stanford.edu/pub/exim/pcre/pcre-8.33.tar.gz 
 [ -s nginx-1.4.2.tar.gz ] && echo 'nginx-1.4.2.tar.gz found' || wget -c http://nginx.org/download/nginx-1.4.2.tar.gz
 [ -s pure-ftpd-1.0.36.tar.gz ] && echo 'pure-ftpd-1.0.36.tar.gz found' || wget -c http://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.36.tar.gz 
 [ -s ftp_v2.1.tar.gz ] && echo 'ftp_v2.1.tar.gz found' || wget -c http://machiel.generaal.net/files/pureftpd/ftp_v2.1.tar.gz 
 [ -s phpMyAdmin-4.0.5-all-languages.tar.gz ] && echo 'phpMyAdmin-4.0.5-all-languages.tar.gz found' || wget -c http://iweb.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.0.5/phpMyAdmin-4.0.5-all-languages.tar.gz
 
 # check source packages
-for src in `cat ./lnmp_install.sh | grep found.*wget | awk '{print $3}' | grep gz`
+for src in `cat /root/lnmp/lnmp_install.sh | grep found.*wget | awk '{print $3}' | grep gz`
 do
         if [ ! -e "/root/lnmp/source/$src" ];then
                 echo -e "\033[31m$src no found! \033[0m"

@@ -133,7 +133,7 @@ source /etc/profile
 mkdir tmux
 cd tmux
 wget -c http://cloud.github.com/downloads/libevent/libevent/libevent-2.0.21-stable.tar.gz 
-wget -c http://downloads.sourceforge.net/tmux/tmux-1.8.tar.gz
+wget -c http://sourceforge.net/projects/tmux/files/tmux/tmux-1.8/tmux-1.8.tar.gz/download 
 tar xzf libevent-2.0.21-stable.tar.gz
 cd libevent-2.0.21-stable
 ./configure
@@ -156,7 +156,7 @@ fi
 ###install htop
 mkdir htop
 cd htop
-wget -c http://downloads.sourceforge.net/project/htop/htop/1.0.2/htop-1.0.2.tar.gz 
+wget -c http://sourceforge.net/projects/htop/files/htop/1.0.2/htop-1.0.2.tar.gz/download 
 tar xzf htop-1.0.2.tar.gz
 cd htop-1.0.2
 ./configure

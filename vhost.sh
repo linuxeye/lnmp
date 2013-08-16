@@ -132,9 +132,9 @@ done
 if [ "$access_yn" == 'n' ]; then
 	al="access_log off;"
 else
-	al="access_log  logs/$domain.log combined;"
+	al="access_log  /home/wwwlogs/$domain.log combined;"
 	echo "################################"
-	echo -e "You access log file=\033[32m/usr/local/nginx/logs/$domain.log\033[0m"
+	echo -e "You access log file=\033[32m/home/wwwlogs/$domain.log\033[0m"
 	echo "################################"
 fi
 

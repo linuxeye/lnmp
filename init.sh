@@ -45,23 +45,23 @@ service sendmail restart
 
 # Close SELINUX
 setenforce 0
-sed -i 's/^SELINUX=.*$/SELINUX=disabled/g' /etc/selinux/config
+sed -i 's/^SELINUX=.*$/SELINUX=disabled/' /etc/selinux/config
 
 # initdefault
-sed -i '^s/id:.*$/id:3:initdefault:/g' /etc/inittab
+sed -i 's/^id:.*$/id:3:initdefault:/' /etc/inittab
 /sbin/init q
 # PS1
 echo 'PS1="\[\e[37;40m\][\[\e[32;40m\]\u\[\e[37;40m\]@\h \[\e[35;40m\]\W\[\e[0m\]]\\$ \[\e[33;40m\]"' >> /etc/profile
 
 # Record command
-sed -i 's/HISTSIZE=.*$/HISTSIZE=100/g' /etc/profile
+sed -i 's/^HISTSIZE=.*$/HISTSIZE=100/' /etc/profile
 echo "export PROMPT_COMMAND='{ msg=\$(history 1 | { read x y; echo \$y; });user=\$(whoami); echo \$(date \"+%Y-%m-%d %H:%M:%S\"):\$user:\`pwd\`/:\$msg ---- \$(who am i); } >> /tmp/\`hostname\`.\`whoami\`.history-timestamp'" >> /root/.bash_profile
 
 # Wrong password five times locked 180s
 sed -i '4a auth        required      pam_tally2.so deny=5 unlock_time=180' /etc/pam.d/system-auth
 
 # alias vi
-sed -i '7a alias vi=vim' /root/.bashrc
+sed "s@alias mv=.*@alias mv='mv -i'\nalias vi=vim@" /root/.bashrc
 echo 'syntax on' >> /etc/vimrc
 
 # /etc/security/limits.conf
@@ -113,12 +113,17 @@ cat > /etc/sysconfig/iptables << EOF
 :INPUT DROP [0:0]
 :FORWARD ACCEPT [0:0]
 :OUTPUT ACCEPT [0:0]
+:syn-flood - [0:0]
 -A INPUT -i lo -j ACCEPT
 -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
 -A INPUT -p icmp -m limit --limit 100/sec --limit-burst 100 -j ACCEPT
 -A INPUT -p icmp -m limit --limit 1/s --limit-burst 10 -j ACCEPT
+-A INPUT -p tcp -m tcp --tcp-flags FIN,SYN,RST,ACK SYN -j syn-flood
+-A INPUT -j REJECT --reject-with icmp-host-prohibited
+-A syn-flood -p tcp -m limit --limit 3/sec --limit-burst 6 -j RETURN
+-A syn-flood -j REJECT --reject-with icmp-port-unreachable
 COMMIT
 EOF
 /sbin/service iptables restart

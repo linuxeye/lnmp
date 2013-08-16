@@ -14,8 +14,8 @@ IP=`ifconfig | grep 'inet addr:' | cut -d: -f2 | grep -v ^10\. | grep -v ^192\.1
 
 #Definition Directory
 home_dir=/home/wwwroot
-mkdir -p $home_dir
-mkdir -p /root/lnmp/{source,conf}
+wwwlogs_dir=/home/wwwlogs
+mkdir -p $home_dir $home_dir/default $wwwlogs_dir /root/lnmp/{source,conf}
 
 #choice database 
 while :
@@ -113,6 +113,7 @@ cd /root/lnmp/source
 [ -s pure-ftpd-1.0.36.tar.gz ] && echo 'pure-ftpd-1.0.36.tar.gz found' || wget -c http://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.36.tar.gz 
 [ -s ftp_v2.1.tar.gz ] && echo 'ftp_v2.1.tar.gz found' || wget -c http://machiel.generaal.net/files/pureftpd/ftp_v2.1.tar.gz 
 [ -s phpMyAdmin-4.0.5-all-languages.tar.gz ] && echo 'phpMyAdmin-4.0.5-all-languages.tar.gz found' || wget -c http://iweb.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.0.5/phpMyAdmin-4.0.5-all-languages.tar.gz
+
 # check source packages
 for src in `cat ./lnmp_install.sh | grep found.*wget | awk '{print $3}' | grep gz`
 do
@@ -598,7 +599,7 @@ chkconfig --add nginx
 chkconfig nginx on
 mv /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf_bk
 cp nginx.conf /usr/local/nginx/conf/nginx.conf
-sed -i "s@/home/wwwroot@$home_dir@" nginx.conf
+sed -i "s@/home/wwwroot/default@$home_dir/default@" nginx.conf
 #worker_cpu_affinity
 Nginx_conf=/usr/local/nginx/conf/nginx.conf
 CPU_num=`cat /proc/cpuinfo | grep processor | wc -l`
@@ -619,7 +620,8 @@ else
 fi
 
 #logrotate nginx log
-echo '/usr/local/nginx/logs/*.log {
+cat > /etc/logrotate.d/nginx << EOF
+$wwwlogs_dir/*.log {
 daily
 rotate 5
 missingok
@@ -628,10 +630,10 @@ compress
 notifempty
 sharedscripts
 postrotate
-    [ -e /var/run/nginx.pid ] && kill -USR1 `cat /var/run/nginx.pid`
+    [ -e /var/run/nginx.pid ] && kill -USR1 \`cat /var/run/nginx.pid\`
 endscript
-}' > /etc/logrotate.d/nginx
-
+}
+EOF
 service nginx restart
 }
 
@@ -662,18 +664,21 @@ sed -i 's/ftpmanagerpwd/'$ftpmanagerpwd'/g' script.mysql
 $db_install_dir/bin/mysql -uroot -p$dbrootpwd< script.mysql
 service pureftpd start
 
-tar xzf /root/lnmp/source/ftp_v2.1.tar.gz -C $home_dir 
-sed -i 's/tmppasswd/'$mysqlftppwd'/' $home_dir/ftp/config.php
-sed -i "s/myipaddress.com/`echo $IP`/" $home_dir/ftp/config.php
-sed -i 's@\$DEFUserID.*;@\$DEFUserID = "501";@' $home_dir/ftp/config.php
-sed -i 's@\$DEFGroupID.*;@\$DEFGroupID = "501";@' $home_dir/ftp/config.php
-sed -i 's@iso-8859-1@UTF-8@' $home_dir/ftp/language/english.php
-rm -rf  $home_dir/ftp/install.php
+tar xzf /root/lnmp/source/ftp_v2.1.tar.gz
+sed -i 's/tmppasswd/'$mysqlftppwd'/' ftp/config.php
+sed -i "s/myipaddress.com/`echo $IP`/" ftp/config.php
+sed -i 's@\$DEFUserID.*;@\$DEFUserID = "501";@' ftp/config.php
+sed -i 's@\$DEFGroupID.*;@\$DEFGroupID = "501";@' ftp/config.php
+sed -i 's@iso-8859-1@UTF-8@' ftp/language/english.php
+/bin/cp /root/lnmp/conf/chinese.php ftp/language/
+sed -i 's@\$LANG.*;@\$LANG = "chinese";@' ftp/config.php
+rm -rf  ftp/install.php
+mv ftp $home_dir/default
 }
 
 function Install_phpMyAdmin()
 { 
-cd $home_dir
+cd $home_dir/default
 tar xzf /root/lnmp/source/phpMyAdmin-4.0.5-all-languages.tar.gz
 mv phpMyAdmin-4.0.5-all-languages phpMyAdmin
 }
@@ -682,10 +687,10 @@ function TEST()
 {
 echo '<?php
 phpinfo()
-?>' > $home_dir/phpinfo.php
-cp /root/lnmp/conf/index.html $home_dir
-unzip -q /root/lnmp/source/tz.zip -d $home_dir
-chown -R www.www $home_dir
+?>' > $home_dir/default/phpinfo.php
+cp /root/lnmp/conf/index.html $home_dir/default
+unzip -q /root/lnmp/source/tz.zip -d $home_dir/default
+chown -R www.www $home_dir/default
 }
 
 function Iptables()
@@ -697,6 +702,7 @@ cat > /etc/sysconfig/iptables << EOF
 :INPUT DROP [0:0]
 :FORWARD ACCEPT [0:0]
 :OUTPUT ACCEPT [0:0]
+:syn-flood - [0:0]
 -A INPUT -i lo -j ACCEPT
 -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
@@ -705,6 +711,10 @@ cat > /etc/sysconfig/iptables << EOF
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
 -A INPUT -p icmp -m limit --limit 100/sec --limit-burst 100 -j ACCEPT
 -A INPUT -p icmp -m limit --limit 1/s --limit-burst 10 -j ACCEPT
+-A INPUT -p tcp -m tcp --tcp-flags FIN,SYN,RST,ACK SYN -j syn-flood
+-A INPUT -j REJECT --reject-with icmp-host-prohibited
+-A syn-flood -p tcp -m limit --limit 3/sec --limit-burst 6 -j RETURN
+-A syn-flood -j REJECT --reject-with icmp-port-unreachable
 COMMIT
 EOF
 service iptables restart
@@ -713,6 +723,7 @@ service iptables restart
 Download_src 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 chmod +x /root/lnmp/{init,vhost}.sh
 sed -i "s@/home/wwwroot@$home_dir@g" /root/lnmp/vhost.sh
+sed -i "s@/home/wwwlogs@$wwwlogs_dir@g" /root/lnmp/vhost.sh
 /root/lnmp/init.sh 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 if [ $choice_db == 'mysql' ];then
 	db_install_dir=/usr/local/mysql

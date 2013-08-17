@@ -103,7 +103,7 @@ cd /root/lnmp/source
 [ -s mcrypt-2.6.8.tar.gz ] && echo 'mcrypt-2.6.8.tar.gz found' || wget -c http://sourceforge.net/projects/mcrypt/files/MCrypt/2.6.8/mcrypt-2.6.8.tar.gz/download 
 [ -s libmcrypt-2.5.8.tar.gz ] && echo 'libmcrypt-2.5.8.tar.gz found' || wget -c http://sourceforge.net/projects/mcrypt/files/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz/download 
 [ -s mhash-0.9.9.9.tar.gz ] && echo 'mhash-0.9.9.9.tar.gz found' || wget -c http://sourceforge.net/projects/mhash/files/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz/download 
-[ -s php-5.5.1.tar.gz ] && echo 'php-5.5.1.tar.gz found' || wget -c http://kr1.php.net/distributions/php-5.5.1.tar.gz
+[ -s php-5.5.2.tar.gz ] && echo 'php-5.5.2.tar.gz found' || wget -c http://kr1.php.net/distributions/php-5.5.2.tar.gz
 [ -s memcached-1.4.15.tar.gz ] && echo 'memcached-1.4.15.tar.gz found' || wget -c --no-check-certificate https://memcached.googlecode.com/files/memcached-1.4.15.tar.gz 
 [ -s memcache-2.2.7.tgz ] && echo 'memcache-2.2.7.tgz found' || wget -c http://pecl.php.net/get/memcache-2.2.7.tgz
 [ -s ImageMagick-6.8.6-8.tar.gz ] && echo 'ImageMagick-6.8.6-8.tar.gz found' || wget -c http://www.imagemagick.org/download/ImageMagick-6.8.6-8.tar.gz 
@@ -410,9 +410,9 @@ cd mcrypt-2.6.8
 make && make install
 cd ../
 
-tar xzf php-5.5.1.tar.gz
+tar xzf php-5.5.2.tar.gz
 useradd -M -s /sbin/nologin www
-cd php-5.5.1
+cd php-5.5.2
 ./configure  --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc \
 --with-fpm-user=www --with-fpm-group=www --enable-opcache --enable-fpm --with-mysql=$db_install_dir \
 --with-mysqli=$db_install_dir/bin/mysql_config --with-pdo-mysql --disable-fileinfo \

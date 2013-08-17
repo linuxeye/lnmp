@@ -460,7 +460,7 @@ make && make install
 cd ../
 
 # Modify php.ini
-sed -i 's@extension_dir = "ext"@extension_dir = "ext"\nextension_dir = "/usr/local/php/lib/php/extensions/no-debug-non-zts-20121212/"\nextension = "imagick.so"\nextension = "http.so"@' /usr/local/php/etc/php.ini
+sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"/usr/local/php/lib/php/extensions/`ls /usr/local/php/lib/php/extensions/`\"\nextension = \"imagick.so\"\nextension = \"http.so\"@" /usr/local/php/etc/php.ini
 sed -i 's@^output_buffering =@output_buffering = On\noutput_buffering =@' /usr/local/php/etc/php.ini 
 sed -i 's@^;cgi.fix_pathinfo.*@cgi.fix_pathinfo=0@' /usr/local/php/etc/php.ini 
 sed -i 's@^short_open_tag = Off@short_open_tag = On@' /usr/local/php/etc/php.ini

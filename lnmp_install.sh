@@ -726,6 +726,7 @@ chmod +x /root/lnmp/{init,vhost}.sh
 sed -i "s@/home/wwwroot@$home_dir@g" /root/lnmp/vhost.sh
 sed -i "s@/home/wwwlogs@$wwwlogs_dir@g" /root/lnmp/vhost.sh
 /root/lnmp/init.sh 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+screen -S lnmp
 if [ $choice_db == 'mysql' ];then
 	db_install_dir=/usr/local/mysql
 	db_data_dir=/data/mysql

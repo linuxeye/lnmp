@@ -185,8 +185,8 @@ echo "#                    LNMP for CentOS/RadHat 5/6                       #"
 echo "# For more information please visit http://blog.linuxeye.com/31.html  #"
 echo "#######################################################################"
 echo ''
-echo -e "Your domain:\033[32m$domain\033[0m"
-echo -e "Virtualhost conf:\033[32m/usr/local/nginx/conf/vhost/$domain.conf\033[0m"
-echo -e "Directory of:\033[32m$vhostdir\033[0m"
-[ "$rewrite_yn" == 'y' ] && echo -e "Rewrite rule:\033[32m$rewrite\033[0m"
+echo -e "`printf "%-32s" "Your domain"`:\033[32m$domain\033[0m"
+echo -e "`printf "%-32s" "Virtualhost conf:"`\033[32m/usr/local/nginx/conf/vhost/$domain.conf\033[0m"
+echo -e "`printf "%-32s" "Directory of:"`\033[32m$vhostdir\033[0m"
+[ "$rewrite_yn" == 'y' ] && echo -e "`printf "%-32s" "Rewrite rule:"`\033[32m$rewrite\033[0m" 
 echo ''

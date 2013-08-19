@@ -102,7 +102,7 @@ ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 # Update time
 /usr/sbin/ntpdate pool.ntp.org 
-echo '*/5 * * * * /usr/sbin/ntpdate pool.ntp.org > /dev/null 2>&1' > /var/spool/cron/root;chmod 600 /var/spool/cron/root
+echo '*/20 * * * * /usr/sbin/ntpdate pool.ntp.org > /dev/null 2>&1' > /var/spool/cron/root;chmod 600 /var/spool/cron/root
 /sbin/service crond restart
 
 # iptables

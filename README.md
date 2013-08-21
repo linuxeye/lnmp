@@ -1,6 +1,6 @@
 ## Introduction
 
-   `Linux`+`Nginx`+`MySQL` (Can Choose to install MariaDB)+PHP (Can Choose whether to install `Pureftpd`+`User manager for PureFTPd`+`phpMyAdmin`), Can choose to install ngx_pagespeed after installing lnmp, Installing the module execute scripts `/root/lnmp/install_ngx_pagespeed.sh`. Add a virtual host with ngx_pagespeed module, Please use the script `/root/lnmp/vhost_ngx_pagespeed.sh` (Must be installed ngx_pagespeed module). Do not ngx_pagespeed module, can run the script `/root/lnmp/vhost.sh` Add a virtual host. 
+   `Linux`+`Nginx`+`MySQL` (Can Choose to install `MariaDB`)+PHP (Can Choose whether to install `Pureftpd`+`User manager for PureFTPd`+`phpMyAdmin`), Can choose to install ngx_pagespeed after installing lnmp, Installing the module execute scripts `/root/lnmp/install_ngx_pagespeed.sh`. Add a virtual host with ngx_pagespeed module, Please use the script `/root/lnmp/vhost_ngx_pagespeed.sh` (Must be installed ngx_pagespeed module). Do not ngx_pagespeed module, can run the script `/root/lnmp/vhost.sh` Add a virtual host. 
     The script is the new software package using stable version, Fixes some security issues, (Before installation will be performed, Initialize security script) For CentOS/RadHat >=5 or Ubuntu >=12 .Features include:
 
 - Constant updates 
@@ -66,7 +66,7 @@
    sed -i 's@/usr/local/php@/data/webserver/php@g' /root/lnmp/lnmp_install.sh
 ```
 
-   Nginx Install to the specified directory, For example ：/data/webserver/nginx 
+   Nginx Install to the specified directory, For example: /data/webserver/nginx 
    Replaced by the following
 ```bash
    sed -i 's@/usr/local/nginx@/data/webserver/nginx@g' /root/lnmp/vhost.sh

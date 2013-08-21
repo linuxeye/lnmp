@@ -10,7 +10,7 @@
 . /etc/init.d/functions
  
 PORT=11211
-USER=www
+USER=memcached
 MAXCONN=1024
 OPTIONS=""
  

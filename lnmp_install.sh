@@ -603,6 +603,7 @@ make && make install
 sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "memcache.so"@' /usr/local/php/etc/php.ini
 cd ../
 
+useradd -M -s /sbin/nologin memcached 
 tar xzf memcached-1.4.15.tar.gz
 cd memcached-1.4.15
 ./configure --prefix=/usr/local/memcached
@@ -733,6 +734,13 @@ sed -i 's@iso-8859-1@UTF-8@' ftp/language/english.php
 sed -i 's@\$LANG.*;@\$LANG = "chinese";@' ftp/config.php
 rm -rf  ftp/install.php
 mv ftp $home_dir/default
+
+# iptables Ftp
+iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
+iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
+OS_CentOS='service iptables save'
+OS_Ubuntu='iptables-save > /etc/iptables.up.rules'
+OS_command
 }
 
 function Install_phpMyAdmin()
@@ -750,15 +758,6 @@ phpinfo()
 cp /root/lnmp/conf/index.html $home_dir/default
 unzip -q /root/lnmp/source/tz.zip -d $home_dir/default
 chown -R www.www $home_dir/default
-}
-
-function Iptables_Ftp()
-{
-iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
-iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
-OS_CentOS='service iptables save'
-OS_Ubuntu='iptables-save > /etc/iptables.up.rules'
-OS_command
 }
 
 Download_src 2>&1 | tee -a /root/lnmp/lnmp_install.log 
@@ -791,7 +790,6 @@ fi
 
 if [ $FTP_yn == 'y' ];then
 	Install_Pureftp 2>&1 | tee -a /root/lnmp/lnmp_install.log 
-	Iptables_Ftp 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 fi
 
 if [ $phpMyAdmin_yn == 'y' ];then

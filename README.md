@@ -45,7 +45,7 @@
 
 ## Related definitions and explanations
 
-   Web directory, you can customize, Which default directory to default. (Include `Ftp Manager` `phpinfo.php` `phpMyAdmin`, Rename the directory for security)
+   Web directory, you can customize, Which default directory to `Ftp Manager` `phpinfo.php` `phpMyAdmin`. (Rename the directory for security)
 ```bash
    home_dir=/home/wwwroot
 ```

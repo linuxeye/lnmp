@@ -26,7 +26,7 @@
    ./lnmp_install.sh
 ```
 
-## How to install [ngx_pagespeed](https://github.com/pagespeed/ngx_pagespeed) the module 
+## How to install [![ngx_pagespeed]](https://github.com/pagespeed/ngx_pagespeed) the module 
    If you need to use ngx_pagespeed module (after installing lnmp), you can run script
 ```bash
    cd /root/lnmp
@@ -74,5 +74,5 @@
    sed -i 's@/usr/local/nginx@/data/webserver/nginx@g' /root/lnmp/conf/Nginx-init-*
 ```
 
-   For feedback, questions, and to follow the progress of the project (Chinese):
-   [lnmp最新源码一键安装脚本](http://blog.linuxeye.com/31.html)
+   For feedback, questions, and to follow the progress of the project (Chinese):<br />
+   [![lnmp最新源码一键安装脚本]](http://blog.linuxeye.com/31.html)

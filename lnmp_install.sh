@@ -1,35 +1,69 @@
 #!/bin/bash
+# Author:  yeho 
+#          <lj2007331 AT gmail.com>.
+# Blog:  http://blog.linuxeye.com
+#
+# Version: 0.2 21-Aug-2013 lj2007331 AT gmail.com
+# Notes: LNMP for CentOS/RadHat 5+ and Ubuntu 12+ 
+#
+# This script's project home is:
+#       https://github.com/lj2007331/lnmp
+
 # Check if user is root
-[ $(id -u) != "0" ] && echo "Error: You must be root to run this script, please use root to install lnmp" && kill -9 $$
+[ $(id -u) != "0" ] && echo "Error: You must be root to run this script, Please use root to install lnmp" && kill -9 $$
+
+export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
 echo "#######################################################################"
-echo "#                    LNMP for CentOS/RadHat 5/6                       #"
-echo "# For more information please visit http://blog.linuxeye.com/31.html  #"
+echo "#            LNMP for CentOS/RadHat 5+ and Ubuntu 12+                 #"
+echo "# For more information Please visit http://blog.linuxeye.com/31.html  #"
 echo "#######################################################################"
 echo ''
+
+# check OS
+if [ -f /etc/redhat-release ];then
+        OS=CentOS
+elif [ ! -z "`cat /etc/issue | grep Ubuntu`" ];then
+        OS=Ubuntu
+else
+        echo -e "\033[31mDoes not support this OS, Please contact the author! \033[0m"
+        kill -9 $$
+fi
+
+function OS_command()
+{
+if [ $OS == 'CentOS' ];then
+        echo -e $OS_CentOS | bash
+elif [ $OS == 'Ubuntu' ];then
+        echo -e $OS_Ubuntu | bash
+else
+        echo -e "\033[31mDoes not support this OS, Please contact the author! \033[0m"
+        kill -9 $$
+fi
+}
 
 # get ipv4 
 IP=`ifconfig | grep 'inet addr:' | cut -d: -f2 | grep -v ^10\. | grep -v ^192\.168 | grep -v ^172\. | grep -v ^127\. | awk '{print  $1}' | awk '{print;exit}'`
 [ ! -n "$IP" ] && IP=`ifconfig | grep 'inet addr:' | cut -d: -f2 | grep -v ^127\. | awk '{print  $1}' | awk '{print;exit}'`
 
-#Definition Directory
+# Definition Directory
 home_dir=/home/wwwroot
 wwwlogs_dir=/home/wwwlogs
 mkdir -p $home_dir/default $wwwlogs_dir /root/lnmp/{source,conf}
 
-#choice database 
+# choice database 
 while :
 do
         read -p "Do you want to install MySQL or MariaDB ? ( MySQL / MariaDB ) " choice_DB
         choice_db=`echo $choice_DB | tr [A-Z] [a-z]`
         if [ "$choice_db" != 'mariadb' ] && [ "$choice_db" != 'mysql' ];then
-                echo -e "\033[31minput error! please input 'MySQL' or 'MariaDB'\033[0m"
+                echo -e "\033[31minput error! Please input 'MySQL' or 'MariaDB'\033[0m"
         else
                 break
         fi
 done
 
-#check dbrootpwd
+# check dbrootpwd
 while :
 do
         read -p "Please input the root password of database:" dbrootpwd
@@ -40,7 +74,7 @@ while :
 do
         read -p "Do you want to install Memcache? (y/n)" Memcache_yn
         if [ "$Memcache_yn" != 'y' ] && [ "$Memcache_yn" != 'n' ];then
-                echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
+                echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
         else
                 break
         fi
@@ -50,7 +84,7 @@ while :
 do
         read -p "Do you want to install Pure-FTPd? (y/n)" FTP_yn
         if [ "$FTP_yn" != 'y' ] && [ "$FTP_yn" != 'n' ];then
-                echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
+                echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
         else
                 break
         fi
@@ -68,7 +102,7 @@ while :
 do
         read -p "Do you want to install phpMyAdmin? (y/n)" phpMyAdmin_yn
         if [ "$phpMyAdmin_yn" != 'y' ] && [ "$phpMyAdmin_yn" != 'n' ];then
-                echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
+                echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
         else
                 break
         fi
@@ -77,7 +111,6 @@ done
 function Download_src()
 {
 cd /root/lnmp
-[ -s init.sh ] && echo 'init.sh found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/init.sh
 [ -s vhost.sh ] && echo 'vhost.sh found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/vhost.sh
 [ -s install_ngx_pagespeed.sh ] && echo 'install_ngx_pagespeed.sh found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/install_ngx_pagespeed.sh
 cd conf
@@ -88,12 +121,17 @@ cd conf
 [ -s typecho.conf ] && echo 'typecho.conf found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/typecho.conf
 [ -s ecshop.conf ] && echo 'ecshop.conf found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/ecshop.conf
 [ -s drupal.conf ] && echo 'drupal.conf found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/drupal.conf
-[ -s init.d.nginx ] && echo 'init.d.nginx found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/init.d.nginx
 [ -s nginx.conf ] && echo 'nginx.conf found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/nginx.conf
 [ -s pure-ftpd.conf ] && echo 'pure-ftpd.conf found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/pure-ftpd.conf
 [ -s pureftpd-mysql.conf ] && echo 'pureftpd-mysql.conf found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/pureftpd-mysql.conf
 [ -s chinese.php ] && echo 'chinese.php found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/chinese.php
 [ -s script.mysql ] && echo 'script.mysql found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/script.mysql
+[ -s Nginx-init-CentOS ] && echo 'Nginx-init-CentOS found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/Nginx-init-CentOS
+[ -s Memcached-init-CentOS ] && echo 'Memcached-init-CentOS found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/Memcached-init-CentOS
+[ -s Nginx-init-Ubuntu ] && echo 'Nginx-init-Ubuntu found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/Nginx-init-Ubuntu
+[ -s Memcached-init-Ubuntu ] && echo 'Memcached-init-Ubuntu found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/Memcached-init-Ubuntu
+[ -s init_CentOS.sh ] && echo 'init_CentOS.sh found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/init_CentOS.sh
+[ -s init_Ubuntu.sh ] && echo 'init_Ubuntu.sh found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/init_Ubuntu.sh
 cd /root/lnmp/source
 [ -s tz.zip ] && echo 'tz.zip found' || wget -c http://www.yahei.net/tz/tz.zip 
 [ -s cmake-2.8.11.2.tar.gz ] && echo 'cmake-2.8.11.2.tar.gz found' || wget -c http://www.cmake.org/files/v2.8/cmake-2.8.11.2.tar.gz
@@ -104,7 +142,7 @@ cd /root/lnmp/source
 [ -s libmcrypt-2.5.8.tar.gz ] && echo 'libmcrypt-2.5.8.tar.gz found' || wget -c http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz 
 [ -s mhash-0.9.9.9.tar.gz ] && echo 'mhash-0.9.9.9.tar.gz found' || wget -c http://downloads.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz 
 [ -s php-5.5.2.tar.gz ] && echo 'php-5.5.2.tar.gz found' || wget -c http://kr1.php.net/distributions/php-5.5.2.tar.gz
-[ -s memcached-1.4.15.tar.gz ] && echo 'memcached-1.4.15.tar.gz found' || wget -c --no-check-certificate https://memcached.googlecode.com/files/memcached-1.4.15.tar.gz 
+[ -s memcached-1.4.15.tar.gz ] && echo 'memcached-1.4.15.tar.gz found' || wget -c http://pkgs.fedoraproject.org/lookaside/pkgs/memcached/memcached-1.4.15.tar.gz/36ea966f5a29655be1746bf4949f7f69/memcached-1.4.15.tar.gz 
 [ -s memcache-2.2.7.tgz ] && echo 'memcache-2.2.7.tgz found' || wget -c http://pecl.php.net/get/memcache-2.2.7.tgz
 [ -s ImageMagick-6.8.6-8.tar.gz ] && echo 'ImageMagick-6.8.6-8.tar.gz found' || wget -c http://www.imagemagick.org/download/ImageMagick-6.8.6-8.tar.gz 
 [ -s imagick-3.1.0RC2.tgz ] && echo 'imagick-3.1.0RC2.tgz found' || wget -c http://pecl.php.net/get/imagick-3.1.0RC2.tgz
@@ -115,12 +153,12 @@ cd /root/lnmp/source
 [ -s ftp_v2.1.tar.gz ] && echo 'ftp_v2.1.tar.gz found' || wget -c http://machiel.generaal.net/files/pureftpd/ftp_v2.1.tar.gz 
 [ -s phpMyAdmin-4.0.5-all-languages.tar.gz ] && echo 'phpMyAdmin-4.0.5-all-languages.tar.gz found' || wget -c http://downloads.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.0.5/phpMyAdmin-4.0.5-all-languages.tar.gz 
 
-# check source packages
+# check download source packages
 for src in `cat /root/lnmp/lnmp_install.sh | grep found.*wget | awk '{print $3}' | grep gz`
 do
         if [ ! -e "/root/lnmp/source/$src" ];then
                 echo -e "\033[31m$src no found! \033[0m"
-		echo -e "\033[31mUpdated version of the Package source,Please Contact Author! \033[0m"
+		echo -e "\033[31mUpdated version of the Package source, Please contact the author! \033[0m"
                 kill -9 $$
         fi
 done
@@ -160,14 +198,16 @@ make && make install
 if [ -d "$db_install_dir" ];then
         echo -e "\033[32mMySQL install successfully! \033[0m"
 else
-        echo -e "\033[31mMySQL install failed,Please Contact Author! \033[0m"
+        echo -e "\033[31mMySQL install failed, Please contact the author! \033[0m"
         kill -9 $$
 fi
 
 /bin/cp support-files/mysql.server /etc/init.d/mysqld 
 chmod +x /etc/init.d/mysqld
-chkconfig --add mysqld
-chkconfig mysqld on
+OS_CentOS='chkconfig --add mysqld \n
+chkconfig mysqld on'
+OS_Ubuntu='update-rc.d mysqld defaults'
+OS_command
 cd ..
 
 # my.cf
@@ -224,7 +264,7 @@ EOF
 $db_install_dir/scripts/mysql_install_db --user=mysql --basedir=$db_install_dir --datadir=$db_data_dir
 
 chown mysql.mysql -R $db_data_dir
-/sbin/service mysqld start
+service mysqld start
 export PATH=$PATH:$db_install_dir/bin
 echo "export PATH=\$PATH:$db_install_dir/bin" >> /etc/profile
 source /etc/profile
@@ -235,7 +275,6 @@ $db_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.user where P
 $db_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.db where User='';"
 $db_install_dir/bin/mysql -uroot -p$dbrootpwd -e "drop database test;"
 $db_install_dir/bin/mysql -uroot -p$dbrootpwd -e "reset master;"
-/sbin/service mysqld restart
 }
 
 function Install_MariaDB()
@@ -275,15 +314,17 @@ make && make install
 if [ -d "$db_install_dir" ];then
         echo -e "\033[32mMariaDB install successfully! \033[0m"
 else
-        echo -e "\033[31mMariaDB install failed,Please Contact Author! \033[0m"
+        echo -e "\033[31mMariaDB install failed, Please contact the author! \033[0m"
         kill -9 $$
 fi
 
 /bin/cp support-files/my-small.cnf /etc/my.cnf
 /bin/cp support-files/mysql.server /etc/init.d/mysqld
 chmod +x /etc/init.d/mysqld
-chkconfig --add mysqld
-chkconfig mysqld on
+OS_CentOS='chkconfig --add mysqld \n
+chkconfig mysqld on'
+OS_Ubuntu='update-rc.d mysqld defaults'
+OS_command
 cd ..
 
 # my.cf
@@ -340,7 +381,7 @@ EOF
 $db_install_dir/scripts/mysql_install_db --user=mysql --basedir=$db_install_dir --datadir=$db_data_dir
 
 chown mysql.mysql -R $db_data_dir
-/sbin/service mysqld start
+service mysqld start
 export PATH=$PATH:$db_install_dir/bin
 echo "export PATH=\$PATH:$db_install_dir/bin" >> /etc/profile
 source /etc/profile
@@ -351,7 +392,6 @@ $db_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.user where P
 $db_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.db where User='';"
 $db_install_dir/bin/mysql -uroot -p$dbrootpwd -e "drop database test;"
 $db_install_dir/bin/mysql -uroot -p$dbrootpwd -e "reset master;"
-/sbin/service mysqld restart
 }
 
 function Install_PHP()
@@ -367,7 +407,7 @@ tar xzf libmcrypt-2.5.8.tar.gz
 cd libmcrypt-2.5.8
 ./configure
 make && make install
-/sbin/ldconfig
+ldconfig
 cd libltdl/
 ./configure --enable-ltdl-install
 make && make install
@@ -392,20 +432,26 @@ EOF
 cat >> /etc/ld.so.conf.d/mysql.conf <<EOF
 $db_install_dir/lib
 EOF
-/sbin/ldconfig
-ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config
-ln -s $db_install_dir/include/* /usr/local/include/
+ldconfig
 ln -s /usr/local/include/ImageMagick-6 /usr/local/include/ImageMagick
-if [ `getconf WORD_BIT` = '32' ] && [ `getconf LONG_BIT` = '64' ] ; then
-        ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1
-        cp -frp /usr/lib64/libldap* /usr/lib
-else
-        ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1
-fi
+OS_CentOS='ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config \n
+ln -s $db_install_dir/include/* /usr/local/include/ \n
+if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ];then \n
+        ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1 \n
+        ln -s /usr/lib64/libldap* /usr/lib \n
+else \n
+        ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1 \n
+fi'
+OS_Ubuntu='if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ];then \n
+	ln -s /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/ \n
+else \n
+	ln -s /usr/lib/i386-linux-gnu/libldap.so /usr/lib/ \n 
+fi'
+OS_command
 
 tar xzf mcrypt-2.6.8.tar.gz
 cd mcrypt-2.6.8
-/sbin/ldconfig
+ldconfig
 ./configure
 make && make install
 cd ../
@@ -428,19 +474,21 @@ make install
 if [ -d "/usr/local/php" ];then
         echo -e "\033[32mPHP install successfully! \033[0m"
 else
-        echo -e "\033[31mPHP install failed,Please Contact Author! \033[0m"
+        echo -e "\033[31mPHP install failed, Please Contact the author! \033[0m"
         kill -9 $$
 fi
-#wget -c http://pear.php.net/go-pear.phar
-#/usr/local/php/bin/php go-pear.phar
+# wget -c http://pear.php.net/go-pear.phar
+# /usr/local/php/bin/php go-pear.phar
 
 /bin/cp php.ini-production /usr/local/php/etc/php.ini
 
-#php-fpm Init Script
+# php-fpm Init Script
 /bin/cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
 chmod +x /etc/init.d/php-fpm
-chkconfig --add php-fpm
-chkconfig php-fpm on
+OS_CentOS='chkconfig --add php-fpm \n
+chkconfig php-fpm on'
+OS_Ubuntu='update-rc.d php-fpm defaults'
+OS_command
 cd ../
 
 tar xzf imagick-3.1.0RC2.tgz
@@ -561,14 +609,12 @@ cd memcached-1.4.15
 make && make install
 
 ln -s /usr/local/memcached/bin/memcached /usr/bin/memcached
-/bin/cp scripts/memcached.sysv /etc/init.d/memcached
-sed -i 's@^USER=.*@USER=root@' /etc/init.d/memcached
-sed -i 's@chown@#chown@' /etc/init.d/memcached
-sed -i 's@/var/run/memcached/memcached.pid@/var/run/memcached.pid@' /etc/init.d/memcached
-sed -i 's@^prog=.*@prog="/usr/local/memcached/bin/memcached"@' /etc/init.d/memcached
-chmod +x /etc/init.d/memcached
-chkconfig --add memcached
-chkconfig memcached on
+OS_CentOS='/bin/cp /root/lnmp/conf/Memcached-init-CentOS /etc/init.d/memcached \n
+chkconfig --add memcached \n
+chkconfig memcached on'
+OS_Ubuntu='/bin/cp /root/lnmp/conf/Memcached-init-Ubuntu /etc/init.d/memcached \n
+update-rc.d memcached defaults'
+OS_command
 service php-fpm restart
 service memcached start
 cd ..
@@ -583,25 +629,27 @@ cd pcre-8.33
 make && make install
 cd ../
 
-#tar xzf ngx_cache_purge-2.1.tar.gz 
 tar xzf nginx-1.4.2.tar.gz
 cd nginx-1.4.2
 
 # Modify Nginx version
 sed -i 's@#define NGINX_VERSION.*$@#define NGINX_VERSION      "1.2"@g' src/core/nginx.h 
 sed -i 's@#define NGINX_VER.*NGINX_VERSION$@#define NGINX_VER          "Linuxeye/" NGINX_VERSION@g' src/core/nginx.h 
-#./configure --prefix=/usr/local/nginx --user=www --group=www --with-http_stub_status_module --with-http_ssl_module --add-module=../ngx_cache_purge-2.1
+
 ./configure --prefix=/usr/local/nginx --user=www --group=www --with-http_stub_status_module --with-http_ssl_module
 make && make install
 cd /root/lnmp/conf
-cp init.d.nginx /etc/init.d/nginx
-chmod 755 /etc/init.d/nginx
-chkconfig --add nginx
-chkconfig nginx on
+OS_CentOS='/bin/cp Nginx-init-CentOS /etc/init.d/nginx \n
+chkconfig --add nginx \n
+chkconfig nginx on'
+OS_Ubuntu='/bin/cp Nginx-init-Ubuntu /etc/init.d/nginx \n
+update-rc.d nginx defaults'
+OS_command
+
 mv /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf_bk
-cp nginx.conf /usr/local/nginx/conf/nginx.conf
 sed -i "s@/home/wwwroot/default@$home_dir/default@" nginx.conf
-#worker_cpu_affinity
+/bin/cp nginx.conf /usr/local/nginx/conf/nginx.conf
+# worker_cpu_affinity
 Nginx_conf=/usr/local/nginx/conf/nginx.conf
 CPU_num=`cat /proc/cpuinfo | grep processor | wc -l`
 if [ $CPU_num == 1 ];then
@@ -620,7 +668,7 @@ else
         echo Google worker_cpu_affinity
 fi
 
-#logrotate nginx log
+# logrotate nginx log
 cat > /etc/logrotate.d/nginx << EOF
 $wwwlogs_dir/*.log {
 daily
@@ -635,7 +683,7 @@ postrotate
 endscript
 }
 EOF
-service nginx restart
+service nginx start
 }
 
 function Install_Pureftp()
@@ -643,8 +691,15 @@ function Install_Pureftp()
 cd /root/lnmp/source
 tar xzf pure-ftpd-1.0.36.tar.gz
 cd pure-ftpd-1.0.36
+[ $OS == 'Ubuntu' ] && ln -s $db_install_dir/lib/libmysqlclient.so /usr/lib
 ./configure --prefix=/usr/local/pureftpd CFLAGS=-O2 --with-mysql=$db_install_dir --with-quotas --with-cookie --with-virtualhosts --with-virtualchroot --with-diraliases --with-sysquotas --with-ratios --with-altlog --with-paranoidmsg --with-shadow --with-welcomemsg  --with-throttling --with-uploadscript --with-language=english 
 make && make install
+if [ -d "/usr/local/pureftpd" ];then
+        echo -e "\033[32mPure-Ftp install successfully! \033[0m"
+else
+        echo -e "\033[31mPure-Ftp install failed, Please contact the author! \033[0m"
+        kill -9 $$
+fi
 cp configuration-file/pure-config.pl /usr/local/pureftpd/sbin
 chmod +x /usr/local/pureftpd/sbin/pure-config.pl
 cp contrib/redhat.init /etc/init.d/pureftpd
@@ -652,8 +707,11 @@ sed -i 's@fullpath=.*@fullpath=/usr/local/pureftpd/sbin/$prog@' /etc/init.d/pure
 sed -i 's@pureftpwho=.*@pureftpwho=/usr/local/pureftpd/sbin/pure-ftpwho@' /etc/init.d/pureftpd
 sed -i 's@/etc/pure-ftpd.conf@/usr/local/pureftpd/pure-ftpd.conf@' /etc/init.d/pureftpd
 chmod +x /etc/init.d/pureftpd
-chkconfig --add pureftpd
-chkconfig pureftpd on
+OS_CentOS='chkconfig --add pureftpd \n
+chkconfig pureftpd on'
+OS_Ubuntu="sed -i 's@^. /etc/rc.d/init.d/functions@. /lib/lsb/init-functions@' /etc/init.d/pureftpd \n
+update-rc.d pureftpd defaults"
+OS_command
 
 cd /root/lnmp/conf
 /bin/cp pure-ftpd.conf /usr/local/pureftpd/
@@ -694,38 +752,26 @@ unzip -q /root/lnmp/source/tz.zip -d $home_dir/default
 chown -R www.www $home_dir/default
 }
 
-function Iptables()
+function Iptables_Ftp()
 {
-cat > /etc/sysconfig/iptables << EOF
-# Firewall configuration written by system-config-securitylevel
-# Manual customization of this file is not recommended.
-*filter
-:INPUT DROP [0:0]
-:FORWARD ACCEPT [0:0]
-:OUTPUT ACCEPT [0:0]
-:syn-flood - [0:0]
--A INPUT -i lo -j ACCEPT
--A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
--A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
--A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
--A INPUT -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
--A INPUT -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
--A INPUT -p icmp -m limit --limit 100/sec --limit-burst 100 -j ACCEPT
--A INPUT -p icmp -m limit --limit 1/s --limit-burst 10 -j ACCEPT
--A INPUT -p tcp -m tcp --tcp-flags FIN,SYN,RST,ACK SYN -j syn-flood
--A INPUT -j REJECT --reject-with icmp-host-prohibited
--A syn-flood -p tcp -m limit --limit 3/sec --limit-burst 6 -j RETURN
--A syn-flood -j REJECT --reject-with icmp-port-unreachable
-COMMIT
-EOF
-service iptables restart
+iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
+iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
+OS_CentOS='service iptables save'
+OS_Ubuntu='iptables-save > /etc/iptables.up.rules'
+OS_command
 }
 
 Download_src 2>&1 | tee -a /root/lnmp/lnmp_install.log 
-chmod +x /root/lnmp/{init,vhost}.sh
+chmod +x /root/lnmp/*.sh /root/lnmp/conf/*init*
 sed -i "s@/home/wwwroot@$home_dir@g" /root/lnmp/vhost.sh
 sed -i "s@/home/wwwlogs@$wwwlogs_dir@g" /root/lnmp/vhost.sh
-/root/lnmp/init.sh 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+
+OS_CentOS='/root/lnmp/conf/init_CentOS.sh 2>&1 | tee -a /root/lnmp/lnmp_install.log \n
+/bin/mv /root/lnmp/conf/init_CentOS.sh /root/lnmp/conf/init_CentOS.ed'
+OS_Ubuntu='/root/lnmp/conf/init_Ubuntu.sh 2>&1 | tee -a /root/lnmp/lnmp_install.log \n
+/bin/mv /root/lnmp/conf/init_Ubuntu.sh /root/lnmp/conf/init_Ubuntu.ed'
+OS_command
+
 if [ $choice_db == 'mysql' ];then
 	db_install_dir=/usr/local/mysql
 	db_data_dir=/data/mysql
@@ -745,7 +791,7 @@ fi
 
 if [ $FTP_yn == 'y' ];then
 	Install_Pureftp 2>&1 | tee -a /root/lnmp/lnmp_install.log 
-	Iptables 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+	Iptables_Ftp 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 fi
 
 if [ $phpMyAdmin_yn == 'y' ];then
@@ -763,4 +809,4 @@ echo -e "`printf "%-32s" "PHP dir:"`\033[32m/usr/local/php\033[0m"
 echo -e "`printf "%-32s" "$choice_DB User:"`\033[32mroot\033[0m"
 echo -e "`printf "%-32s" "$choice_DB Password:"`\033[32m${dbrootpwd}\033[0m"
 echo -e "`printf "%-32s" "Manager url:"`\033[32mhttp://$IP/\033[0m"
-echo -e "`printf "%-32s" "add ngx_pagespeed module:"`\033[32m./install_ngx_pagespeed.sh\033[0m"
+echo -e "`printf "%-32s" "install ngx_pagespeed module:"`\033[32m./install_ngx_pagespeed.sh\033[0m"

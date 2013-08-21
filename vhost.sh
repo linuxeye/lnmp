@@ -4,7 +4,7 @@
 [ $(id -u) != "0" ] && echo "Error: You must be root to run this script, please use root to create vhost" && exit 1
 
 echo "#######################################################################"
-echo "#                    LNMP for CentOS/RadHat 5/6                       #"
+echo "#            LNMP for CentOS/RadHat 5+ and Ubuntu 12+                 #"
 echo "# For more information please visit http://blog.linuxeye.com/31.html  #"
 echo "#######################################################################"
 echo ''

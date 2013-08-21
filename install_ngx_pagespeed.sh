@@ -1,9 +1,24 @@
 #!/bin/bash
+# Author:  yeho
+#          <lj2007331 AT gmail.com>.
+# Blog:  http://blog.linuxeye.com
+#
+# Version: 0.2 21-Aug-2013 lj2007331 AT gmail.com
+# Notes: LNMP for CentOS/RadHat 5+ and Ubuntu 12+
+#
+# This script's project home is:
+#       https://github.com/lj2007331/lnmp
+
+# Check if user is root
+[ $(id -u) != "0" ] && echo "Error: You must be root to run this script, Please use root to install ngx_pagespeed " && kill -9 $$
+
+export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
 echo "#######################################################################"
-echo "#                    LNMP for CentOS/RadHat 5/6                       #"
+echo "#            LNMP for CentOS/RadHat 5+ and Ubuntu 12+                 #"
 echo "# For more information please visit http://blog.linuxeye.com/318.html #"
 echo "#######################################################################"
-echo ''
+
 read -p "Do you want to install ngx_pagespeed? (y/n)" nps_yn
 if [ $nps_yn == 'y' ];then
 cd /root/lnmp/source

@@ -25,7 +25,7 @@ fi
 # Update rpm package
 yum -y update
 
-# Install dependencies package
+# Install needed packages
 yum -y install gcc gcc-c++ make autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel nss_ldap openldap openldap-devel openldap-clients openldap-servers libxslt-devel libevent-devel ntp libtool libtool-ltdl bison gd-devel vim-enhanced pcre-devel zip unzip sendmail
 
 # chkconfig 
@@ -41,7 +41,7 @@ chkconfig sendmail on
 service sendmail restart
 
 # /etc/hosts
-[ "$(hostname -i)" != "127.0.0.1" ] && sed -i "s@^127.0.0.1\(.*\)@127.0.0.1   `hostname` \1@" /etc/hosts
+[ "$(hostname -i | awk '{print $1}')" != "127.0.0.1" ] && sed -i "s@^127.0.0.1\(.*\)@127.0.0.1   `hostname` \1@" /etc/hosts
 
 # Close SELINUX
 setenforce 0
@@ -147,7 +147,7 @@ make && make install
 cd ../../
 rm -rf tmux
 
-if [ `getconf WORD_BIT` = '32' ] && [ `getconf LONG_BIT` = '64' ] ; then
+if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ];then
     ln -s /usr/local/lib/libevent-2.0.so.5 /usr/lib64/libevent-2.0.so.5
 else
     ln -s /usr/local/lib/libevent-2.0.so.5 /usr/lib/libevent-2.0.so.5

@@ -1,13 +1,15 @@
 ## Introduction
 
    `Linux`+`Nginx`+`MySQL` (Can Choose to install `MariaDB`)+`PHP` (Can Choose whether to install `Pureftpd`+`User manager for PureFTPd`+`phpMyAdmin`), Can choose to install ngx_pagespeed after installing lnmp, Installing the module execute scripts `/root/lnmp/install_ngx_pagespeed.sh`. Add a virtual host with ngx_pagespeed module, Please use the script `/root/lnmp/vhost_ngx_pagespeed.sh` (Must be installed ngx_pagespeed module). Do not ngx_pagespeed module, can run the script `/root/lnmp/vhost.sh` Add a virtual host. <br /> 
-    The script is the new software package using stable version, Fixes some security issues, (Before installation will be performed, Initialize security script) For CentOS/RadHat >=5 or Ubuntu >=12 .Features include:
+   The script is the new software package using stable version, Fixes some security issues, (Before installation will be performed, Initialize security script) For CentOS/RadHat >=5 or Ubuntu >=12 .<br />
 
+   Features include:
 - Constant updates 
 - Source compiler, Almost all of source packages is the latest stable version and downloaded from the official website
 - Fixes some security issues 
 - Choose to install MySQL or MariaDB database 
-- Choose whether to install memcache, Pureftpd, phpMyAdmin 
+- Choose whether to install Pureftpd, phpMyAdmin 
+- Choose whether to install memcache or redis
 - Support ngx_pagespeed module (after installing lnmp)
 - Add a virtual host script provided 
 

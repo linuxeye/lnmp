@@ -54,8 +54,8 @@ mkdir -p $home_dir/default $wwwlogs_dir /root/lnmp/{source,conf}
 # choice database 
 while :
 do
-        read -p "Do you want to install MySQL or MariaDB ? ( MySQL / MariaDB ) " choice_DB
-        choice_db=`echo $choice_DB | tr [A-Z] [a-z]`
+        read -p "Do you want to install MySQL or MariaDB ? ( MySQL / MariaDB ) " Choice_DB
+        choice_db=`echo $Choice_DB | tr [A-Z] [a-z]`
         if [ "$choice_db" != 'mariadb' ] && [ "$choice_db" != 'mysql' ];then
                 echo -e "\033[31minput error! Please input 'MySQL' or 'MariaDB'\033[0m"
         else
@@ -63,23 +63,38 @@ do
         fi
 done
 
-# check dbrootpwd
+# check dbrootpwd 
 while :
 do
         read -p "Please input the root password of database:" dbrootpwd
-        (( ${#dbrootpwd} >= 5 )) && break || echo -e "\033[31m$choice_DB root password least 5 characters! \033[0m"
+        (( ${#dbrootpwd} >= 5 )) && break || echo -e "\033[31m$Choice_DB root password least 5 characters! \033[0m"
 done
 
+# check cache
 while :
 do
-        read -p "Do you want to install Memcache? (y/n)" Memcache_yn
-        if [ "$Memcache_yn" != 'y' ] && [ "$Memcache_yn" != 'n' ];then
+        read -p "Do you want to install Memcache or Redis ? (y/n)" Cache_yn
+        if [ "$Cache_yn" != 'y' ] && [ "$Cache_yn" != 'n' ];then
                 echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
         else
                 break
         fi
 done
 
+if [ "$Cache_yn" == 'y' ];then
+while :
+do
+        read -p "Memcache or Redis ? ( Memcache / Redis ) " Choice_Cache
+        choice_cache=`echo $Choice_Cache | tr [A-Z] [a-z]`
+        if [ "$choice_cache" != 'memcache' ] && [ "$choice_cache" != 'redis' ];then
+                echo -e "\033[31minput error! Please input 'Memcache' or 'Redis'\033[0m"
+        else
+                break
+        fi
+done
+fi
+
+# check Pureftpd
 while :
 do
         read -p "Do you want to install Pure-FTPd? (y/n)" FTP_yn
@@ -90,7 +105,7 @@ do
         fi
 done
 
-if [ $FTP_yn == 'y' ];then
+if [ "$FTP_yn" == 'y' ];then
         while :
         do
                 read -p "Please input the manager password of Pureftpd:" ftpmanagerpwd
@@ -98,6 +113,7 @@ if [ $FTP_yn == 'y' ];then
         done
 fi
 
+# check phpMyAdmin
 while :
 do
         read -p "Do you want to install phpMyAdmin? (y/n)" phpMyAdmin_yn
@@ -127,9 +143,11 @@ cd conf
 [ -s chinese.php ] && echo 'chinese.php found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/chinese.php
 [ -s script.mysql ] && echo 'script.mysql found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/script.mysql
 [ -s Nginx-init-CentOS ] && echo 'Nginx-init-CentOS found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/Nginx-init-CentOS
-[ -s Memcached-init-CentOS ] && echo 'Memcached-init-CentOS found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/Memcached-init-CentOS
 [ -s Nginx-init-Ubuntu ] && echo 'Nginx-init-Ubuntu found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/Nginx-init-Ubuntu
+[ -s Memcached-init-CentOS ] && echo 'Memcached-init-CentOS found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/Memcached-init-CentOS
 [ -s Memcached-init-Ubuntu ] && echo 'Memcached-init-Ubuntu found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/Memcached-init-Ubuntu
+[ -s Redis-server-init-CentOS ] && echo 'Redis-server-init-CentOS found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/Redis-server-init-CentOS
+[ -s Redis-server-init-Ubuntu ] && echo 'Redis-server-init-Ubuntu found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/Redis-server-init-Ubuntu
 [ -s init_CentOS.sh ] && echo 'init_CentOS.sh found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/init_CentOS.sh
 [ -s init_Ubuntu.sh ] && echo 'init_Ubuntu.sh found' || wget -c --no-check-certificate https://raw.github.com/lj2007331/lnmp/master/conf/init_Ubuntu.sh
 cd /root/lnmp/source
@@ -142,8 +160,10 @@ cd /root/lnmp/source
 [ -s libmcrypt-2.5.8.tar.gz ] && echo 'libmcrypt-2.5.8.tar.gz found' || wget -c http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz 
 [ -s mhash-0.9.9.9.tar.gz ] && echo 'mhash-0.9.9.9.tar.gz found' || wget -c http://downloads.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz 
 [ -s php-5.5.2.tar.gz ] && echo 'php-5.5.2.tar.gz found' || wget -c http://kr1.php.net/distributions/php-5.5.2.tar.gz
-[ -s memcached-1.4.15.tar.gz ] && echo 'memcached-1.4.15.tar.gz found' || wget -c http://pkgs.fedoraproject.org/lookaside/pkgs/memcached/memcached-1.4.15.tar.gz/36ea966f5a29655be1746bf4949f7f69/memcached-1.4.15.tar.gz 
 [ -s memcache-2.2.7.tgz ] && echo 'memcache-2.2.7.tgz found' || wget -c http://pecl.php.net/get/memcache-2.2.7.tgz
+[ -s memcached-1.4.15.tar.gz ] && echo 'memcached-1.4.15.tar.gz found' || wget -c http://pkgs.fedoraproject.org/lookaside/pkgs/memcached/memcached-1.4.15.tar.gz/36ea966f5a29655be1746bf4949f7f69/memcached-1.4.15.tar.gz 
+[ -s redis-2.2.3.tgz ] && echo 'redis-2.2.3.tgz found' || wget -c http://pecl.php.net/get/redis-2.2.3.tgz 
+[ -s redis-2.6.14.tar.gz ] && echo 'redis-2.6.14.tar.gz found' || wget -c http://redis.googlecode.com/files/redis-2.6.14.tar.gz 
 [ -s ImageMagick-6.8.6-8.tar.gz ] && echo 'ImageMagick-6.8.6-8.tar.gz found' || wget -c http://www.imagemagick.org/download/ImageMagick-6.8.6-8.tar.gz 
 [ -s imagick-3.1.0RC2.tgz ] && echo 'imagick-3.1.0RC2.tgz found' || wget -c http://pecl.php.net/get/imagick-3.1.0RC2.tgz
 [ -s pecl_http-1.7.6.tgz ] && echo 'pecl_http-1.7.6.tgz found' || wget -c http://pecl.php.net/get/pecl_http-1.7.6.tgz
@@ -256,6 +276,7 @@ slow_query_log_file = $db_data_dir/mysql-slow.log
 # Oher
 #max_connections = 1000
 open_files_limit = 65535
+explicit_defaults_for_timestamp = true
 
 [client]
 port = 3306
@@ -601,6 +622,7 @@ cd memcache-2.2.7
 ./configure --with-php-config=/usr/local/php/bin/php-config
 make && make install
 sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "memcache.so"@' /usr/local/php/etc/php.ini
+service php-fpm restart
 cd ../
 
 useradd -M -s /sbin/nologin memcached 
@@ -616,8 +638,44 @@ chkconfig memcached on'
 OS_Ubuntu='/bin/cp /root/lnmp/conf/Memcached-init-Ubuntu /etc/init.d/memcached \n
 update-rc.d memcached defaults'
 OS_command
-service php-fpm restart
 service memcached start
+cd ..
+}
+
+function Install_Redis()
+{
+cd /root/lnmp/source
+tar xzf redis-2.2.3.tgz
+cd redis-2.2.3
+/usr/local/php/bin/phpize
+./configure --with-php-config=/usr/local/php/bin/php-config
+make && make install
+sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "redis.so"@' /usr/local/php/etc/php.ini
+service php-fpm restart
+cd ..
+
+tar xzf redis-2.6.14.tar.gz
+cd redis-2.6.14
+make
+mkdir -p /usr/local/redis/{bin,etc,var}
+/bin/cp src/{redis-benchmark,redis-check-aof,redis-check-dump,redis-cli,redis-sentinel,redis-server} /usr/local/redis/bin/
+/bin/cp redis.conf /usr/local/redis/etc/
+ln -s /usr/local/redis/bin/* /usr/local/bin/
+sed -i 's@pidfile.*$@pidfile /var/run/redis.pid@' /usr/local/redis/etc/redis.conf
+sed -i 's@logfile.*$@logfile /usr/local/redis/var/redis.log@' /usr/local/redis/etc/redis.conf
+sed -i 's@^dir.*$@dir /usr/local/redis/var@' /usr/local/redis/etc/redis.conf
+sed -i 's@daemonize no@daemonize yes@' /usr/local/redis/etc/redis.conf
+OS_CentOS='/bin/cp /root/lnmp/conf/Redis-server-init-CentOS /etc/init.d/redis-server \n
+chkconfig --add redis-server \n
+chkconfig redis-server on'
+OS_Ubuntu='useradd -M -s /sbin/nologin redis \n
+chown -R redis:redis /usr/local/redis/var/ \n
+/bin/cp /root/lnmp/conf/Redis-server-init-Ubuntu /etc/init.d/redis-server \n
+update-rc.d redis-server defaults'
+OS_command
+echo 'vm.overcommit_memory = 1' >> /etc/sysctl.conf
+sysctl -p
+service redis-server start
 cd ..
 }
 
@@ -721,7 +779,8 @@ mysqlftppwd=`cat /dev/urandom | head -1 | md5sum | head -c 8`
 sed -i 's/tmppasswd/'$mysqlftppwd'/g' /usr/local/pureftpd/pureftpd-mysql.conf
 sed -i 's/mysqlftppwd/'$mysqlftppwd'/g' script.mysql
 sed -i 's/ftpmanagerpwd/'$ftpmanagerpwd'/g' script.mysql
-$db_install_dir/bin/mysql -uroot -p$dbrootpwd< script.mysql
+service mysqld restart
+$db_install_dir/bin/mysql -uroot -p$dbrootpwd < script.mysql
 service pureftpd start
 
 tar xzf /root/lnmp/source/ftp_v2.1.tar.gz
@@ -758,6 +817,7 @@ phpinfo()
 cp /root/lnmp/conf/index.html $home_dir/default
 unzip -q /root/lnmp/source/tz.zip -d $home_dir/default
 chown -R www.www $home_dir/default
+service mysqld restart
 }
 
 Download_src 2>&1 | tee -a /root/lnmp/lnmp_install.log 
@@ -771,30 +831,29 @@ OS_Ubuntu='/root/lnmp/conf/init_Ubuntu.sh 2>&1 | tee -a /root/lnmp/lnmp_install.
 /bin/mv /root/lnmp/conf/init_Ubuntu.sh /root/lnmp/conf/init_Ubuntu.ed'
 OS_command
 
-if [ $choice_db == 'mysql' ];then
+if [ "$choice_db" == 'mysql' ];then
 	db_install_dir=/usr/local/mysql
 	db_data_dir=/data/mysql
 	Install_MySQL 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+	service mysqld stop
 fi
-if [ $choice_db == 'mariadb' ];then
+if [ "$choice_db" == 'mariadb' ];then
 	db_install_dir=/usr/local/mariadb
 	db_data_dir=/data/mariadb
 	Install_MariaDB 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+	service mysqld stop
 fi
+
 Install_PHP 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 Install_Nginx 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 
-if [ $Memcache_yn == 'y' ];then
-	Install_Memcache 2>&1 | tee -a /root/lnmp/lnmp_install.log 
-fi
+[ "$choice_cache" == 'memcache' ] && Install_Memcache 2>&1 | tee -a /root/lnmp/lnmp_install.log 
+[ "$choice_cache" == 'redis' ] && Install_Redis 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 
-if [ $FTP_yn == 'y' ];then
-	Install_Pureftp 2>&1 | tee -a /root/lnmp/lnmp_install.log 
-fi
+[ "$FTP_yn" == 'y' ] && Install_Pureftp 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 
-if [ $phpMyAdmin_yn == 'y' ];then
-	Install_phpMyAdmin 2>&1 | tee -a /root/lnmp/lnmp_install.log
-fi
+[ "$phpMyAdmin_yn" == 'y' ] && Install_phpMyAdmin 2>&1 | tee -a /root/lnmp/lnmp_install.log
+
 TEST 2>&1 | tee -a /root/lnmp/lnmp_install.log 
 
 echo "################Congratulations####################"
@@ -802,9 +861,9 @@ echo -e "\033[32mPlease restart the server and see if the services start up fine
 echo ''
 echo "The path of some dirs:"
 echo -e "`printf "%-32s" "Nginx dir":`\033[32m/usr/local/nginx\033[0m"
-echo -e "`printf "%-32s" "$choice_DB dir:"`\033[32m$db_install_dir\033[0m"
+echo -e "`printf "%-32s" "$Choice_DB dir:"`\033[32m$db_install_dir\033[0m"
 echo -e "`printf "%-32s" "PHP dir:"`\033[32m/usr/local/php\033[0m"
-echo -e "`printf "%-32s" "$choice_DB User:"`\033[32mroot\033[0m"
-echo -e "`printf "%-32s" "$choice_DB Password:"`\033[32m${dbrootpwd}\033[0m"
+echo -e "`printf "%-32s" "$Choice_DB User:"`\033[32mroot\033[0m"
+echo -e "`printf "%-32s" "$Choice_DB Password:"`\033[32m${dbrootpwd}\033[0m"
 echo -e "`printf "%-32s" "Manager url:"`\033[32mhttp://$IP/\033[0m"
 echo -e "`printf "%-32s" "install ngx_pagespeed module:"`\033[32m./install_ngx_pagespeed.sh\033[0m"

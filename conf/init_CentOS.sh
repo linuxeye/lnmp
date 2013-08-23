@@ -9,11 +9,6 @@ cd ..
 rm -rf yum-3.4.3*
 sed -i 's@^exclude@#exclude@' /etc/yum.conf
 yum clean all
-yum check-update
-
-mv /etc/yum.repos.d/CentOS-Debuginfo.repo /etc/yum.repos.d/CentOS-Debuginfo.repo$(date +%m%d)
-mv /etc/yum.repos.d/CentOS-Media.repo /etc/yum.repos.d/CentOS-Media.repo$(date +%m%d)
-mv /etc/yum.repos.d/CentOS-Vault.repo /etc/yum.repos.d/CentOS-Vault.repo$(date +%m%d)
 
 # Remove obsolete rpm package
 if [ -z "$(cat /etc/redhat-release | grep '5\.')" ];then
@@ -22,7 +17,8 @@ else
 	yum -y groupremove "FTP Server" "PostgreSQL Database client" "PostgreSQL Database server" "MySQL Database server" "MySQL Database client" "Web Server" "Office Suite and Productivity" "Ruby Support" "X Window System" "Printing client" "Desktop*"
 fi
 
-# Update rpm package
+# update rpm packages
+yum check-update
 yum -y update
 
 # Install needed packages

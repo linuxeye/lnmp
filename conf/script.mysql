@@ -1,4 +1,4 @@
-grant all privileges on ftpusers.* to ftp@`127.0.0.1` identified by 'mysqlftppwd';
+grant all privileges on ftpusers.* to ftp@`127.0.0.1` identified by 'conn_ftpusers_dbpwd';
 FLUSH PRIVILEGES;
 
 CREATE DATABASE ftpusers;

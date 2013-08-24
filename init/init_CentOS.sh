@@ -57,7 +57,7 @@ echo "export PROMPT_COMMAND='{ msg=\$(history 1 | { read x y; echo \$y; });user=
 sed -i '4a auth        required      pam_tally2.so deny=5 unlock_time=180' /etc/pam.d/system-auth
 
 # alias vi
-sed "s@alias mv=.*@alias mv='mv -i'\nalias vi=vim@" /root/.bashrc
+sed -i "s@alias mv=.*@alias mv='mv -i'\nalias vi=vim@" /root/.bashrc
 echo 'syntax on' >> /etc/vimrc
 
 # /etc/security/limits.conf
@@ -96,6 +96,14 @@ fi
 rm -rf /etc/localtime
 ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
+# Set OpenDNS
+if [ ! -z "`cat /etc/resolv.conf | grep '8\.8\.8\.8'`" ];then 
+cat > /etc/resolv.conf << EOF
+nameserver 208.67.222.222
+nameserver 208.67.220.220
+EOF
+fi
+
 # Update time
 /usr/sbin/ntpdate pool.ntp.org 
 echo '*/20 * * * * /usr/sbin/ntpdate pool.ntp.org > /dev/null 2>&1' > /var/spool/cron/root;chmod 600 /var/spool/cron/root
@@ -123,7 +131,7 @@ cat > /etc/sysconfig/iptables << EOF
 COMMIT
 EOF
 /sbin/service iptables restart
-source /etc/profile
+. /etc/profile
 
 ###install tmux
 mkdir tmux

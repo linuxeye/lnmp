@@ -56,6 +56,14 @@ sed -i 's@^@#@g' /etc/init/control-alt-delete.conf
 rm -rf /etc/localtime
 ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
+# Set OpenDNS
+if [ ! -z "`cat /etc/resolv.conf | grep '8\.8\.8\.8'`" ];then
+cat > /etc/resolv.conf << EOF
+nameserver 208.67.222.222
+nameserver 208.67.220.220
+EOF
+fi
+
 # Update time
 ntpdate pool.ntp.org 
 echo '*/20 * * * * /usr/sbin/ntpdate pool.ntp.org > /dev/null 2>&1' > /var/spool/cron/crontabs/root;chmod 600 /var/spool/cron/crontabs/root 
@@ -83,4 +91,4 @@ cat > /etc/iptables.up.rules << EOF
 COMMIT
 EOF
 iptables-restore < /etc/iptables.up.rules
-source /etc/profile
+. /etc/profile

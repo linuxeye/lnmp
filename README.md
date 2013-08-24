@@ -17,63 +17,23 @@
 
 ```bash
    # Please ensure that the downloaded script in the root directory.
-   cd /root
+   yum -y install wget screen
    wget http://blog.linuxeye.com/wp-content/uploads/lnmp.tar.gz
    tar xzf lnmp.tar.gz
    cd lnmp
    chmod +x lnmp_install.sh
    # Prevent interrupt the installation process. If the network is down, you can execute commands `srceen -r lnmp` network reconnect the installation window.
-   yum -y install screen
    screen -S lnmp
    ./lnmp_install.sh
-```
-
-## How to install [ngx_pagespeed](https://github.com/pagespeed/ngx_pagespeed) the module 
-   If you need to use ngx_pagespeed module (after installing lnmp), you can run script
-```bash
-   cd /root/lnmp
-   ./install_ngx_pagespeed.sh
 ```
 
 ## How to add a virtual host
 
 ```bash
-   cd /root/lnmp
    # Does not have ngx_pagespeed function add a virtual host ,You need to run
    ./vhost.sh
    # Add a virtual host with ngx_pagespeed functionality ,you need to run (must be installed ngx_pagespeed)
    ./vhost_ngx_pagespeed.sh
-```
-
-## Related definitions and explanations
-
-   Web directory, you can customize, Which default directory to `Ftp Manager` `phpinfo.php` `phpMyAdmin`. (Rename the directory for security)
-```bash
-   home_dir=/home/wwwroot
-```
-   Nginx Generate a log storage directory, you can customize.
-```bash
-   wwwlogs_dir=/home/wwwlogs 
-```
-   Database data storage directory, you can customize.
-```bash
-   db_data_dir=/data/mysql
-```
-
-## Program Installation directory
-   not recommended to change <br />
-   PHP install to the specified directory, For example: /data/webserver/php <br />
-   Replaced by the following
-```bash
-   sed -i 's@/usr/local/php@/data/webserver/php@g' /root/lnmp/lnmp_install.sh
-```
-
-   Nginx Install to the specified directory, For example: /data/webserver/nginx <br /> 
-   Replaced by the following
-```bash
-   sed -i 's@/usr/local/nginx@/data/webserver/nginx@g' /root/lnmp/vhost.sh
-   sed -i 's@/usr/local/nginx@/data/webserver/nginx@g' /root/lnmp/lnmp_install.sh
-   sed -i 's@/usr/local/nginx@/data/webserver/nginx@g' /root/lnmp/conf/Nginx-init-*
 ```
 
    For feedback, questions, and to follow the progress of the project (Chinese): <br />

@@ -38,6 +38,7 @@ if [ ! -d "$db_install_dir" ];then
                 echo -e "\t\033[32m2\033[0m. Install MySQL-5.5"
                 echo -e "\t\033[32m3\033[0m. Install MariaDB-5.5"
                 read -p "Please input a number:(Default 1 press Enter) " DB_version
+		echo ''
                 [ -z "$DB_version" ] && DB_version=1
                 if [ $DB_version != 1 ] && [ $DB_version != 2 ] && [ $DB_version != 3 ];then
                         echo -e "\033[31minput error! Please input 1 2 3 \033[0m"
@@ -61,6 +62,7 @@ if [ ! -d "$php_install_dir" ];then
                 echo -e "\t\033[32m2\033[0m. Install php-5.4"
                 echo -e "\t\033[32m3\033[0m. Install php-5.3"
                 read -p "Please input a number:(Default 1 press Enter) " PHP_version
+		echo ''
                 [ -z "$PHP_version" ] && PHP_version=1
                 if [ $PHP_version != 1 ] && [ $PHP_version != 2 ] && [ $PHP_version != 3 ];then
                         echo -e "\033[31minput error! Please input 1 2 3 \033[0m"

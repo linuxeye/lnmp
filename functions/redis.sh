@@ -14,6 +14,7 @@ src_url=http://redis.googlecode.com/files/redis-2.6.14.tar.gz && Download_src
 
 tar xzf redis-2.2.3.tgz
 cd redis-2.2.3
+make clean
 $php_install_dir/bin/phpize
 ./configure --with-php-config=$php_install_dir/bin/php-config
 make && make install

@@ -22,7 +22,6 @@ echo ''
 #get pwd
 sed -i "s@^lnmp_dir.*@lnmp_dir=`pwd`@" options.conf
 
-
 # get ipv4 
 . functions/get_ipv4.sh
 
@@ -34,16 +33,36 @@ mkdir -p $home_dir/default $wwwlogs_dir $lnmp_dir/{src,conf}
 if [ ! -d "$db_install_dir" ];then
         while :
         do
-                read -p "Do you want to install MySQL or MariaDB ? ( MySQL / MariaDB ) " Choice_DB
-                choice_db=`echo $Choice_DB | tr [A-Z] [a-z]`
-                if [ "$choice_db" != 'mariadb' ] && [ "$choice_db" != 'mysql' ];then
-                        echo -e "\033[31minput error! Please input 'MySQL' or 'MariaDB'\033[0m"
+                echo -e "\t\033[32m1\033[0m. Install MySQL-5.6"
+                echo -e "\t\033[32m2\033[0m. Install MySQL-5.5"
+                echo -e "\t\033[32m3\033[0m. Install MariaDB-5.5"
+                read -p "Please input a number:(Default 1 press Enter) " DB_version
+                [ -z "$DB_version" ] && DB_version=1
+                if [ $DB_version != 1 ] && [ $DB_version != 2 ] && [ $DB_version != 3 ];then
+                        echo -e "\033[31minput error! Please input 1 2 3 \033[0m"
                 else
                         while :
                         do
-                                read -p "Please input the root password of $Choice_DB:" dbrootpwd
-                                (( ${#dbrootpwd} >= 5 )) && sed -i "s@^dbrootpwd.*@dbrootpwd=$dbrootpwd@" options.conf && break || echo -e "\033[31m$Choice_DB root password least 5 characters! \033[0m"
+                                read -p "Please input database root password:" dbrootpwd
+                                (( ${#dbrootpwd} >= 5 )) && sed -i "s@^dbrootpwd.*@dbrootpwd=$dbrootpwd@" options.conf && break || echo -e "\033[31mdatabase root password least 5 characters! \033[0m"
                         done
+                        break
+                fi
+        done
+fi
+
+# check PHP
+if [ ! -d "$php_install_dir" ];then
+        while :
+        do
+                echo -e "\t\033[32m1\033[0m. Install php-5.5"
+                echo -e "\t\033[32m1\033[0m. Install php-5.4"
+                echo -e "\t\033[32m1\033[0m. Install php-5.3"
+                read -p "Please input a number:(Default 1 press Enter) " PHP_version
+                [ -z "$PHP_version" ] && PHP_version=1
+                if [ $PHP_version != 1 ] && [ $PHP_version != 2 ] && [ $PHP_version != 3 ];then
+                        echo -e "\033[31minput error! Please input 1 2 3 \033[0m"
+                else
                         break
                 fi
         done
@@ -129,26 +148,46 @@ OS_Ubuntu='init/init_Ubuntu.sh 2>&1 | tee -a lnmp_install.log \n
 /bin/mv init/init_Ubuntu.sh init/init_Ubuntu.ed'
 OS_command
 
-if [ "$choice_db" == 'mysql' ];then
+# Database
+if [ $DB_version == 1 ];then
 	cd $lnmp_dir
-	. functions/mysql.sh 
-	Install_MySQL 2>&1 | tee -a $lnmp_dir/lnmp_install.log 
+	. functions/mysql-5.6.sh 
+	Install_MySQL-5.6 2>&1 | tee -a $lnmp_dir/lnmp_install.log 
 	db_install_dir=$mysql_install_dir
 	sed -i "s@^db_install_dir.*@db_install_dir=$mysql_install_dir@" options.conf
 	sed -i "s@^db_data_dir.*@db_data_dir=$mysql_data_dir@" options.conf
-fi
-if [ "$choice_db" == 'mariadb' ];then
+elif [ $DB_version == 2 ];then
 	cd $lnmp_dir
-	. functions/mariadb.sh
-	Install_MariaDB 2>&1 | tee -a $lnmp_dir/lnmp_install.log 
+        . functions/mysql-5.5.sh
+        Install_MySQL-5.5 2>&1 | tee -a $lnmp_dir/lnmp_install.log
+        db_install_dir=$mysql_install_dir
+        sed -i "s@^db_install_dir.*@db_install_dir=$mysql_install_dir@" options.conf
+        sed -i "s@^db_data_dir.*@db_data_dir=$mysql_data_dir@" options.conf
+elif [ $DB_version == 3 ];then
+	cd $lnmp_dir
+	. functions/mariadb-5.5.sh
+	Install_MariaDB-5.5 2>&1 | tee -a $lnmp_dir/lnmp_install.log 
 	db_install_dir=$mariadb_install_dir
 	sed -i "s@^db_install_dir.*@db_install_dir=$mariadb_install_dir@" options.conf
 	sed -i "s@^db_data_dir.*@db_data_dir=$mariadb_data_dir@" options.conf
+else
+        echo -e "\033[31mdatabase install failed, Please contact the author! \033[0m"
+        kill -9 $$
 fi
 
-if [ ! -d "$php_install_dir" ];then
-	. functions/php.sh
-	Install_PHP 2>&1 | tee -a $lnmp_dir/lnmp_install.log 
+# PHP
+if [ $PHP_version == 1 ];then
+	. functions/php-5.5.sh
+	Install_PHP-5.5 2>&1 | tee -a $lnmp_dir/lnmp_install.log
+elif [ $PHP_version == 2 ];then
+        . functions/php-5.4.sh
+        Install_PHP-5.4 2>&1 | tee -a $lnmp_dir/lnmp_install.log
+elif [ $PHP_version == 3 ];then
+        . functions/php-5.3.sh
+        Install_PHP-5.3 2>&1 | tee -a $lnmp_dir/lnmp_install.log
+else
+        echo -e "\033[31mPHP install failed, Please contact the author! \033[0m"
+        kill -9 $$
 fi
 
 if [ ! -d "$nginx_install_dir" ];then

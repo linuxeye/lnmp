@@ -10,7 +10,7 @@ cd $lnmp_dir/src
 
 rm -rf release* ngx_pagespeed-release*
 src_url=https://dl.google.com/dl/page-speed/psol/1.6.29.5.tar.gz && Download_src
-wget -c --no-check-certificate https://github.com/pagespeed/ngx_pagespeed/archive/release-1.6.29.5-beta.zip
+[ -s "release-1.6.29.5-beta" ] && echo "release-1.6.29.5-beta found" || wget -c --no-check-certificate https://github.com/pagespeed/ngx_pagespeed/archive/release-1.6.29.5-beta.zip
 
 unzip -q release-1.6.29.5-beta
 tar xzf 1.6.29.5.tar.gz -C ngx_pagespeed-release-1.6.29.5-beta

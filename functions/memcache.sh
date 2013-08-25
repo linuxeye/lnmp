@@ -14,6 +14,7 @@ src_url=http://pkgs.fedoraproject.org/lookaside/pkgs/memcached/memcached-1.4.15.
 
 tar xzf memcache-2.2.7.tgz
 cd memcache-2.2.7
+make clean
 $php_install_dir/bin/phpize
 ./configure --with-php-config=$php_install_dir/bin/php-config
 make && make install

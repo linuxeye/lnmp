@@ -33,6 +33,7 @@ mkdir -p $home_dir/default $wwwlogs_dir $lnmp_dir/{src,conf}
 if [ ! -d "$db_install_dir" ];then
         while :
         do
+		echo 'Please select the database version:'
                 echo -e "\t\033[32m1\033[0m. Install MySQL-5.6"
                 echo -e "\t\033[32m2\033[0m. Install MySQL-5.5"
                 echo -e "\t\033[32m3\033[0m. Install MariaDB-5.5"
@@ -55,9 +56,10 @@ fi
 if [ ! -d "$php_install_dir" ];then
         while :
         do
+		echo 'Please select the php version:'
                 echo -e "\t\033[32m1\033[0m. Install php-5.5"
-                echo -e "\t\033[32m1\033[0m. Install php-5.4"
-                echo -e "\t\033[32m1\033[0m. Install php-5.3"
+                echo -e "\t\033[32m2\033[0m. Install php-5.4"
+                echo -e "\t\033[32m3\033[0m. Install php-5.3"
                 read -p "Please input a number:(Default 1 press Enter) " PHP_version
                 [ -z "$PHP_version" ] && PHP_version=1
                 if [ $PHP_version != 1 ] && [ $PHP_version != 2 ] && [ $PHP_version != 3 ];then

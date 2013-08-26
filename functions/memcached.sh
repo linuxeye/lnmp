@@ -28,10 +28,10 @@ else
 fi
 
 ln -s $memcached_install_dir/bin/memcached /usr/bin/memcached
-OS_CentOS='/bin/cp init/Memcached-init-CentOS /etc/init.d/memcached \n
+OS_CentOS='/bin/cp ../init/Memcached-init-CentOS /etc/init.d/memcached \n
 chkconfig --add memcached \n
 chkconfig memcached on'
-OS_Ubuntu='/bin/cp init/Memcached-init-Ubuntu /etc/init.d/memcached \n
+OS_Ubuntu='/bin/cp ../init/Memcached-init-Ubuntu /etc/init.d/memcached \n
 update-rc.d memcached defaults'
 OS_command
 sed -i "s@/usr/local/memcached@$memcached_install_dir@g" /etc/init.d/memcached

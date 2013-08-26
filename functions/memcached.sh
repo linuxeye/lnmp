@@ -40,6 +40,7 @@ service memcached start
 # php memcached extension
 tar xzf libmemcached-1.0.16.tar.gz
 cd libmemcached-1.0.16
+yum -y install gcc44
 ./configure --with-memcached=$memcached_install_dir
 make && make install
 cd ..

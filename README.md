@@ -1,28 +1,30 @@
-## Introduction
+   This script is free collection of shell scripts for rapid deployment of lnmp stacks (`Linux`, `Nginx`, `MySQL`/`MariaDB` and `PHP`) for CentOS/Redhat and Ubuntu.
 
-   `Linux`+`Nginx`+`MySQL` (Can Choose to install `MariaDB`)+`PHP` (Can Choose whether to install `Pureftpd`+`User manager for PureFTPd`+`phpMyAdmin`), Can choose to install ngx_pagespeed after installing lnmp, Installing the module execute scripts `/root/lnmp/install_ngx_pagespeed.sh`. Add a virtual host with ngx_pagespeed module, Please use the script `/root/lnmp/vhost_ngx_pagespeed.sh` (Must be installed ngx_pagespeed module). Do not ngx_pagespeed module, can run the script `/root/lnmp/vhost.sh` Add a virtual host. <br /> 
-   The script is the new software package using stable version, Fixes some security issues, (Before installation will be performed, Initialize security script) For CentOS/RadHat >=5 or Ubuntu >=12 .<br />
-
-   Features include:
+   Script features: 
 - Constant updates 
-- Source compiler, Almost all of source packages is the latest stable version and downloaded from the official website
+- Source compiler installation, most source code is the latest stable version, and downloaded from the official website
 - Fixes some security issues 
-- Choose to install MySQL or MariaDB database 
-- Choose whether to install Pureftpd, phpMyAdmin 
-- Choose whether to install memcache or redis
-- Support ngx_pagespeed module (after installing lnmp)
+- You can freely choose to install MySQL database (MySQL-5.5, MySQL-5.6) or MariaDB (MariaDB-5.5) 
+- You can freely choose to install PHP version (php-5.5, php-5.4, php-5.3)
+- According to their needs can choose to install Pureftpd, phpMyAdmin
+- According to their needs can choose to install memcached, redis
+- According to their needs can choose to install ngx_pagespeed
+- According to their needs can choose to install eAccelerator (php-5.4, php-5.3) 
 - Add a virtual host script provided 
 
 ## How to use 
 
 ```bash
-   # Please ensure that the downloaded script in the root directory.
-   yum -y install wget screen
+   yum -y install wget screen # for CentOS/Redhat
+   #apt-get -y install wget screen # for Ubuntu 
    wget http://blog.linuxeye.com/wp-content/uploads/lnmp.tar.gz
+   #or wget http://blog.linuxeye.com/wp-content/uploads/lnmp-full.tar.gz # include source packages
    tar xzf lnmp.tar.gz
    cd lnmp
    chmod +x lnmp_install.sh
    # Prevent interrupt the installation process. If the network is down, you can execute commands `srceen -r lnmp` network reconnect the installation window.
+   # Если сеть не работает, вы можете выполнять команды `srceen -r lnmp` сети подключить установку окна.
+   # 如果网路出现中断，可以执行命令`srceen -r lnmp`重新连接安装窗口
    screen -S lnmp
    ./lnmp_install.sh
 ```
@@ -38,3 +40,4 @@
 
    For feedback, questions, and to follow the progress of the project (Chinese): <br />
    [lnmp最新源码一键安装脚本](http://blog.linuxeye.com/31.html)
+   provided support:[nightgod](http://odvps.ml)

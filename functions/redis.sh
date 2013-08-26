@@ -10,7 +10,7 @@ cd $lnmp_dir/src
 . ../options.conf
 
 src_url=http://pecl.php.net/get/redis-2.2.3.tgz && Download_src
-src_url=http://redis.googlecode.com/files/redis-2.6.14.tar.gz && Download_src
+src_url=http://download.redis.io/releases/redis-2.6.15.tar.gz && Download_src
 
 tar xzf redis-2.2.3.tgz
 cd redis-2.2.3
@@ -26,8 +26,8 @@ fi
 service php-fpm restart
 cd ..
 
-tar xzf redis-2.6.14.tar.gz
-cd redis-2.6.14
+tar xzf redis-2.6.15.tar.gz
+cd redis-2.6.15
 if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 32 ];then
 	sed -i '1i\CFLAGS= -march=i686' src/Makefile
 	sed -i 's@^OPT=.*@OPT=-O2 -march=i686@' src/.make-settings

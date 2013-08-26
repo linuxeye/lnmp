@@ -32,13 +32,10 @@ if [ -f "objs/nginx" ];then
 	kill -USR2 `cat /var/run/nginx.pid`
 	kill -QUIT `cat /var/run/nginx.pid.oldbin`
 	mkdir /var/ngx_pagespeed_cache
-	chown www.www /var/ngx_pagespeed_cache
-	/bin/cp $lnmp_dir/vhost.sh $lnmp_dir/vhost_ngx_pagespeed.sh
-	sed -i 's@root $vhostdir;@root $vhostdir;\n\tpagespeed on;\n\tpagespeed FileCachePath /var/ngx_pagespeed_cache;\n\tpagespeed RewriteLevel CoreFilters;\n\tpagespeed EnableFilters local_storage_cache;\n\tpagespeed EnableFilters collapse_whitespace,remove_comments;\n\tpagespeed EnableFilters outline_css;\n\tpagespeed EnableFilters flatten_css_imports;\n\tpagespeed EnableFilters move_css_above_scripts;\n\tpagespeed EnableFilters move_css_to_head;\n\tpagespeed EnableFilters outline_javascript;\n\tpagespeed EnableFilters combine_javascript;\n\tpagespeed EnableFilters combine_css;\n\tpagespeed EnableFilters rewrite_javascript;\n\tpagespeed EnableFilters rewrite_css,sprite_images;\n\tpagespeed EnableFilters rewrite_style_attributes;\n\tpagespeed EnableFilters recompress_images;\n\tpagespeed EnableFilters resize_images;\n\tpagespeed EnableFilters convert_meta_tags;\n\tlocation ~ "\\.pagespeed\\.([a-z]\\.)?[a-z]{2}\\.[^.]{10}\\.[^.]+" { add_header "" ""; }\n\tlocation ~ "^/ngx_pagespeed_static/" { }\n\tlocation ~ "^/ngx_pagespeed_beacon$" { }\n\tlocation /ngx_pagespeed_statistics { allow 127.0.0.1; deny all; }\n\tlocation /ngx_pagespeed_message { allow 127.0.0.1; deny all; }@' $lnmp_dir/vhost_ngx_pagespeed.sh
+	chown -R www.www /var/ngx_pagespeed_cache
 	echo -e "\033[32minstall ngx_pagespeed module successfully! \033[0m"
-	echo -e "`printf "%-40s" "add ngx_pagespeed Virtual Hosts:"`\033[32m$lnmp_dir/vhost_ngx_pagespeed.sh\033[0m"
 else
-	echo -e "`printf "%-40s" "add Virtual Hosts:"`\033[31minstall ngx_pagespeed failed\033[0m"
+	echo -e "\033[31minstall ngx_pagespeed failed\033[0m"
 	kill -9 $$
 fi
 }

@@ -33,12 +33,12 @@ mkdir -p $home_dir/default $wwwlogs_dir $lnmp_dir/{src,conf}
 if [ ! -d "$db_install_dir" ];then
         while :
         do
-		echo 'Please select the database version:'
+                echo 'Please select the database version:'
                 echo -e "\t\033[32m1\033[0m. Install MySQL-5.6"
                 echo -e "\t\033[32m2\033[0m. Install MySQL-5.5"
                 echo -e "\t\033[32m3\033[0m. Install MariaDB-5.5"
                 read -p "Please input a number:(Default 1 press Enter) " DB_version
-		echo ''
+                echo ''
                 [ -z "$DB_version" ] && DB_version=1
                 if [ $DB_version != 1 ] && [ $DB_version != 2 ] && [ $DB_version != 3 ];then
                         echo -e "\033[31minput error! Please input 1 2 3 \033[0m"
@@ -54,19 +54,30 @@ if [ ! -d "$db_install_dir" ];then
 fi
 
 # check PHP
-if [ ! -d "$php_install_dir" ];then
+if [ ! -d "$php_insall_dir" ];then
         while :
         do
-		echo 'Please select the php version:'
+                echo 'Please select the php version:'
                 echo -e "\t\033[32m1\033[0m. Install php-5.5"
                 echo -e "\t\033[32m2\033[0m. Install php-5.4"
                 echo -e "\t\033[32m3\033[0m. Install php-5.3"
                 read -p "Please input a number:(Default 1 press Enter) " PHP_version
-		echo ''
+                echo ''
                 [ -z "$PHP_version" ] && PHP_version=1
                 if [ $PHP_version != 1 ] && [ $PHP_version != 2 ] && [ $PHP_version != 3 ];then
                         echo -e "\033[31minput error! Please input 1 2 3 \033[0m"
                 else
+			if [ $PHP_version != 1 ];then
+				while :
+				do
+				        read -p "Do you want to install php eAccelerator module? (y/n)" eAccelerator_yn
+				        if [ "$eAccelerator_yn" != 'y' ] && [ "$eAccelerator_yn" != 'n' ];then
+				                echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
+				        else
+						break
+				        fi
+				done
+			fi
                         break
                 fi
         done
@@ -80,11 +91,17 @@ do
         if [ "$FTP_yn" != 'y' ] && [ "$FTP_yn" != 'n' ];then
                 echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
         else
-        if [ "$FTP_yn" == 'y' ];then
+
+        	if [ "$FTP_yn" == 'y' ];then
                 while :
                 do
                         read -p "Please input the manager password of Pureftpd:" ftpmanagerpwd
-                        (( ${#ftpmanagerpwd} >= 5 )) && sed -i "s@^ftpmanagerpwd.*@ftpmanagerpwd=$ftpmanagerpwd@" options.conf && break || echo -e "\033[31mFtp manager password least 5 characters! \033[0m"
+                        if (( ${#ftpmanagerpwd} >= 5 ));then
+				sed -i "s@^ftpmanagerpwd.*@ftpmanagerpwd=$ftpmanagerpwd@" options.conf
+				break
+			else
+				echo -e "\033[31mFtp manager password least 5 characters! \033[0m"
+			fi
                 done
         fi
         break
@@ -118,12 +135,12 @@ if [ ! -d "$redis_install_dir" ];then
 	done
 fi
 
-# check memcache
+# check memcached
 if [ ! -d "$memcached_install_dir" ];then
         while :
         do
-                read -p "Do you want to install Memcache? (y/n)" memcache_yn
-                if [ "$memcache_yn" != 'y' ] && [ "$memcache_yn" != 'n' ];then
+                read -p "Do you want to install memcached? (y/n)" memcached_yn
+                if [ "$memcached_yn" != 'y' ] && [ "$memcached_yn" != 'n' ];then
                         echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
                 else
                         break
@@ -194,6 +211,11 @@ else
         kill -9 $$
 fi
 
+if [ "$eAccelerator_yn" ];then
+	. functions/eaccelerator.sh
+        Install_eAccelerator 2>&1 | tee -a $lnmp_dir/lnmp_install.log
+fi
+
 if [ ! -d "$nginx_install_dir" ];then
 	. functions/nginx.sh
 	Install_Nginx 2>&1 | tee -a $lnmp_dir/lnmp_install.log 
@@ -217,9 +239,9 @@ if [ "$redis_yn" == 'y' ];then
 	Install_Redis 2>&1 | tee -a $lnmp_dir/lnmp_install.log
 fi
 
-if [ "$memcache_yn" == 'y' ];then
-	. functions/memcache.sh
-	Install_Memcache 2>&1 | tee -a $lnmp_dir/lnmp_install.log
+if [ "$memcached_yn" == 'y' ];then
+	. functions/memcached.sh
+	Install_memcached 2>&1 | tee -a $lnmp_dir/lnmp_install.log
 fi
 
 if [ ! -f "$home_dir/default/index.html" ];then

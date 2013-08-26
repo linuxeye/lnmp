@@ -56,6 +56,26 @@ if [ "$moredomainame_yn" == 'y' ]; then
 	done
 fi
 
+# check ngx_pagespeed and add ngx_pagespeed
+script -c "/usr/local/nginx/sbin/nginx -V" -f /tmp/typescript > /dev/null 2>&1
+if [ ! -z "`cat /tmp/typescript | grep ngx_pagespeed`" ];then
+        rm -rf /tmp/typescript
+        while :
+        do
+                read -p "Do you want to use ngx_pagespeed module? (y/n)" ngx_pagespeed_yn
+                if [ "$ngx_pagespeed_yn" != 'y' ] && [ "$ngx_pagespeed_yn" != 'n' ];then
+                        echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
+                else
+                        if [ "$ngx_pagespeed_yn" == 'y' ];then
+                                ngx_pagespeed='pagespeed on;\npagespeed FileCachePath /var/ngx_pagespeed_cache;\npagespeed RewriteLevel CoreFilters;\npagespeed EnableFilters local_storage_cache;\npagespeed EnableFilters collapse_whitespace,remove_comments;\npagespeed EnableFilters outline_css;\npagespeed EnableFilters flatten_css_imports;\npagespeed EnableFilters move_css_above_scripts;\npagespeed EnableFilters move_css_to_head;\npagespeed EnableFilters outline_javascript;\npagespeed EnableFilters combine_javascript;\npagespeed EnableFilters combine_css;\npagespeed EnableFilters rewrite_javascript;\npagespeed EnableFilters rewrite_css,sprite_images;\npagespeed EnableFilters rewrite_style_attributes;\npagespeed EnableFilters recompress_images;\npagespeed EnableFilters resize_images;\npagespeed EnableFilters convert_meta_tags;\nlocation ~ "\\.pagespeed\\.([a-z]\\.)?[a-z]{2}\\.[^.]{10}\\.[^.]+" { add_header "" ""; }\nlocation ~ "^/ngx_pagespeed_static/" { }\nlocation ~ "^/ngx_pagespeed_beacon$" { }\nlocation /ngx_pagespeed_statistics { allow 127.0.0.1; deny all; }\nlocation /ngx_pagespeed_message { allow 127.0.0.1; deny all; }'
+                        else
+                                ngx_pagespeed=
+                        fi
+                        break
+                fi
+        done
+fi
+
 while :
 do
         read -p "Do you want to add hotlink protection? (y/n)" anti_hotlinking_yn 
@@ -161,6 +181,7 @@ if ( \$query_string ~* ".*[\;'\<\>].*" ){
 	return 404;
 }
 $anti_hotlinking
+`echo -e $ngx_pagespeed`
 location ~ .*\.(php|php5)?$  {
       fastcgi_pass  127.0.0.1:9000;
       fastcgi_index index.php;

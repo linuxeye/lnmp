@@ -12,7 +12,7 @@ cd $lnmp_dir/src
 src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz && Download_src
-src_url=http://www.imagemagick.org/download/ImageMagick-6.8.6-8.tar.gz && Download_src
+src_url=http://www.imagemagick.org/download/ImageMagick-6.8.6-9.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/2.6.8/mcrypt-2.6.8.tar.gz && Download_src
 src_url=http://kr1.php.net/distributions/php-5.3.27.tar.gz && Download_src
 src_url=http://pecl.php.net/get/imagick-3.1.0RC2.tgz && Download_src
@@ -40,8 +40,8 @@ cd mhash-0.9.9.9
 make && make install
 cd ../
 
-tar xzf ImageMagick-6.8.6-8.tar.gz
-cd ImageMagick-6.8.6-8
+tar xzf ImageMagick-6.8.6-9.tar.gz
+cd ImageMagick-6.8.6-9
 ./configure
 make && make install
 cd ../

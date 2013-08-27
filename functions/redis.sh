@@ -44,6 +44,7 @@ if [ -f "src/redis-server" ];then
 	sed -i "s@logfile.*$@logfile $redis_install_dir/var/redis.log@" $redis_install_dir/etc/redis.conf
 	sed -i "s@^dir.*$@dir $redis_install_dir/var@" $redis_install_dir/etc/redis.conf
 	sed -i 's@daemonize no@daemonize yes@' $redis_install_dir/etc/redis.conf
+	cd ../../
 	OS_CentOS='/bin/cp init/Redis-server-init-CentOS /etc/init.d/redis-server \n
 chkconfig --add redis-server \n
 chkconfig redis-server on'
@@ -60,5 +61,4 @@ else
 	echo -e "\033[31mRedis install failed, Please contact the author! \033[0m"
 fi
 
-cd ../../
 }

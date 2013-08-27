@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # Blog:  http://blog.linuxeye.com
 #
-# Version: 0.2 21-Aug-2013 lj2007331 AT gmail.com
+# Version: 0.3 27-Aug-2013 lj2007331 AT gmail.com
 # Notes: LNMP for CentOS/RadHat 5+ and Ubuntu 12+ 
 #
 # This script's project home is:
@@ -67,17 +67,28 @@ if [ ! -d "$php_insall_dir" ];then
                 if [ $PHP_version != 1 ] && [ $PHP_version != 2 ] && [ $PHP_version != 3 ];then
                         echo -e "\033[31minput error! Please input 1 2 3 \033[0m"
                 else
-			if [ $PHP_version != 1 ];then
-				while :
-				do
-				        read -p "Do you want to install php eAccelerator module? (y/n)" eAccelerator_yn
-				        if [ "$eAccelerator_yn" != 'y' ] && [ "$eAccelerator_yn" != 'n' ];then
-				                echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
-				        else
-						break
-				        fi
-				done
-			fi
+                        if [ $PHP_version == 2 ];then
+                                while :
+                                do
+                                        read -p "Do you want to install php eAccelerator-1.0-dev module? (y/n)" eAccelerator_yn
+                                        if [ "$eAccelerator_yn" != 'y' ] && [ "$eAccelerator_yn" != 'n' ];then
+                                                echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
+                                        else
+                                                break
+                                        fi
+                                done
+                        fi
+                        if [ $PHP_version == 3 ];then
+                                while :
+                                do
+                                        read -p "Do you want to install php eAccelerator-0.9 module? (y/n)" eAccelerator_yn
+                                        if [ "$eAccelerator_yn" != 'y' ] && [ "$eAccelerator_yn" != 'n' ];then
+                                                echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
+                                        else
+                                                break
+                                        fi
+                                done
+                        fi
                         break
                 fi
         done
@@ -211,9 +222,13 @@ else
         kill -9 $$
 fi
 
-if [ "$eAccelerator_yn" ];then
-	. functions/eaccelerator.sh
-        Install_eAccelerator 2>&1 | tee -a $lnmp_dir/lnmp_install.log
+if [ "$eAccelerator_yn" == 'y' -a $PHP_version == 2 ];then
+	. functions/eaccelerator-1.0-dev.sh
+        Install_eAccelerator-1.0-dev 2>&1 | tee -a $lnmp_dir/lnmp_install.log
+        echo functions/eaccelerator-0.9.sh
+elif [ "$eAccelerator_yn" == 'y' -a $PHP_version == 3 ];then
+	. functions/eaccelerator-0.9.sh
+        Install_eAccelerator-0.9 2>&1 | tee -a $lnmp_dir/lnmp_install.log
 fi
 
 if [ ! -d "$nginx_install_dir" ];then

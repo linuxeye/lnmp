@@ -57,9 +57,8 @@ if [ "$moredomainame_yn" == 'y' ]; then
 fi
 
 # check ngx_pagespeed and add ngx_pagespeed
-script -c "/usr/local/nginx/sbin/nginx -V" -f /tmp/typescript > /dev/null 2>&1
-if [ ! -z "`cat /tmp/typescript | grep ngx_pagespeed`" ];then
-        rm -rf /tmp/typescript
+/usr/local/nginx/sbin/nginx -V &> $$
+if [ ! -z "`cat $$ | grep ngx_pagespeed`" ];then
         while :
         do
                 read -p "Do you want to use ngx_pagespeed module? (y/n)" ngx_pagespeed_yn
@@ -208,7 +207,7 @@ echo "#                    LNMP for CentOS/RadHat 5/6                       #"
 echo "# For more information please visit http://blog.linuxeye.com/31.html  #"
 echo "#######################################################################"
 echo ''
-echo -e "`printf "%-32s" "Your domain"`:\033[32m$domain\033[0m"
+echo -e "`printf "%-32s" "Your domain:"`\033[32m$domain\033[0m"
 echo -e "`printf "%-32s" "Virtualhost conf:"`\033[32m/usr/local/nginx/conf/vhost/$domain.conf\033[0m"
 echo -e "`printf "%-32s" "Directory of:"`\033[32m$vhostdir\033[0m"
 [ "$rewrite_yn" == 'y' ] && echo -e "`printf "%-32s" "Rewrite rule:"`\033[32m$rewrite\033[0m" 

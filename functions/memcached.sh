@@ -40,9 +40,11 @@ service memcached start
 # php memcached extension
 tar xzf libmemcached-1.0.16.tar.gz
 cd libmemcached-1.0.16
-OS_CentOS='yum -y install gcc44 gcc44-c++ libstdc++44-devel \n
-export CC=/usr/bin/gcc44 \n
-export CXX=/usr/bin/g++44'
+OS_CentOS='if [ -z "`rpm -q gcc | grep 'gcc-4\.4'`" ];then \n
+	yum -y install gcc44 gcc44-c++ libstdc++44-devel \n
+	export CC=/usr/bin/gcc44 \n
+	export CXX=/usr/bin/g++44 \n
+fi'
 OS_command
 ./configure --with-memcached=$memcached_install_dir
 make && make install

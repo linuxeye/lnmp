@@ -39,6 +39,7 @@ sed -i "s@/usr/local/nginx@$nginx_install_dir@g" /etc/init.d/nginx
 mv $nginx_install_dir/conf/nginx.conf $nginx_install_dir/conf/nginx.conf_bk
 sed -i "s@/home/wwwroot/default@$home_dir/default@" conf/nginx.conf
 /bin/cp conf/nginx.conf $nginx_install_dir/conf/nginx.conf
+sed -i "s@/home/wwwlogs@$wwwlogs_dir@g" $nginx_install_dir/conf/nginx.conf
 
 # worker_cpu_affinity
 CPU_num=`cat /proc/cpuinfo | grep processor | wc -l`

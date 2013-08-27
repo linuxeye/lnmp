@@ -17,11 +17,11 @@ tar xzf 1.6.29.5.tar.gz -C ngx_pagespeed-release-1.6.29.5-beta
 cd nginx-1.4.2/
 make clean
 if [ `getconf WORD_BIT` = '32' ] && [ `getconf LONG_BIT` = '64' ] ;then
-./configure --prefix=$nginx_install_dir --user=www --group=www --with-http_stub_status_module --with-http_ssl_module \
+	./configure --prefix=$nginx_install_dir --user=www --group=www --with-http_stub_status_module --with-http_ssl_module \
 --add-module=../ngx_pagespeed-release-1.6.29.5-beta \
 --with-cc-opt='-DLINUX=2 -D_REENTRANT -D_LARGEFILE64_SOURCE -pthread'
 else
-./configure --prefix=$nginx_install_dir --user=www --group=www --with-http_stub_status_module --with-http_ssl_module \
+	./configure --prefix=$nginx_install_dir --user=www --group=www --with-http_stub_status_module --with-http_ssl_module \
 --add-module=../ngx_pagespeed-release-1.6.29.5-beta \
 --with-cc-opt='-DLINUX=2 -D_REENTRANT -D_LARGEFILE64_SOURCE -march=i686 -pthread'
 fi
@@ -36,6 +36,6 @@ if [ -f "objs/nginx" ];then
 	echo -e "\033[32minstall ngx_pagespeed module successfully! \033[0m"
 else
 	echo -e "\033[31minstall ngx_pagespeed failed\033[0m"
-	kill -9 $$
 fi
+cd ../../
 }

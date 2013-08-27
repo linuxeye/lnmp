@@ -16,10 +16,9 @@ make clean
 $php_install_dir/bin/phpize
 ./configure --enable-eaccelerator=shared --with-php-config=$php_install_dir/bin/php-config
 make && make install
-cd ../
-
-mkdir /var/eaccelerator_cache;chown -R www.www /var/eaccelerator_cache 
-cat >> $php_install_dir/etc/php.ini << EOF
+if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/eaccelerator.so" ];then
+        mkdir /var/eaccelerator_cache;chown -R www.www /var/eaccelerator_cache
+        cat >> $php_install_dir/etc/php.ini << EOF
 [eaccelerator]
 zend_extension="$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/eaccelerator.so"
 eaccelerator.shm_size="64"
@@ -39,6 +38,9 @@ eaccelerator.keys = "disk_only"
 eaccelerator.sessions = "disk_only"
 eaccelerator.content = "disk_only"
 EOF
-
-service php-fpm restart
+        service php-fpm restart
+else
+        echo -e "\033[31meAccelerator module install failed, Please contact the author! \033[0m"
+fi
+cd ../../
 }

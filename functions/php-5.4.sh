@@ -129,7 +129,6 @@ make clean
 $php_install_dir/bin/phpize
 ./configure --with-php-config=$php_install_dir/bin/php-config
 make && make install
-cd ../../
 
 # Modify php.ini
 sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions/`\"\nextension = \"imagick.so\"\nextension = \"http.so\"@" $php_install_dir/etc/php.ini
@@ -204,4 +203,5 @@ env[TMPDIR] = /tmp
 env[TEMP] = /tmp
 EOF
 service php-fpm start
+cd ../../
 }

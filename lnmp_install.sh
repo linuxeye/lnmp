@@ -70,9 +70,14 @@ if [ ! -d "$php_insall_dir" ];then
                         if [ $PHP_version == 2 ];then
                                 while :
                                 do
-                                        read -p "Do you want to install php eAccelerator-1.0-dev module? (y/n)" eAccelerator_yn
-                                        if [ "$eAccelerator_yn" != 'y' ] && [ "$eAccelerator_yn" != 'n' ];then
-                                                echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
+                                        echo 'Please select the PHP opcode cache:'
+                                        echo -e "\t\033[32m1\033[0m. Install Zend OPcache"
+                                        echo -e "\t\033[32m2\033[0m. Install eAccelerator-1.0-dev"
+                                        read -p "Please input a number:(Default 1 press Enter) " PHP_cache
+                                        echo ''
+                                        [ -z "$PHP_cache" ] && PHP_cache=1
+                                        if [ "$PHP_cache" != 1 ] && [ "$PHP_cache" != 2 ];then
+                                                echo -e "\033[31minput error! Please input 1 or 2\033[0m"
                                         else
                                                 break
                                         fi
@@ -81,9 +86,14 @@ if [ ! -d "$php_insall_dir" ];then
                         if [ $PHP_version == 3 ];then
                                 while :
                                 do
-                                        read -p "Do you want to install php eAccelerator-0.9 module? (y/n)" eAccelerator_yn
-                                        if [ "$eAccelerator_yn" != 'y' ] && [ "$eAccelerator_yn" != 'n' ];then
-                                                echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
+                                        echo 'Please select the PHP opcode cache:'
+                                        echo -e "\t\033[32m1\033[0m. Install Zend OPcache"
+                                        echo -e "\t\033[32m2\033[0m. Install eAccelerator-0.9"
+                                        read -p "Please input a number:(Default 1 press Enter) " PHP_cache
+                                        echo ''
+                                        [ -z "$PHP_cache" ] && PHP_cache=1
+                                        if [ "$PHP_cache" != 1 ] && [ "$PHP_cache" != 2 ];then
+                                                echo -e "\033[31minput error! Please input 1 or 2\033[0m"
                                         else
                                                 break
                                         fi
@@ -222,12 +232,15 @@ else
         kill -9 $$
 fi
 
-if [ "$eAccelerator_yn" == 'y' -a $PHP_version == 2 ];then
-	. functions/eaccelerator-1.0-dev.sh
+# PHP opcode cache (php <= 5.4)
+if [ $PHP_cache == 1 ];then
+        . functions/zendopcache.sh
+        Install_ZendOPcache 2>&1 | tee -a $lnmp_dir/lnmp_install.log
+elif [ $PHP_cache == 2 -a $PHP_version == 2 ];then
+        . functions/eaccelerator-1.0-dev.sh
         Install_eAccelerator-1.0-dev 2>&1 | tee -a $lnmp_dir/lnmp_install.log
-        echo functions/eaccelerator-0.9.sh
-elif [ "$eAccelerator_yn" == 'y' -a $PHP_version == 3 ];then
-	. functions/eaccelerator-0.9.sh
+elif [ $PHP_cache == 2 -a $PHP_version == 3 ];then
+        . functions/eaccelerator-0.9.sh
         Install_eAccelerator-0.9 2>&1 | tee -a $lnmp_dir/lnmp_install.log
 fi
 

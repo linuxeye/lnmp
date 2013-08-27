@@ -52,7 +52,6 @@ OS_CentOS='chkconfig --add mysqld \n
 chkconfig mysqld on'
 OS_Ubuntu='update-rc.d mysqld defaults'
 OS_command
-cd ..
 
 # my.cf
 cat > /etc/my.cnf << EOF
@@ -123,4 +122,5 @@ cd ../
 sed -i "s@^db_install_dir.*@db_install_dir=$mysql_install_dir@" options.conf
 sed -i "s@^db_data_dir.*@db_data_dir$mysql_data_dir@" options.conf
 service mysqld stop
+cd ../../
 }

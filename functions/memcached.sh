@@ -22,29 +22,29 @@ make && make install
 cd ../
 if [ -d "$memcached_install_dir" ];then
         echo -e "\033[32mmemcached install successfully! \033[0m"
-else
-        echo -e "\033[31mmemcached install failed, Please contact the author! \033[0m"
-        kill -9 $$
-fi
-
-ln -s $memcached_install_dir/bin/memcached /usr/bin/memcached
-OS_CentOS='/bin/cp ../init/Memcached-init-CentOS /etc/init.d/memcached \n
+	ln -s $memcached_install_dir/bin/memcached /usr/bin/memcached
+	OS_CentOS='/bin/cp ../init/Memcached-init-CentOS /etc/init.d/memcached \n
 chkconfig --add memcached \n
 chkconfig memcached on'
-OS_Ubuntu='/bin/cp ../init/Memcached-init-Ubuntu /etc/init.d/memcached \n
+	OS_Ubuntu='/bin/cp ../init/Memcached-init-Ubuntu /etc/init.d/memcached \n
 update-rc.d memcached defaults'
-OS_command
-sed -i "s@/usr/local/memcached@$memcached_install_dir@g" /etc/init.d/memcached
-service memcached start
+	OS_command
+	sed -i "s@/usr/local/memcached@$memcached_install_dir@g" /etc/init.d/memcached
+	service memcached start
+else
+        echo -e "\033[31mmemcached install failed, Please contact the author! \033[0m"
+fi
 
 # php memcached extension
 tar xzf libmemcached-1.0.16.tar.gz
 cd libmemcached-1.0.16
 OS_CentOS='if [ -z "`rpm -q gcc | grep 'gcc-4\.4'`" ];then \n
 	yum -y install gcc44 gcc44-c++ libstdc++44-devel \n
-	export CC=/usr/bin/gcc44 \n
-	export CXX=/usr/bin/g++44 \n
 fi'
+if [ -f "`which gcc44`" ];then
+	export CC=`which gcc44`
+	export CXX=`which g++44`
+fi
 OS_command
 ./configure --with-memcached=$memcached_install_dir
 make && make install
@@ -58,9 +58,10 @@ $php_install_dir/bin/phpize
 make && make install
 if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/memcached.so" ];then
         sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "memcached.so"@' $php_install_dir/etc/php.ini
+	service php-fpm restart
 else
         echo -e "\033[31mPHP memcached module install failed, Please contact the author! \033[0m"
 fi
-service php-fpm restart
-cd ../
+
+cd ../../
 }

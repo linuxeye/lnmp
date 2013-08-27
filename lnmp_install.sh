@@ -22,23 +22,34 @@ echo ''
 #get pwd
 sed -i "s@^lnmp_dir.*@lnmp_dir=`pwd`@" options.conf
 
-# get ipv4 
+# get ipv4
 . functions/get_ipv4.sh
 
 # Definition Directory
 . ./options.conf
 mkdir -p $home_dir/default $wwwlogs_dir $lnmp_dir/{src,conf}
 
+# choice upgrade OS
+while :
+do
+        read -p "Do you want to upgrade operating system ? (y/n)" upgrade_yn
+        if [ "$upgrade_yn" != 'y' ] && [ "$upgrade_yn" != 'n' ];then
+                echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
+        else
+                break
+        fi
+done
+
 # choice database 
 if [ ! -d "$db_install_dir" ];then
         while :
         do
+                echo ''
                 echo 'Please select the database version:'
                 echo -e "\t\033[32m1\033[0m. Install MySQL-5.6"
                 echo -e "\t\033[32m2\033[0m. Install MySQL-5.5"
                 echo -e "\t\033[32m3\033[0m. Install MariaDB-5.5"
                 read -p "Please input a number:(Default 1 press Enter) " DB_version
-                echo ''
                 [ -z "$DB_version" ] && DB_version=1
                 if [ $DB_version != 1 ] && [ $DB_version != 2 ] && [ $DB_version != 3 ];then
                         echo -e "\033[31minput error! Please input 1 2 3 \033[0m"
@@ -57,12 +68,12 @@ fi
 if [ ! -d "$php_insall_dir" ];then
         while :
         do
+                echo ''
                 echo 'Please select the php version:'
                 echo -e "\t\033[32m1\033[0m. Install php-5.5"
                 echo -e "\t\033[32m2\033[0m. Install php-5.4"
                 echo -e "\t\033[32m3\033[0m. Install php-5.3"
                 read -p "Please input a number:(Default 1 press Enter) " PHP_version
-                echo ''
                 [ -z "$PHP_version" ] && PHP_version=1
                 if [ $PHP_version != 1 ] && [ $PHP_version != 2 ] && [ $PHP_version != 3 ];then
                         echo -e "\033[31minput error! Please input 1 2 3 \033[0m"
@@ -134,6 +145,7 @@ fi
 if [ ! -d "$wwwroot/default/phpMyAdmin" ];then
 while :
 do
+	echo ''
         read -p "Do you want to install phpMyAdmin? (y/n)" phpMyAdmin_yn
         if [ "$phpMyAdmin_yn" != 'y' ] && [ "$phpMyAdmin_yn" != 'n' ];then
                 echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
@@ -147,6 +159,7 @@ fi
 if [ ! -d "$redis_install_dir" ];then
 	while :
 	do
+		echo ''
 		read -p "Do you want to install Redis? (y/n)" redis_yn
 		if [ "$redis_yn" != 'y' ] && [ "$redis_yn" != 'n' ];then
 	                echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
@@ -160,6 +173,7 @@ fi
 if [ ! -d "$memcached_install_dir" ];then
         while :
         do
+		echo ''
                 read -p "Do you want to install memcached? (y/n)" memcached_yn
                 if [ "$memcached_yn" != 'y' ] && [ "$memcached_yn" != 'n' ];then
                         echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
@@ -172,6 +186,7 @@ fi
 # check ngx_pagespeed
 while :
 do
+	echo ''
         read -p "Do you want to install ngx_pagespeed? (y/n)" ngx_pagespeed_yn
         if [ "$ngx_pagespeed_yn" != 'y' ] && [ "$ngx_pagespeed_yn" != 'n' ];then
                 echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
@@ -184,6 +199,7 @@ chmod +x functions/*.sh init/* *.sh
 
 # init
 . functions/check_os.sh
+export IP upgrade_yn
 OS_CentOS='init/init_CentOS.sh 2>&1 | tee -a lnmp_install.log \n
 /bin/mv init/init_CentOS.sh init/init_CentOS.ed'
 OS_Ubuntu='init/init_Ubuntu.sh 2>&1 | tee -a lnmp_install.log \n

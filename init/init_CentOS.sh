@@ -1,5 +1,5 @@
 #!/bin/bash
-# Configure yum source
+
 cd /tmp
 wget -c http://yum.baseurl.org/download/3.4/yum-3.4.3.tar.gz
 tar zxf yum-3.4.3.tar.gz
@@ -10,6 +10,13 @@ rm -rf yum-3.4.3*
 sed -i 's@^exclude@#exclude@' /etc/yum.conf
 yum clean all
 
+if [ "`./functions/get_ip_area.py $IP`" == 'CN' ];then
+        cd /etc/yum.repos.d/
+        mv CentOS-Base.repo CentOS-Base.repo_bk
+	wget -c http://mirrors.163.com/.help/CentOS-Base-163.repo
+	yum makecache
+fi
+
 # Remove obsolete rpm package
 if [ -z "$(cat /etc/redhat-release | grep '5\.')" ];then
 	yum -y groupremove "FTP Server" "Text-based Internet" "Windows File Server" "PostgreSQL Database" "News Server" "MySQL Database" "DNS Name Server" "Web Server" "Dialup Networking Support" "Mail Server" "Ruby" "Office/Productivity" "Sound and Video" "X Window System" "X Software Development" "Printing Support" "OpenFabrics Enterprise Distribution"
@@ -19,7 +26,10 @@ fi
 
 # update rpm packages
 yum check-update
-yum -y update
+yum -y upgrade
+
+# check upgrade OS
+[ "$upgrade_yn" == 'y' ] && yum -y update
 
 # Install needed packages
 yum -y install gcc gcc-c++ make autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel nss_ldap openldap openldap-devel openldap-clients openldap-servers libxslt-devel libevent-devel ntp libtool libtool-ltdl bison gd-devel vim-enhanced pcre-devel zip unzip sendmail
@@ -36,29 +46,20 @@ chkconfig iptables on
 chkconfig sendmail on
 service sendmail restart
 
-# /etc/hosts
-[ "$(hostname -i | awk '{print $1}')" != "127.0.0.1" ] && sed -i "s@^127.0.0.1\(.*\)@127.0.0.1   `hostname` \1@" /etc/hosts
-
 # Close SELINUX
 setenforce 0
 sed -i 's/^SELINUX=.*$/SELINUX=disabled/' /etc/selinux/config
 
 # initdefault
 sed -i 's/^id:.*$/id:3:initdefault:/' /etc/inittab
-/sbin/init q
+init q
+
 # PS1
 echo 'PS1="\[\e[37;40m\][\[\e[32;40m\]\u\[\e[37;40m\]@\h \[\e[35;40m\]\W\[\e[0m\]]\\$ \[\e[33;40m\]"' >> /etc/profile
 
-# Record command
+# history size 
 sed -i 's/^HISTSIZE=.*$/HISTSIZE=100/' /etc/profile
-echo "export PROMPT_COMMAND='{ msg=\$(history 1 | { read x y; echo \$y; });user=\$(whoami); echo \$(date \"+%Y-%m-%d %H:%M:%S\"):\$user:\`pwd\`/:\$msg ---- \$(who am i); } >> /tmp/\`hostname\`.\`whoami\`.history-timestamp'" >> /root/.bash_profile
-
-# Wrong password five times locked 180s
-sed -i '4a auth        required      pam_tally2.so deny=5 unlock_time=180' /etc/pam.d/system-auth
-
-# alias vi
-sed -i "s@alias mv=.*@alias mv='mv -i'\nalias vi=vim@" /root/.bashrc
-echo 'syntax on' >> /etc/vimrc
+echo "export PROMPT_COMMAND='{ msg=\$(history 1 | { read x y; echo \$y; });user=\$(whoami); echo \$(date \"+%Y-%m-%d %H:%M:%S\"):\$user:\`pwd\`/:\$msg ---- \$(who am i); } >> /tmp/\`hostname\`.\`whoami\`.history-timestamp'" >> /root/.bashrc
 
 # /etc/security/limits.conf
 cat >> /etc/security/limits.conf <<EOF
@@ -68,6 +69,28 @@ cat >> /etc/security/limits.conf <<EOF
 * hard nofile 65535
 EOF
 echo "ulimit -SH 65535" >> /etc/rc.local
+
+# /etc/hosts
+[ "$(hostname -i | awk '{print $1}')" != "127.0.0.1" ] && sed -i "s@^127.0.0.1\(.*\)@127.0.0.1   `hostname` \1@" /etc/hosts
+
+# Set timezone
+rm -rf /etc/localtime
+ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+# Set OpenDNS
+if [ ! -z "`cat /etc/resolv.conf | grep '8\.8\.8\.8'`" ];then
+cat > /etc/resolv.conf << EOF
+nameserver 208.67.222.222
+nameserver 208.67.220.220
+EOF
+fi
+
+# Wrong password five times locked 180s
+sed -i '4a auth        required      pam_tally2.so deny=5 unlock_time=180' /etc/pam.d/system-auth
+
+# alias vi
+sed -i "s@alias mv=\(.*\)@alias mv=\1\nalias vi=vim@" /root/.bashrc
+echo 'syntax on' >> /etc/vimrc
 
 # /etc/sysctl.conf
 sed -i 's/net.ipv4.tcp_syncookies.*$/net.ipv4.tcp_syncookies = 1/g' /etc/sysctl.conf
@@ -90,24 +113,12 @@ else
 	sed -i 's@^ACTIVE_CONSOLES.*@ACTIVE_CONSOLES=/dev/tty[1-2]@' /etc/sysconfig/init	
 	sed -i 's@^start@#start@' /etc/init/control-alt-delete.conf
 fi
-/sbin/init q
-
-# Set timezone
-rm -rf /etc/localtime
-ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-
-# Set OpenDNS
-if [ ! -z "`cat /etc/resolv.conf | grep '8\.8\.8\.8'`" ];then 
-cat > /etc/resolv.conf << EOF
-nameserver 208.67.222.222
-nameserver 208.67.220.220
-EOF
-fi
+init q
 
 # Update time
-/usr/sbin/ntpdate pool.ntp.org 
+ntpdate pool.ntp.org 
 echo '*/20 * * * * /usr/sbin/ntpdate pool.ntp.org > /dev/null 2>&1' > /var/spool/cron/root;chmod 600 /var/spool/cron/root
-/sbin/service crond restart
+service crond restart
 
 # iptables
 cat > /etc/sysconfig/iptables << EOF
@@ -130,10 +141,9 @@ cat > /etc/sysconfig/iptables << EOF
 -A syn-flood -j REJECT --reject-with icmp-port-unreachable
 COMMIT
 EOF
-/sbin/service iptables restart
-. /etc/profile
+service iptables restart
 
-###install tmux
+# install tmux
 mkdir tmux
 cd tmux
 wget -c http://cloud.github.com/downloads/libevent/libevent/libevent-2.0.21-stable.tar.gz 
@@ -157,7 +167,7 @@ else
     ln -s /usr/local/lib/libevent-2.0.so.5 /usr/lib/libevent-2.0.so.5
 fi
 
-###install htop
+# install htop
 mkdir htop
 cd htop
 wget -c http://downloads.sourceforge.net/project/htop/htop/1.0.2/htop-1.0.2.tar.gz 
@@ -167,3 +177,5 @@ cd htop-1.0.2
 make && make install
 cd ../../
 rm -rf htop
+
+. /etc/profile

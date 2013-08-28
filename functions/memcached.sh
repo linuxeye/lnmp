@@ -12,6 +12,7 @@ cd $lnmp_dir/src
 src_url=http://pkgs.fedoraproject.org/lookaside/pkgs/memcached/memcached-1.4.15.tar.gz/36ea966f5a29655be1746bf4949f7f69/memcached-1.4.15.tar.gz && Download_src
 src_url=https://launchpad.net/libmemcached/1.0/1.0.16/+download/libmemcached-1.0.16.tar.gz && Download_src
 src_url=http://pecl.php.net/get/memcached-2.1.0.tgz && Download_src
+src_url=http://pecl.php.net/get/memcache-2.2.7.tgz && Download_src
 
 # memcached server
 useradd -M -s /sbin/nologin memcached
@@ -35,6 +36,20 @@ else
         echo -e "\033[31mmemcached install failed, Please contact the author! \033[0m"
 fi
 
+# php memcache extension
+tar xzf memcache-2.2.7.tgz 
+cd memcache-2.2.7 
+make clean
+$php_install_dir/bin/phpize
+./configure --with-php-config=$php_install_dir/bin/php-config
+make && make install
+if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/memcache.so" ];then
+        sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "memcache.so"@' $php_install_dir/etc/php.ini
+        service php-fpm restart
+else
+        echo -e "\033[31mPHP memcache module install failed, Please contact the author! \033[0m"
+fi
+cd ..
 # php memcached extension
 tar xzf libmemcached-1.0.16.tar.gz
 cd libmemcached-1.0.16

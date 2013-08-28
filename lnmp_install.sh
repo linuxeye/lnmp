@@ -32,7 +32,7 @@ mkdir -p $home_dir/default $wwwlogs_dir $lnmp_dir/{src,conf}
 # choice upgrade OS
 while :
 do
-        read -p "Do you want to upgrade operating system ? (y/n)" upgrade_yn
+        read -p "Do you want to upgrade operating system ? (y/n) " upgrade_yn
         if [ "$upgrade_yn" != 'y' ] && [ "$upgrade_yn" != 'n' ];then
                 echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
         else
@@ -45,7 +45,7 @@ if [ ! -d "$db_install_dir" ];then
         while :
         do
                 echo ''
-                echo 'Please select the database version:'
+                echo 'Please select a version of the Database:'
                 echo -e "\t\033[32m1\033[0m. Install MySQL-5.6"
                 echo -e "\t\033[32m2\033[0m. Install MySQL-5.5"
                 echo -e "\t\033[32m3\033[0m. Install MariaDB-5.5"
@@ -56,7 +56,7 @@ if [ ! -d "$db_install_dir" ];then
                 else
                         while :
                         do
-                                read -p "Please input database root password:" dbrootpwd
+                                read -p "Please input the root password of database: " dbrootpwd
                                 (( ${#dbrootpwd} >= 5 )) && sed -i "s@^dbrootpwd.*@dbrootpwd=$dbrootpwd@" options.conf && break || echo -e "\033[31mdatabase root password least 5 characters! \033[0m"
                         done
                         break
@@ -69,7 +69,7 @@ if [ ! -d "$php_insall_dir" ];then
         while :
         do
                 echo ''
-                echo 'Please select the php version:'
+                echo 'Please select a version of the PHP:'
                 echo -e "\t\033[32m1\033[0m. Install php-5.5"
                 echo -e "\t\033[32m2\033[0m. Install php-5.4"
                 echo -e "\t\033[32m3\033[0m. Install php-5.3"
@@ -81,7 +81,7 @@ if [ ! -d "$php_insall_dir" ];then
                         if [ $PHP_version == 2 ];then
                                 while :
                                 do
-                                        echo 'Please select the PHP opcode cache:'
+                                        echo 'Please select a opcode cache of the PHP:'
                                         echo -e "\t\033[32m1\033[0m. Install Zend OPcache"
                                         echo -e "\t\033[32m2\033[0m. Install eAccelerator-1.0-dev"
                                         read -p "Please input a number:(Default 1 press Enter) " PHP_cache
@@ -97,7 +97,7 @@ if [ ! -d "$php_insall_dir" ];then
                         if [ $PHP_version == 3 ];then
                                 while :
                                 do
-                                        echo 'Please select the PHP opcode cache:'
+                                        echo 'Please select a opcode cache of the PHP:'
                                         echo -e "\t\033[32m1\033[0m. Install Zend OPcache"
                                         echo -e "\t\033[32m2\033[0m. Install eAccelerator-0.9"
                                         read -p "Please input a number:(Default 1 press Enter) " PHP_cache
@@ -119,7 +119,8 @@ fi
 if [ ! -d "$pureftpd_install_dir" ];then
 while :
 do
-        read -p "Do you want to install Pure-FTPd? (y/n)" FTP_yn
+	echo ''
+        read -p "Do you want to install Pure-FTPd? (y/n) " FTP_yn
         if [ "$FTP_yn" != 'y' ] && [ "$FTP_yn" != 'n' ];then
                 echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
         else
@@ -127,7 +128,7 @@ do
         	if [ "$FTP_yn" == 'y' ];then
                 while :
                 do
-                        read -p "Please input the manager password of Pureftpd:" ftpmanagerpwd
+                        read -p "Please input the manager password of Pure-FTPd: " ftpmanagerpwd
                         if (( ${#ftpmanagerpwd} >= 5 ));then
 				sed -i "s@^ftpmanagerpwd.*@ftpmanagerpwd=$ftpmanagerpwd@" options.conf
 				break
@@ -146,7 +147,7 @@ if [ ! -d "$wwwroot/default/phpMyAdmin" ];then
 while :
 do
 	echo ''
-        read -p "Do you want to install phpMyAdmin? (y/n)" phpMyAdmin_yn
+        read -p "Do you want to install phpMyAdmin? (y/n) " phpMyAdmin_yn
         if [ "$phpMyAdmin_yn" != 'y' ] && [ "$phpMyAdmin_yn" != 'n' ];then
                 echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
         else
@@ -160,7 +161,7 @@ if [ ! -d "$redis_install_dir" ];then
 	while :
 	do
 		echo ''
-		read -p "Do you want to install Redis? (y/n)" redis_yn
+		read -p "Do you want to install Redis? (y/n) " redis_yn
 		if [ "$redis_yn" != 'y' ] && [ "$redis_yn" != 'n' ];then
 	                echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
 		else
@@ -174,7 +175,7 @@ if [ ! -d "$memcached_install_dir" ];then
         while :
         do
 		echo ''
-                read -p "Do you want to install memcached? (y/n)" memcached_yn
+                read -p "Do you want to install memcached? (y/n) " memcached_yn
                 if [ "$memcached_yn" != 'y' ] && [ "$memcached_yn" != 'n' ];then
                         echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
                 else
@@ -187,7 +188,7 @@ fi
 while :
 do
 	echo ''
-        read -p "Do you want to install ngx_pagespeed? (y/n)" ngx_pagespeed_yn
+        read -p "Do you want to install ngx_pagespeed? (y/n) " ngx_pagespeed_yn
         if [ "$ngx_pagespeed_yn" != 'y' ] && [ "$ngx_pagespeed_yn" != 'n' ];then
                 echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
         else

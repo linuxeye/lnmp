@@ -13,7 +13,7 @@ echo ''
 
 while :
 do
-	read -p "Please input domain(example: www.linuxeye.com linuxeye.com):" domain
+	read -p "Please input domain(example: www.linuxeye.com linuxeye.com): " domain
 	if [ -z "`echo $domain | grep '.*\..*'`" ]; then
 		echo -e "\033[31minput error\033[0m"
 	else
@@ -21,19 +21,16 @@ do
 	fi
 done
 if [ ! -f "/usr/local/nginx/conf/vhost/$domain.conf" ]; then
-	echo "################################"
 	echo "domain=$domain"
-	echo "################################"
 else
-	echo "################################"
 	echo "$domain is exist!"
-	echo "################################"
 	exit 1
 fi
 
 while :
 do
-        read -p "Do you want to add more domain name? (y/n)" moredomainame_yn 
+	echo ''
+        read -p "Do you want to add more domain name? (y/n) " moredomainame_yn 
         if [ "$moredomainame_yn" != 'y' ] && [ "$moredomainame_yn" != 'n' ];then
                 echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
         else
@@ -43,13 +40,12 @@ done
 if [ "$moredomainame_yn" == 'y' ]; then
 	while :
 	do
-		read -p "Type domainname,example(blog.linuxeye.com bbs.linuxeye.com):" moredomain
+		echo ''
+		read -p "Type domainname,example(blog.linuxeye.com bbs.linuxeye.com): " moredomain
 		if [ -z "`echo $moredomain | grep '.*\..*'`" ]; then
 			echo -e "\033[31minput error\033[0m"
 		else
-			echo "################################"
 			echo -e "domain list=\033[32m$moredomain\033[0m"
-			echo "################################"
 			moredomainame=" $moredomain"
 			break
 		fi
@@ -61,7 +57,8 @@ fi
 if [ ! -z "`cat $$ | grep ngx_pagespeed`" ];then
         while :
         do
-                read -p "Do you want to use ngx_pagespeed module? (y/n)" ngx_pagespeed_yn
+		echo ''
+                read -p "Do you want to use ngx_pagespeed module? (y/n) " ngx_pagespeed_yn
                 if [ "$ngx_pagespeed_yn" != 'y' ] && [ "$ngx_pagespeed_yn" != 'n' ];then
                         echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
                 else
@@ -73,11 +70,13 @@ if [ ! -z "`cat $$ | grep ngx_pagespeed`" ];then
                         break
                 fi
         done
+	rm -rf $$
 fi
 
 while :
 do
-        read -p "Do you want to add hotlink protection? (y/n)" anti_hotlinking_yn 
+	echo ''
+        read -p "Do you want to add hotlink protection? (y/n) " anti_hotlinking_yn 
         if [ "$anti_hotlinking_yn" != 'y' ] && [ "$anti_hotlinking_yn" != 'n' ];then
                 echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
         else
@@ -102,18 +101,18 @@ else
 	anti_hotlinking=
 fi
 
+echo ''
 echo "Please input the directory for the domain:$domain :"
-read -p "(Default directory: /home/wwwroot/$domain):" vhostdir
+read -p "(Default directory: /home/wwwroot/$domain): " vhostdir
 if [ -z "$vhostdir" ]; then
 	vhostdir="/home/wwwroot/$domain"
-	echo "################################"
 	echo -e "Virtual Host Directory=\033[32m$vhostdir\033[0m"
-	echo "################################"
 fi
 
 while :
 do
-        read -p "Allow Rewrite rule? (y/n)" rewrite_yn
+	echo ''
+        read -p "Allow Rewrite rule? (y/n) " rewrite_yn
         if [ "$rewrite_yn" != 'y' ] && [ "$rewrite_yn" != 'n' ];then
                 echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
         else
@@ -124,17 +123,16 @@ if [ "$rewrite_yn" == 'n' ];then
 	rewrite="none"
 	touch "/usr/local/nginx/conf/$rewrite.conf"
 else
+	echo ''
 	echo "Please input the rewrite of programme :"
 	echo -e "\033[32mwordpress\033[0m,\033[32mdiscuz\033[0m,\033[32mphpwind\033[0m,\033[32mtypecho\033[0m,\033[32mecshop\033[0m,\033[32mdrupal\033[0m rewrite was exist."
 	read -p "(Default rewrite: other):" rewrite
 	if [ "$rewrite" == "" ]; then
 		rewrite="other"
 	fi
-	echo "################################"
 	echo -e "You choose rewrite=\033[32m$rewrite\033[0m" 
-	echo "################################"
-	if [ -s "/root/lnmp/conf/$rewrite.conf" ];then
-		/bin/cp /root/lnmp/conf/$rewrite.conf /usr/local/nginx/conf/$rewrite.conf
+	if [ -s "conf/$rewrite.conf" ];then
+		/bin/cp conf/$rewrite.conf /usr/local/nginx/conf/$rewrite.conf
 	else
 		touch "/usr/local/nginx/conf/$rewrite.conf"
 	fi
@@ -143,7 +141,8 @@ fi
 
 while :
 do
-        read -p "Allow access_log? (y/n)" access_yn 
+	echo ''
+        read -p "Allow access_log? (y/n) " access_yn 
         if [ "$access_yn" != 'y' ] && [ "$access_yn" != 'n' ];then
                 echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
         else
@@ -154,9 +153,8 @@ if [ "$access_yn" == 'n' ]; then
 	al="access_log off;"
 else
 	al="access_log  /home/wwwlogs/$domain.log combined;"
-	echo "################################"
 	echo -e "You access log file=\033[32m/home/wwwlogs/$domain.log\033[0m"
-	echo "################################"
+	echo '' 
 fi
 
 

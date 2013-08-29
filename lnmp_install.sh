@@ -218,9 +218,8 @@ OS_Ubuntu='init/init_Ubuntu.sh 2>&1 | tee -a lnmp_install.log \n
 OS_command
 
 # tcmalloc
-if [ "$tcmalloc_yn" == 'y' ];then
-	. functions/tcmalloc.sh | tee -a $lnmp_dir/lnmp_install.log
-fi
+. functions/tcmalloc.sh
+[ "$tcmalloc_yn" == 'y' ] && TCMalloc | tee -a $lnmp_dir/lnmp_install.log
 
 # Database
 if [ $DB_version == 1 ];then

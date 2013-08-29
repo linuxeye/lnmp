@@ -1,4 +1,6 @@
 #!/bin/bash
+TCMalloc()
+{
 cd $lnmp_dir/src
 . ../functions/download.sh
 
@@ -32,3 +34,4 @@ else
 	kill -9 $$
 fi
 cd ..
+}

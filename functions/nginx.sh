@@ -29,7 +29,7 @@ if [ "Stcmalloc_yn" == 'y' ];then
 	./configure --prefix=$nginx_install_dir --user=www --group=www --with-http_stub_status_module --with-http_ssl_module --with-http_flv_module --with-http_gzip_static_module --with-google_perftools_module
 	mkdir /tmp/tcmalloc
 	chown -R www.www /tmp/tcmalloc
-	sed -i 's@^pid\(.*)@pid\1\ngoogle_perftools_profiles /tmp/tcmalloc;@' ../../conf/nginx.conf
+	sed -i 's@^pid\(.*\)@pid\1\ngoogle_perftools_profiles /tmp/tcmalloc;@' ../../conf/nginx.conf
 else
 	./configure --prefix=$nginx_install_dir --user=www --group=www --with-http_stub_status_module --with-http_ssl_module --with-http_flv_module --with-http_gzip_static_module
 fi

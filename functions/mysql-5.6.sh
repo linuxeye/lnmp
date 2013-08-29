@@ -53,7 +53,7 @@ OS_CentOS='chkconfig --add mysqld \n
 chkconfig mysqld on'
 OS_Ubuntu='update-rc.d mysqld defaults'
 OS_command
-cd ..
+cd ../../
 
 # my.cf
 cat > /etc/my.cnf << EOF
@@ -120,8 +120,8 @@ $mysql_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.user wher
 $mysql_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.db where User='';"
 $mysql_install_dir/bin/mysql -uroot -p$dbrootpwd -e "drop database test;"
 $mysql_install_dir/bin/mysql -uroot -p$dbrootpwd -e "reset master;"
-cd ../
 sed -i "s@^db_install_dir.*@db_install_dir=$mysql_install_dir@" options.conf
-sed -i "s@^db_data_dir.*@db_data_dir$mysql_data_dir@" options.conf
+sed -i "s@^db_data_dir.*@db_data_dir=$mysql_data_dir@" options.conf
 service mysqld stop
+[ "$tcmalloc_yn" == 'y' ] && sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libtcmalloc.so@' $mysql_install_dir/bin/mysqld_safe 
 }

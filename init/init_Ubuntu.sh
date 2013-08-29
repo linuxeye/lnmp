@@ -1,15 +1,26 @@
 #!/bin/bash
 
-apt-get -y update
 apt-get -y remove apache2 apache2-doc apache2-utils apache2.2-common apache2.2-bin apache2-mpm-prefork apache2-doc apache2-mpm-worker mysql-client mysql-server mysql-common php5 php5-common php5-cgi php5-mysql php5-curl php5-gd
 dpkg -p apache2 apache2-doc apache2-mpm-prefork apache2-utils apache2.2-common libmysqlclient15off libmysqlclient15-dev mysql-common php5 php5-common php5-cgi php5-mysql php5-curl php5-gd
+
+apt-get -y update
+# update packages
 apt-get -y upgrade
 
+# check upgrade OS
+[ "$upgrade_yn" == 'y' ] && apt-get -y dist-upgrade 
+
 # Install needed packages
-apt-get -y install gcc g++ make autoconf libjpeg8 libjpeg8-dev libpng12-0 libpng12-dev libpng3 libfreetype6 libfreetype6-dev libxml2 libxml2-dev zlib1g zlib1g-dev libc6 libc6-dev libglib2.0-0 libglib2.0-dev bzip2 libzip-dev libbz2-1.0 libncurses5 libncurses5-dev curl libcurl3 libcurl4-openssl-dev e2fsprogs libkrb5-3 libkrb5-dev libltdl-dev libidn11 libidn11-dev openssl libtool libevent-2.0-5 libevent-dev slapd ldap-utils libnss-ldap libguile-ltdl-1 bison libsasl2-dev libxslt-dev libcloog-ppl0 vim zip unzip tmux htop wget 
+apt-get -y install gcc g++ make autoconf libjpeg8 libjpeg8-dev libpng12-0 libpng12-dev libpng3 libfreetype6 libfreetype6-dev libxml2 libxml2-dev zlib1g zlib1g-dev libc6 libc6-dev libglib2.0-0 libglib2.0-dev bzip2 libzip-dev libbz2-1.0 libncurses5 libncurses5-dev curl libcurl3 libcurl4-openssl-dev e2fsprogs libkrb5-3 libkrb5-dev libltdl-dev libidn11 libidn11-dev openssl libtool libevent-2.0-5 libevent-dev slapd ldap-utils libnss-ldap bison libsasl2-dev vim zip unzip tmux htop wget 
+
+if [ ! -z "`cat /etc/issue | grep 13`" ];then
+	apt-get -y install libxslt1-dev libcloog-ppl1
+if [ ! -z "`cat /etc/issue | grep 12`" ];then
+	apt-get -y install libxslt-dev libcloog-ppl0
+fi
 
 # PS1
-echo "PS1='\${debian_chroot:+(\$debian_chroot)}\\[\\e[1;32m\\]\\u@\\h\\[\\033[00m\\]:\\[\\033[01;34m\\]\\w\\[\\033[00m\\]\\$ '" >> /etc/profile
+echo "PS1='\${debian_chroot:+(\$debian_chroot)}\\[\\e[1;32m\\]\\u@\\h\\[\\033[00m\\]:\\[\\033[01;34m\\]\\w\\[\\033[00m\\]\\$ '" >> /root/.bashrc 
 
 # history size 
 sed -i 's/HISTSIZE=.*$/HISTSIZE=100/g' /root/.bashrc 
@@ -85,4 +96,4 @@ COMMIT
 EOF
 iptables-restore < /etc/iptables.up.rules
 
-. /etc/profile
+. /root/.bashrc

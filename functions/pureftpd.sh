@@ -55,6 +55,7 @@ update-rc.d pureftpd defaults"
 	sed -i 's@\$LANG.*;@\$LANG = "chinese";@' ftp/config.php
 	rm -rf  ftp/install.php
 	mv ftp $home_dir/default
+	cd ..
 
 	# iptables Ftp
 	iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
@@ -63,9 +64,8 @@ update-rc.d pureftpd defaults"
 	OS_Ubuntu='iptables-save > /etc/iptables.up.rules'
 	OS_command
 else
+	cd ../../
         echo -e "\033[31mPure-Ftp install failed, Please contact the author! \033[0m"
         kill -9 $$
 fi
-
-cd ../../
 }

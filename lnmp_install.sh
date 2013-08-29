@@ -85,7 +85,6 @@ if [ ! -d "$php_insall_dir" ];then
                                         echo -e "\t\033[32m1\033[0m. Install Zend OPcache"
                                         echo -e "\t\033[32m2\033[0m. Install eAccelerator-1.0-dev"
                                         read -p "Please input a number:(Default 1 press Enter) " PHP_cache
-                                        echo ''
                                         [ -z "$PHP_cache" ] && PHP_cache=1
                                         if [ "$PHP_cache" != 1 ] && [ "$PHP_cache" != 2 ];then
                                                 echo -e "\033[31minput error! Please input 1 or 2\033[0m"
@@ -101,7 +100,6 @@ if [ ! -d "$php_insall_dir" ];then
                                         echo -e "\t\033[32m1\033[0m. Install Zend OPcache"
                                         echo -e "\t\033[32m2\033[0m. Install eAccelerator-0.9"
                                         read -p "Please input a number:(Default 1 press Enter) " PHP_cache
-                                        echo ''
                                         [ -z "$PHP_cache" ] && PHP_cache=1
                                         if [ "$PHP_cache" != 1 ] && [ "$PHP_cache" != 2 ];then
                                                 echo -e "\033[31minput error! Please input 1 or 2\033[0m"
@@ -196,39 +194,45 @@ do
         fi
 done
 
+# check tcmalloc
+while :
+do
+        echo ''
+        read -p "Do you want to optimize the system with tcmalloc? (y/n) " tcmalloc_yn
+        if [ "$tcmalloc_yn" != 'y' ] && [ "$tcmalloc_yn" != 'n' ];then
+                echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
+        else
+                break
+        fi
+done
+
 chmod +x functions/*.sh init/* *.sh
 
 # init
 . functions/check_os.sh
-export IP upgrade_yn
+export IP upgrade_yn tcmalloc_yn
 OS_CentOS='init/init_CentOS.sh 2>&1 | tee -a lnmp_install.log \n
 /bin/mv init/init_CentOS.sh init/init_CentOS.ed'
 OS_Ubuntu='init/init_Ubuntu.sh 2>&1 | tee -a lnmp_install.log \n
 /bin/mv init/init_Ubuntu.sh init/init_Ubuntu.ed'
 OS_command
 
+# tcmalloc
+[ "$tcmalloc_yn" == 'y' ] && ./functions/tcmalloc.sh | tee -a $lnmp_dir/lnmp_install.log
+
 # Database
 if [ $DB_version == 1 ];then
 	cd $lnmp_dir
 	. functions/mysql-5.6.sh 
 	Install_MySQL-5.6 2>&1 | tee -a $lnmp_dir/lnmp_install.log 
-	db_install_dir=$mysql_install_dir
-	sed -i "s@^db_install_dir.*@db_install_dir=$mysql_install_dir@" options.conf
-	sed -i "s@^db_data_dir.*@db_data_dir=$mysql_data_dir@" options.conf
 elif [ $DB_version == 2 ];then
 	cd $lnmp_dir
         . functions/mysql-5.5.sh
         Install_MySQL-5.5 2>&1 | tee -a $lnmp_dir/lnmp_install.log
-        db_install_dir=$mysql_install_dir
-        sed -i "s@^db_install_dir.*@db_install_dir=$mysql_install_dir@" options.conf
-        sed -i "s@^db_data_dir.*@db_data_dir=$mysql_data_dir@" options.conf
 elif [ $DB_version == 3 ];then
 	cd $lnmp_dir
 	. functions/mariadb-5.5.sh
 	Install_MariaDB-5.5 2>&1 | tee -a $lnmp_dir/lnmp_install.log 
-	db_install_dir=$mariadb_install_dir
-	sed -i "s@^db_install_dir.*@db_install_dir=$mariadb_install_dir@" options.conf
-	sed -i "s@^db_data_dir.*@db_data_dir=$mariadb_data_dir@" options.conf
 else
         echo -e "\033[31mdatabase install failed, Please contact the author! \033[0m"
         kill -9 $$
@@ -305,7 +309,7 @@ echo ''
 echo "The path of some dirs:"
 echo -e "`printf "%-32s" "Nginx dir":`\033[32m$nginx_install_dir\033[0m"
 echo -e "`printf "%-32s" "PHP dir:"`\033[32m$php_install_dir\033[0m"
-echo -e "`printf "%-32s" "$Choice_DB dir:"`\033[32m$db_install_dir\033[0m"
-echo -e "`printf "%-32s" "$Choice_DB User:"`\033[32mroot\033[0m"
-echo -e "`printf "%-32s" "$Choice_DB Password:"`\033[32m${dbrootpwd}\033[0m"
+echo -e "`printf "%-32s" "Database Install dir:"`\033[32m$db_install_dir\033[0m"
+echo -e "`printf "%-32s" "Database User:"`\033[32mroot\033[0m"
+echo -e "`printf "%-32s" "Database Password:"`\033[32m${dbrootpwd}\033[0m"
 echo -e "`printf "%-32s" "Manager url:"`\033[32mhttp://$IP/\033[0m"

@@ -33,7 +33,7 @@ if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 32 ];then
 	sed -i 's@^OPT=.*@OPT=-O2 -march=i686@' src/.make-settings
 fi
 
-make
+[ "$tcmalloc_yn" == 'y' ] && make USE_TCMALLOC=yes FORCE_LIBC_MALLOC=yes || make
 
 if [ -f "src/redis-server" ];then
 	mkdir -p $redis_install_dir/{bin,etc,var}
@@ -58,7 +58,7 @@ update-rc.d redis-server defaults'
 	sysctl -p
 	service redis-server start
 else
+	cd ../../
 	echo -e "\033[31mRedis install failed, Please contact the author! \033[0m"
 fi
-
 }

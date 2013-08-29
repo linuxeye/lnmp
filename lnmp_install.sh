@@ -238,6 +238,9 @@ else
         kill -9 $$
 fi
 
+# get db_install_dir
+. ./options.conf
+
 # PHP
 if [ $PHP_version == 1 ];then
 	. functions/php-5.5.sh
@@ -302,7 +305,6 @@ if [ "$ngx_pagespeed_yn" == 'y' ];then
 	. functions/ngx_pagespeed.sh
 	Install_ngx_pagespeed 2>&1 | tee -a $lnmp_dir/lnmp_install.log
 fi
-
 echo "################Congratulations####################"
 echo -e "\033[32mPlease restart the server and see if the services start up fine.\033[0m"
 echo ''

@@ -40,6 +40,7 @@ update-rc.d pureftpd defaults"
 	sed -i 's/tmppasswd/'$conn_ftpusers_dbpwd'/g' $pureftpd_install_dir/pureftpd-mysql.conf
 	sed -i 's/conn_ftpusers_dbpwd/'$conn_ftpusers_dbpwd'/g' conf/script.mysql
 	sed -i 's/ftpmanagerpwd/'$ftpmanagerpwd'/g' conf/script.mysql
+	ulimit -s unlimited
 	service mysqld restart
 	$db_install_dir/bin/mysql -uroot -p$dbrootpwd < conf/script.mysql
 	service pureftpd start

@@ -30,7 +30,6 @@ if [ "Stcmalloc_yn" == 'y' ];then
 	./configure --prefix=$nginx_install_dir --user=www --group=www --with-http_stub_status_module --with-http_ssl_module --with-http_flv_module --with-http_gzip_static_module --with-google_perftools_module
 	mkdir /tmp/tcmalloc
 	chown -R www.www /tmp/tcmalloc
-	sed -i 's@^pid\(.*\)@pid\1\ngoogle_perftools_profiles /tmp/tcmalloc;@' ../../conf/nginx.conf
 else
 	./configure --prefix=$nginx_install_dir --user=www --group=www --with-http_stub_status_module --with-http_ssl_module --with-http_flv_module --with-http_gzip_static_module
 fi
@@ -49,6 +48,7 @@ mv $nginx_install_dir/conf/nginx.conf $nginx_install_dir/conf/nginx.conf_bk
 sed -i "s@/home/wwwroot/default@$home_dir/default@" conf/nginx.conf
 /bin/cp conf/nginx.conf $nginx_install_dir/conf/nginx.conf
 sed -i "s@/home/wwwlogs@$wwwlogs_dir@g" $nginx_install_dir/conf/nginx.conf
+[ "Stcmalloc_yn" == 'y' ] && sed -i 's@^pid\(.*\)@pid\1\ngoogle_perftools_profiles /tmp/tcmalloc;@' $nginx_install_dir/conf/nginx.conf 
 
 # worker_cpu_affinity
 CPU_num=`cat /proc/cpuinfo | grep processor | wc -l`

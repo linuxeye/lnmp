@@ -127,5 +127,5 @@ $mariadb_install_dir/bin/mysql -uroot -p$dbrootpwd -e "reset master;"
 sed -i "s@^db_install_dir.*@db_install_dir=$mariadb_install_dir@" options.conf
 sed -i "s@^db_data_dir.*@db_data_dir=$mariadb_data_dir@" options.conf
 service mysqld stop
-[ "$tcmalloc_yn" == 'y' ] && sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libtcmalloc.so@' $mysql_install_dir/bin/mysqld_safe 
+[ "$tcmalloc_yn" == 'y' ] && sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libtcmalloc.so@' $mariadb_install_dir/bin/mysqld_safe 
 }

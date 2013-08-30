@@ -1,5 +1,5 @@
 #!/bin/bash
-TCMalloc()
+Install_TCMalloc()
 {
 cd $lnmp_dir/src
 . ../functions/download.sh

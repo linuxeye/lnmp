@@ -33,7 +33,7 @@ if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 32 ];then
 	sed -i 's@^OPT=.*@OPT=-O2 -march=i686@' src/.make-settings
 fi
 
-[ "$tcmalloc_yn" == 'y' ] && make USE_TCMALLOC=yes FORCE_LIBC_MALLOC=yes || make
+make
 
 if [ -f "src/redis-server" ];then
 	mkdir -p $redis_install_dir/{bin,etc,var}

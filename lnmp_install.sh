@@ -219,7 +219,7 @@ OS_command
 
 # tcmalloc
 . functions/tcmalloc.sh
-[ "$tcmalloc_yn" == 'y' ] && TCMalloc | tee -a $lnmp_dir/lnmp_install.log
+[ "$tcmalloc_yn" == 'y' ] && Install_TCMalloc | tee -a $lnmp_dir/lnmp_install.log
 
 # Database
 if [ $DB_version == 1 ];then

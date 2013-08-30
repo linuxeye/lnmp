@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # Blog:  http://blog.linuxeye.com
 
-Install_eAccelerator-0.9()
+Install_eAccelerator-0-9()
 {
 cd $lnmp_dir/src
 . ../functions/download.sh

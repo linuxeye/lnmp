@@ -18,7 +18,7 @@ if [ "`./functions/get_ip_area.py $IP`" == 'CN' ];then
 fi
 
 # Remove obsolete rpm package
-if [ -z "$(cat /etc/redhat-release | grep '5\.')" ];then
+if [ ! -z "$(cat /etc/redhat-release | grep '6\.')" ];then
 	yum -y groupremove "FTP Server" "Text-based Internet" "Windows File Server" "PostgreSQL Database" "News Server" "MySQL Database" "DNS Name Server" "Web Server" "Dialup Networking Support" "Mail Server" "Ruby" "Office/Productivity" "Sound and Video" "X Window System" "X Software Development" "Printing Support" "OpenFabrics Enterprise Distribution"
 else
 	yum -y groupremove "FTP Server" "PostgreSQL Database client" "PostgreSQL Database server" "MySQL Database server" "MySQL Database client" "Web Server" "Office Suite and Productivity" "Ruby Support" "X Window System" "Printing client" "Desktop*"

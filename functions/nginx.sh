@@ -22,8 +22,9 @@ tar xzf nginx-1.4.2.tar.gz
 cd nginx-1.4.2
 
 # Modify Nginx version
-sed -i 's@#define NGINX_VERSION.*$@#define NGINX_VERSION      "1.2"@g' src/core/nginx.h
-sed -i 's@#define NGINX_VER.*NGINX_VERSION$@#define NGINX_VER          "Linuxeye/" NGINX_VERSION@g' src/core/nginx.h
+sed -i 's@#define NGINX_VERSION.*$@#define NGINX_VERSION      "1.2"@' src/core/nginx.h
+sed -i 's@#define NGINX_VER.*NGINX_VERSION$@#define NGINX_VER          "Linuxeye/" NGINX_VERSION@' src/core/nginx.h
+sed -i 's@Server: nginx@Server: linuxeye@' src/http/ngx_http_header_filter_module.c
 
 if [ "Stcmalloc_yn" == 'y' ];then
 	./configure --prefix=$nginx_install_dir --user=www --group=www --with-http_stub_status_module --with-http_ssl_module --with-http_flv_module --with-http_gzip_static_module --with-google_perftools_module

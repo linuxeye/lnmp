@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # Blog:  http://blog.linuxeye.com
 
-Install_PHP-5.3()
+Install_PHP-5-3()
 {
 cd $lnmp_dir/src
 . ../functions/download.sh 

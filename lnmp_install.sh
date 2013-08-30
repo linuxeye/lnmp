@@ -225,15 +225,15 @@ OS_command
 if [ $DB_version == 1 ];then
 	cd $lnmp_dir
 	. functions/mysql-5.6.sh 
-	Install_MySQL-5.6 2>&1 | tee -a $lnmp_dir/lnmp_install.log 
+	Install_MySQL-5-6 2>&1 | tee -a $lnmp_dir/lnmp_install.log 
 elif [ $DB_version == 2 ];then
 	cd $lnmp_dir
         . functions/mysql-5.5.sh
-        Install_MySQL-5.5 2>&1 | tee -a $lnmp_dir/lnmp_install.log
+        Install_MySQL-5-5 2>&1 | tee -a $lnmp_dir/lnmp_install.log
 elif [ $DB_version == 3 ];then
 	cd $lnmp_dir
 	. functions/mariadb-5.5.sh
-	Install_MariaDB-5.5 2>&1 | tee -a $lnmp_dir/lnmp_install.log 
+	Install_MariaDB-5-5 2>&1 | tee -a $lnmp_dir/lnmp_install.log 
 else
         echo -e "\033[31mdatabase install failed, Please contact the author! \033[0m"
         kill -9 $$
@@ -245,13 +245,13 @@ fi
 # PHP
 if [ $PHP_version == 1 ];then
 	. functions/php-5.5.sh
-	Install_PHP-5.5 2>&1 | tee -a $lnmp_dir/lnmp_install.log
+	Install_PHP-5-5 2>&1 | tee -a $lnmp_dir/lnmp_install.log
 elif [ $PHP_version == 2 ];then
         . functions/php-5.4.sh
-        Install_PHP-5.4 2>&1 | tee -a $lnmp_dir/lnmp_install.log
+        Install_PHP-5-4 2>&1 | tee -a $lnmp_dir/lnmp_install.log
 elif [ $PHP_version == 3 ];then
         . functions/php-5.3.sh
-        Install_PHP-5.3 2>&1 | tee -a $lnmp_dir/lnmp_install.log
+        Install_PHP-5-3 2>&1 | tee -a $lnmp_dir/lnmp_install.log
 else
         echo -e "\033[31mPHP install failed, Please contact the author! \033[0m"
         kill -9 $$
@@ -263,10 +263,10 @@ if [ $PHP_cache == 1 ];then
         Install_ZendOPcache 2>&1 | tee -a $lnmp_dir/lnmp_install.log
 elif [ $PHP_cache == 2 -a $PHP_version == 2 ];then
         . functions/eaccelerator-1.0-dev.sh
-        Install_eAccelerator-1.0-dev 2>&1 | tee -a $lnmp_dir/lnmp_install.log
+        Install_eAccelerator-1-0-dev 2>&1 | tee -a $lnmp_dir/lnmp_install.log
 elif [ $PHP_cache == 2 -a $PHP_version == 3 ];then
         . functions/eaccelerator-0.9.sh
-        Install_eAccelerator-0.9 2>&1 | tee -a $lnmp_dir/lnmp_install.log
+        Install_eAccelerator-0-9 2>&1 | tee -a $lnmp_dir/lnmp_install.log
 fi
 
 if [ ! -d "$nginx_install_dir" ];then
@@ -279,7 +279,7 @@ fi
 
 if [ "$FTP_yn" == 'y' ];then
 	. functions/pureftpd.sh
-	Install_Pureftpd 2>&1 | tee -a $lnmp_dir/lnmp_install.log 
+	Install_PureFTPd 2>&1 | tee -a $lnmp_dir/lnmp_install.log 
 fi
 
 if [ "$phpMyAdmin_yn" == 'y' ];then
@@ -289,7 +289,7 @@ fi
 
 if [ "$redis_yn" == 'y' ];then
 	. functions/redis.sh
-	Install_Redis 2>&1 | tee -a $lnmp_dir/lnmp_install.log
+	Install_redis 2>&1 | tee -a $lnmp_dir/lnmp_install.log
 fi
 
 if [ "$memcached_yn" == 'y' ];then

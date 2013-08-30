@@ -21,12 +21,18 @@ make &&  make install
 cd ..
 tar zxf mariadb-5.5.32.tar.gz
 cd mariadb-5.5.32
+if [ "$tcmalloc_yn" == 'y' ];then
+	EXE_LINKER=`echo -e '-DCMAKE_EXE_LINKER_FLAGS="-ltcmalloc" -DWITH_SAFEMALLOC=OFF \\'`
+else
+        EXE_LINKER=\\
+fi
 cmake . -DCMAKE_INSTALL_PREFIX=$mariadb_install_dir \
 -DMYSQL_UNIX_ADDR=/tmp/mysql.sock \
 -DMYSQL_DATADIR=$mariadb_data_dir \
 -DSYSCONFDIR=/etc \
 -DMYSQL_USER=mysql \
 -DMYSQL_TCP_PORT=3306 \
+$EXE_LINKER
 -DWITH_ARIA_STORAGE_ENGINE=1 \
 -DWITH_XTRADB_STORAGE_ENGINE=1 \
 -DWITH_ARCHIVE_STORAGE_ENGINE=1 \
@@ -127,5 +133,4 @@ $mariadb_install_dir/bin/mysql -uroot -p$dbrootpwd -e "reset master;"
 sed -i "s@^db_install_dir.*@db_install_dir=$mariadb_install_dir@" options.conf
 sed -i "s@^db_data_dir.*@db_data_dir=$mariadb_data_dir@" options.conf
 service mysqld stop
-[ "$tcmalloc_yn" == 'y' ] && sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libtcmalloc.so@' $mariadb_install_dir/bin/mysqld_safe 
 }

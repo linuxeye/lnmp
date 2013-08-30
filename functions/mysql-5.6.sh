@@ -22,9 +22,9 @@ cd ..
 tar zxf mysql-5.6.13.tar.gz
 cd mysql-5.6.13
 if [ "$tcmalloc_yn" == 'y' ];then
-        EXE_LINKER=`echo -e '-DCMAKE_EXE_LINKER_FLAGS="-ltcmalloc" -DWITH_SAFEMALLOC=OFF \\'`
+        EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc' -DWITH_SAFEMALLOC=OFF"
 else
-	EXE_LINKER=\\
+        EXE_LINKER=
 fi
 cmake . -DCMAKE_INSTALL_PREFIX=$mysql_install_dir \
 -DMYSQL_UNIX_ADDR=/tmp/mysql.sock \
@@ -32,7 +32,6 @@ cmake . -DCMAKE_INSTALL_PREFIX=$mysql_install_dir \
 -DSYSCONFDIR=/etc \
 -DMYSQL_USER=mysql \
 -DMYSQL_TCP_PORT=3306 \
-$EXE_LINKER
 -DWITH_INNOBASE_STORAGE_ENGINE=1 \
 -DWITH_PARTITION_STORAGE_ENGINE=1 \
 -DWITH_BLACKHOLE_STORAGE_ENGINE=1 \
@@ -43,7 +42,8 @@ $EXE_LINKER
 -DDEFAULT_COLLATION=utf8_general_ci \
 -DEXTRA_CHARSETS=all \
 -DWITH_BIG_TABLES=1 \
--DWITH_DEBUG=0
+-DWITH_DEBUG=0 \
+$EXE_LINKER
 make && make install
 
 if [ -d "$mysql_install_dir" ];then

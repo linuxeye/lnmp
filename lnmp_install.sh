@@ -194,14 +194,29 @@ do
         fi
 done
 
-# check tcmalloc
+# check tcmalloc or jemalloc 
 while :
 do
         echo ''
-        read -p "Do you want to optimize the system with tcmalloc? (y/n) " tcmalloc_yn
-        if [ "$tcmalloc_yn" != 'y' ] && [ "$tcmalloc_yn" != 'n' ];then
+        read -p "Do you want to use tcmalloc or jemalloc optimize MySQL and Nginx? (y/n) " tc_je_malloc_yn
+        if [ "$tc_je_malloc_yn" != 'y' ] && [ "$tc_je_malloc_yn" != 'n' ];then
                 echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
         else
+                if [ "$tc_je_malloc_yn" == 'y' ];then
+                        echo 'Please select tcmalloc or jemalloc:'
+                        echo -e "\t\033[32m1\033[0m. tcmalloc"
+                        echo -e "\t\033[32m2\033[0m. jemalloc"
+                        while :
+                        do
+                                read -p "Please input a number:(Default 1 press Enter) " tc_je_malloc
+                                [ -z "$tc_je_malloc" ] && tc_je_malloc=1
+                                if [ $tc_je_malloc != 1 ] && [ $tc_je_malloc != 2 ];then
+                                        echo -e "\033[31minput error! Please input 1 2\033[0m"
+                                else
+                                        break
+                                fi
+                        done
+                fi
                 break
         fi
 done
@@ -210,16 +225,21 @@ chmod +x functions/*.sh init/* *.sh
 
 # init
 . functions/check_os.sh
-export IP upgrade_yn tcmalloc_yn
+export IP upgrade_yn tc_je_malloc 
 OS_CentOS='init/init_CentOS.sh 2>&1 | tee -a lnmp_install.log \n
 /bin/mv init/init_CentOS.sh init/init_CentOS.ed'
 OS_Ubuntu='init/init_Ubuntu.sh 2>&1 | tee -a lnmp_install.log \n
 /bin/mv init/init_Ubuntu.sh init/init_Ubuntu.ed'
 OS_command
 
-# tcmalloc
-. functions/tcmalloc.sh
-[ "$tcmalloc_yn" == 'y' ] && Install_TCMalloc | tee -a $lnmp_dir/lnmp_install.log
+# tcmalloc or jemalloc
+if [ "$tc_je_malloc_yn" == 'y' -a "$tc_je_malloc" == '1' ];then
+	. functions/tcmalloc.sh
+	Install_tcmalloc | tee -a $lnmp_dir/lnmp_install.log
+elif [ "$tc_je_malloc_yn" == 'y' -a "$tc_je_malloc" == '2' ];then
+	. functions/jemalloc.sh
+	Install_jemalloc | tee -a $lnmp_dir/lnmp_install.log
+fi
 
 # Database
 if [ $DB_version == 1 ];then

@@ -1,5 +1,8 @@
 #!/bin/bash
-Install_TCMalloc()
+# Author:  yeho <lj2007331 AT gmail.com>
+# Blog:  http://blog.linuxeye.com
+
+Install_tcmalloc()
 {
 cd $lnmp_dir/src
 . ../functions/download.sh

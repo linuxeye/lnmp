@@ -10,7 +10,7 @@
 - According to their needs can to install Pureftpd, phpMyAdmin
 - According to their needs can to install memcached, redis
 - According to their needs can to install ngx_pagespeed
-- According to their needs can to optimize MySQL and Nginx with tcmalloc 
+- According to their needs can to optimize MySQL and Nginx with tcmalloc or jemalloc 
 - Add a virtual host script provided 
 
 ## How to use 

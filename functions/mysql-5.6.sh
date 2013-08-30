@@ -21,8 +21,10 @@ make &&  make install
 cd ..
 tar zxf mysql-5.6.13.tar.gz
 cd mysql-5.6.13
-if [ "$tcmalloc_yn" == 'y' ];then
+if [ "$tc_je_malloc" == '1' ];then
         EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc' -DWITH_SAFEMALLOC=OFF"
+elif [ "$tc_je_malloc" == '2' ];then
+        EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc' -DWITH_SAFEMALLOC=OFF"
 else
         EXE_LINKER=
 fi

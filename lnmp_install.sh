@@ -20,7 +20,7 @@ echo "#######################################################################"
 echo ''
 
 #get pwd
-sed -i "s@^lnmp_dir.*@lnmp_dir=`pwd`@" options.conf
+sed -i "s@^lnmp_dir.*@lnmp_dir=`pwd`@" ./options.conf
 
 # get ipv4
 . functions/get_ipv4.sh
@@ -223,15 +223,12 @@ OS_command
 
 # Database
 if [ $DB_version == 1 ];then
-	cd $lnmp_dir
 	. functions/mysql-5.6.sh 
 	Install_MySQL-5-6 2>&1 | tee -a $lnmp_dir/lnmp_install.log 
 elif [ $DB_version == 2 ];then
-	cd $lnmp_dir
         . functions/mysql-5.5.sh
         Install_MySQL-5-5 2>&1 | tee -a $lnmp_dir/lnmp_install.log
 elif [ $DB_version == 3 ];then
-	cd $lnmp_dir
 	. functions/mariadb-5.5.sh
 	Install_MariaDB-5-5 2>&1 | tee -a $lnmp_dir/lnmp_install.log 
 else

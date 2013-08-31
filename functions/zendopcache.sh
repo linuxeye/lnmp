@@ -9,9 +9,9 @@ cd $lnmp_dir/src
 . ../options.conf
 
 src_url=https://github.com/zendtech/ZendOptimizerPlus/tarball/master && Download_src
-/bin/mv master zendtech-ZendOptimizerPlus-8eeb372.tar.gz 
-tar xzf zendtech-ZendOptimizerPlus-8eeb372.tar.gz 
-cd zendtech-ZendOptimizerPlus-8eeb372 
+/bin/mv master zendtech-ZendOptimizerPlus.tar.gz 
+tar xzf zendtech-ZendOptimizerPlus.tar.gz 
+cd zendtech-ZendOptimizerPlus*
 make clean
 $php_install_dir/bin/phpize
 ./configure --with-php-config=$php_install_dir/bin/php-config

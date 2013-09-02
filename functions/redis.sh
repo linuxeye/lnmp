@@ -9,11 +9,11 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://pecl.php.net/get/redis-2.2.3.tgz && Download_src
+src_url=http://pecl.php.net/get/redis-2.2.4.tgz && Download_src
 src_url=http://download.redis.io/releases/redis-2.6.16.tar.gz && Download_src
 
-tar xzf redis-2.2.3.tgz
-cd redis-2.2.3
+tar xzf redis-2.2.4.tgz
+cd redis-2.2.4
 make clean
 $php_install_dir/bin/phpize
 ./configure --with-php-config=$php_install_dir/bin/php-config

@@ -17,10 +17,10 @@ tar xzf 1.6.29.5.tar.gz -C ngx_pagespeed-release-1.6.29.5-beta
 cd nginx-1.4.2/
 make clean
 
-if [ "$tc_je_malloc" == '1' ];then
-        malloc_module='--with-google_perftools_module'
-elif [ "$tc_je_malloc" == '2' ];then
+if [ "$je_tc_malloc" == '1' ];then
         malloc_module='--with-ld-opt="-ljemalloc"'
+elif [ "$je_tc_malloc" == '2' ];then
+        malloc_module='--with-google_perftools_module'
 else
         malloc_module=
 fi

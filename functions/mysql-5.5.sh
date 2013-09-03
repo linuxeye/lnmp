@@ -20,10 +20,10 @@ make &&  make install
 cd ..
 tar zxf mysql-5.5.33.tar.gz
 cd mysql-5.5.33
-if [ "$tc_je_malloc" == '1' ];then
-        EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc' -DWITH_SAFEMALLOC=OFF"
-elif [ "$tc_je_malloc" == '2' ];then
+if [ "$je_tc_malloc" == '1' ];then
         EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc' -DWITH_SAFEMALLOC=OFF"
+elif [ "$je_tc_malloc" == '2' ];then
+        EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc' -DWITH_SAFEMALLOC=OFF"
 else
         EXE_LINKER=
 fi

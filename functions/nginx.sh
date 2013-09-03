@@ -26,12 +26,12 @@ sed -i 's@#define NGINX_VERSION.*$@#define NGINX_VERSION      "1.2"@' src/core/n
 sed -i 's@#define NGINX_VER.*NGINX_VERSION$@#define NGINX_VER          "Linuxeye/" NGINX_VERSION@' src/core/nginx.h
 sed -i 's@Server: nginx@Server: linuxeye@' src/http/ngx_http_header_filter_module.c
 
-if [ "$tc_je_malloc" == '1' ];then
+if [ "$je_tc_malloc" == '1' ];then
+	malloc_module='--with-ld-opt="-ljemalloc"'
+elif [ "$je_tc_malloc" == '2' ];then
 	malloc_module='--with-google_perftools_module'
 	mkdir /tmp/tcmalloc
 	chown -R www.www /tmp/tcmalloc
-elif [ "$tc_je_malloc" == '2' ];then
-	malloc_module='--with-ld-opt="-ljemalloc"'
 else
         malloc_module=
 fi
@@ -51,7 +51,7 @@ mv $nginx_install_dir/conf/nginx.conf $nginx_install_dir/conf/nginx.conf_bk
 sed -i "s@/home/wwwroot/default@$home_dir/default@" conf/nginx.conf
 /bin/cp conf/nginx.conf $nginx_install_dir/conf/nginx.conf
 sed -i "s@/home/wwwlogs@$wwwlogs_dir@g" $nginx_install_dir/conf/nginx.conf
-[ "$tc_je_malloc" == '1' ] && sed -i 's@^pid\(.*\)@pid\1\ngoogle_perftools_profiles /tmp/tcmalloc;@' $nginx_install_dir/conf/nginx.conf 
+[ "$je_tc_malloc" == '2' ] && sed -i 's@^pid\(.*\)@pid\1\ngoogle_perftools_profiles /tmp/tcmalloc;@' $nginx_install_dir/conf/nginx.conf 
 
 # worker_cpu_affinity
 CPU_num=`cat /proc/cpuinfo | grep processor | wc -l`

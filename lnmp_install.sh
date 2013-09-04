@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # Blog:  http://blog.linuxeye.com
 #
-# Version: 0.3 27-Aug-2013 lj2007331 AT gmail.com
+# Version: 0.3 04-Sep-2013 lj2007331 AT gmail.com
 # Notes: LNMP for CentOS/RadHat 5+ and Ubuntu 12+ 
 #
 # This script's project home is:
@@ -39,6 +39,33 @@ do
                 break
         fi
 done
+
+# choice Web server
+if [ ! -d "$web_install_dir" ];then
+        while :
+        do
+                echo ''
+                echo 'Please select Web server:'
+                echo -e "\t\033[32m1\033[0m. Install Nginx"
+                echo -e "\t\033[32m2\033[0m. Install Tengine"
+                read -p "Please input a number:(Default 1 press Enter) " Web_server
+                [ -z "$Web_server" ] && Web_server=1
+                if [ $Web_server != 1 ] && [ $Web_server != 2 ];then
+                        echo -e "\033[31minput error! Please input 1 2\033[0m"
+                else
+                        while :
+                        do
+                                read -p "Do you want to install ngx_pagespeed? (y/n) " ngx_pagespeed_yn
+                                if [ "$ngx_pagespeed_yn" != 'y' ] && [ "$ngx_pagespeed_yn" != 'n' ];then
+                                        echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
+                                else
+                                break
+                        fi
+                        done
+                        break
+                fi
+        done
+fi
 
 # choice database 
 if [ ! -d "$db_install_dir" ];then
@@ -182,23 +209,11 @@ if [ ! -d "$memcached_install_dir" ];then
         done
 fi
 
-# check ngx_pagespeed
-while :
-do
-	echo ''
-        read -p "Do you want to install ngx_pagespeed? (y/n) " ngx_pagespeed_yn
-        if [ "$ngx_pagespeed_yn" != 'y' ] && [ "$ngx_pagespeed_yn" != 'n' ];then
-                echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
-        else
-                break
-        fi
-done
-
 # check jemalloc or tcmalloc 
 while :
 do
         echo ''
-        read -p "Do you want to use tcmalloc or jemalloc optimize MySQL and Nginx? (y/n) " je_tc_malloc_yn
+        read -p "Do you want to use jemalloc or tcmalloc optimize Web server and Database? (y/n) " je_tc_malloc_yn
         if [ "$je_tc_malloc_yn" != 'y' ] && [ "$je_tc_malloc_yn" != 'n' ];then
                 echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
         else
@@ -225,7 +240,7 @@ chmod +x functions/*.sh init/* *.sh
 
 # init
 . functions/check_os.sh
-export IP upgrade_yn je_tc_malloc 
+export IP upgrade_yn Web_server je_tc_malloc
 OS_CentOS='init/init_CentOS.sh 2>&1 | tee -a lnmp_install.log \n
 /bin/mv init/init_CentOS.sh init/init_CentOS.ed'
 OS_Ubuntu='init/init_Ubuntu.sh 2>&1 | tee -a lnmp_install.log \n
@@ -252,12 +267,9 @@ elif [ $DB_version == 3 ];then
 	. functions/mariadb-5.5.sh
 	Install_MariaDB-5-5 2>&1 | tee -a $lnmp_dir/lnmp_install.log 
 else
-        echo -e "\033[31mdatabase install failed, Please contact the author! \033[0m"
+        echo -e "\033[31mDatabase install failed, Please contact the author! \033[0m"
         kill -9 $$
 fi
-
-# get db_install_dir
-. ./options.conf
 
 # PHP
 if [ $PHP_version == 1 ];then
@@ -286,12 +298,21 @@ elif [ $PHP_cache == 2 -a $PHP_version == 3 ];then
         Install_eAccelerator-0-9 2>&1 | tee -a $lnmp_dir/lnmp_install.log
 fi
 
-if [ ! -d "$nginx_install_dir" ];then
-	. functions/nginx.sh
-	Install_Nginx 2>&1 | tee -a $lnmp_dir/lnmp_install.log 
-	sed -i "s@/usr/local/nginx@$nginx_install_dir@g" vhost.sh
-	sed -i "s@/home/wwwroot@$home_dir@g" vhost.sh
-	sed -i "s@/home/wwwlogs@$wwwlogs_dir@g" vhost.sh
+# Web server
+if [ $Web_server == 1 ];then
+        . functions/nginx.sh
+        Install_Nginx 2>&1 | tee -a $lnmp_dir/lnmp_install.log
+elif [ $Web_server == 2 ];then
+	. functions/tengine.sh
+        Install_Tengine 2>&1 | tee -a $lnmp_dir/lnmp_install.log
+else
+        echo -e "\033[31mWeb server install failed, Please contact the author! \033[0m"
+        kill -9 $$
+fi
+
+if [ "$ngx_pagespeed_yn" == 'y' ];then
+	. functions/ngx_pagespeed.sh
+	Install_ngx_pagespeed 2>&1 | tee -a $lnmp_dir/lnmp_install.log
 fi
 
 if [ "$FTP_yn" == 'y' ];then
@@ -319,15 +340,14 @@ if [ ! -f "$home_dir/default/index.html" ];then
 	TEST 2>&1 | tee -a $lnmp_dir/lnmp_install.log 
 fi
 
-if [ "$ngx_pagespeed_yn" == 'y' ];then
-	. functions/ngx_pagespeed.sh
-	Install_ngx_pagespeed 2>&1 | tee -a $lnmp_dir/lnmp_install.log
-fi
+# get db_install_dir and web_install_dir
+. ./options.conf
+
 echo "################Congratulations####################"
 echo -e "\033[32mPlease restart the server and see if the services start up fine.\033[0m"
 echo ''
 echo "The path of some dirs:"
-echo -e "`printf "%-32s" "Nginx dir":`\033[32m$nginx_install_dir\033[0m"
+echo -e "`printf "%-32s" "Web dir":`\033[32m$web_install_dir\033[0m"
 echo -e "`printf "%-32s" "PHP dir:"`\033[32m$php_install_dir\033[0m"
 echo -e "`printf "%-32s" "Database Install dir:"`\033[32m$db_install_dir\033[0m"
 echo -e "`printf "%-32s" "Database User:"`\033[32mroot\033[0m"

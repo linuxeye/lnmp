@@ -50,6 +50,7 @@ fi
 sed -i "s@^alias l=\(.*\)@alias l=\1\nalias vi='vim'@" ~/.bashrc
 echo 'syntax on' >> /etc/vim/vimrc
 sed -i 's@^# export LS_OPTIONS@export LS_OPTIONS@' ~/.bashrc
+sed -i 's@^# alias@alias@g' ~/.bashrc
 
 # /etc/sysctl.conf
 cat >> /etc/sysctl.conf << EOF

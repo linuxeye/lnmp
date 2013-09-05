@@ -22,7 +22,7 @@ tar xzf tengine-1.5.1.tar.gz
 cd tengine-1.5.1 
 
 # Modify Tengine version
-sed -i 's@TENGINE "/" TENGINE_VERSION@"Tengine/unknown"@' src/core/nginx.h
+#sed -i 's@TENGINE "/" TENGINE_VERSION@"Tengine/unknown"@' src/core/nginx.h
 
 # disabled debug
 sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc

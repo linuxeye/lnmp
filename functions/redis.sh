@@ -48,10 +48,10 @@ if [ -f "src/redis-server" ];then
 	OS_CentOS='/bin/cp init/Redis-server-init-CentOS /etc/init.d/redis-server \n
 chkconfig --add redis-server \n
 chkconfig redis-server on'
-	OS_Debian_Ubuntu='useradd -M -s /sbin/nologin redis \n
+	OS_Debian_Ubuntu="useradd -M -s /sbin/nologin redis \n
 chown -R redis:redis $redis_install_dir/var/ \n
 /bin/cp init/Redis-server-init-Ubuntu /etc/init.d/redis-server \n
-update-rc.d redis-server defaults'
+update-rc.d redis-server defaults"
 	OS_command
 	sed -i "s@/usr/local/redis@$redis_install_dir@g" /etc/init.d/redis-server
 	echo 'vm.overcommit_memory = 1' >> /etc/sysctl.conf

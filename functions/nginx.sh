@@ -22,9 +22,9 @@ tar xzf nginx-1.4.2.tar.gz
 cd nginx-1.4.2
 
 # Modify Nginx version
-sed -i 's@#define NGINX_VERSION.*$@#define NGINX_VERSION      "1.2"@' src/core/nginx.h
-sed -i 's@#define NGINX_VER.*NGINX_VERSION$@#define NGINX_VER          "Linuxeye/" NGINX_VERSION@' src/core/nginx.h
-sed -i 's@Server: nginx@Server: linuxeye@' src/http/ngx_http_header_filter_module.c
+#sed -i 's@#define NGINX_VERSION.*$@#define NGINX_VERSION      "1.2"@' src/core/nginx.h
+#sed -i 's@#define NGINX_VER.*NGINX_VERSION$@#define NGINX_VER          "Linuxeye/" NGINX_VERSION@' src/core/nginx.h
+#sed -i 's@Server: nginx@Server: linuxeye@' src/http/ngx_http_header_filter_module.c
 
 if [ "$je_tc_malloc" == '1' ];then
 	malloc_module="--with-ld-opt='-ljemalloc'"

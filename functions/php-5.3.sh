@@ -64,7 +64,7 @@ if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ];then \n
 else \n
         ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1 \n
 fi'
-OS_Ubuntu='if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ];then \n
+OS_Debian_Ubuntu='if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ];then \n
         ln -s /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/ \n
 else \n
         ln -s /usr/lib/i386-linux-gnu/libldap.so /usr/lib/ \n
@@ -110,7 +110,7 @@ fi
 chmod +x /etc/init.d/php-fpm
 OS_CentOS='chkconfig --add php-fpm \n
 chkconfig php-fpm on'
-OS_Ubuntu='update-rc.d php-fpm defaults'
+OS_Debian_Ubuntu='update-rc.d php-fpm defaults'
 OS_command
 cd ../
 

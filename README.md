@@ -1,4 +1,4 @@
-   This script is free collection of shell scripts for rapid deployment of lnmp stacks (`Linux`, `Nginx`/`Tengine`, `MySQL`/`MariaDB` and `PHP`) for CentOS/Redhat and Ubuntu.
+   This script is free collection of shell scripts for rapid deployment of lnmp stacks (`Linux`, `Nginx`/`Tengine`, `MySQL`/`MariaDB` and `PHP`) for CentOS/Redhat Debian and Ubuntu.
 
    Script features: 
 - Constant updates 
@@ -18,7 +18,7 @@
 
 ```bash
    yum -y install wget screen # for CentOS/Redhat
-   #apt-get -y install wget screen # for Ubuntu 
+   #apt-get -y install wget screen # for Debian/Ubuntu 
    wget http://blog.linuxeye.com/lnmp.tar.gz
    #or wget http://blog.linuxeye.com/lnmp-full.tar.gz # include source packages
    tar xzf lnmp.tar.gz

@@ -3,7 +3,7 @@
 # Blog:  http://blog.linuxeye.com
 #
 # Version: 0.3 04-Sep-2013 lj2007331 AT gmail.com
-# Notes: LNMP for CentOS/RadHat 5+ and Ubuntu 12+ 
+# Notes: LNMP for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+ 
 #
 # This script's project home is:
 #       https://github.com/lj2007331/lnmp
@@ -14,7 +14,7 @@
 export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
 echo "#######################################################################"
-echo "#            LNMP for CentOS/RadHat 5+ and Ubuntu 12+                 #"
+echo "#         LNMP for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+          #"
 echo "# For more information Please visit http://blog.linuxeye.com/31.html  #"
 echo "#######################################################################"
 echo ''
@@ -55,7 +55,7 @@ if [ ! -d "$web_install_dir" ];then
                 else
                         while :
                         do
-                                read -p "Do you want to install ngx_pagespeed? (y/n) " ngx_pagespeed_yn
+                                read -p "Do you want to install ngx_pagespeed module? (y/n) " ngx_pagespeed_yn
                                 if [ "$ngx_pagespeed_yn" != 'y' ] && [ "$ngx_pagespeed_yn" != 'n' ];then
                                         echo -e "\033[31minput error! Please input 'y' or 'n'\033[0m"
                                 else
@@ -239,13 +239,18 @@ done
 chmod +x functions/*.sh init/* *.sh
 
 # init
-. functions/check_os.sh
 export IP upgrade_yn Web_server je_tc_malloc
-OS_CentOS='init/init_CentOS.sh 2>&1 | tee -a lnmp_install.log \n
-/bin/mv init/init_CentOS.sh init/init_CentOS.ed'
-OS_Ubuntu='init/init_Ubuntu.sh 2>&1 | tee -a lnmp_install.log \n
-/bin/mv init/init_Ubuntu.sh init/init_Ubuntu.ed'
-OS_command
+. functions/check_os.sh
+if [ "$OS" == 'CentOS' ];then
+	./init/init_CentOS.sh 2>&1 | tee -a $lnmp_dir/lnmp_install.log
+	/bin/mv init/init_CentOS.sh init/init_CentOS.ed
+elif [ "$OS" == 'Debian' ];then
+	./init/init_Debian.sh 2>&1 | tee -a $lnmp_dir/lnmp_install.log
+	/bin/mv init/init_Debian.sh init/init_Debian.ed
+elif [ "$OS" == 'Ubuntu' ];then
+	./init/init_Ubuntu.sh 2>&1 | tee -a $lnmp_dir/lnmp_install.log
+	/bin/mv init/init_Ubuntu.sh init/init_Ubuntu.ed
+fi
 
 # jemalloc or tcmalloc
 if [ "$je_tc_malloc_yn" == 'y' -a "$je_tc_malloc" == '1' ];then

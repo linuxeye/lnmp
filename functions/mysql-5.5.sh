@@ -58,7 +58,7 @@ fi
 chmod +x /etc/init.d/mysqld
 OS_CentOS='chkconfig --add mysqld \n
 chkconfig mysqld on'
-OS_Ubuntu='update-rc.d mysqld defaults'
+OS_Debian_Ubuntu='update-rc.d mysqld defaults'
 OS_command
 cd ../../
 

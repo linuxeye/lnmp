@@ -13,19 +13,13 @@ apt-get -y upgrade
 [ "$upgrade_yn" == 'y' ] && apt-get -y dist-upgrade 
 
 # Install needed packages
-apt-get -y install gcc g++ make autoconf libjpeg8 libjpeg8-dev libpng12-0 libpng12-dev libpng3 libfreetype6 libfreetype6-dev libxml2 libxml2-dev zlib1g zlib1g-dev libc6 libc6-dev libglib2.0-0 libglib2.0-dev bzip2 libzip-dev libbz2-1.0 libncurses5 libncurses5-dev curl libcurl3 libcurl4-openssl-dev e2fsprogs libkrb5-3 libkrb5-dev libltdl-dev libidn11 libidn11-dev openssl libtool libevent-dev slapd ldap-utils libnss-ldap bison libsasl2-dev libxslt1-dev vim zip unzip tmux htop wget
-
-if [ ! -z "`cat /etc/issue | grep 13`" ];then
-       apt-get -y install libcloog-ppl1
-if [ ! -z "`cat /etc/issue | grep 12`" ];then
-       apt-get -y install libcloog-ppl0
-fi
+apt-get -y install gcc g++ make autoconf libjpeg8 libjpeg8-dev libpng12-0 libpng12-dev libpng3 libfreetype6 libfreetype6-dev libxml2 libxml2-dev zlib1g zlib1g-dev libc6 libc6-dev libglib2.0-0 libglib2.0-dev bzip2 libzip-dev libbz2-1.0 libncurses5 libncurses5-dev curl libcurl3 libcurl4-openssl-dev e2fsprogs libkrb5-3 libkrb5-dev libltdl-dev libidn11 libidn11-dev openssl libtool libevent-dev slapd ldap-utils libnss-ldap bison libsasl2-dev libxslt1-dev vim zip unzip tmux htop wget locales libcloog-ppl0
 
 # PS1
 echo "PS1='\${debian_chroot:+(\$debian_chroot)}\\[\\e[1;32m\\]\\u@\\h\\[\\033[00m\\]:\\[\\033[01;34m\\]\\w\\[\\033[00m\\]\\$ '" >> ~/.bashrc 
 
 # history size 
-sed -i 's/HISTSIZE=.*$/HISTSIZE=100/g' ~/.bashrc 
+echo 'HISTSIZE=100' >> ~/.bashrc 
 echo "export PROMPT_COMMAND='{ msg=\$(history 1 | { read x y; echo \$y; });user=\$(whoami); echo \$(date \"+%Y-%m-%d %H:%M:%S\"):\$user:\`pwd\`/:\$msg ---- \$(who am i); } >> /tmp/\`hostname\`.\`whoami\`.history-timestamp'" >> ~/.bashrc
 
 # /etc/security/limits.conf
@@ -54,6 +48,8 @@ fi
 
 # alias vi
 sed -i "s@^alias l=\(.*\)@alias l=\1\nalias vi='vim'@" ~/.bashrc
+echo 'syntax on' >> /etc/vim/vimrc
+sed -i 's@^# export LS_OPTIONS@export LS_OPTIONS@' ~/.bashrc
 
 # /etc/sysctl.conf
 cat >> /etc/sysctl.conf << EOF
@@ -66,9 +62,13 @@ EOF
 sysctl -p
 
 sed -i 's@^ACTIVE_CONSOLES.*@ACTIVE_CONSOLES="/dev/tty[1-2]"@' /etc/default/console-setup 
-sed -i 's@^@#@g' /etc/init/tty[3-6].conf
-echo 'en_US.UTF-8 UTF-8' > /var/lib/locales/supported.d/local
-sed -i 's@^@#@g' /etc/init/control-alt-delete.conf 
+sed -i 's@^3:23:respawn@#3:23:respawn@' /etc/inittab
+sed -i 's@^4:23:respawn@#4:23:respawn@' /etc/inittab
+sed -i 's@^5:23:respawn@#5:23:respawn@' /etc/inittab
+sed -i 's@^6:23:respawn@#6:23:respawn@' /etc/inittab
+sed -i "s@^ctrlaltdel@#ctrlaltdel@" /etc/inittab
+sed -i 's@^# en_US.UTF-8@en_US.UTF-8@' /etc/locale.gen
+init q
 
 # Update time
 ntpdate pool.ntp.org 

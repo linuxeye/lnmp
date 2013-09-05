@@ -19,7 +19,7 @@ tar xzf 1.6.29.5.tar.gz -C ngx_pagespeed-release-1.6.29.5-beta
 make clean
 
 if [ "$je_tc_malloc" == '1' ];then
-	[ "$Web_server" == '1' ] && malloc_module='--with-ld-opt="-ljemalloc"'
+	[ "$Web_server" == '1' ] && malloc_module="--with-ld-opt='-ljemalloc'"
 	[ "$Web_server" == '2' ] && malloc_module='--with-jemalloc'
 elif [ "$je_tc_malloc" == '2' ];then
         malloc_module='--with-google_perftools_module'

@@ -1,4 +1,6 @@
 #!/bin/bash
+# Author:  yeho <lj2007331 AT gmail.com>
+# Blog:  http://blog.linuxeye.com
 
 wget -c http://yum.baseurl.org/download/3.4/yum-3.4.3.tar.gz
 tar zxf yum-3.4.3.tar.gz
@@ -57,7 +59,7 @@ echo 'PS1="\[\e[37;40m\][\[\e[32;40m\]\u\[\e[37;40m\]@\h \[\e[35;40m\]\W\[\e[0m\
 
 # history size 
 sed -i 's/^HISTSIZE=.*$/HISTSIZE=100/' /etc/profile
-echo "export PROMPT_COMMAND='{ msg=\$(history 1 | { read x y; echo \$y; });user=\$(whoami); echo \$(date \"+%Y-%m-%d %H:%M:%S\"):\$user:\`pwd\`/:\$msg ---- \$(who am i); } >> /tmp/\`hostname\`.\`whoami\`.history-timestamp'" >> /root/.bashrc
+echo "export PROMPT_COMMAND='{ msg=\$(history 1 | { read x y; echo \$y; });user=\$(whoami); echo \$(date \"+%Y-%m-%d %H:%M:%S\"):\$user:\`pwd\`/:\$msg ---- \$(who am i); } >> /tmp/\`hostname\`.\`whoami\`.history-timestamp'" >> ~/.bashrc
 
 # /etc/security/limits.conf
 cat >> /etc/security/limits.conf <<EOF
@@ -87,7 +89,7 @@ fi
 sed -i '4a auth        required      pam_tally2.so deny=5 unlock_time=180' /etc/pam.d/system-auth
 
 # alias vi
-sed -i "s@alias mv=\(.*\)@alias mv=\1\nalias vi=vim@" /root/.bashrc
+sed -i "s@alias mv=\(.*\)@alias mv=\1\nalias vi=vim@" ~/.bashrc
 echo 'syntax on' >> /etc/vimrc
 
 # /etc/sysctl.conf

@@ -29,7 +29,7 @@ if [ -d "$pureftpd_install_dir" ];then
 	chmod +x /etc/init.d/pureftpd
 	OS_CentOS='chkconfig --add pureftpd \n
 chkconfig pureftpd on'
-	OS_Ubuntu="sed -i 's@^. /etc/rc.d/init.d/functions@. /lib/lsb/init-functions@' /etc/init.d/pureftpd \n
+	OS_Debian_Ubuntu="sed -i 's@^. /etc/rc.d/init.d/functions@. /lib/lsb/init-functions@' /etc/init.d/pureftpd \n
 update-rc.d pureftpd defaults"
 	OS_command
 
@@ -62,7 +62,7 @@ update-rc.d pureftpd defaults"
 	iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
 	iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
 	OS_CentOS='service iptables save'
-	OS_Ubuntu='iptables-save > /etc/iptables.up.rules'
+	OS_Debian_Ubuntu='iptables-save > /etc/iptables.up.rules'
 	OS_command
 else
 	cd ../../

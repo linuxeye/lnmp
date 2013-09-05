@@ -43,7 +43,7 @@ cd ../../
 OS_CentOS='/bin/cp init/Nginx-init-CentOS /etc/init.d/nginx \n
 chkconfig --add nginx \n
 chkconfig nginx on'
-OS_Ubuntu='/bin/cp init/Nginx-init-Ubuntu /etc/init.d/nginx \n
+OS_Debian_Ubuntu='/bin/cp init/Nginx-init-Ubuntu /etc/init.d/nginx \n
 update-rc.d nginx defaults'
 OS_command
 sed -i "s@/usr/local/nginx@$tengine_install_dir@g" /etc/init.d/nginx

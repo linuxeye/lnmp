@@ -27,7 +27,7 @@ sed -i 's@#define NGINX_VER.*NGINX_VERSION$@#define NGINX_VER          "Linuxeye
 sed -i 's@Server: nginx@Server: linuxeye@' src/http/ngx_http_header_filter_module.c
 
 if [ "$je_tc_malloc" == '1' ];then
-	malloc_module='--with-ld-opt="-ljemalloc"'
+	malloc_module="--with-ld-opt='-ljemalloc'"
 elif [ "$je_tc_malloc" == '2' ];then
 	malloc_module='--with-google_perftools_module'
 	mkdir /tmp/tcmalloc
@@ -42,7 +42,7 @@ cd ../../
 OS_CentOS='/bin/cp init/Nginx-init-CentOS /etc/init.d/nginx \n
 chkconfig --add nginx \n
 chkconfig nginx on'
-OS_Ubuntu='/bin/cp init/Nginx-init-Ubuntu /etc/init.d/nginx \n
+OS_Debian_Ubuntu='/bin/cp init/Nginx-init-Ubuntu /etc/init.d/nginx \n
 update-rc.d nginx defaults'
 OS_command
 sed -i "s@/usr/local/nginx@$nginx_install_dir@g" /etc/init.d/nginx

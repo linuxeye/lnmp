@@ -18,13 +18,13 @@ make clean
 $php_install_dir/bin/phpize
 ./configure --with-php-config=$php_install_dir/bin/php-config
 make && make install
+cd ..
 if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/redis.so" ];then
 	sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "redis.so"@' $php_install_dir/etc/php.ini
 	service php-fpm restart
 else
         echo -e "\033[31mPHP Redis module install failed, Please contact the author! \033[0m"
 fi
-cd ..
 
 tar xzf redis-2.6.16.tar.gz
 cd redis-2.6.16

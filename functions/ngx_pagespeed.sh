@@ -23,15 +23,9 @@ if [ "$je_tc_malloc" == '1' ];then
 	[ "$Web_server" == '2' ] && malloc_module='--with-jemalloc'
 elif [ "$je_tc_malloc" == '2' ];then
         malloc_module='--with-google_perftools_module'
-else
-        malloc_module=
 fi
 
-if [ "$Web_server" == '2' ];then
-	tengine_options='--with-http_concat_module=shared --with-http_sysguard_module=shared'
-else
-	tengine_options=
-fi
+[ "$Web_server" == '2' ] && tengine_options='--with-http_concat_module=shared --with-http_sysguard_module=shared'
 
 if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ] ;then
 	./configure --prefix=$web_install_dir --user=www --group=www --with-http_stub_status_module --with-http_ssl_module --with-http_flv_module --with-http_gzip_static_module --add-module=../ngx_pagespeed-release-1.6.29.5-beta --with-cc-opt='-DLINUX=2 -D_REENTRANT -D_LARGEFILE64_SOURCE -pthread' $malloc_module $tengine_options

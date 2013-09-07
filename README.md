@@ -23,12 +23,12 @@
    #or wget http://blog.linuxeye.com/lnmp-full.tar.gz # include source packages
    tar xzf lnmp.tar.gz
    cd lnmp
-   chmod +x lnmp_install.sh
+   chmod +x install.sh
    # Prevent interrupt the installation process. If the network is down, you can execute commands `srceen -r lnmp` network reconnect the installation window.
    # Если сеть не работает, вы можете выполнять команды `srceen -r lnmp` сети подключить установку окна.
    # 如果网路出现中断，可以执行命令`srceen -r lnmp`重新连接安装窗口
    screen -S lnmp
-   ./lnmp_install.sh
+   ./install.sh
 ```
 
 ## How to add a virtual host

@@ -19,12 +19,13 @@ make && make install
 cd ../
 
 tar xzf tengine-1.5.1.tar.gz 
+useradd -M -s /sbin/nologin www
 cd tengine-1.5.1 
 
 # Modify Tengine version
 #sed -i 's@TENGINE "/" TENGINE_VERSION@"Tengine/unknown"@' src/core/nginx.h
 
-# disabled debug
+# close debug
 sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc
 
 if [ "$je_tc_malloc" == '1' ];then
@@ -33,12 +34,16 @@ elif [ "$je_tc_malloc" == '2' ];then
 	malloc_module='--with-google_perftools_module'
 	mkdir /tmp/tcmalloc
 	chown -R www.www /tmp/tcmalloc
-else
-        malloc_module=
 fi
 
 ./configure --prefix=$tengine_install_dir --user=www --group=www --with-http_stub_status_module --with-http_ssl_module --with-http_flv_module --with-http_gzip_static_module --with-http_concat_module=shared --with-http_sysguard_module=shared $malloc_module
 make && make install
+if [ -d "$tengine_install_dir" ];then
+        echo -e "\033[32mTengine install successfully! \033[0m"
+else
+        echo -e "\033[31mTengine install failed, Please Contact the author! \033[0m"
+        kill -9 $$
+fi
 cd ../../
 OS_CentOS='/bin/cp init/Nginx-init-CentOS /etc/init.d/nginx \n
 chkconfig --add nginx \n
@@ -76,5 +81,6 @@ sed -i "s@^web_install_dir.*@web_install_dir=$tengine_install_dir@" options.conf
 sed -i "s@/usr/local/nginx@$tengine_install_dir@g" vhost.sh
 sed -i "s@/home/wwwroot@$home_dir@g" vhost.sh
 sed -i "s@/home/wwwlogs@$wwwlogs_dir@g" vhost.sh
+ldconfig
 service nginx start
 }

@@ -15,7 +15,7 @@ while :
 do
 	read -p "Please input domain(example: www.linuxeye.com linuxeye.com): " domain
 	if [ -z "`echo $domain | grep '.*\..*'`" ]; then
-		echo -e "\033[31minput error\033[0m"
+		echo -e "\033[31minput error! \033[0m"
 	else
 		break
 	fi
@@ -30,9 +30,9 @@ fi
 while :
 do
 	echo ''
-        read -p "Do you want to add more domain name? (y/n) " moredomainame_yn 
+        read -p "Do you want to add more domain name? [y/n]: " moredomainame_yn 
         if [ "$moredomainame_yn" != 'y' ] && [ "$moredomainame_yn" != 'n' ];then
-                echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
+                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
         else
                 break 
         fi
@@ -43,7 +43,7 @@ if [ "$moredomainame_yn" == 'y' ]; then
 		echo ''
 		read -p "Type domainname,example(blog.linuxeye.com bbs.linuxeye.com): " moredomain
 		if [ -z "`echo $moredomain | grep '.*\..*'`" ]; then
-			echo -e "\033[31minput error\033[0m"
+			echo -e "\033[31minput error! \033[0m"
 		else
 			echo -e "domain list=\033[32m$moredomain\033[0m"
 			moredomainame=" $moredomain"
@@ -58,9 +58,9 @@ if [ ! -z "`cat $$ | grep ngx_pagespeed`" ];then
         while :
         do
 		echo ''
-                read -p "Do you want to use ngx_pagespeed module? (y/n) " ngx_pagespeed_yn
+                read -p "Do you want to use ngx_pagespeed module? [y/n]: " ngx_pagespeed_yn
                 if [ "$ngx_pagespeed_yn" != 'y' ] && [ "$ngx_pagespeed_yn" != 'n' ];then
-                        echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
+                        echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
                 else
                         if [ "$ngx_pagespeed_yn" == 'y' ];then
                                 ngx_pagespeed='pagespeed on;\npagespeed FileCachePath /var/ngx_pagespeed_cache;\npagespeed RewriteLevel CoreFilters;\npagespeed EnableFilters local_storage_cache;\npagespeed EnableFilters collapse_whitespace,remove_comments;\npagespeed EnableFilters outline_css;\npagespeed EnableFilters flatten_css_imports;\npagespeed EnableFilters move_css_above_scripts;\npagespeed EnableFilters move_css_to_head;\npagespeed EnableFilters outline_javascript;\npagespeed EnableFilters combine_javascript;\npagespeed EnableFilters combine_css;\npagespeed EnableFilters rewrite_javascript;\npagespeed EnableFilters rewrite_css,sprite_images;\npagespeed EnableFilters rewrite_style_attributes;\npagespeed EnableFilters recompress_images;\npagespeed EnableFilters resize_images;\npagespeed EnableFilters convert_meta_tags;\nlocation ~ "\\.pagespeed\\.([a-z]\\.)?[a-z]{2}\\.[^.]{10}\\.[^.]+" { add_header "" ""; }\nlocation ~ "^/ngx_pagespeed_static/" { }\nlocation ~ "^/ngx_pagespeed_beacon$" { }\nlocation /ngx_pagespeed_statistics { allow 127.0.0.1; deny all; }\nlocation /ngx_pagespeed_message { allow 127.0.0.1; deny all; }'
@@ -76,9 +76,9 @@ fi
 while :
 do
 	echo ''
-        read -p "Do you want to add hotlink protection? (y/n) " anti_hotlinking_yn 
+        read -p "Do you want to add hotlink protection? [y/n]: " anti_hotlinking_yn 
         if [ "$anti_hotlinking_yn" != 'y' ] && [ "$anti_hotlinking_yn" != 'n' ];then
-                echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
+                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
         else
                 break
         fi
@@ -112,9 +112,9 @@ fi
 while :
 do
 	echo ''
-        read -p "Allow Rewrite rule? (y/n) " rewrite_yn
+        read -p "Allow Rewrite rule? [y/n]: " rewrite_yn
         if [ "$rewrite_yn" != 'y' ] && [ "$rewrite_yn" != 'n' ];then
-                echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
+                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
         else
                 break 
         fi
@@ -142,9 +142,9 @@ fi
 while :
 do
 	echo ''
-        read -p "Allow access_log? (y/n) " access_yn 
+        read -p "Allow access_log? [y/n]: " access_yn 
         if [ "$access_yn" != 'y' ] && [ "$access_yn" != 'n' ];then
-                echo -e "\033[31minput error! please input 'y' or 'n'\033[0m"
+                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
         else
                 break 
         fi

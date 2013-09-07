@@ -43,13 +43,14 @@ make clean
 $php_install_dir/bin/phpize
 ./configure --with-php-config=$php_install_dir/bin/php-config
 make && make install
+cd ..
 if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/memcache.so" ];then
         sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "memcache.so"@' $php_install_dir/etc/php.ini
         service php-fpm restart
 else
         echo -e "\033[31mPHP memcache module install failed, Please contact the author! \033[0m"
 fi
-cd ..
+
 # php memcached extension
 tar xzf libmemcached-1.0.16.tar.gz
 cd libmemcached-1.0.16
@@ -71,6 +72,7 @@ make clean
 $php_install_dir/bin/phpize
 ./configure --with-php-config=$php_install_dir/bin/php-config
 make && make install
+cd ../
 if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/memcached.so" ];then
         sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "memcached.so"@' $php_install_dir/etc/php.ini
 	service php-fpm restart
@@ -78,5 +80,5 @@ else
         echo -e "\033[31mPHP memcached module install failed, Please contact the author! \033[0m"
 fi
 
-cd ../../
+cd ../
 }

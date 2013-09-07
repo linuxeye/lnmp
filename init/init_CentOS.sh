@@ -26,10 +26,10 @@ fi
 
 # update rpm packages
 yum check-update
-yum -y upgrade
+yum -y update
 
 # check upgrade OS
-[ "$upgrade_yn" == 'y' ] && yum -y update
+[ "$upgrade_yn" == 'y' ] && yum -y upgrade
 
 # Install needed packages
 yum -y install gcc gcc-c++ make autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel nss_ldap openldap openldap-devel openldap-clients openldap-servers libxslt-devel libevent-devel ntp libtool libtool-ltdl bison gd-devel vim-enhanced pcre-devel zip unzip sendmail

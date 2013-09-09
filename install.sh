@@ -310,6 +310,12 @@ elif [ "$DB_version" == '3' ];then
 	Install_MariaDB-5-5 2>&1 | tee -a $lnmp_dir/install.log 
 fi
 
+# PHP MySQL Client
+if [ "$DB" == 'n' -a "$PHP_yn" == 'y' ];then
+	. functions/php-mysql-client.sh 2>&1 | tee -a $lnmp_dir/install.log
+	Install_PHP-MySQL-Client 2>&1 | tee -a $lnmp_dir/install.log
+fi
+
 # PHP
 if [ "$PHP_version" == '1' ];then
 	. functions/php-5.5.sh

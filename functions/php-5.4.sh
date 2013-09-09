@@ -48,8 +48,9 @@ make && make install
 cd ../
 
 # linked library
+[ "$DB_yn" == 'n' ] && db_install_dir=$mysql_install_dir
+echo "$db_install_dir/lib" > /etc/ld.so.conf.d/mysql.conf
 echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
-[ "$DB_yn" == 'y' ] && echo "$db_install_dir/lib" > /etc/ld.so.conf.d/mysql.conf
 ldconfig
 ln -s /usr/local/include/ImageMagick-6 /usr/local/include/ImageMagick
 OS_CentOS='ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config \n
@@ -80,9 +81,9 @@ tar xzf php-5.4.19.tar.gz
 useradd -M -s /sbin/nologin www
 cd php-5.4.19
 make clean
-[ "$DB_yn" == 'y' ] && php_mysql_options="--with-mysql=$db_install_dir --with-mysqli=$db_install_dir/bin/mysql_config --with-pdo-mysql=$db_install_dir/bin/mysql_config"
-./configure  --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
---with-fpm-user=www --with-fpm-group=www --enable-fpm --disable-fileinfo $php_mysql_options \
+./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
+--with-fpm-user=www --with-fpm-group=www --enable-fpm --disable-fileinfo --with-mysql=$db_install_dir \
+--with-mysqli=$db_install_dir/bin/mysql_config --with-pdo-mysql=$db_install_dir/bin/mysql_config \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
 --enable-sysvsem --enable-inline-optimization --with-curl --with-kerberos --enable-mbregex \

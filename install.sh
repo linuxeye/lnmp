@@ -9,7 +9,7 @@
 #       https://github.com/lj2007331/lnmp
 
 # Check if user is root
-[ $(id -u) != "0" ] && echo "Error: You must be root to run this script, Please use root to install lnmp" && kill -9 $$
+[ $(id -u) != "0" ] && echo "Error: You must be root to run this script" && kill -9 $$
 
 export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 clear

@@ -17,7 +17,7 @@ apt-get -y install gcc g++ make autoconf libjpeg8 libjpeg8-dev libpng12-0 libpng
 
 if [ ! -z "`cat /etc/issue | grep 13`" ];then
        apt-get -y install libcloog-ppl1
-if [ ! -z "`cat /etc/issue | grep 12`" ];then
+elif [ ! -z "`cat /etc/issue | grep 12`" ];then
        apt-get -y install libcloog-ppl0
 fi
 

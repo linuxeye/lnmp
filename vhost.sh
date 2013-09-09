@@ -3,7 +3,7 @@
 # Blog:  http://blog.linuxeye.com
 
 # Check if user is root
-[ $(id -u) != "0" ] && echo "Error: You must be root to run this script, please use root to create vhost" && exit 1
+[ $(id -u) != "0" ] && echo "Error: You must be root to run this script" && exit 1
 
 echo "#######################################################################"
 echo "#         LNMP for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+          #"

@@ -142,10 +142,12 @@ do
                                                         echo 'Please select a opcode cache of the PHP:'
                                                         echo -e "\t\033[32m1\033[0m. Install Zend OPcache"
                                                         echo -e "\t\033[32m2\033[0m. Install eAccelerator-1.0-dev"
+                                                        echo -e "\t\033[32m3\033[0m. Install XCache"
                                                         read -p "Please input a number:(Default 1 press Enter) " PHP_cache
                                                         [ -z "$PHP_cache" ] && PHP_cache=1
-                                                        if [ $PHP_cache != 1 -a $PHP_cache != 2 ];then
-                                                                echo -e "\033[31minput error! Please only input number 1,2\033[0m"
+                                                        if [ $PHP_cache != 1 -a $PHP_cache != 2 -a $PHP_cache != 3 ];then
+                                                                echo -e "\033[31minput error! Please only input number 1,2,3\033[
+0m"
                                                         else
                                                                 break
                                                         fi
@@ -157,13 +159,22 @@ do
                                                         echo 'Please select a opcode cache of the PHP:'
                                                         echo -e "\t\033[32m1\033[0m. Install Zend OPcache"
                                                         echo -e "\t\033[32m2\033[0m. Install eAccelerator-0.9"
+                                                        echo -e "\t\033[32m3\033[0m. Install XCache"
                                                         read -p "Please input a number:(Default 1 press Enter) " PHP_cache
                                                         [ -z "$PHP_cache" ] && PHP_cache=1
-                                                        if [ $PHP_cache != 1 -a $PHP_cache != 2 ];then
-                                                                echo -e "\033[31minput error! Please only input number 1,2\033[0m"
+                                                        if [ $PHP_cache != 1 -a $PHP_cache != 2 -a $PHP_cache != 3 ];then
+                                                                echo -e "\033[31minput error! Please only input number 1,2
+\033[0m"
                                                         else
                                                                 break
                                                         fi
+                                                done
+                                        fi
+                                        if [ "$PHP_cache" == '3' ];then
+                                                while :
+                                                do
+                                                        read -p "Please input xcache admin password: " xcache_admin_pass
+                                                        (( ${#xcache_admin_pass} >= 5 )) && xcache_admin_md5_pass=`echo -n "$xcache_admin_pass" | md5sum | awk '{print $1}'` && break || echo -e "\033[31mxcache admin password least 5 characters! \033[0m"
                                                 done
                                         fi
                                 fi
@@ -338,6 +349,9 @@ elif [ "$PHP_cache" == '2' -a "$PHP_version" == '2' ];then
 elif [ "$PHP_cache" == '2' -a "$PHP_version" == '3' ];then
         . functions/eaccelerator-0.9.sh
         Install_eAccelerator-0-9 2>&1 | tee -a $lnmp_dir/install.log
+elif [ "$PHP_cache" == '3' ];then
+        . functions/xcache.sh 
+        Install_XCache 2>&1 | tee -a $lnmp_dir/install.log
 fi
 
 # Web server
@@ -390,22 +404,23 @@ fi
 # get db_install_dir and web_install_dir
 . ./options.conf
 
-echo "################Congratulations####################"
+echo "####################Congratulations########################"
 echo -e "\033[32mPlease restart the server and see if the services start up fine.\033[0m"
 echo
-echo "The path of some dirs:"
 [ "$Web_yn" == 'y' ] && echo -e "`printf "%-32s" "Web install  dir":`\033[32m$web_install_dir\033[0m"
-[ "$DB_yn" == 'y' ] && echo -e "`printf "%-32s" "Database install dir:"`\033[32m$db_install_dir\033[0m"
-[ "$PHP_yn" == 'y' ] && echo -e "`printf "%-32s" "PHP install dir:"`\033[32m$php_install_dir\033[0m"
-[ "$FTP_yn" == 'y' ] && echo -e "`printf "%-32s" "Pure-FTPd install dir:"`\033[32m$pureftpd_install_dir\033[0m"
+[ "$DB_yn" == 'y' ] && echo -e "\n`printf "%-32s" "Database install dir:"`\033[32m$db_install_dir\033[0m"
+[ "$DB_yn" == 'y' ] && echo -e "`printf "%-32s" "Database user:"`\033[32mroot\033[0m"
+[ "$DB_yn" == 'y' ] && echo -e "`printf "%-32s" "Database password:"`\033[32m${dbrootpwd}\033[0m"
+[ "$PHP_yn" == 'y' ] && echo -e "\n`printf "%-32s" "PHP install dir:"`\033[32m$php_install_dir\033[0m"
+[ "$PHP_cache" == '3' ] && echo -e "`printf "%-32s" "xcache web dir:"`\033[32m$home_dir/default/xcache\033[0m"
+[ "$PHP_cache" == '3' ] && echo -e "`printf "%-32s" "xcache web manager url:"`\033[32mhttp://$IP/xcache\033[0m"
+[ "$PHP_cache" == '3' ] && echo -e "`printf "%-32s" "xcache user:"`\033[32madmin\033[0m"
+[ "$PHP_cache" == '3' ] && echo -e "`printf "%-32s" "xcache password:"`\033[32m$xcache_admin_pass\033[0m"
+[ "$FTP_yn" == 'y' ] && echo -e "\n`printf "%-32s" "Pure-FTPd install dir:"`\033[32m$pureftpd_install_dir\033[0m"
 [ "$FTP_yn" == 'y' ] && echo -e "`printf "%-32s" "pureftpd php manager dir:"`\033[32m$home_dir/default/ftp\033[0m"
-[ "$phpMyAdmin_yn" == 'y' ] && echo -e "`printf "%-32s" "phpMyAdmin dir:"`\033[32m$home_dir/default/phpMyAdmin\033[0m"
-[ "$redis_yn" == 'y' ] && echo -e "`printf "%-32s" "redis install dir:"`\033[32m$redis_install_dir\033[0m"
-[ "$memcached_yn" == 'y' ] && echo -e "`printf "%-32s" "memcached install dir:"`\033[32m$memcached_install_dir\033[0m"
-echo
-[ "$DB_yn" == 'y' ] && echo -e "`printf "%-32s" "Database User:"`\033[32mroot\033[0m"
-[ "$DB_yn" == 'y' ] && echo -e "`printf "%-32s" "Database Password:"`\033[32m${dbrootpwd}\033[0m"
-echo
-[ "$Web_yn" == 'y' ] && echo -e "`printf "%-32s" "index url:"`\033[32mhttp://$IP/\033[0m"
 [ "$FTP_yn" == 'y' ] && echo -e "`printf "%-32s" "ftp web manager url:"`\033[32mhttp://$IP/ftp\033[0m"
+[ "$phpMyAdmin_yn" == 'y' ] && echo -e "\n`printf "%-32s" "phpMyAdmin dir:"`\033[32m$home_dir/default/phpMyAdmin\033[0m"
 [ "$phpMyAdmin_yn" == 'y' ] && echo -e "`printf "%-32s" "phpMyAdmin url:"`\033[32mhttp://$IP/phpMyAdmin\033[0m"
+[ "$redis_yn" == 'y' ] && echo -e "\n`printf "%-32s" "redis install dir:"`\033[32m$redis_install_dir\033[0m"
+[ "$memcached_yn" == 'y' ] && echo -e "\n`printf "%-32s" "memcached install dir:"`\033[32m$memcached_install_dir\033[0m"
+[ "$Web_yn" == 'y' ] && echo -e "\n`printf "%-32s" "index url:"`\033[32mhttp://$IP/\033[0m"

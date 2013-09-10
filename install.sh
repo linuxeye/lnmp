@@ -395,14 +395,14 @@ if [ "$PHP_yn" == 'y' ];then
 	fi
 fi
 
+# get db_install_dir and web_install_dir
+. ./options.conf
+
 # index example
 if [ ! -e "$home_dir/default/index.html" -a -d "$web_install_dir" ];then
 	. functions/test.sh
 	TEST 2>&1 | tee -a $lnmp_dir/install.log 
 fi
-
-# get db_install_dir and web_install_dir
-. ./options.conf
 
 echo "####################Congratulations########################"
 echo -e "\033[32mPlease restart the server and see if the services start up fine.\033[0m"

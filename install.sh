@@ -185,6 +185,7 @@ do
         fi
 done
 
+if [ "$Web_yn" == 'y' -a "$DB_yn" == 'y' -a "$PHP_yn" == 'y' ];then
 # check Pureftpd
 while :
 do
@@ -225,7 +226,9 @@ do
                 break
         fi
 done
+fi
 
+if [ "$PHP_yn" == 'y' ];then
 # check redis
 while :
 do
@@ -255,9 +258,10 @@ do
                 break
         fi
 done
+fi
 
 # check jemalloc or tcmalloc 
-if [ ! -d "$db_install_dir" -o ! -d "$web_install_dir" ];then
+if [ "$Web_yn" == 'y' -o "$DB_yn" == 'y' ];then
         while :
         do
                 echo
@@ -322,8 +326,8 @@ elif [ "$DB_version" == '3' ];then
 fi
 
 # PHP MySQL Client
-if [ "$DB" == 'n' -a "$PHP_yn" == 'y' ];then
-	. functions/php-mysql-client.sh 2>&1 | tee -a $lnmp_dir/install.log
+if [ "$DB_yn" == 'n' -a "$PHP_yn" == 'y' ];then
+	. functions/php-mysql-client.sh
 	Install_PHP-MySQL-Client 2>&1 | tee -a $lnmp_dir/install.log
 fi
 
@@ -370,29 +374,27 @@ if [ "$ngx_pagespeed_yn" == 'y' ];then
 fi
 
 # Pure-FTPd
-if [ "$Web_yn" == 'y' -a "$DB_yn" == 'y' -a "$FTP_yn" == 'y' ];then
+if [ "$FTP_yn" == 'y' ];then
 	. functions/pureftpd.sh
 	Install_PureFTPd 2>&1 | tee -a $lnmp_dir/install.log 
 fi
 
-if [ "$PHP_yn" == 'y' ];then
-	# phpMyAdmin
-	if [ "$phpMyAdmin_yn" == 'y' ];then
-		. functions/phpmyadmin.sh
-		Install_phpMyAdmin 2>&1 | tee -a $lnmp_dir/install.log
-	fi
+# phpMyAdmin
+if [ "$phpMyAdmin_yn" == 'y' ];then
+	. functions/phpmyadmin.sh
+	Install_phpMyAdmin 2>&1 | tee -a $lnmp_dir/install.log
+fi
 
-	# redis
-	if [ "$redis_yn" == 'y' ];then
-		. functions/redis.sh
-		Install_redis 2>&1 | tee -a $lnmp_dir/install.log
-	fi
+# redis
+if [ "$redis_yn" == 'y' ];then
+	. functions/redis.sh
+	Install_redis 2>&1 | tee -a $lnmp_dir/install.log
+fi
 
-	# memcached
-	if [ "$memcached_yn" == 'y' ];then
-		. functions/memcached.sh
-		Install_memcached 2>&1 | tee -a $lnmp_dir/install.log
-	fi
+# memcached
+if [ "$memcached_yn" == 'y' ];then
+	. functions/memcached.sh
+	Install_memcached 2>&1 | tee -a $lnmp_dir/install.log
 fi
 
 # get db_install_dir and web_install_dir

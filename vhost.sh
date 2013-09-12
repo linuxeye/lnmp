@@ -176,13 +176,13 @@ root $vhostdir;
 #error_page 404 /404.html;
 if ( \$query_string ~* ".*[\;'\<\>].*" ){
 	return 404;
-}
+	}
 $anti_hotlinking
 `echo -e $ngx_pagespeed`
 location ~ .*\.(php|php5)?$  {
-      fastcgi_pass  127.0.0.1:9000;
-      fastcgi_index index.php;
-      include fastcgi.conf;
+	fastcgi_pass  127.0.0.1:9000;
+	fastcgi_index index.php;
+	include fastcgi.conf;
 	}
 location ~ .*\.(htm|html|gif|jpg|jpeg|png|bmp|swf|ioc|rar|zip|txt|flv|mid|doc|ppt|pdf|xls|mp3|wma)$ {
         expires      30d;

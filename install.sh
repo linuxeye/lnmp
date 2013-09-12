@@ -408,14 +408,13 @@ fi
 
 echo "####################Congratulations########################"
 echo -e "\033[32mPlease restart the server and see if the services start up fine.\033[0m"
-echo
-[ "$Web_yn" == 'y' ] && echo -e "`printf "%-32s" "Web install  dir":`\033[32m$web_install_dir\033[0m"
+[ "$Web_yn" == 'y' ] && echo -e "\n`printf "%-32s" "Web install  dir":`\033[32m$web_install_dir\033[0m"
 [ "$DB_yn" == 'y' ] && echo -e "\n`printf "%-32s" "Database install dir:"`\033[32m$db_install_dir\033[0m"
 [ "$DB_yn" == 'y' ] && echo -e "`printf "%-32s" "Database user:"`\033[32mroot\033[0m"
 [ "$DB_yn" == 'y' ] && echo -e "`printf "%-32s" "Database password:"`\033[32m${dbrootpwd}\033[0m"
 [ "$PHP_yn" == 'y' ] && echo -e "\n`printf "%-32s" "PHP install dir:"`\033[32m$php_install_dir\033[0m"
 [ "$PHP_cache" == '3' ] && echo -e "`printf "%-32s" "xcache web dir:"`\033[32m$home_dir/default/xcache\033[0m"
-[ "$PHP_cache" == '3' ] && echo -e "`printf "%-32s" "xcache web manager url:"`\033[32mhttp://$IP/xcache\033[0m"
+[ "$PHP_cache" == '3' -a "$Web_yn" == 'y' ] && echo -e "`printf "%-32s" "xcache web manager url:"`\033[32mhttp://$IP/xcache\033[0m"
 [ "$PHP_cache" == '3' ] && echo -e "`printf "%-32s" "xcache user:"`\033[32madmin\033[0m"
 [ "$PHP_cache" == '3' ] && echo -e "`printf "%-32s" "xcache password:"`\033[32m$xcache_admin_pass\033[0m"
 [ "$FTP_yn" == 'y' ] && echo -e "\n`printf "%-32s" "Pure-FTPd install dir:"`\033[32m$pureftpd_install_dir\033[0m"

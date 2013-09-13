@@ -12,9 +12,9 @@ sed -i 's@^exclude@#exclude@' /etc/yum.conf
 yum clean all
 
 if [ "`./functions/get_ip_area.py $IP`" == 'CN' ];then
-        cd /etc/yum.repos.d/
-        mv CentOS-Base.repo CentOS-Base.repo_bk
-	wget -c http://mirrors.163.com/.help/CentOS-Base-163.repo
+        mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo_bk
+	[ ! -z "$(cat /etc/redhat-release | grep '6\.')" ] && wget -c http://mirrors.163.com/.help/CentOS6-Base-163.repo -P /etc/yum.repos.d
+	[ ! -z "$(cat /etc/redhat-release | grep '5\.')" ] && wget -c http://mirrors.163.com/.help/CentOS5-Base-163.repo -P /etc/yum.repos.d
 	yum makecache
 fi
 

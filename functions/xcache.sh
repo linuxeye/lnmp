@@ -21,8 +21,7 @@ if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extens
 	touch /tmp/xcache;chown www.www /tmp/xcache
 	cat >> $php_install_dir/etc/php.ini << EOF
 [xcache-common]
-extension_dir = "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/"
-extension = xcache.so
+extension = "xcache.so"
 [xcache.admin]
 xcache.admin.enable_auth = On
 xcache.admin.user = "admin"

@@ -177,6 +177,30 @@ do
                                                         (( ${#xcache_admin_pass} >= 5 )) && xcache_admin_md5_pass=`echo -n "$xcache_admin_pass" | md5sum | awk '{print $1}'` && break || echo -e "\033[31mxcache admin password least 5 characters! \033[0m"
                                                 done
                                         fi
+                                        while :
+                                        do
+                                                echo
+                                                echo 'Please select ImageMagick or GraphicsMagick:'
+                                                echo -e "\t\033[32m1\033[0m. Install ImageMagick"
+                                                echo -e "\t\033[32m2\033[0m. Install GraphicsMagick"
+                                                read -p "Please input a number:(Default 1 press Enter) " Magick
+                                                [ -z "$Magick" ] && Magick=1
+                                                if [ $Magick != 1 -a $Magick != 2 ];then
+                                                        echo -e "\033[31minput error! Please only input number 1,2 \033[0m"
+                                                else
+                                                        break
+                                                fi
+                                        done
+                                        while :
+                                        do
+                                                echo
+                                                read -p "Do you want to install pecl_http PHP extension(Support HTTP request curls)? [y/n]: " pecl_http_yn
+                                                if [ "$pecl_http_yn" != 'y' -a "$pecl_http_yn" != 'n' ];then
+                                                        echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
+                                                else
+                                                        break
+                                                fi
+                                        done
                                 fi
                                 break
                         done
@@ -341,6 +365,21 @@ elif [ "$PHP_version" == '2' ];then
 elif [ "$PHP_version" == '3' ];then
         . functions/php-5.3.sh
         Install_PHP-5-3 2>&1 | tee -a $lnmp_dir/install.log
+fi
+
+# ImageMagick or GraphicsMagick
+if [ "$Magick" == '1' ];then
+	. functions/ImageMagick.sh
+	Install_ImageMagick 2>&1 | tee -a $lnmp_dir/install.log
+elif [ "$Magick" == '2' ];then
+	. functions/GraphicsMagick.sh
+	Install_GraphicsMagick 2>&1 | tee -a $lnmp_dir/install.log
+fi
+
+# Support HTTP request curls 
+if [ "$pecl_http_yn" == 'y' ];then
+	. functions/pecl_http.sh
+	Install_pecl_http 2>&1 | tee -a $lnmp_dir/install.log
 fi
 
 # PHP opcode cache (php <= 5.4)

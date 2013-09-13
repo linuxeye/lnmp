@@ -12,11 +12,8 @@ cd $lnmp_dir/src
 src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz && Download_src
-src_url=http://www.imagemagick.org/download/ImageMagick-6.8.6-9.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/2.6.8/mcrypt-2.6.8.tar.gz && Download_src
 src_url=http://kr1.php.net/distributions/php-5.4.19.tar.gz && Download_src
-src_url=http://pecl.php.net/get/imagick-3.1.0RC2.tgz && Download_src
-src_url=http://pecl.php.net/get/pecl_http-1.7.6.tgz && Download_src
 
 tar xzf libiconv-1.14.tar.gz
 cd libiconv-1.14
@@ -41,18 +38,11 @@ cd mhash-0.9.9.9
 make && make install
 cd ../
 
-tar xzf ImageMagick-6.8.6-9.tar.gz
-cd ImageMagick-6.8.6-9
-./configure
-make && make install
-cd ../
-
 # linked library
 [ "$DB_yn" == 'n' ] && db_install_dir=$mysql_install_dir
 echo "$db_install_dir/lib" > /etc/ld.so.conf.d/mysql.conf
 echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
 ldconfig
-ln -s /usr/local/include/ImageMagick-6 /usr/local/include/ImageMagick
 OS_CentOS='ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config \n
 ln -s $db_install_dir/include/* /usr/local/include/ \n
 if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ];then \n
@@ -114,25 +104,7 @@ OS_Debian_Ubuntu='update-rc.d php-fpm defaults'
 OS_command
 cd ../
 
-tar xzf imagick-3.1.0RC2.tgz
-cd imagick-3.1.0RC2
-make clean
-export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
-$php_install_dir/bin/phpize
-./configure --with-php-config=$php_install_dir/bin/php-config
-make && make install
-cd ../
-
-# Support HTTP request curls
-tar xzf pecl_http-1.7.6.tgz
-cd pecl_http-1.7.6
-make clean
-$php_install_dir/bin/phpize
-./configure --with-php-config=$php_install_dir/bin/php-config
-make && make install
-
 # Modify php.ini
-sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions/`\"\nextension = \"imagick.so\"\nextension = \"http.so\"@" $php_install_dir/etc/php.ini
 sed -i 's@^output_buffering =@output_buffering = On\noutput_buffering =@' $php_install_dir/etc/php.ini
 sed -i 's@^;cgi.fix_pathinfo.*@cgi.fix_pathinfo=0@' $php_install_dir/etc/php.ini
 sed -i 's@^short_open_tag = Off@short_open_tag = On@' $php_install_dir/etc/php.ini

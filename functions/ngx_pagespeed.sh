@@ -49,6 +49,8 @@ elif [ "$Web_server" == '2' ];then
 	$web_install_dir/sbin/dso_tool --add-module=$lnmp_dir/src/ngx_pagespeed-release-1.6.29.5-beta
 	if [ -f "$web_install_dir/modules/ngx_pagespeed.so" ];then
 		sed -i "s@^dso\(.*\)@dso\1\n\tload ngx_pagespeed.so;@" $web_install_dir/conf/nginx.conf
+		mkdir /var/ngx_pagespeed_cache
+		chown -R www.www /var/ngx_pagespeed_cache
 		kill -HUP `cat /var/run/nginx.pid`
 	fi
 fi

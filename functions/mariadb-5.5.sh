@@ -29,8 +29,6 @@ fi
 cmake . -DCMAKE_INSTALL_PREFIX=$mariadb_install_dir \
 -DMYSQL_UNIX_ADDR=/tmp/mysql.sock \
 -DMYSQL_DATADIR=$mariadb_data_dir \
--DSYSCONFDIR=/etc \
--DMYSQL_USER=mysql \
 -DMYSQL_TCP_PORT=3306 \
 -DWITH_ARIA_STORAGE_ENGINE=1 \
 -DWITH_XTRADB_STORAGE_ENGINE=1 \
@@ -43,9 +41,7 @@ cmake . -DCMAKE_INSTALL_PREFIX=$mariadb_install_dir \
 -DENABLED_LOCAL_INFILE=1 \
 -DDEFAULT_CHARSET=utf8 \
 -DDEFAULT_COLLATION=utf8_general_ci \
--DEXTRA_CHARSETS=all \
--DWITH_BIG_TABLES=1 \
--DWITH_DEBUG=0 \
+-DWITH_EXTRA_CHARSETS=all \
 $EXE_LINKER
 make && make install
 

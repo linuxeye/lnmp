@@ -8,11 +8,11 @@ cd $lnmp_dir/src
 . ../functions/download.sh
 . ../options.conf
 
-src_url=http://www.imagemagick.org/download/ImageMagick-6.8.6-9.tar.gz && Download_src
+src_url=http://www.imagemagick.org/download/ImageMagick-6.8.6-10.tar.gz && Download_src
 src_url=http://pecl.php.net/get/imagick-3.1.0.tgz && Download_src
 
-tar xzf ImageMagick-6.8.6-9.tar.gz
-cd ImageMagick-6.8.6-9
+tar xzf ImageMagick-6.8.6-10.tar.gz
+cd ImageMagick-6.8.6-10
 ./configure
 make && make install
 cd ../

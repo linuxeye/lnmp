@@ -37,5 +37,11 @@
    ./vhost.sh
 ```
 
+## How to uninstall 
+
+```bash
+   ./uninstall.sh
+```
+
    For feedback, questions, and to follow the progress of the project (Chinese): <br />
    [lnmp最新源码一键安装脚本](http://blog.linuxeye.com/31.html)<br />

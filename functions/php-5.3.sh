@@ -116,6 +116,7 @@ sed -i 's@^max_execution_time.*@max_execution_time = 300@' $php_install_dir/etc/
 sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,stream_socket_server,fsocket@' $php_install_dir/etc/php.ini
 sed -i 's@^session.cookie_httponly.*@session.cookie_httponly = 1@' $php_install_dir/etc/php.ini
 sed -i 's@#sendmail_path.*@#sendmail_path = /usr/sbin/sendmail -t@' $php_install_dir/etc/php.ini
+[ -e /usr/sbin/sendmail ] && sed -i 's@^;sendmail_path.*@sendmail_path = /usr/sbin/sendmail -t -i@' $php_install_dir/etc/php.ini
 
 cat > $php_install_dir/etc/php-fpm.conf <<EOF
 ;;;;;;;;;;;;;;;;;;;;;

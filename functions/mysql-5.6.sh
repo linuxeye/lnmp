@@ -22,9 +22,9 @@ cd ..
 tar zxf mysql-5.6.14.tar.gz
 cd mysql-5.6.14
 if [ "$je_tc_malloc" == '1' ];then
-        EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc' -DWITH_SAFEMALLOC=OFF"
+        EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
 elif [ "$je_tc_malloc" == '2' ];then
-        EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc' -DWITH_SAFEMALLOC=OFF"
+        EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"
 fi
 cmake . -DCMAKE_INSTALL_PREFIX=$mysql_install_dir \
 -DMYSQL_UNIX_ADDR=/tmp/mysql.sock \

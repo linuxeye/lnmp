@@ -1,0 +1,77 @@
+#!/bin/bash
+# Author:  yeho <lj2007331 AT gmail.com>
+# Blog:  http://blog.linuxeye.com
+
+# Check if user is root
+[ $(id -u) != "0" ] && echo "Error: You must be root to run this script" && kill -9 $$
+
+export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+. ./options.conf
+Uninstall()
+{
+[ -e "$db_install_dir" ] && service mysqld stop
+[ -e "$php_install_dir" ] && service php-fpm stop
+[ -e "$web_install_dir" ] && service nginx stop
+[ -e "$pureftpd_install_dir" ] && service pureftpd stop
+[ -e "$redis_install_dir" ] && service redis-server stop
+[ -e "$memcached_install_dir" ] && service memcached stop
+
+for D in `cat ./options.conf | grep dir= | grep -v lnmp | awk -F'=' '{print $2}' | sort | uniq`
+do
+        [ -e "$D" ] && rm -rf $D
+done
+
+[ -e "$web_install_dir" ] && rm -rf /etc/logrotate.d/nginx
+[ -e "$db_install_dir" ] && rm -rf /etc/my.cnf /etc/ld.so.conf.d/mysql.conf 
+sed -i 's@^lnmp_dir=.*@lnmp_dir=@' ./options.conf
+sed -i 's@^web_install_dir=.*@web_install_dir=@' ./options.conf
+sed -i 's@^db_install_dir=.*@db_install_dir=@' ./options.conf
+sed -i 's@^db_data_dir=.*@db_data_dir=@' ./options.conf
+sed -i 's@^dbrootpwd=.*@dbrootpwd=@' ./options.conf
+sed -i 's@^ftpmanagerpwd=.*@ftpmanagerpwd=@' ./options.conf
+sed -i 's@^conn_ftpusers_dbpwd=.*@conn_ftpusers_dbpwd=@' ./options.conf
+echo -e "\033[32mUninstall completed.\033[0m"
+}
+
+get_char() 
+{ 
+SAVEDSTTY=`stty -g` 
+stty -echo 
+stty cbreak 
+dd if=/dev/tty bs=1 count=1 2> /dev/null 
+stty -raw 
+stty echo 
+stty $SAVEDSTTY 
+} 
+ 
+clear
+echo 
+echo -e "\033[31mYou will uninstall LNMP, Please backup your configure files and DB data! \033[0m"
+echo 
+echo -e "\033[33mThe following directory or files will be remove: \033[0m"
+for D in `cat ./options.conf | grep dir= | grep -v lnmp | awk -F'=' '{print $2}' | sort | uniq` 
+do
+	[ -e "$D" ] && echo $D
+done
+[ -e "$web_install_dir" ] && echo -e "/etc/init.d/nginx\n/etc/logrotate.d/nginx" 
+[ -e "$db_install_dir" ] && echo -e "/etc/init.d/mysqld\n/etc/my.cnf\n/etc/ld.so.conf.d/mysql.conf" 
+[ -e "$php_install_dir" ] && echo '/etc/init.d/php-fpm'
+[ -e "$pureftpd_install_dir" ] && echo '/etc/init.d/pureftpd'
+[ -e "$memcached_install_dir" ] && echo '/etc/init.d/memcached' 
+[ -e "$redis_install_dir" ] && echo '/etc/init.d/redis-server' 
+echo 
+echo -e "\033[33mPress any key to continue\033[0m..." 
+char=`get_char`
+
+while :
+do
+        echo
+        read -p "Do you want to uninstall LNMP? [y/n]: " uninstall_yn
+        if [ "$uninstall_yn" != 'y' -a "$uninstall_yn" != 'n' ];then
+                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
+        else
+                break
+        fi
+done
+
+[ "$uninstall_yn" == 'y' ] && Uninstall 

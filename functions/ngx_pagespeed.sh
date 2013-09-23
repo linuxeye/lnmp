@@ -19,17 +19,14 @@ tar xzf 1.6.29.5.tar.gz -C ngx_pagespeed-release-1.6.29.5-beta
 if [ "$Web_server" == '1' ];then
 	cd nginx-1.4.2
 	make clean
-
-	if [ "$je_tc_malloc" == '1' ];then
-		malloc_module="--with-ld-opt='-ljemalloc'"
-	elif [ "$je_tc_malloc" == '2' ];then
-	        malloc_module='--with-google_perftools_module'
-	fi
+	$web_install_dir/sbin/nginx -V &> $$
+	nginx_configure_arguments=`cat $$ | grep 'configure arguments:' | awk -F: '{print $2}'`
+	rm -rf $$
 
 	if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ] ;then
-		./configure --prefix=$web_install_dir --user=www --group=www --with-http_stub_status_module --with-http_ssl_module --with-http_flv_module --with-http_gzip_static_module --add-module=../ngx_pagespeed-release-1.6.29.5-beta --with-cc-opt='-DLINUX=2 -D_REENTRANT -D_LARGEFILE64_SOURCE -pthread' $malloc_module
+		./configure $nginx_configure_arguments --add-module=../ngx_pagespeed-release-1.6.29.5-beta --with-cc-opt='-DLINUX=2 -D_REENTRANT -D_LARGEFILE64_SOURCE -pthread'
 	else
-		./configure --prefix=$web_install_dir --user=www --group=www --with-http_stub_status_module --with-http_ssl_module --with-http_flv_module --with-http_gzip_static_module --add-module=../ngx_pagespeed-release-1.6.29.5-beta --with-cc-opt='-DLINUX=2 -D_REENTRANT -D_LARGEFILE64_SOURCE -march=i686 -pthread' $malloc_module
+		./configure $nginx_configure_arguments --add-module=../ngx_pagespeed-release-1.6.29.5-beta --with-cc-opt='-DLINUX=2 -D_REENTRANT -D_LARGEFILE64_SOURCE -march=i686 -pthread'
 	fi
 
 	make

@@ -20,7 +20,8 @@ do
 		break
 	fi
 done
-if [ ! -f "/usr/local/nginx/conf/vhost/$domain.conf" ]; then
+. ./options.conf
+if [ ! -f "$web_install_dir/conf/vhost/$domain.conf" ]; then
 	echo "domain=$domain"
 else
 	echo "$domain is exist!"
@@ -53,7 +54,7 @@ if [ "$moredomainame_yn" == 'y' ]; then
 fi
 
 # check ngx_pagespeed and add ngx_pagespeed
-/usr/local/nginx/sbin/nginx -V &> $$
+$web_install_dir/sbin/nginx -V &> $$
 if [ ! -z "`cat $$ | grep ngx_pagespeed`" ];then
         while :
         do
@@ -121,7 +122,7 @@ do
 done
 if [ "$rewrite_yn" == 'n' ];then
 	rewrite="none"
-	touch "/usr/local/nginx/conf/$rewrite.conf"
+	touch "$web_install_dir/conf/$rewrite.conf"
 else
 	echo ''
 	echo "Please input the rewrite of programme :"
@@ -132,9 +133,9 @@ else
 	fi
 	echo -e "You choose rewrite=\033[32m$rewrite\033[0m" 
 	if [ -s "conf/$rewrite.conf" ];then
-		/bin/cp conf/$rewrite.conf /usr/local/nginx/conf/$rewrite.conf
+		/bin/cp conf/$rewrite.conf $web_install_dir/conf/$rewrite.conf
 	else
-		touch "/usr/local/nginx/conf/$rewrite.conf"
+		touch "$web_install_dir/conf/$rewrite.conf"
 	fi
 fi
 
@@ -158,14 +159,14 @@ else
 fi
 
 
-[ ! -d /usr/local/nginx/conf/vhost ] && mkdir /usr/local/nginx/conf/vhost
+[ ! -d $web_install_dir/conf/vhost ] && mkdir $web_install_dir/conf/vhost
 
 echo "Create Virtul Host directory......"
 mkdir -p $vhostdir
 echo "set permissions of Virtual Host directory......"
 chown -R www.www $vhostdir
 
-cat >/usr/local/nginx/conf/vhost/$domain.conf<<EOF
+cat >$web_install_dir/conf/vhost/$domain.conf<<EOF
 server {
 listen 80;
 server_name $domain$moredomainame;
@@ -195,10 +196,10 @@ location ~ .*\.(js|css)?$ {
 EOF
 
 echo "Test Nginx configure file......"
-/usr/local/nginx/sbin/nginx -t
+$web_install_dir/sbin/nginx -t
 echo ""
 echo "Restart Nginx......"
-/usr/local/nginx/sbin/nginx -s reload
+$web_install_dir/sbin/nginx -s reload
 
 echo "#######################################################################"
 echo "#         LNMP for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+          #"
@@ -206,7 +207,7 @@ echo "# For more information please visit http://blog.linuxeye.com/31.html  #"
 echo "#######################################################################"
 echo ''
 echo -e "`printf "%-32s" "Your domain:"`\033[32m$domain\033[0m"
-echo -e "`printf "%-32s" "Virtualhost conf:"`\033[32m/usr/local/nginx/conf/vhost/$domain.conf\033[0m"
+echo -e "`printf "%-32s" "Virtualhost conf:"`\033[32m$web_install_dir/conf/vhost/$domain.conf\033[0m"
 echo -e "`printf "%-32s" "Directory of:"`\033[32m$vhostdir\033[0m"
 [ "$rewrite_yn" == 'y' ] && echo -e "`printf "%-32s" "Rewrite rule:"`\033[32m$rewrite\033[0m" 
 echo ''

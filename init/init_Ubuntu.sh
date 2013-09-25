@@ -21,6 +21,9 @@ elif [ ! -z "`cat /etc/issue | grep 12`" ];then
        apt-get -y install libcloog-ppl0
 fi
 
+# check sendmail
+[ "$sendmail_yn" == 'y' ] && apt-get -y install sendmail
+
 # PS1
 echo "PS1='\${debian_chroot:+(\$debian_chroot)}\\[\\e[1;32m\\]\\u@\\h\\[\\033[00m\\]:\\[\\033[01;34m\\]\\w\\[\\033[00m\\]\\$ '" >> ~/.bashrc 
 

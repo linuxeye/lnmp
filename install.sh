@@ -41,6 +41,18 @@ do
         fi
 done
 
+# check sendmail
+while :
+do
+        echo
+        read -p "Do you want to install sendmail ? [y/n]: " sendmail_yn 
+        if [ "$sendmail_yn" != 'y' -a "$sendmail_yn" != 'n' ];then
+                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
+        else
+                break
+        fi
+done
+
 # check Web server
 while :
 do

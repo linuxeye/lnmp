@@ -9,7 +9,7 @@ cd $lnmp_dir/src
 . ../options.conf
 
 src_url=http://www.imagemagick.org/download/ImageMagick-6.8.6-10.tar.gz && Download_src
-src_url=http://pecl.php.net/get/imagick-3.1.0.tgz && Download_src
+src_url=http://pecl.php.net/get/imagick-3.1.2.tgz && Download_src
 
 tar xzf ImageMagick-6.8.6-10.tar.gz
 cd ImageMagick-6.8.6-10
@@ -18,8 +18,8 @@ make && make install
 cd ../
 ln -s /usr/local/include/ImageMagick-6 /usr/local/include/ImageMagick
 
-tar xzf imagick-3.1.0.tgz
-cd imagick-3.1.0
+tar xzf imagick-3.1.2.tgz
+cd imagick-3.1.2
 make clean
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 $php_install_dir/bin/phpize

@@ -40,11 +40,11 @@ cd ../
 
 # linked library
 [ "$DB_yn" == 'n' ] && db_install_dir=$mysql_install_dir
+ln -s $db_install_dir/include /usr/include/mysql
 echo "$db_install_dir/lib" > /etc/ld.so.conf.d/mysql.conf
 echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
 ldconfig
 OS_CentOS='ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config \n
-ln -s $db_install_dir/include/* /usr/local/include/ \n
 if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ];then \n
         ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1 \n
         ln -s /usr/lib64/libldap* /usr/lib \n

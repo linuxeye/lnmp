@@ -34,6 +34,12 @@ yum -y update
 # Install needed packages
 yum -y install gcc gcc-c++ make autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel nss_ldap openldap openldap-devel openldap-clients openldap-servers libxslt-devel libevent-devel ntp libtool libtool-ltdl bison gd-devel vim-enhanced pcre-devel zip unzip
 
+# use gcc-4.4
+if [ ! -z "`gcc --version | head -n1 | grep 4\.1`" ];then
+        yum -y install gcc44 gcc44-c++ libstdc++44-devel
+	export CC="gcc44" CXX="g++44"
+fi
+
 # check sendmail
 [ "$sendmail_yn" == 'y' ] && yum -y install sendmail
 

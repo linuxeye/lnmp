@@ -37,18 +37,18 @@ do
                 echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
         else
                 [ -e init/init_*.ed -a "$upgrade_yn" == 'y' ] && echo -e "\033[31mYour system is already upgraded! \033[0m" && upgrade_yn=n && break
-                break
-        fi
-done
-
-# check sendmail
-while :
-do
-        echo
-        read -p "Do you want to install sendmail ? [y/n]: " sendmail_yn 
-        if [ "$sendmail_yn" != 'y' -a "$sendmail_yn" != 'n' ];then
-                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
-        else
+                # check sendmail
+                while :
+                do
+                        echo
+                        read -p "Do you want to install sendmail ? [y/n]: " sendmail_yn
+                        if [ "$sendmail_yn" != 'y' -a "$sendmail_yn" != 'n' ];then
+                                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
+                        else
+                                [ -e /usr/sbin/sendmail ] && echo -e "\033[31msendmail already installed! \033[0m" && sendmail_yn=n && break
+                                break
+                        fi
+                done
                 break
         fi
 done
@@ -333,6 +333,7 @@ chmod +x functions/*.sh init/* *.sh
 if [ "$OS" == 'CentOS' ];then
 	. init/init_CentOS.sh 2>&1 | tee -a $lnmp_dir/install.log
 	/bin/mv init/init_CentOS.sh init/init_CentOS.ed
+	[ ! -z "`gcc --version | head -n1 | grep 4\.1`" ] && export CC="gcc44" CXX="g++44"
 elif [ "$OS" == 'Debian' ];then
 	. init/init_Debian.sh 2>&1 | tee -a $lnmp_dir/install.log
 	/bin/mv init/init_Debian.sh init/init_Debian.ed

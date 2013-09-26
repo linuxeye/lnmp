@@ -54,14 +54,6 @@ fi
 # php memcached extension
 tar xzf libmemcached-1.0.16.tar.gz
 cd libmemcached-1.0.16
-OS_CentOS='if [ -z "`rpm -q gcc | grep 'gcc-4\.4'`" ];then \n
-	yum -y install gcc44 gcc44-c++ libstdc++44-devel \n
-fi'
-OS_command
-if [ -f "`which gcc44`" ];then
-	export CC=`which gcc44`
-	export CXX=`which g++44`
-fi
 ./configure --with-memcached=$memcached_install_dir
 make && make install
 cd ..

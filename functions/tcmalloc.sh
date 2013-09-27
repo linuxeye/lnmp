@@ -13,9 +13,8 @@ src_url=http://gperftools.googlecode.com/files/gperftools-2.1.tar.gz && Download
 if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ];then
 	tar xzf libunwind-1.1.tar.gz
 	cd libunwind-1.1
-	CFLAGS=-fPIC ./configure
-	make CFLAGS=-fPIC
-	make CFLAGS=-fPIC install
+	CFLAGS="$CFLAGS -fPIC" ./configure
+	make && make install 
 	cd ..
 	tar xzf gperftools-2.1.tar.gz
 	cd gperftools-2.1

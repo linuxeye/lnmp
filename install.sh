@@ -297,6 +297,19 @@ do
 done
 fi
 
+# gcc sane CFLAGS and CXXFLAGS
+while :
+do
+        echo
+        read -p "Do you want to optimizing compiled code using safe, sane CFLAGS and CXXFLAGS? [y/n]: " gcc_sane_yn
+        if [ "$gcc_sane_yn" != 'y' -a "$gcc_sane_yn" != 'n' ];then
+                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
+        else
+                [ "$gcc_sane_yn" == 'y' -a -z "`cat /proc/cpuinfo | grep 'model name' | grep -E 'Intel|AMD'`" ] && echo -e "Unknown CPU model" && gcc_sane_yn=n && break
+                break
+        fi
+done
+
 # check jemalloc or tcmalloc 
 if [ "$Web_yn" == 'y' -o "$DB_yn" == 'y' ];then
         while :
@@ -342,15 +355,15 @@ elif [ "$OS" == 'Ubuntu' ];then
 	/bin/mv init/init_Ubuntu.sh init/init_Ubuntu.ed
 fi
 
-# gcc options
-if [ ! -z "`cat /proc/cpuinfo | grep 'model name' | grep -E 'Intel|AMD'`" ];then
-	if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ];then
-		export CHOST="x86_64-pc-linux-gnu" CFLAGS="-march=native -O3 -pipe -fomit-frame-pointer"
-		export CXXFLAGS="${CFLAGS}"
-	elif [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 32 ];then
-		export CHOST="i686-pc-linux-gnu" CFLAGS="-march=native -O3 -pipe -fomit-frame-pointer"
-		export CXXFLAGS="${CFLAGS}"
-	fi
+# Optimization compiled code using safe, sane CFLAGS and CXXFLAGS
+if [ "$gcc_sane_yn" == 'y' ];then
+        if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ];then
+                export CHOST="x86_64-pc-linux-gnu" CFLAGS="-march=native -O3 -pipe -fomit-frame-pointer"
+                export CXXFLAGS="${CFLAGS}"
+        elif [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 32 ];then
+                export CHOST="i686-pc-linux-gnu" CFLAGS="-march=native -O3 -pipe -fomit-frame-pointer"
+                export CXXFLAGS="${CFLAGS}"
+        fi
 fi
 
 # jemalloc or tcmalloc

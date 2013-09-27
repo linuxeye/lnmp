@@ -2,16 +2,17 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # Blog:  http://blog.linuxeye.com
 
-wget -c http://yum.baseurl.org/download/3.4/yum-3.4.3.tar.gz
+cd src
+. ../functions/download.sh
+src_url=http://yum.baseurl.org/download/3.4/yum-3.4.3.tar.gz && Download_src
 tar zxf yum-3.4.3.tar.gz
 cd yum-3.4.3
 ./yummain.py install yum -y
 cd ..
-rm -rf yum-3.4.3*
 sed -i 's@^exclude@#exclude@' /etc/yum.conf
 yum clean all
 
-if [ "`./functions/get_ip_area.py $IP`" == 'CN' ];then
+if [ "`../functions/get_ip_area.py $IP`" == 'CN' ];then
         mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo_bk
 	[ ! -z "$(cat /etc/redhat-release | grep '6\.')" ] && wget -c http://mirrors.163.com/.help/CentOS6-Base-163.repo -P /etc/yum.repos.d
 	[ ! -z "$(cat /etc/redhat-release | grep '5\.')" ] && wget -c http://mirrors.163.com/.help/CentOS5-Base-163.repo -P /etc/yum.repos.d
@@ -64,20 +65,20 @@ sed -i 's/^id:.*$/id:3:initdefault:/' /etc/inittab
 init q
 
 # PS1
-echo 'PS1="\[\e[37;40m\][\[\e[32;40m\]\u\[\e[37;40m\]@\h \[\e[35;40m\]\W\[\e[0m\]]\\$ \[\e[33;40m\]"' >> /etc/profile
+[ -z "`cat ~/.bashrc | grep ^PS1`" ] && echo 'PS1="\[\e[37;40m\][\[\e[32;40m\]\u\[\e[37;40m\]@\h \[\e[35;40m\]\W\[\e[0m\]]\\$ \[\e[33;40m\]"' >> ~/.bashrc 
 
 # history size 
 sed -i 's/^HISTSIZE=.*$/HISTSIZE=100/' /etc/profile
-echo "export PROMPT_COMMAND='{ msg=\$(history 1 | { read x y; echo \$y; });user=\$(whoami); echo \$(date \"+%Y-%m-%d %H:%M:%S\"):\$user:\`pwd\`/:\$msg ---- \$(who am i); } >> /tmp/\`hostname\`.\`whoami\`.history-timestamp'" >> ~/.bashrc
+[ -z "`cat ~/.bashrc | grep history-timestamp`" ] && echo "export PROMPT_COMMAND='{ msg=\$(history 1 | { read x y; echo \$y; });user=\$(whoami); echo \$(date \"+%Y-%m-%d %H:%M:%S\"):\$user:\`pwd\`/:\$msg ---- \$(who am i); } >> /tmp/\`hostname\`.\`whoami\`.history-timestamp'" >> ~/.bashrc
 
 # /etc/security/limits.conf
-cat >> /etc/security/limits.conf <<EOF
+[ -z "`cat /etc/security/limits.conf | grep 'nproc 65535'`" ] && cat >> /etc/security/limits.conf <<EOF
 * soft nproc 65535
 * hard nproc 65535
 * soft nofile 65535
 * hard nofile 65535
 EOF
-echo "ulimit -SH 65535" >> /etc/rc.local
+[ -z "`cat /etc/rc.local | grep 'ulimit -SH 65535'`" ] && echo "ulimit -SH 65535" >> /etc/rc.local
 
 # /etc/hosts
 [ "$(hostname -i | awk '{print $1}')" != "127.0.0.1" ] && sed -i "s@^127.0.0.1\(.*\)@127.0.0.1   `hostname` \1@" /etc/hosts
@@ -95,15 +96,14 @@ EOF
 fi
 
 # Wrong password five times locked 180s
-sed -i '4a auth        required      pam_tally2.so deny=5 unlock_time=180' /etc/pam.d/system-auth
+[ -z "`cat /etc/pam.d/system-auth | grep 'pam_tally2.so'`" ] && sed -i '4a auth        required      pam_tally2.so deny=5 unlock_time=180' /etc/pam.d/system-auth
 
 # alias vi
-sed -i "s@alias mv=\(.*\)@alias mv=\1\nalias vi=vim@" ~/.bashrc
-echo 'syntax on' >> /etc/vimrc
+[ -z "`cat ~/.bashrc | grep 'alias vi='`" ] && sed -i "s@alias mv=\(.*\)@alias mv=\1\nalias vi=vim@" ~/.bashrc && echo 'syntax on' >> /etc/vimrc
 
 # /etc/sysctl.conf
 sed -i 's/net.ipv4.tcp_syncookies.*$/net.ipv4.tcp_syncookies = 1/g' /etc/sysctl.conf
-cat >> /etc/sysctl.conf << EOF
+[ -z "`cat /etc/sysctl.conf | grep 'fs.file-max'`" ] && cat >> /etc/sysctl.conf << EOF
 fs.file-max=65535
 net.ipv4.tcp_tw_reuse = 1
 net.ipv4.tcp_tw_recycle = 1
@@ -153,38 +153,37 @@ EOF
 service iptables restart
 
 # install tmux
-mkdir tmux
-cd tmux
-wget -c http://cloud.github.com/downloads/libevent/libevent/libevent-2.0.21-stable.tar.gz 
-wget -c http://downloads.sourceforge.net/project/tmux/tmux/tmux-1.8/tmux-1.8.tar.gz 
-tar xzf libevent-2.0.21-stable.tar.gz
-cd libevent-2.0.21-stable
-./configure
-make && make install
-cd ../
+if [ ! -e "`which tmux`" ];then
+	src_url=http://cloud.github.com/downloads/libevent/libevent/libevent-2.0.21-stable.tar.gz && Download_src 
+	src_url=http://downloads.sourceforge.net/project/tmux/tmux/tmux-1.8/tmux-1.8.tar.gz && Download_src 
+	tar xzf libevent-2.0.21-stable.tar.gz
+	cd libevent-2.0.21-stable
+	./configure
+	make && make install
+	cd ..
 
-tar xzf tmux-1.8.tar.gz
-cd tmux-1.8
-CFLAGS="-I/usr/local/include" LDFLAGS="-L//usr/local/lib" ./configure
-make && make install
-cd ../../
-rm -rf tmux
+	tar xzf tmux-1.8.tar.gz
+	cd tmux-1.8
+	CFLAGS="-I/usr/local/include" LDFLAGS="-L//usr/local/lib" ./configure
+	make && make install
+	cd ..
 
-if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ];then
-    ln -s /usr/local/lib/libevent-2.0.so.5 /usr/lib64/libevent-2.0.so.5
-else
-    ln -s /usr/local/lib/libevent-2.0.so.5 /usr/lib/libevent-2.0.so.5
+	if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ];then
+	    ln -s /usr/local/lib/libevent-2.0.so.5 /usr/lib64/libevent-2.0.so.5
+	else
+	    ln -s /usr/local/lib/libevent-2.0.so.5 /usr/lib/libevent-2.0.so.5
+	fi
 fi
 
 # install htop
-mkdir htop
-cd htop
-wget -c http://downloads.sourceforge.net/project/htop/htop/1.0.2/htop-1.0.2.tar.gz 
-tar xzf htop-1.0.2.tar.gz
-cd htop-1.0.2
-./configure
-make && make install
-cd ../../
-rm -rf htop
-
+if [ ! -e "`which htop`" ];then
+	src_url=http://downloads.sourceforge.net/project/htop/htop/1.0.2/htop-1.0.2.tar.gz && Download_src 
+	tar xzf htop-1.0.2.tar.gz
+	cd htop-1.0.2
+	./configure
+	make && make install
+	cd ..
+fi
+cd ..
 . /etc/profile
+. ~/.bashrc

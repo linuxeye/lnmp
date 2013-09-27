@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # Blog:  http://blog.linuxeye.com
 #
-# Version: 0.3 07-Sep-2013 lj2007331 AT gmail.com
+# Version: 0.4 27-Sep-2013 lj2007331 AT gmail.com
 # Notes: LNMP for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+ 
 #
 # This script's project home is:
@@ -340,6 +340,17 @@ elif [ "$OS" == 'Debian' ];then
 elif [ "$OS" == 'Ubuntu' ];then
 	. init/init_Ubuntu.sh 2>&1 | tee -a $lnmp_dir/install.log
 	/bin/mv init/init_Ubuntu.sh init/init_Ubuntu.ed
+fi
+
+# gcc options
+if [ ! -z "`cat /proc/cpuinfo | grep 'model name' | grep -E 'Intel|AMD'`" ];then
+	if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ];then
+		export CHOST="x86_64-pc-linux-gnu" CFLAGS="-march=native -O3 -pipe -fomit-frame-pointer"
+		export CXXFLAGS="${CFLAGS}"
+	elif [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 32 ];then
+		export CHOST="i686-pc-linux-gnu" CFLAGS="-march=native -O3 -pipe -fomit-frame-pointer"
+		export CXXFLAGS="${CFLAGS}"
+	fi
 fi
 
 # jemalloc or tcmalloc

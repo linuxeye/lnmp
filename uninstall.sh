@@ -22,7 +22,7 @@ do
 done
 
 [ -e "$web_install_dir" ] && rm -rf /etc/logrotate.d/nginx && [ -e "/var/ngx_pagespeed_cache" ] && rm -rf /var/ngx_pagespeed_cache
-[ -e "$db_install_dir" ] && rm -rf /etc/my.cnf /etc/ld.so.conf.d/mysql.conf 
+[ -e "$db_install_dir" ] && rm -rf /etc/my.cnf /etc/ld.so.conf.d/mysql.conf /usr/include/mysql 
 sed -i 's@^lnmp_dir=.*@lnmp_dir=@' ./options.conf
 sed -i 's@^web_install_dir=.*@web_install_dir=@' ./options.conf
 sed -i 's@^db_install_dir=.*@db_install_dir=@' ./options.conf
@@ -54,7 +54,7 @@ do
 	[ -e "$D" ] && echo $D
 done
 [ -e "$web_install_dir" ] && echo -e "/etc/init.d/nginx\n/etc/logrotate.d/nginx" && [ -e "/var/ngx_pagespeed_cache" ] && echo '/var/ngx_pagespeed_cache'
-[ -e "$db_install_dir" ] && echo -e "/etc/init.d/mysqld\n/etc/my.cnf\n/etc/ld.so.conf.d/mysql.conf" 
+[ -e "$db_install_dir" ] && echo -e "/etc/init.d/mysqld\n/etc/my.cnf\n/etc/ld.so.conf.d/mysql.conf\n/usr/include/mysql"
 [ -e "$php_install_dir" ] && echo '/etc/init.d/php-fpm'
 [ -e "$pureftpd_install_dir" ] && echo '/etc/init.d/pureftpd'
 [ -e "$memcached_install_dir" ] && echo '/etc/init.d/memcached' 

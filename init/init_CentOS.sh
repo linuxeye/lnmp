@@ -20,9 +20,9 @@ if [ "`../functions/get_ip_area.py $IP`" == 'CN' ];then
 fi
 
 if [ ! -z "$(cat /etc/redhat-release | grep '6\.')" ];then
+	yum -y groupremove "FTP Server" "PostgreSQL Database client" "PostgreSQL Database server" "MySQL Database server" "MySQL Database client" "Web Server" "Office Suite and Productivity" "E-mail server" "Ruby Support" "X Window System" "Printing client" "Desktop*"
+elif [ ! -z "$(cat /etc/redhat-release | grep '5\.')" ];then
 	yum -y groupremove "FTP Server" "Text-based Internet" "Windows File Server" "PostgreSQL Database" "News Server" "MySQL Database" "DNS Name Server" "Web Server" "Dialup Networking Support" "Mail Server" "Ruby" "Office/Productivity" "Sound and Video" "X Window System" "X Software Development" "Printing Support" "OpenFabrics Enterprise Distribution"
-else
-	yum -y groupremove "FTP Server" "PostgreSQL Database client" "PostgreSQL Database server" "MySQL Database server" "MySQL Database client" "Web Server" "Office Suite and Productivity" "Ruby Support" "X Window System" "Printing client" "Desktop*"
 fi
 
 yum check-update
@@ -40,7 +40,7 @@ if [ ! -z "`gcc --version | head -n1 | grep 4\.1`" ];then
 fi
 
 # check sendmail
-[ "$sendmail_yn" == 'y' ] && yum -y install sendmail
+[ "$sendmail_yn" == 'y' ] && yum -y install sendmail && service sendmail restart
 
 # closed Unnecessary services and remove obsolete rpm package
 chkconfig --list | awk '{print "chkconfig " $1 " off"}' > /tmp/chkconfiglist.sh;/bin/sh /tmp/chkconfiglist.sh;rm -rf /tmp/chkconfiglist.sh
@@ -52,7 +52,6 @@ chkconfig iptables on
 chkconfig rsyslog on #CentOS 6
 chkconfig syslog on #CentOS 5
 chkconfig sendmail on
-service sendmail restart
 
 # Close SELINUX
 setenforce 0

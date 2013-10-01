@@ -69,7 +69,7 @@ tar xzf php-5.3.27.tar.gz
 useradd -M -s /sbin/nologin www
 cd php-5.3.27
 make clean
-./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
+CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
 --with-fpm-user=www --with-fpm-group=www --enable-fpm --disable-fileinfo --with-mysql=$db_install_dir \
 --with-mysqli=$db_install_dir/bin/mysql_config --with-pdo-mysql=$db_install_dir/bin/mysql_config \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \

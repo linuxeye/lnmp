@@ -13,7 +13,7 @@ src_url=http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.34.tar.gz && Download
 
 tar xzf cmake-2.8.11.2.tar.gz
 cd cmake-2.8.11.2
-./configure
+CFLAGS= CXXFLAGS= ./configure
 make &&  make install
 cd ..
 

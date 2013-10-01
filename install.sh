@@ -298,17 +298,17 @@ done
 fi
 
 # gcc sane CFLAGS and CXXFLAGS
-while :
-do
-        echo
-        read -p "Do you want to optimizing compiled code using safe, sane CFLAGS and CXXFLAGS? [y/n]: " gcc_sane_yn
-        if [ "$gcc_sane_yn" != 'y' -a "$gcc_sane_yn" != 'n' ];then
-                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
-        else
-                [ "$gcc_sane_yn" == 'y' -a -z "`cat /proc/cpuinfo | grep 'model name' | grep -E 'Intel|AMD'`" ] && echo -e "Unknown CPU model" && gcc_sane_yn=n && break
-                break
-        fi
-done
+#while :
+#do
+#        echo
+#        read -p "Do you want to optimizing compiled code using safe, sane CFLAGS and CXXFLAGS? [y/n]: " gcc_sane_yn
+#        if [ "$gcc_sane_yn" != 'y' -a "$gcc_sane_yn" != 'n' ];then
+#                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
+#        else
+#                [ "$gcc_sane_yn" == 'y' -a -z "`cat /proc/cpuinfo | grep 'model name' | grep -E 'Intel|AMD'`" ] && echo -e "Unknown CPU model" && gcc_sane_yn=n && break
+#                break
+#        fi
+#done
 
 # check jemalloc or tcmalloc 
 if [ "$Web_yn" == 'y' -o "$DB_yn" == 'y' ];then

@@ -16,8 +16,8 @@ useradd -M -s /sbin/nologin mysql
 mkdir -p $mariadb_data_dir;chown mysql.mysql -R $mariadb_data_dir
 tar xzf cmake-2.8.11.2.tar.gz
 cd cmake-2.8.11.2
-./configure
-make &&  make install
+CFLAGS= CXXFLAGS= ./configure
+make && make install
 cd ..
 tar zxf mariadb-5.5.33a.tar.gz
 cd mariadb-5.5.33a

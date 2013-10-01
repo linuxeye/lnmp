@@ -16,8 +16,8 @@ useradd -M -s /sbin/nologin mysql
 mkdir -p $mysql_data_dir;chown mysql.mysql -R $mysql_data_dir
 tar xzf cmake-2.8.11.2.tar.gz
 cd cmake-2.8.11.2
-./configure
-make &&  make install
+CFLAGS= CXXFLAGS= ./configure
+make && make install
 cd ..
 tar zxf mysql-5.6.14.tar.gz
 cd mysql-5.6.14

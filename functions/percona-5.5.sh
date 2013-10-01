@@ -15,8 +15,8 @@ useradd -M -s /sbin/nologin mysql
 mkdir -p $percona_data_dir;chown mysql.mysql -R $percona_data_dir
 tar xzf cmake-2.8.11.2.tar.gz
 cd cmake-2.8.11.2
-./configure
-make &&  make install
+CFLAGS= CXXFLAGS= ./configure
+make && make install
 cd ..
 tar zxf Percona-Server-5.5.33-rel31.1.tar.gz
 cd Percona-Server-5.5.33-rel31.1

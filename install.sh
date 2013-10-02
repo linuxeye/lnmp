@@ -45,7 +45,6 @@ do
                         if [ "$sendmail_yn" != 'y' -a "$sendmail_yn" != 'n' ];then
                                 echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
                         else
-                                [ -e /usr/sbin/sendmail ] && echo -e "\033[31msendmail already installed! \033[0m" && sendmail_yn=n && break
                                 break
                         fi
                 done
@@ -117,7 +116,7 @@ do
                                         while :
                                         do
                                                 read -p "Please input the root password of database: " dbrootpwd
-                                                (( ${#dbrootpwd} >= 5 )) && sed -i "s@^dbrootpwd.*@dbrootpwd=$dbrootpwd@" options.conf && break || echo -e "\033[31mdatabase root password least 5 characters! \033[0m"
+                                                (( ${#dbrootpwd} >= 5 )) && sed -i "s@^dbrootpwd.*@dbrootpwd=$dbrootpwd@" ./options.conf && break || echo -e "\033[31mdatabase root password least 5 characters! \033[0m"
                                         done
                                         break
                                 fi

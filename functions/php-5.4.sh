@@ -143,8 +143,7 @@ daemonize = yes
 ;;;;;;;;;;;;;;;;;;;;
 
 [www]
-
-listen = 127.0.0.1:9000
+listen = /dev/shm/php-cgi.sock
 listen.backlog = -1
 listen.allowed_clients = 127.0.0.1
 listen.owner = www
@@ -174,6 +173,7 @@ env[TMP] = /tmp
 env[TMPDIR] = /tmp
 env[TEMP] = /tmp
 EOF
+[ "$Web_yn" == 'n' ] && sed -i "s@^listen =.*@listen = $IP:9000@" $php_install_dir/etc/php-fpm.conf 
 service php-fpm start
 cd ../../
 }

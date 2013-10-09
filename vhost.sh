@@ -181,7 +181,8 @@ if ( \$query_string ~* ".*[\;'\<\>].*" ){
 $anti_hotlinking
 `echo -e $ngx_pagespeed`
 location ~ .*\.(php|php5)?$  {
-	fastcgi_pass  127.0.0.1:9000;
+	#fastcgi_pass  remote_php_ip:9000;
+	fastcgi_pass unix:/dev/shm/php-cgi.sock;
 	fastcgi_index index.php;
 	include fastcgi.conf;
 	}

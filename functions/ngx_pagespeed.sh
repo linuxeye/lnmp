@@ -17,7 +17,7 @@ unzip -q ngx_pagespeed-master.zip
 tar xzf 1.6.29.5.tar.gz -C ngx_pagespeed-release-1.6.29.5-beta
 
 if [ "$Web_server" == '1' ];then
-	cd nginx-1.4.2
+	cd nginx-1.4.3
 	make clean
 	$web_install_dir/sbin/nginx -V &> $$
 	nginx_configure_arguments=`cat $$ | grep 'configure arguments:' | awk -F: '{print $2}'`

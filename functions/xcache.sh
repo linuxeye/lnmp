@@ -8,9 +8,9 @@ cd $lnmp_dir/src
 . ../functions/download.sh
 . ../options.conf
 
-src_url=http://xcache.lighttpd.net/pub/Releases/3.0.3/xcache-3.0.3.tar.gz && Download_src
-tar xzf xcache-3.0.3.tar.gz 
-cd xcache-3.0.3
+src_url=http://xcache.lighttpd.net/pub/Releases/3.1.0/xcache-3.1.0.tar.gz && Download_src
+tar xzf xcache-3.1.0.tar.gz 
+cd xcache-3.1.0
 make clean
 $php_install_dir/bin/phpize
 ./configure --enable-xcache --enable-xcache-coverager --enable-xcache-optimizer --with-php-config=$php_install_dir/bin/php-config

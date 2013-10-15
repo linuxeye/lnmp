@@ -14,8 +14,22 @@ yum clean all
 
 if [ "`../functions/get_ip_area.py $IP`" == 'CN' ];then
         mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo_bk
-	[ ! -z "$(cat /etc/redhat-release | grep '6\.')" ] && wget -c http://mirrors.163.com/.help/CentOS6-Base-163.repo -P /etc/yum.repos.d
-	[ ! -z "$(cat /etc/redhat-release | grep '5\.')" ] && wget -c http://mirrors.163.com/.help/CentOS5-Base-163.repo -P /etc/yum.repos.d
+	if [ ! -z "$(cat /etc/redhat-release | grep '6\.')" ];then
+		wget -c http://mirrors.163.com/.help/CentOS6-Base-163.repo -P /etc/yum.repos.d
+		if [ ! -z "$(cat /etc/redhat-release | grep 'Red Hat')" ];then
+			sed -i 's@\$releasever@6@g' /etc/yum.repos.d/CentOS6-Base-163.repo
+	                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS6-Base-163.repo
+		fi
+	fi
+
+	if [ ! -z "$(cat /etc/redhat-release | grep '5\.')" ];then
+		wget -c http://mirrors.163.com/.help/CentOS5-Base-163.repo -P /etc/yum.repos.d
+		if [ ! -z "$(cat /etc/redhat-release | grep 'Red Hat')" ];then
+			sed -i 's@\$releasever@5@g' /etc/yum.repos.d/CentOS5-Base-163.repo
+	                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS5-Base-163.repo
+		fi
+	fi
+
 	yum makecache
 fi
 

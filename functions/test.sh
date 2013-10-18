@@ -14,6 +14,6 @@ echo '<?php phpinfo() ?>' > $home_dir/default/phpinfo.php
 /bin/cp $lnmp_dir/conf/index.html $home_dir/default
 unzip -q tz.zip -d $home_dir/default
 chown -R www.www $home_dir/default
-service mysqld restart
+[ "$DB_yn" == 'y' ]service mysqld restart
 cd ..
 }

@@ -13,7 +13,7 @@ src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/2.6.8/mcrypt-2.6.8.tar.gz && Download_src
-src_url=http://kr1.php.net/distributions/php-5.3.27.tar.gz && Download_src
+src_url=http://www.php.net/distributions/php-5.3.27.tar.gz && Download_src
 
 tar xzf libiconv-1.14.tar.gz
 cd libiconv-1.14

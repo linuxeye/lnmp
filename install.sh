@@ -21,8 +21,8 @@ echo "#######################################################################"
 #get pwd
 sed -i "s@^lnmp_dir.*@lnmp_dir=`pwd`@" ./options.conf
 
-# get ipv4
-. functions/get_ipv4.sh
+# get local ip address
+local_IP=`./functions/get_local_ip.py`
 
 # Definition Directory
 . ./options.conf
@@ -494,14 +494,14 @@ echo -e "\033[32mPlease restart the server and see if the services start up fine
 [ "$DB_yn" == 'y' ] && echo -e "`printf "%-32s" "Database password:"`\033[32m${dbrootpwd}\033[0m"
 [ "$PHP_yn" == 'y' ] && echo -e "\n`printf "%-32s" "PHP install dir:"`\033[32m$php_install_dir\033[0m"
 [ "$PHP_cache" == '3' ] && echo -e "`printf "%-32s" "xcache web dir:"`\033[32m$home_dir/default/xcache\033[0m"
-[ "$PHP_cache" == '3' -a "$Web_yn" == 'y' ] && echo -e "`printf "%-32s" "xcache web manager url:"`\033[32mhttp://$IP/xcache\033[0m"
+[ "$PHP_cache" == '3' -a "$Web_yn" == 'y' ] && echo -e "`printf "%-32s" "xcache web manager url:"`\033[32mhttp://$local_IP/xcache\033[0m"
 [ "$PHP_cache" == '3' ] && echo -e "`printf "%-32s" "xcache user:"`\033[32madmin\033[0m"
 [ "$PHP_cache" == '3' ] && echo -e "`printf "%-32s" "xcache password:"`\033[32m$xcache_admin_pass\033[0m"
 [ "$FTP_yn" == 'y' ] && echo -e "\n`printf "%-32s" "Pure-FTPd install dir:"`\033[32m$pureftpd_install_dir\033[0m"
 [ "$FTP_yn" == 'y' ] && echo -e "`printf "%-32s" "pureftpd php manager dir:"`\033[32m$home_dir/default/ftp\033[0m"
-[ "$FTP_yn" == 'y' ] && echo -e "`printf "%-32s" "ftp web manager url:"`\033[32mhttp://$IP/ftp\033[0m"
+[ "$FTP_yn" == 'y' ] && echo -e "`printf "%-32s" "ftp web manager url:"`\033[32mhttp://$local_IP/ftp\033[0m"
 [ "$phpMyAdmin_yn" == 'y' ] && echo -e "\n`printf "%-32s" "phpMyAdmin dir:"`\033[32m$home_dir/default/phpMyAdmin\033[0m"
-[ "$phpMyAdmin_yn" == 'y' ] && echo -e "`printf "%-32s" "phpMyAdmin url:"`\033[32mhttp://$IP/phpMyAdmin\033[0m"
+[ "$phpMyAdmin_yn" == 'y' ] && echo -e "`printf "%-32s" "phpMyAdmin url:"`\033[32mhttp://$local_IP/phpMyAdmin\033[0m"
 [ "$redis_yn" == 'y' ] && echo -e "\n`printf "%-32s" "redis install dir:"`\033[32m$redis_install_dir\033[0m"
 [ "$memcached_yn" == 'y' ] && echo -e "\n`printf "%-32s" "memcached install dir:"`\033[32m$memcached_install_dir\033[0m"
-[ "$Web_yn" == 'y' ] && echo -e "\n`printf "%-32s" "index url:"`\033[32mhttp://$IP/\033[0m"
+[ "$Web_yn" == 'y' ] && echo -e "\n`printf "%-32s" "index url:"`\033[32mhttp://$local_IP/\033[0m"

@@ -12,7 +12,8 @@ cd ..
 sed -i 's@^exclude@#exclude@' /etc/yum.conf
 yum clean all
 
-if [ "`../functions/get_ip_area.py $IP`" == 'CN' ];then
+public_IP=`../functions/get_public_ip.py`
+if [ "`../functions/get_ip_area.py $public_IP`" == 'CN' ];then
         mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo_bk
 	if [ ! -z "$(cat /etc/redhat-release | grep '6\.')" ];then
 		wget -c http://mirrors.163.com/.help/CentOS6-Base-163.repo -P /etc/yum.repos.d

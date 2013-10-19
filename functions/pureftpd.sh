@@ -48,7 +48,7 @@ update-rc.d pureftpd defaults"
 	cd src 
 	tar xzf ftp_v2.1.tar.gz
 	sed -i 's/tmppasswd/'$conn_ftpusers_dbpwd'/' ftp/config.php
-	sed -i "s/myipaddress.com/`echo $IP`/" ftp/config.php
+	sed -i "s/myipaddress.com/`echo $local_IP`/" ftp/config.php
 	sed -i 's@\$DEFUserID.*;@\$DEFUserID = "501";@' ftp/config.php
 	sed -i 's@\$DEFGroupID.*;@\$DEFGroupID = "501";@' ftp/config.php
 	sed -i 's@iso-8859-1@UTF-8@' ftp/language/english.php

@@ -171,7 +171,7 @@ env[TMP] = /tmp
 env[TMPDIR] = /tmp
 env[TEMP] = /tmp
 EOF
-[ "$Web_yn" == 'n' ] && sed -i "s@^listen =.*@listen = $IP:9000@" $php_install_dir/etc/php-fpm.conf 
+[ "$Web_yn" == 'n' ] && sed -i "s@^listen =.*@listen = $local_IP:9000@" $php_install_dir/etc/php-fpm.conf 
 service php-fpm start
 cd ../../
 }

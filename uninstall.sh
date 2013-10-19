@@ -6,7 +6,14 @@
 [ $(id -u) != "0" ] && echo "Error: You must be root to run this script" && kill -9 $$
 
 export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+clear
+echo "#######################################################################"
+echo "#         LNMP for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+          #"
+echo "#                           Uninstall LNMP                            #"
+echo "# For more information Please visit http://blog.linuxeye.com/31.html  #"
+echo "#######################################################################"
 . ./options.conf
+
 Uninstall()
 {
 [ -e "$db_install_dir" ] && service mysqld stop
@@ -30,6 +37,7 @@ sed -i 's@^db_data_dir=.*@db_data_dir=@' ./options.conf
 sed -i 's@^dbrootpwd=.*@dbrootpwd=@' ./options.conf
 sed -i 's@^ftpmanagerpwd=.*@ftpmanagerpwd=@' ./options.conf
 sed -i 's@^conn_ftpusers_dbpwd=.*@conn_ftpusers_dbpwd=@' ./options.conf
+sed -i "s@^export.*$db_install_dir.*@@g" /etc/profile && . /etc/profile
 echo -e "\033[32mUninstall completed.\033[0m"
 }
 
@@ -44,7 +52,6 @@ stty echo
 stty $SAVEDSTTY 
 } 
  
-clear
 echo 
 echo -e "\033[31mYou will uninstall LNMP, Please backup your configure files and DB data! \033[0m"
 echo 
@@ -60,7 +67,7 @@ done
 [ -e "$memcached_install_dir" ] && echo '/etc/init.d/memcached' 
 [ -e "$redis_install_dir" ] && echo '/etc/init.d/redis-server' 
 echo 
-echo -e "\033[33mPress any key to continue\033[0m..." 
+echo "Press Ctrl+c to cancel or Press any key to continue..."
 char=`get_char`
 
 while :

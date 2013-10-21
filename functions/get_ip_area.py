@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #coding:utf-8
 try:
     import sys,urllib2,json

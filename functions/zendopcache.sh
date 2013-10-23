@@ -18,6 +18,7 @@ $php_install_dir/bin/phpize
 make && make install
 if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/opcache.so" ];then
         cat >> $php_install_dir/etc/php.ini << EOF
+[opcache]
 zend_extension="$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/opcache.so"
 opcache.memory_consumption=128
 opcache.interned_strings_buffer=8

@@ -9,7 +9,7 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh 
 . ../options.conf
 
-src_url=http://ftp.cs.stanford.edu/pub/exim/pcre/pcre-8.33.tar.gz && Download_src
+src_url=http://downloads.sourceforge.net/project/pcre/pcre/8.33/pcre-8.33.tar.gz && Download_src
 src_url=http://nginx.org/download/nginx-1.4.3.tar.gz && Download_src
 
 tar xzf pcre-8.33.tar.gz

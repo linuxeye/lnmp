@@ -189,6 +189,18 @@ do
                                                         (( ${#xcache_admin_pass} >= 5 )) && xcache_admin_md5_pass=`echo -n "$xcache_admin_pass" | md5sum | awk '{print $1}'` && break || echo -e "\033[31mxcache admin password least 5 characters! \033[0m"
                                                 done
                                         fi
+					if [ "$PHP_version" == '2' -o "$PHP_version" == '3' ];then
+                                                while :
+                                                do
+                                                        echo
+                                                        read -p "Do you want to install ZendGuardLoader? [y/n]: " ZendGuardLoader_yn
+                                                        if [ "$ZendGuardLoader_yn" != 'y' -a "$ZendGuardLoader_yn" != 'n' ];then
+                                                                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
+                                                        else
+                                                                break
+                                                        fi
+                                                done
+                                        fi
                                         while :
                                         do
                                                 echo
@@ -213,8 +225,8 @@ do
                                                         break
                                                 fi
                                         done
+	                                break
                                 fi
-                                break
                         done
                 fi
                 break
@@ -437,6 +449,12 @@ elif [ "$PHP_cache" == '3' ];then
         Install_XCache 2>&1 | tee -a $lnmp_dir/install.log
 fi
 
+# ZendGuardLoader (php <= 5.4)
+if [ "$ZendGuardLoader_yn" == 'y' ];then
+	. functions/ZendGuardLoader.sh
+        Install_ZendGuardLoader 2>&1 | tee -a $lnmp_dir/install.log
+fi
+
 # Web server
 if [ "$Web_server" == '1' ];then
         . functions/nginx.sh
@@ -489,19 +507,22 @@ echo "####################Congratulations########################"
 echo -e "\033[32mPlease restart the server and see if the services start up fine.\033[0m"
 [ "$Web_yn" == 'y' ] && echo -e "\n`printf "%-32s" "Web install  dir":`\033[32m$web_install_dir\033[0m"
 [ "$DB_yn" == 'y' ] && echo -e "\n`printf "%-32s" "Database install dir:"`\033[32m$db_install_dir\033[0m"
-[ "$DB_yn" == 'y' ] && echo -e "\n`printf "%-32s" "Database data dir:"`\033[32m$db_data_dir\033[0m"
+[ "$DB_yn" == 'y' ] && echo -e "`printf "%-32s" "Database data dir:"`\033[32m$db_data_dir\033[0m"
 [ "$DB_yn" == 'y' ] && echo -e "`printf "%-32s" "Database user:"`\033[32mroot\033[0m"
 [ "$DB_yn" == 'y' ] && echo -e "`printf "%-32s" "Database password:"`\033[32m${dbrootpwd}\033[0m"
 [ "$PHP_yn" == 'y' ] && echo -e "\n`printf "%-32s" "PHP install dir:"`\033[32m$php_install_dir\033[0m"
-[ "$PHP_cache" == '3' ] && echo -e "`printf "%-32s" "xcache web dir:"`\033[32m$home_dir/default/xcache\033[0m"
-[ "$PHP_cache" == '3' -a "$Web_yn" == 'y' ] && echo -e "`printf "%-32s" "xcache web manager url:"`\033[32mhttp://$local_IP/xcache\033[0m"
+[ "$PHP_cache" == '1' ] && echo -e "`printf "%-32s" "Opcache Control Panel url:"`\033[32mhttp://$local_IP/ocp.php\033[0m" 
+[ "$PHP_cache" == '2' ] && echo -e "`printf "%-32s" "eAccelerator Control Panel url:"`\033[32mhttp://$local_IP/control.php\033[0m"
+[ "$PHP_cache" == '2' ] && echo -e "`printf "%-32s" "eAccelerator user:"`\033[32madmin\033[0m"
+[ "$PHP_cache" == '2' ] && echo -e "`printf "%-32s" "eAccelerator password:"`\033[32meAccelerator\033[0m"
+[ "$PHP_cache" == '3' ] && echo -e "`printf "%-32s" "xcache Control Panel url:"`\033[32mhttp://$local_IP/xcache\033[0m"
 [ "$PHP_cache" == '3' ] && echo -e "`printf "%-32s" "xcache user:"`\033[32madmin\033[0m"
 [ "$PHP_cache" == '3' ] && echo -e "`printf "%-32s" "xcache password:"`\033[32m$xcache_admin_pass\033[0m"
 [ "$FTP_yn" == 'y' ] && echo -e "\n`printf "%-32s" "Pure-FTPd install dir:"`\033[32m$pureftpd_install_dir\033[0m"
-[ "$FTP_yn" == 'y' ] && echo -e "`printf "%-32s" "pureftpd php manager dir:"`\033[32m$home_dir/default/ftp\033[0m"
-[ "$FTP_yn" == 'y' ] && echo -e "`printf "%-32s" "ftp web manager url:"`\033[32mhttp://$local_IP/ftp\033[0m"
+[ "$FTP_yn" == 'y' ] && echo -e "`printf "%-32s" "Pure-FTPd php manager dir:"`\033[32m$home_dir/default/ftp\033[0m"
+[ "$FTP_yn" == 'y' ] && echo -e "`printf "%-32s" "Ftp User Control Panel url:"`\033[32mhttp://$local_IP/ftp\033[0m"
 [ "$phpMyAdmin_yn" == 'y' ] && echo -e "\n`printf "%-32s" "phpMyAdmin dir:"`\033[32m$home_dir/default/phpMyAdmin\033[0m"
-[ "$phpMyAdmin_yn" == 'y' ] && echo -e "`printf "%-32s" "phpMyAdmin url:"`\033[32mhttp://$local_IP/phpMyAdmin\033[0m"
+[ "$phpMyAdmin_yn" == 'y' ] && echo -e "`printf "%-32s" "phpMyAdmin Control Panel url:"`\033[32mhttp://$local_IP/phpMyAdmin\033[0m"
 [ "$redis_yn" == 'y' ] && echo -e "\n`printf "%-32s" "redis install dir:"`\033[32m$redis_install_dir\033[0m"
 [ "$memcached_yn" == 'y' ] && echo -e "\n`printf "%-32s" "memcached install dir:"`\033[32m$memcached_install_dir\033[0m"
 [ "$Web_yn" == 'y' ] && echo -e "\n`printf "%-32s" "index url:"`\033[32mhttp://$local_IP/\033[0m"

@@ -4,11 +4,11 @@
 - Constant updates 
 - Source compiler installation, most source code is the latest stable version, and downloaded from the official website
 - Fixes some security issues 
-- You can freely choose to install database version (MySQL-5.6, MySQL-5.5, MariaDB-5.5, Percona-5.5)
+- You can freely choose to install database version (MySQL-5.6, MySQL-5.5, MariaDB-5.5, Percona-5.5, Percona-5.6)
 - You can freely choose to install PHP version (php-5.5, php-5.4, php-5.3)
 - You can freely choose to install Nginx or Tengine 
 - According to their needs can to install ngx_pagespeed
-- According to their needs can to install ZendOPcache, eAccelerator, xcache, ZendGuardLoader (php-5.4, php-5.3) 
+- According to their needs can to install ZendOPcache, eAccelerator, xcache and ZendGuardLoader (php-5.4, php-5.3) 
 - According to their needs can to install Pureftpd, phpMyAdmin
 - According to their needs can to install memcached, redis
 - According to their needs can to optimize MySQL and Nginx with jemalloc or tcmalloc 

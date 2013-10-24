@@ -108,10 +108,11 @@ do
                                 echo -e "\t\033[32m2\033[0m. Install MySQL-5.5"
                                 echo -e "\t\033[32m3\033[0m. Install MariaDB-5.5"
                                 echo -e "\t\033[32m4\033[0m. Install Percona-5.5"
+                                echo -e "\t\033[32m5\033[0m. Install Percona-5.6"
                                 read -p "Please input a number:(Default 1 press Enter) " DB_version
                                 [ -z "$DB_version" ] && DB_version=1
-                                if [ $DB_version != 1 -a $DB_version != 2 -a $DB_version != 3 -a $DB_version != 4 ];then
-                                        echo -e "\033[31minput error! Please only input number 1,2,3,4 \033[0m"
+                                if [ $DB_version != 1 -a $DB_version != 2 -a $DB_version != 3 -a $DB_version != 4 -a $DB_version != 5 ];then
+                                        echo -e "\033[31minput error! Please only input number 1,2,3,4,5 \033[0m"
                                 else
                                         while :
                                         do
@@ -399,6 +400,9 @@ elif [ "$DB_version" == '3' ];then
 elif [ "$DB_version" == '4' ];then
 	. functions/percona-5.5.sh 
 	Install_Percona-5-5 2>&1 | tee -a $lnmp_dir/install.log 
+elif [ "$DB_version" == '5' ];then
+        . functions/percona-5.6.sh
+        Install_Percona-5-6 2>&1 | tee -a $lnmp_dir/install.log
 fi
 
 # PHP MySQL Client
@@ -511,7 +515,7 @@ echo -e "\033[32mPlease restart the server and see if the services start up fine
 [ "$DB_yn" == 'y' ] && echo -e "`printf "%-32s" "Database user:"`\033[32mroot\033[0m"
 [ "$DB_yn" == 'y' ] && echo -e "`printf "%-32s" "Database password:"`\033[32m${dbrootpwd}\033[0m"
 [ "$PHP_yn" == 'y' ] && echo -e "\n`printf "%-32s" "PHP install dir:"`\033[32m$php_install_dir\033[0m"
-[ "$PHP_cache" == '1' ] && echo -e "`printf "%-32s" "Opcache Control Panel url:"`\033[32mhttp://$local_IP/ocp.php\033[0m" 
+[ "$PHP_version" == '1' -o "$PHP_cache" == '1' ] && echo -e "`printf "%-32s" "Opcache Control Panel url:"`\033[32mhttp://$local_IP/ocp.php\033[0m" 
 [ "$PHP_cache" == '2' ] && echo -e "`printf "%-32s" "eAccelerator Control Panel url:"`\033[32mhttp://$local_IP/control.php\033[0m"
 [ "$PHP_cache" == '2' ] && echo -e "`printf "%-32s" "eAccelerator user:"`\033[32madmin\033[0m"
 [ "$PHP_cache" == '2' ] && echo -e "`printf "%-32s" "eAccelerator password:"`\033[32meAccelerator\033[0m"

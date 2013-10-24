@@ -1,7 +1,7 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
 # Blog:  http://blog.linuxeye.com
-Install_MySQL-5-5()
+Install_Percona-5-6()
 {
 cd $lnmp_dir/src
 . ../functions/download.sh 
@@ -9,25 +9,25 @@ cd $lnmp_dir/src
 . ../options.conf
 
 src_url=http://www.cmake.org/files/v2.8/cmake-2.8.12.tar.gz && Download_src 
-src_url=http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.34.tar.gz && Download_src
+src_url=http://www.percona.com/downloads/Percona-Server-5.6/LATEST/release-5.6.14-62.0/483/source/Percona-Server-5.6.14-rel62.0.tar.gz && Download_src
 
 useradd -M -s /sbin/nologin mysql
-mkdir -p $mysql_data_dir;chown mysql.mysql -R $mysql_data_dir
+mkdir -p $percona_data_dir;chown mysql.mysql -R $percona_data_dir
 tar xzf cmake-2.8.12.tar.gz
 cd cmake-2.8.12
 CFLAGS= CXXFLAGS= ./configure
 make && make install
 cd ..
-tar zxf mysql-5.5.34.tar.gz
-cd mysql-5.5.34
+tar zxf Percona-Server-5.6.14-rel62.0.tar.gz
+cd Percona-Server-5.6.14-rel62.0
 if [ "$je_tc_malloc" == '1' ];then
         EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
 elif [ "$je_tc_malloc" == '2' ];then
         EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"
 fi
-cmake . -DCMAKE_INSTALL_PREFIX=$mysql_install_dir \
+cmake . -DCMAKE_INSTALL_PREFIX=$percona_install_dir \
 -DMYSQL_UNIX_ADDR=/tmp/mysql.sock \
--DMYSQL_DATADIR=$mysql_data_dir \
+-DMYSQL_DATADIR=$percona_data_dir \
 -DSYSCONFDIR=/etc \
 -DMYSQL_TCP_PORT=3306 \
 -DWITH_INNOBASE_STORAGE_ENGINE=1 \
@@ -35,7 +35,6 @@ cmake . -DCMAKE_INSTALL_PREFIX=$mysql_install_dir \
 -DWITH_BLACKHOLE_STORAGE_ENGINE=1 \
 -DWITH_MYISAM_STORAGE_ENGINE=1 \
 -DWITH_ARCHIVE_STORAGE_ENGINE=1 \
--DWITH_READLINE=1 \
 -DENABLED_LOCAL_INFILE=1 \
 -DDEFAULT_CHARSET=utf8 \
 -DDEFAULT_COLLATION=utf8_general_ci \
@@ -44,10 +43,10 @@ cmake . -DCMAKE_INSTALL_PREFIX=$mysql_install_dir \
 $EXE_LINKER
 make && make install
 
-if [ -d "$mysql_install_dir" ];then
-        echo -e "\033[32mMySQL install successfully! \033[0m"
+if [ -d "$percona_install_dir" ];then
+        echo -e "\033[32mPercona install successfully! \033[0m"
 else
-        echo -e "\033[31mMySQL install failed, Please contact the author! \033[0m"
+        echo -e "\033[31mPercona install failed, Please contact the author! \033[0m"
         kill -9 $$
 fi
 
@@ -62,9 +61,9 @@ cd ../../
 # my.cf
 cat > /etc/my.cnf << EOF
 [mysqld]
-basedir = $mysql_install_dir
-datadir = $mysql_data_dir
-pid-file = $mysql_data_dir/mysql.pid
+basedir = $percona_install_dir
+datadir = $percona_data_dir
+pid-file = $percona_data_dir/mysql.pid
 character-set-server = utf8
 collation-server = utf8_general_ci
 user = mysql
@@ -97,10 +96,10 @@ read_rnd_buffer_size = 512K
 myisam_sort_buffer_size = 8M
 
 # LOG
-log_error = $mysql_data_dir/mysql-error.log
+log_error = $percona_data_dir/mysql-error.log
 long_query_time = 1
 slow_query_log
-slow_query_log_file = $mysql_data_dir/mysql-slow.log
+slow_query_log_file = $percona_data_dir/mysql-slow.log
 
 # Oher
 #max_connections = 1000
@@ -110,21 +109,21 @@ open_files_limit = 65535
 port = 3306
 EOF
 
-$mysql_install_dir/scripts/mysql_install_db --user=mysql --basedir=$mysql_install_dir --datadir=$mysql_data_dir
+$percona_install_dir/scripts/mysql_install_db --user=mysql --basedir=$percona_install_dir --datadir=$percona_data_dir
 
-chown mysql.mysql -R $mysql_data_dir
+chown mysql.mysql -R $percona_data_dir
 service mysqld start
-export PATH=$PATH:$mysql_install_dir/bin
-echo "export PATH=\$PATH:$mysql_install_dir/bin" >> /etc/profile
+export PATH=$PATH:$percona_install_dir/bin
+echo "export PATH=\$PATH:$percona_install_dir/bin" >> /etc/profile
 . /etc/profile
 
-$mysql_install_dir/bin/mysql -e "grant all privileges on *.* to root@'127.0.0.1' identified by \"$dbrootpwd\" with grant option;"
-$mysql_install_dir/bin/mysql -e "grant all privileges on *.* to root@'localhost' identified by \"$dbrootpwd\" with grant option;"
-$mysql_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.user where Password='';"
-$mysql_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.db where User='';"
-$mysql_install_dir/bin/mysql -uroot -p$dbrootpwd -e "drop database test;"
-$mysql_install_dir/bin/mysql -uroot -p$dbrootpwd -e "reset master;"
-sed -i "s@^db_install_dir.*@db_install_dir=$mysql_install_dir@" options.conf
-sed -i "s@^db_data_dir.*@db_data_dir=$mysql_data_dir@" options.conf
+$percona_install_dir/bin/mysql -e "grant all privileges on *.* to root@'127.0.0.1' identified by \"$dbrootpwd\" with grant option;"
+$percona_install_dir/bin/mysql -e "grant all privileges on *.* to root@'localhost' identified by \"$dbrootpwd\" with grant option;"
+$percona_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.user where Password='';"
+$percona_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.db where User='';"
+$percona_install_dir/bin/mysql -uroot -p$dbrootpwd -e "drop database test;"
+$percona_install_dir/bin/mysql -uroot -p$dbrootpwd -e "reset master;"
+sed -i "s@^db_install_dir.*@db_install_dir=$percona_install_dir@" options.conf
+sed -i "s@^db_data_dir.*@db_data_dir=$percona_data_dir@" options.conf
 service mysqld stop
 }

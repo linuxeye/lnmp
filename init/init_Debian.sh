@@ -98,5 +98,6 @@ cat > /etc/iptables.up.rules << EOF
 COMMIT
 EOF
 iptables-restore < /etc/iptables.up.rules
+echo 'pre-up iptables-restore < /etc/iptables.up.rules' >> /etc/network/interfaces
 
 . ~/.bashrc

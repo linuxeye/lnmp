@@ -1,4 +1,4 @@
-   This script is free collection of shell scripts for rapid deployment of lnmp stacks (`Linux`, `Nginx`/`Tengine`, `MySQL`/`MariaDB` and `PHP`) for CentOS/Redhat Debian and Ubuntu.
+   This script is free collection of shell scripts for rapid deployment of lnmp stacks (`Linux`, `Nginx`/`Tengine`, `MySQL`/`MariaDB`/`Percona` and `PHP`) for CentOS/Redhat Debian and Ubuntu.
 
    Script features: 
 - Constant updates 
@@ -25,11 +25,18 @@
    cd lnmp
    chmod +x install.sh
    # Prevent interrupt the installation process. If the network is down, you can execute commands `srceen -r lnmp` network reconnect the installation window.
-   # Если сеть не работает, вы можете выполнять команды `srceen -r lnmp` сети подключить установку окна.
-   # 如果网路出现中断，可以执行命令`srceen -r lnmp`重新连接安装窗口
    screen -S lnmp
    ./install.sh
 ```
+
+## How to manage service
+
+        Nginx/Tengine: `service nginx {start|stop|status|restart|condrestart|try-restart|reload|force-reload|configtest}`
+MySQL/MariaDB/Percona: `service mysqld {start|stop|restart|reload|force-reload|status}`
+                  PHP: `service php-fpm {start|stop|force-quit|restart|reload|status}`
+            Pure-Ftpd: `service pureftpd {start|stop|restart|condrestart|status}`
+                Redis: `service redis-server {start|stop|status|restart|condrestart|try-restart|reload|force-reload}`
+            Memcached: `service memcached {start|stop|status|restart|reload|force-reload}`
 
 ## How to add a virtual host
 

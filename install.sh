@@ -68,9 +68,9 @@ do
                                 echo 'Please select Web server:'
                                 echo -e "\t\033[32m1\033[0m. Install Nginx"
                                 echo -e "\t\033[32m2\033[0m. Install Tengine"
-                                read -p "Please input a number:(Default 1 press Enter) " Web_server
-                                [ -z "$Web_server" ] && Web_server=1
-                                if [ $Web_server != 1 -a $Web_server != 2 ];then
+                                read -p "Please input a number:(Default 1 press Enter) " Nginx_version
+                                [ -z "$Nginx_version" ] && Nginx_version=1
+                                if [ $Nginx_version != 1 -a $Nginx_version != 2 ];then
                                         echo -e "\033[31minput error! Please only input number 1,2\033[0m"
                                 else
                                         while :
@@ -460,10 +460,10 @@ if [ "$ZendGuardLoader_yn" == 'y' ];then
 fi
 
 # Web server
-if [ "$Web_server" == '1' ];then
+if [ "$Nginx_version" == '1' ];then
         . functions/nginx.sh
         Install_Nginx 2>&1 | tee -a $lnmp_dir/install.log
-elif [ "$Web_server" == '2' ];then
+elif [ "$Nginx_version" == '2' ];then
 	. functions/tengine.sh
         Install_Tengine 2>&1 | tee -a $lnmp_dir/install.log
 fi
@@ -508,7 +508,7 @@ if [ ! -e "$home_dir/default/index.html" -a -d "$web_install_dir" ];then
 fi
 
 echo "####################Congratulations########################"
-echo -e "\033[32mPlease restart the server and see if the services start up fine.\033[0m"
+echo
 [ "$Web_yn" == 'y' ] && echo -e "\n`printf "%-32s" "Web install  dir":`\033[32m$web_install_dir\033[0m"
 [ "$DB_yn" == 'y' ] && echo -e "\n`printf "%-32s" "Database install dir:"`\033[32m$db_install_dir\033[0m"
 [ "$DB_yn" == 'y' ] && echo -e "`printf "%-32s" "Database data dir:"`\033[32m$db_data_dir\033[0m"
@@ -530,3 +530,15 @@ echo -e "\033[32mPlease restart the server and see if the services start up fine
 [ "$redis_yn" == 'y' ] && echo -e "\n`printf "%-32s" "redis install dir:"`\033[32m$redis_install_dir\033[0m"
 [ "$memcached_yn" == 'y' ] && echo -e "\n`printf "%-32s" "memcached install dir:"`\033[32m$memcached_install_dir\033[0m"
 [ "$Web_yn" == 'y' ] && echo -e "\n`printf "%-32s" "index url:"`\033[32mhttp://$local_IP/\033[0m"
+while :
+do
+        echo
+        echo -e "\033[31mPlease restart the server and see if the services start up fine.\033[0m"
+        read -p "Do you want to restart OS ? [y/n]: " restart_yn
+        if [ "$restart_yn" != 'y' -a "$restart_yn" != 'n' ];then
+                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
+        else
+                break
+        fi
+done
+[ "$restart_yn" == 'y' ] && reboot

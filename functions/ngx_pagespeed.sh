@@ -16,7 +16,7 @@ unzip -q ngx_pagespeed-master.zip
 /bin/mv ngx_pagespeed-master ngx_pagespeed-release-1.6.29.7-beta
 tar xzf 1.6.29.7.tar.gz -C ngx_pagespeed-release-1.6.29.7-beta
 
-if [ "$Web_server" == '1' ];then
+if [ "$Nginx_version" == '1' ];then
 	cd nginx-1.4.3
 	make clean
 	$web_install_dir/sbin/nginx -V &> $$
@@ -42,7 +42,7 @@ if [ "$Web_server" == '1' ];then
 		echo -e "\033[31minstall ngx_pagespeed failed\033[0m"
 	fi
 	cd ../
-elif [ "$Web_server" == '2' ];then
+elif [ "$Nginx_version" == '2' ];then
 	$web_install_dir/sbin/dso_tool --add-module=$lnmp_dir/src/ngx_pagespeed-release-1.6.29.7-beta
 	if [ -f "$web_install_dir/modules/ngx_pagespeed.so" ];then
 		sed -i "s@^dso\(.*\)@dso\1\n\tload ngx_pagespeed.so;@" $web_install_dir/conf/nginx.conf

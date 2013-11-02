@@ -30,13 +30,31 @@
 ```
 
 ## How to manage service
-
-        Nginx/Tengine: `service nginx {start|stop|status|restart|condrestart|try-restart|reload|force-reload|configtest}`<br />
-MySQL/MariaDB/Percona: `service mysqld {start|stop|restart|reload|force-reload|status}`<br />
-                  PHP: `service php-fpm {start|stop|force-quit|restart|reload|status}`<br />
-            Pure-Ftpd: `service pureftpd {start|stop|restart|condrestart|status}`<br />
-                Redis: `service redis-server {start|stop|status|restart|condrestart|try-restart|reload|force-reload}`<br />
-            Memcached: `service memcached {start|stop|status|restart|reload|force-reload}`<br />
+Nginx/Tengine:
+```bash
+   service nginx {start|stop|status|restart|condrestart|try-restart|reload|force-reload|configtest}
+```
+MySQL/MariaDB/Percona:
+```bash
+   service mysqld {start|stop|restart|reload|force-reload|status}
+```
+PHP:
+```bash
+   service php-fpm {start|stop|force-quit|restart|reload|status}
+```
+Pure-Ftpd:
+```bash
+   service pureftpd {start|stop|restart|condrestart|status}
+```
+Redis:
+```bash
+   service redis-server {start|stop|status|restart|condrestart|try-restart|reload|force-reload}
+```
+```bash
+Memcached:
+```bash
+   service memcached {start|stop|status|restart|reload|force-reload}
+```
 
 ## How to add a virtual host
 

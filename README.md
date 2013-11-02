@@ -50,7 +50,6 @@ Redis:
 ```bash
    service redis-server {start|stop|status|restart|condrestart|try-restart|reload|force-reload}
 ```
-```bash
 Memcached:
 ```bash
    service memcached {start|stop|status|restart|reload|force-reload}

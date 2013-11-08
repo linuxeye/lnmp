@@ -69,8 +69,9 @@ tar xzf php-5.5.5.tar.gz
 useradd -M -s /sbin/nologin www
 cd php-5.5.5
 make clean
+if [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
 CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
---with-fpm-user=www --with-fpm-group=www --enable-opcache --enable-fpm --disable-fileinfo --with-mysql=$db_install_dir \
+--with-apxs2=$apache_install_dir/bin/apxs --enable-opcache --disable-fileinfo --with-mysql=$db_install_dir \
 --with-mysqli=$db_install_dir/bin/mysql_config --with-pdo-mysql=$db_install_dir/bin/mysql_config \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
@@ -78,6 +79,17 @@ CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=
 --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-xsl --with-openssl \
 --with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc \
 --enable-ftp --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
+else
+CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
+--with-fpm-user=www --with-fpm-group=www --enable-fpm --enable-opcache --disable-fileinfo --with-mysql=$db_install_dir \
+--with-mysqli=$db_install_dir/bin/mysql_config --with-pdo-mysql=$db_install_dir/bin/mysql_config \
+--with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
+--with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
+--enable-sysvsem --enable-inline-optimization --with-curl --with-kerberos --enable-mbregex \
+--enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-xsl --with-openssl \
+--with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc \
+--enable-ftp --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
+fi
 make ZEND_EXTRA_LIBS='-liconv'
 make install
 
@@ -92,15 +104,6 @@ fi
 # $php_install_dir/bin/php go-pear.phar
 
 /bin/cp php.ini-production $php_install_dir/etc/php.ini
-
-# php-fpm Init Script
-/bin/cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
-chmod +x /etc/init.d/php-fpm
-OS_CentOS='chkconfig --add php-fpm \n
-chkconfig php-fpm on'
-OS_Debian_Ubuntu='update-rc.d php-fpm defaults'
-OS_command
-cd ../
 
 # Modify php.ini
 sed -i 's@^output_buffering =@output_buffering = On\noutput_buffering =@' $php_install_dir/etc/php.ini
@@ -125,6 +128,15 @@ sed -i 's@^;opcache.max_accelerated_files.*@opcache.max_accelerated_files=4000@'
 sed -i 's@^;opcache.revalidate_freq.*@opcache.revalidate_freq=60@' $php_install_dir/etc/php.ini
 sed -i 's@^;opcache.fast_shutdown.*@opcache.fast_shutdown=1@' $php_install_dir/etc/php.ini
 sed -i 's@^;opcache.enable_cli.*@opcache.enable_cli=1@' $php_install_dir/etc/php.ini
+
+if [ "$Apache_version" != '1' -a "$Apache_version" != '2' ];then
+# php-fpm Init Script
+/bin/cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
+chmod +x /etc/init.d/php-fpm
+OS_CentOS='chkconfig --add php-fpm \n
+chkconfig php-fpm on'
+OS_Debian_Ubuntu='update-rc.d php-fpm defaults'
+OS_command
 
 cat > $php_install_dir/etc/php-fpm.conf <<EOF
 ;;;;;;;;;;;;;;;;;;;;;
@@ -182,5 +194,6 @@ env[TEMP] = /tmp
 EOF
 [ "$Web_yn" == 'n' ] && sed -i "s@^listen =.*@listen = $local_IP:9000@" $php_install_dir/etc/php-fpm.conf 
 service php-fpm start
+fi
 cd ../../
 }

@@ -16,12 +16,13 @@ echo "#######################################################################"
 
 Uninstall()
 {
-[ -e "$db_install_dir" ] && service mysqld stop
-[ -e "$php_install_dir" ] && service php-fpm stop
-[ -e "$web_install_dir" ] && service nginx stop
-[ -e "$pureftpd_install_dir" ] && service pureftpd stop
-[ -e "$redis_install_dir" ] && service redis-server stop
-[ -e "$memcached_install_dir" ] && service memcached stop
+[ -e "$db_install_dir" ] && service mysqld stop && rm -rf /etc/init.d/mysqld
+[ -e "$apache_install_dir" ] && service httpd stop && rm -rf /etc/init.d/httpd
+[ -e "$php_install_dir" ] && service php-fpm stop && rm -rf /etc/init.d/php-fpm
+[ -e "$web_install_dir" ] && service nginx stop && rm -rf /etc/init.d/nginx
+[ -e "$pureftpd_install_dir" ] && service pureftpd stop && rm -rf /etc/init.d/pureftpd
+[ -e "$redis_install_dir" ] && service redis-server stop && rm -rf /etc/init.d/redis-server
+[ -e "$memcached_install_dir" ] && service memcached stop && rm -rf /etc/init.d/memcached
 
 for D in `cat ./options.conf | grep dir= | grep -v lnmp | awk -F'=' '{print $2}' | sort | uniq`
 do
@@ -61,6 +62,7 @@ do
 	[ -e "$D" ] && echo $D
 done
 [ -e "$web_install_dir" ] && echo -e "/etc/init.d/nginx\n/etc/logrotate.d/nginx" && [ -e "/var/ngx_pagespeed_cache" ] && echo '/var/ngx_pagespeed_cache'
+[ -e "$apache_install_dir" ] && echo '/etc/init.d/httpd'
 [ -e "$db_install_dir" ] && echo -e "/etc/init.d/mysqld\n/etc/my.cnf\n/etc/ld.so.conf.d/mysql.conf\n/usr/include/mysql"
 [ -e "$php_install_dir" ] && echo '/etc/init.d/php-fpm'
 [ -e "$pureftpd_install_dir" ] && echo '/etc/init.d/pureftpd'

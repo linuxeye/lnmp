@@ -45,7 +45,7 @@ zend_loader.enable=1
 zend_loader.disable_licensing=0
 zend_loader.obfuscation_level_support=3
 EOF
-        service php-fpm restart
+        [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
 else
         echo -e "\033[31meZendGuardLoader module install failed, Please contact the author! \033[0m"
 fi

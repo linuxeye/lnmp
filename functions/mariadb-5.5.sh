@@ -14,11 +14,13 @@ src_url=http://ftp.osuosl.org/pub/mariadb/mariadb-5.5.33a/kvm-tarbake-jaunty-x86
 
 useradd -M -s /sbin/nologin mysql
 mkdir -p $mariadb_data_dir;chown mysql.mysql -R $mariadb_data_dir
-tar xzf cmake-2.8.12.tar.gz
-cd cmake-2.8.12
-CFLAGS= CXXFLAGS= ./configure
-make && make install
-cd ..
+if [ ! -e "`which cmake`" ];then
+        tar xzf cmake-2.8.12.tar.gz
+        cd cmake-2.8.12
+        CFLAGS= CXXFLAGS= ./configure
+        make && make install
+        cd ..
+fi
 tar zxf mariadb-5.5.33a.tar.gz
 cd mariadb-5.5.33a
 if [ "$je_tc_malloc" == '1' ];then
@@ -26,6 +28,7 @@ if [ "$je_tc_malloc" == '1' ];then
 elif [ "$je_tc_malloc" == '2' ];then
 	EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc' -DWITH_SAFEMALLOC=OFF"
 fi
+make clean
 cmake . -DCMAKE_INSTALL_PREFIX=$mariadb_install_dir \
 -DMYSQL_UNIX_ADDR=/tmp/mysql.sock \
 -DMYSQL_DATADIR=$mariadb_data_dir \

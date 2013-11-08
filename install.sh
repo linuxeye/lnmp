@@ -13,10 +13,11 @@
 
 export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 clear
-echo "#######################################################################"
-echo "#         LNMP for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+          #"
-echo "# For more information Please visit http://blog.linuxeye.com/31.html  #"
-echo "#######################################################################"
+printf "
+#######################################################################
+#    LNMP/LAMP/LANMP for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+    #
+# For more information please visit http://blog.linuxeye.com/31.html  #
+#######################################################################"
 
 #get pwd
 sed -i "s@^lnmp_dir.*@lnmp_dir=`pwd`@" ./options.conf
@@ -31,7 +32,7 @@ mkdir -p $home_dir/default $wwwlogs_dir $lnmp_dir/{src,conf}
 # choice upgrade OS
 while :
 do
-        echo
+	echo -e "\033[32m \033[0m"
         read -p "Do you want to upgrade operating system ? [y/n]: " upgrade_yn
         if [ "$upgrade_yn" != 'y' -a "$upgrade_yn" != 'n' ];then
                 echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
@@ -65,25 +66,40 @@ do
                         while :
                         do
                                 echo
-                                echo 'Please select Web server:'
+                                echo 'Please select Nginx server:'
                                 echo -e "\t\033[32m1\033[0m. Install Nginx"
                                 echo -e "\t\033[32m2\033[0m. Install Tengine"
+                                echo -e "\t\033[32m3\033[0m. Do not install"
                                 read -p "Please input a number:(Default 1 press Enter) " Nginx_version
                                 [ -z "$Nginx_version" ] && Nginx_version=1
-                                if [ $Nginx_version != 1 -a $Nginx_version != 2 ];then
-                                        echo -e "\033[31minput error! Please only input number 1,2\033[0m"
+                                if [ $Nginx_version != 1 -a $Nginx_version != 2 -a $Nginx_version != 3 ];then
+                                        echo -e "\033[31minput error! Please only input number 1,2,3\033[0m"
                                 else
+                                if [ $Nginx_version = 1 -o $Nginx_version = 2 ];then
                                         while :
                                         do
                                                 read -p "Do you want to install ngx_pagespeed module? [y/n]: " ngx_pagespeed_yn
                                                 if [ "$ngx_pagespeed_yn" != 'y' -a "$ngx_pagespeed_yn" != 'n' ];then
                                                         echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
                                                 else
-                                                break
+                                                        break
                                                 fi
                                         done
+                                fi
+                                echo
+                                echo 'Please select Apache server:'
+                                echo -e "\t\033[32m1\033[0m. Install Apache-2.4"
+                                echo -e "\t\033[32m2\033[0m. Install Apache-2.2"
+                                echo -e "\t\033[32m3\033[0m. Do not install"
+                                read -p "Please input a number:(Default 3 press Enter) " Apache_version
+                                [ -z "$Apache_version" ] && Apache_version=3
+                                if [ $Apache_version != 1 -a $Apache_version != 2 -a $Apache_version != 3 ];then
+                                        echo -e "\033[31minput error! Please only input number 1,2,3\033[0m"
+                                else
+                                        break
+                                fi
                                 break
-                        fi
+                                fi
                         done
                 fi
                 break
@@ -411,6 +427,15 @@ if [ "$DB_yn" == 'n' -a "$PHP_yn" == 'y' ];then
 	Install_PHP-MySQL-Client 2>&1 | tee -a $lnmp_dir/install.log
 fi
 
+# Apache
+if [ "$Apache_version" == '1' ];then
+	. functions/apache-2.4.sh 
+	Install_Apache-2-4 2>&1 | tee -a $lnmp_dir/install.log
+elif [ "$Apache_version" == '2' ];then
+	. functions/apache-2.2.sh 
+	Install_Apache-2-2 2>&1 | tee -a $lnmp_dir/install.log
+fi
+
 # PHP
 if [ "$PHP_version" == '1' ];then
 	. functions/php-5.5.sh
@@ -502,14 +527,15 @@ fi
 . ./options.conf
 
 # index example
-if [ ! -e "$home_dir/default/index.html" -a -d "$web_install_dir" ];then
+if [ ! -e "$home_dir/default/index.html" -a "$Web_yn" == 'y' ];then
 	. functions/test.sh
 	TEST 2>&1 | tee -a $lnmp_dir/install.log 
 fi
 
 echo "####################Congratulations########################"
-echo
-[ "$Web_yn" == 'y' ] && echo -e "\n`printf "%-32s" "Web install  dir":`\033[32m$web_install_dir\033[0m"
+[ "$Web_yn" == 'y' -a "$Nginx_version" != '3' -a "$Apache_version" == '3' ] && echo -e "\n`printf "%-32s" "Nginx/Tengine install dir":`\033[32m$web_install_dir\033[0m"
+[ "$Web_yn" == 'y' -a "$Nginx_version" != '3' -a "$Apache_version" != '3' ] && echo -e "\n`printf "%-32s" "Nginx/Tengine install dir":`\033[32m$web_install_dir\033[0m\n`printf "%-32s" "Apache install  dir":`\033[32m$apache_install_dir\033[0m" 
+[ "$Web_yn" == 'y' -a "$Nginx_version" == '3' -a "$Apache_version" != '3' ] && echo -e "\n`printf "%-32s" "Apache install dir":`\033[32m$apache_install_dir\033[0m"
 [ "$DB_yn" == 'y' ] && echo -e "\n`printf "%-32s" "Database install dir:"`\033[32m$db_install_dir\033[0m"
 [ "$DB_yn" == 'y' ] && echo -e "`printf "%-32s" "Database data dir:"`\033[32m$db_data_dir\033[0m"
 [ "$DB_yn" == 'y' ] && echo -e "`printf "%-32s" "Database user:"`\033[32mroot\033[0m"

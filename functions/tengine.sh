@@ -55,7 +55,11 @@ sed -i "s@/usr/local/nginx@$tengine_install_dir@g" /etc/init.d/nginx
 
 mv $tengine_install_dir/conf/nginx.conf $tengine_install_dir/conf/nginx.conf_bk
 sed -i "s@/home/wwwroot/default@$home_dir/default@" conf/nginx.conf
-/bin/cp conf/nginx.conf $tengine_install_dir/conf/nginx.conf
+if [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
+        /bin/cp conf/nginx_apache.conf $tengine_install_dir/conf/nginx.conf
+else
+        /bin/cp conf/nginx.conf $tengine_install_dir/conf/nginx.conf
+fi
 sed -i "s@/home/wwwlogs@$wwwlogs_dir@g" $tengine_install_dir/conf/nginx.conf
 [ "$je_tc_malloc" == '2' ] && sed -i 's@^pid\(.*\)@pid\1\ngoogle_perftools_profiles /tmp/tcmalloc;@' $tengine_install_dir/conf/nginx.conf 
 
@@ -64,7 +68,7 @@ sed -i "s@^worker_processes.*@worker_processes auto;\nworker_cpu_affinity auto;\
 
 # logrotate nginx log
 cat > /etc/logrotate.d/nginx << EOF
-$wwwlogs_dir/*.log {
+$wwwlogs_dir/*nginx.log {
 daily
 rotate 5
 missingok
@@ -77,6 +81,7 @@ postrotate
 endscript
 }
 EOF
+
 sed -i "s@^web_install_dir.*@web_install_dir=$tengine_install_dir@" options.conf
 sed -i "s@/home/wwwroot@$home_dir@g" vhost.sh
 sed -i "s@/home/wwwlogs@$wwwlogs_dir@g" vhost.sh

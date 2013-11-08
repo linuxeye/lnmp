@@ -40,7 +40,7 @@ eaccelerator.content = "disk_only"
 EOF
 	echo 'kernel.shmmax = 67108864' >> /etc/sysctl.conf
 	sysctl -p
-        service php-fpm restart
+        [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
 else
         echo -e "\033[31meAccelerator module install failed, Please contact the author! \033[0m"
 fi

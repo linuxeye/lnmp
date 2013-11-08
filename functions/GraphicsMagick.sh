@@ -9,7 +9,7 @@ cd $lnmp_dir/src
 . ../options.conf
 
 src_url=http://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/1.3.18/GraphicsMagick-1.3.18.tar.gz && Download_src
-src_url=http://pecl.php.net/get/gmagick-1.1.4RC1.tgz && Download_src
+src_url=http://pecl.php.net/get/gmagick-1.1.5RC1.tgz && Download_src
 
 tar xzf GraphicsMagick-1.3.18.tar.gz 
 cd GraphicsMagick-1.3.18
@@ -17,8 +17,8 @@ cd GraphicsMagick-1.3.18
 make && make install
 cd ../
 
-tar xzf gmagick-1.1.4RC1.tgz 
-cd gmagick-1.1.4RC1
+tar xzf gmagick-1.1.5RC1.tgz 
+cd gmagick-1.1.5RC1
 make clean
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 $php_install_dir/bin/phpize
@@ -32,7 +32,7 @@ if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extens
 	else
 		sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "gmagick.so"@' $php_install_dir/etc/php.ini
 	fi
-        service php-fpm restart
+        [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service php-fpm restart
 else
         echo -e "\033[31mPHP Gmagick module install failed, Please contact the author! \033[0m"
 fi

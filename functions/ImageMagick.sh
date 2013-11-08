@@ -8,11 +8,11 @@ cd $lnmp_dir/src
 . ../functions/download.sh
 . ../options.conf
 
-src_url=http://blog.linuxeye.com/lnmp/src/ImageMagick-6.8.7-4.tar.gz && Download_src
+src_url=http://blog.linuxeye.com/lnmp/src/ImageMagick-6.8.7-5.tar.gz && Download_src
 src_url=http://pecl.php.net/get/imagick-3.1.2.tgz && Download_src
 
-tar xzf ImageMagick-6.8.7-4.tar.gz
-cd ImageMagick-6.8.7-4
+tar xzf ImageMagick-6.8.7-5.tar.gz
+cd ImageMagick-6.8.7-5
 ./configure
 make && make install
 cd ../
@@ -29,7 +29,7 @@ cd ../
 
 if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/imagick.so" ];then
 	sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions/`\"\nextension = \"imagick.so\"@" $php_install_dir/etc/php.ini
-        service php-fpm restart
+        [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
 else
         echo -e "\033[31mPHP imagick module install failed, Please contact the author! \033[0m"
 fi

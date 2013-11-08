@@ -1,4 +1,4 @@
-   This script is free collection of shell scripts for rapid deployment of lnmp stacks (`Linux`, `Nginx`/`Tengine`, `MySQL`/`MariaDB`/`Percona` and `PHP`) for CentOS/Redhat Debian and Ubuntu.
+   This script is free collection of shell scripts for rapid deployment of lnmp/lamp/lanmp stacks (`Linux`, `Nginx`/`Tengine`, `MySQL`/`MariaDB`/`Percona` and `PHP`) for CentOS/Redhat Debian and Ubuntu.
 
    Script features: 
 - Constant updates 
@@ -7,6 +7,7 @@
 - You can freely choose to install database version (MySQL-5.6, MySQL-5.5, MariaDB-5.5, Percona-5.5, Percona-5.6)
 - You can freely choose to install PHP version (php-5.5, php-5.4, php-5.3)
 - You can freely choose to install Nginx or Tengine 
+- You can freely choose to install Apache version (Apache-2.4, Apache-2.2) 
 - According to their needs can to install ngx_pagespeed
 - According to their needs can to install ZendOPcache, eAccelerator, xcache and ZendGuardLoader (php-5.4, php-5.3) 
 - According to their needs can to install Pureftpd, phpMyAdmin
@@ -41,6 +42,10 @@ MySQL/MariaDB/Percona:
 PHP:
 ```bash
    service php-fpm {start|stop|force-quit|restart|reload|status}
+```
+Apache:
+```bash
+   service httpd {start|restart|graceful|graceful-stop|stop}
 ```
 Pure-Ftpd:
 ```bash

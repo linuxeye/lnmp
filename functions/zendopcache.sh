@@ -27,7 +27,7 @@ opcache.revalidate_freq=60
 opcache.fast_shutdown=1
 opcache.enable_cli=1
 EOF
-        service php-fpm restart
+        [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
 else
         echo -e "\033[31meZend OPcache module install failed, Please contact the author! \033[0m"
 fi

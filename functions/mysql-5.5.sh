@@ -13,11 +13,13 @@ src_url=http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.34.tar.gz && Download
 
 useradd -M -s /sbin/nologin mysql
 mkdir -p $mysql_data_dir;chown mysql.mysql -R $mysql_data_dir
-tar xzf cmake-2.8.12.tar.gz
-cd cmake-2.8.12
-CFLAGS= CXXFLAGS= ./configure
-make && make install
-cd ..
+if [ ! -e "`which cmake`" ];then
+	tar xzf cmake-2.8.12.tar.gz
+	cd cmake-2.8.12
+	CFLAGS= CXXFLAGS= ./configure
+	make && make install
+	cd ..
+fi
 tar zxf mysql-5.5.34.tar.gz
 cd mysql-5.5.34
 if [ "$je_tc_malloc" == '1' ];then
@@ -25,6 +27,7 @@ if [ "$je_tc_malloc" == '1' ];then
 elif [ "$je_tc_malloc" == '2' ];then
         EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"
 fi
+make clean
 cmake . -DCMAKE_INSTALL_PREFIX=$mysql_install_dir \
 -DMYSQL_UNIX_ADDR=/tmp/mysql.sock \
 -DMYSQL_DATADIR=$mysql_data_dir \

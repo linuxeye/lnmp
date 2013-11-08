@@ -13,11 +13,13 @@ src_url=http://www.percona.com/downloads/Percona-Server-5.6/LATEST/release-5.6.1
 
 useradd -M -s /sbin/nologin mysql
 mkdir -p $percona_data_dir;chown mysql.mysql -R $percona_data_dir
-tar xzf cmake-2.8.12.tar.gz
-cd cmake-2.8.12
-CFLAGS= CXXFLAGS= ./configure
-make && make install
-cd ..
+if [ ! -e "`which cmake`" ];then
+        tar xzf cmake-2.8.12.tar.gz
+        cd cmake-2.8.12
+        CFLAGS= CXXFLAGS= ./configure
+        make && make install
+        cd ..
+fi
 tar zxf Percona-Server-5.6.14-rel62.0.tar.gz
 cd Percona-Server-5.6.14-rel62.0
 if [ "$je_tc_malloc" == '1' ];then
@@ -25,6 +27,7 @@ if [ "$je_tc_malloc" == '1' ];then
 elif [ "$je_tc_malloc" == '2' ];then
         EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"
 fi
+make clean
 cmake . -DCMAKE_INSTALL_PREFIX=$percona_install_dir \
 -DMYSQL_UNIX_ADDR=/tmp/mysql.sock \
 -DMYSQL_DATADIR=$percona_data_dir \

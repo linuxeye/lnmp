@@ -1,4 +1,4 @@
-   This script is free collection of shell scripts for rapid deployment of lnmp/lamp/lanmp stacks (`Linux`, `Nginx`/`Tengine`, `MySQL`/`MariaDB`/`Percona` and `PHP`) for CentOS/Redhat Debian and Ubuntu.
+   This script is free collection of shell scripts for rapid deployment of `LNMP`/`LAMP`/`LANMP` stacks (`Linux`, `Nginx`/`Tengine`, `MySQL`/`MariaDB`/`Percona` and `PHP`) for CentOS/Redhat Debian and Ubuntu.
 
    Script features: 
 - Constant updates 

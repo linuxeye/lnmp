@@ -158,7 +158,7 @@ write_buffer = 4M
 EOF
 
 Memtatol=`free -m | grep 'Mem:' | awk '{print $2}'`
-if [ $Memtaltol -gt 1500 -a $Memtaltol -le 2500 ];then
+if [ $Memtatol -gt 1500 -a $Memtatol -le 2500 ];then
         sed -i 's@^thread_cache_size.*@thread_cache_size = 16@' /etc/my.cnf
         sed -i 's@^query_cache_size.*@query_cache_size = 16M@' /etc/my.cnf
         sed -i 's@^myisam_sort_buffer_size.*@myisam_sort_buffer_size = 16M@' /etc/my.cnf
@@ -166,7 +166,7 @@ if [ $Memtaltol -gt 1500 -a $Memtaltol -le 2500 ];then
         sed -i 's@^innodb_buffer_pool_size.*@innodb_buffer_pool_size = 128M@' /etc/my.cnf
         sed -i 's@^tmp_table_size.*@tmp_table_size = 32M@' /etc/my.cnf
         sed -i 's@^table_open_cache.*@table_open_cache = 256@' /etc/my.cnf
-elif [ $Memtaltol -gt 2500 -a $Memtaltol -le 3500 ];then
+elif [ $Memtatol -gt 2500 -a $Memtatol -le 3500 ];then
         sed -i 's@^thread_cache_size.*@thread_cache_size = 32@' /etc/my.cnf
         sed -i 's@^query_cache_size.*@query_cache_size = 32M@' /etc/my.cnf
         sed -i 's@^myisam_sort_buffer_size.*@myisam_sort_buffer_size = 32M@' /etc/my.cnf
@@ -174,7 +174,7 @@ elif [ $Memtaltol -gt 2500 -a $Memtaltol -le 3500 ];then
         sed -i 's@^innodb_buffer_pool_size.*@innodb_buffer_pool_size = 512M@' /etc/my.cnf
         sed -i 's@^tmp_table_size.*@tmp_table_size = 64M@' /etc/my.cnf
         sed -i 's@^table_open_cache.*@table_open_cache = 512@' /etc/my.cnf
-elif [ $Memtaltol -gt 3500 ];then
+elif [ $Memtatol -gt 3500 ];then
         sed -i 's@^thread_cache_size.*@thread_cache_size = 64@' /etc/my.cnf
         sed -i 's@^query_cache_size.*@query_cache_size = 64M@' /etc/my.cnf
         sed -i 's@^myisam_sort_buffer_size.*@myisam_sort_buffer_size = 64M@' /etc/my.cnf

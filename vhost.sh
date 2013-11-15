@@ -207,13 +207,14 @@ location ~ .*\.(php|php5)?$  {
 	fastcgi_index index.php;
 	include fastcgi.conf;
 	}
-location ~ .*\.(htm|html|gif|jpg|jpeg|png|bmp|swf|ioc|rar|zip|txt|flv|mid|doc|ppt|pdf|xls|mp3|wma)$ {
-        expires      30d;
+
+location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|ico)$ {
+	expires 30d;
 	}
 
 location ~ .*\.(js|css)?$ {
-        expires      1h;
-        }
+	expires 7d;
+	}
 }
 EOF
 

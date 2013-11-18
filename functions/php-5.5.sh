@@ -153,7 +153,7 @@ error_log = log/php-fpm.log
 log_level = notice
 
 emergency_restart_threshold = 30
-emergency_restart_interval = 1m
+emergency_restart_interval = 60s 
 process_control_timeout = 5s
 daemonize = yes
 
@@ -172,10 +172,10 @@ user = www
 group = www
 
 pm = dynamic
-pm.max_children = 32
-pm.start_servers = 4
-pm.min_spare_servers = 4
-pm.max_spare_servers = 16
+pm.max_children = 12 
+pm.start_servers = 8 
+pm.min_spare_servers = 6 
+pm.max_spare_servers = 12
 pm.max_requests = 512
 
 request_terminate_timeout = 0
@@ -192,6 +192,11 @@ env[TMP] = /tmp
 env[TMPDIR] = /tmp
 env[TEMP] = /tmp
 EOF
+Mem=`free -m | awk '/Mem:/{print $2}'`
+sed -i "s@^pm.max_children.*@pm.max_children = $(($Mem/2/20))@" $php_install_dir/etc/php-fpm.conf 
+sed -i "s@^pm.start_servers.*@pm.start_servers = $(($Mem/2/30))@" $php_install_dir/etc/php-fpm.conf 
+sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = $(($Mem/2/40))@" $php_install_dir/etc/php-fpm.conf 
+sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = $(($Mem/2/20))@" $php_install_dir/etc/php-fpm.conf 
 [ "$Web_yn" == 'n' ] && sed -i "s@^listen =.*@listen = $local_IP:9000@" $php_install_dir/etc/php-fpm.conf 
 service php-fpm start
 fi

@@ -8,14 +8,14 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://www.cmake.org/files/v2.8/cmake-2.8.12.tar.gz && Download_src 
+src_url=http://www.cmake.org/files/v2.8/cmake-2.8.12.1.tar.gz && Download_src 
 src_url=http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.34.tar.gz && Download_src
 
 useradd -M -s /sbin/nologin mysql
 mkdir -p $mysql_data_dir;chown mysql.mysql -R $mysql_data_dir
 if [ ! -e "`which cmake`" ];then
-	tar xzf cmake-2.8.12.tar.gz
-	cd cmake-2.8.12
+	tar xzf cmake-2.8.12.1.tar.gz
+	cd cmake-2.8.12.1
 	CFLAGS= CXXFLAGS= ./configure
 	make && make install
 	cd ..

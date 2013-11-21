@@ -16,10 +16,10 @@ echo "#######################################################################"
 
 Uninstall()
 {
-[ -e "$db_install_dir" ] && service mysqld stop && rm -rf /etc/init.d/mysqld
+[ -e "$db_install_dir" ] && service mysqld stop && rm -rf /etc/init.d/mysqld /etc/my.cnf /etc/ld.so.conf.d/mysql.conf /usr/include/mysql
 [ -e "$apache_install_dir" ] && service httpd stop && rm -rf /etc/init.d/httpd
 [ -e "$php_install_dir" ] && service php-fpm stop && rm -rf /etc/init.d/php-fpm
-[ -e "$web_install_dir" ] && service nginx stop && rm -rf /etc/init.d/nginx
+[ -e "$web_install_dir" ] && service nginx stop && rm -rf /etc/init.d/nginx /etc/logrotate.d/nginx /var/ngx_pagespeed_cache
 [ -e "$pureftpd_install_dir" ] && service pureftpd stop && rm -rf /etc/init.d/pureftpd
 [ -e "$redis_install_dir" ] && service redis-server stop && rm -rf /etc/init.d/redis-server
 [ -e "$memcached_install_dir" ] && service memcached stop && rm -rf /etc/init.d/memcached
@@ -29,8 +29,6 @@ do
         [ -e "$D" ] && rm -rf $D
 done
 
-[ -e "$web_install_dir" ] && rm -rf /etc/logrotate.d/nginx && [ -e "/var/ngx_pagespeed_cache" ] && rm -rf /var/ngx_pagespeed_cache
-[ -e "$db_install_dir" ] && rm -rf /etc/my.cnf /etc/ld.so.conf.d/mysql.conf /usr/include/mysql 
 sed -i 's@^lnmp_dir=.*@lnmp_dir=@' ./options.conf
 sed -i 's@^web_install_dir=.*@web_install_dir=@' ./options.conf
 sed -i 's@^db_install_dir=.*@db_install_dir=@' ./options.conf

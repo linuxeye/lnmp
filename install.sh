@@ -2,10 +2,11 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # Blog:  http://blog.linuxeye.com
 #
-# Version: 0.5 09-Nov-2013 lj2007331 AT gmail.com
-# Notes: LNMP for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+ 
+# Version: 0.6 22-Nov-2013 lj2007331 AT gmail.com
+# Notes: LNMP/LAMP/LANMP for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+ 
 #
 # This script's project home is:
+#       http://blog.linuxeye.com/31.html
 #       https://github.com/lj2007331/lnmp
 
 # Check if user is root
@@ -218,20 +219,33 @@ do
                                                         fi
                                                 done
                                         fi
+
                                         while :
                                         do
                                                 echo
-                                                echo 'Please select ImageMagick or GraphicsMagick:'
-                                                echo -e "\t\033[32m1\033[0m. Install ImageMagick"
-                                                echo -e "\t\033[32m2\033[0m. Install GraphicsMagick"
-                                                read -p "Please input a number:(Default 1 press Enter) " Magick
-                                                [ -z "$Magick" ] && Magick=1
-                                                if [ $Magick != 1 -a $Magick != 2 ];then
-                                                        echo -e "\033[31minput error! Please only input number 1,2 \033[0m"
+                                                read -p "Do you want to install ImageMagick or GraphicsMagick? [y/n]: " Magick_yn
+                                                if [ "$Magick_yn" != 'y' -a "$Magick_yn" != 'n' ];then
+                                                        echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
                                                 else
                                                         break
                                                 fi
                                         done
+                                        if [ "$Magick_yn" == 'y' ];then
+                                                while :
+                                                do
+                                                        echo 'Please select ImageMagick or GraphicsMagick:'
+                                                        echo -e "\t\033[32m1\033[0m. Install ImageMagick"
+                                                        echo -e "\t\033[32m2\033[0m. Install GraphicsMagick"
+                                                        read -p "Please input a number:(Default 1 press Enter) " Magick
+                                                        [ -z "$Magick" ] && Magick=1
+                                                        if [ $Magick != 1 -a $Magick != 2 ];then
+                                                                echo -e "\033[31minput error! Please only input number 1,2 \033[0m"
+                                                        else
+                                                                break
+                                                        fi
+                                                done
+                                        fi
+
                                         while :
                                         do
                                                 echo

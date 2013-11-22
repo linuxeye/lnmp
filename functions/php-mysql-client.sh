@@ -11,11 +11,13 @@ cd $lnmp_dir/src
 src_url=http://www.cmake.org/files/v2.8/cmake-2.8.12.1.tar.gz && Download_src 
 src_url=http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.34.tar.gz && Download_src
 
-tar xzf cmake-2.8.12.1.tar.gz
-cd cmake-2.8.12.1
-CFLAGS= CXXFLAGS= ./configure
-make &&  make install
-cd ..
+if [ ! -e "`which cmake`" ];then
+        tar xzf cmake-2.8.12.1.tar.gz
+        cd cmake-2.8.12.1
+        CFLAGS= CXXFLAGS= ./configure
+        make && make install
+        cd ..
+fi
 
 tar zxf mysql-5.5.34.tar.gz
 cd mysql-5.5.34

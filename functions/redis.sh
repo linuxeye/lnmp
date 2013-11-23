@@ -10,7 +10,7 @@ cd $lnmp_dir/src
 . ../options.conf
 
 src_url=http://pecl.php.net/get/redis-2.2.4.tgz && Download_src
-src_url=http://download.redis.io/releases/redis-2.6.16.tar.gz && Download_src
+src_url=http://download.redis.io/releases/redis-2.8.0.tar.gz && Download_src
 
 tar xzf redis-2.2.4.tgz
 cd redis-2.2.4
@@ -26,8 +26,8 @@ else
         echo -e "\033[31mPHP Redis module install failed, Please contact the author! \033[0m"
 fi
 
-tar xzf redis-2.6.16.tar.gz
-cd redis-2.6.16
+tar xzf redis-2.8.0.tar.gz
+cd redis-2.8.0
 if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 32 ];then
 	sed -i '1i\CFLAGS= -march=i686' src/Makefile
 	sed -i 's@^OPT=.*@OPT=-O2 -march=i686@' src/.make-settings
@@ -40,9 +40,9 @@ if [ -f "src/redis-server" ];then
 	/bin/cp src/{redis-benchmark,redis-check-aof,redis-check-dump,redis-cli,redis-sentinel,redis-server} $redis_install_dir/bin/
 	/bin/cp redis.conf $redis_install_dir/etc/
 	ln -s $redis_install_dir/bin/* /usr/local/bin/
-	sed -i 's@pidfile.*$@pidfile /var/run/redis.pid@' $redis_install_dir/etc/redis.conf
-	sed -i "s@logfile.*$@logfile $redis_install_dir/var/redis.log@" $redis_install_dir/etc/redis.conf
-	sed -i "s@^dir.*$@dir $redis_install_dir/var@" $redis_install_dir/etc/redis.conf
+	sed -i 's@pidfile.*@pidfile /var/run/redis.pid@' $redis_install_dir/etc/redis.conf
+	sed -i "s@logfile.*@logfile $redis_install_dir/var/redis.log@" $redis_install_dir/etc/redis.conf
+	sed -i "s@^dir.*@dir $redis_install_dir/var@" $redis_install_dir/etc/redis.conf
 	sed -i 's@daemonize no@daemonize yes@' $redis_install_dir/etc/redis.conf
 	cd ../../
 	OS_CentOS='/bin/cp init/Redis-server-init-CentOS /etc/init.d/redis-server \n

@@ -304,7 +304,7 @@ case "$1" in
         ;;
   restart|force-reload)
 	stop
-	sleep 1
+	sleep 3 
 	start
         ;;
   reload)

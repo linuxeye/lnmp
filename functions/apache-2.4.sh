@@ -12,7 +12,7 @@ cd $lnmp_dir/src
 src_url=http://downloads.sourceforge.net/project/pcre/pcre/8.33/pcre-8.33.tar.gz && Download_src
 src_url=http://archive.apache.org/dist/apr/apr-1.4.8.tar.gz && Download_src 
 src_url=http://archive.apache.org/dist/apr/apr-util-1.5.2.tar.gz && Download_src 
-src_url=http://www.apache.org/dist/httpd/httpd-2.4.6.tar.gz && Download_src 
+src_url=http://www.apache.org/dist/httpd/httpd-2.4.7.tar.gz && Download_src 
 
 tar xzf pcre-8.33.tar.gz
 cd pcre-8.33
@@ -21,10 +21,10 @@ make && make install
 cd ../
 
 useradd -M -s /sbin/nologin www
-tar xzf httpd-2.4.6.tar.gz
+tar xzf httpd-2.4.7.tar.gz
 tar xzf apr-1.4.8.tar.gz
 tar xzf apr-util-1.5.2.tar.gz
-cd httpd-2.4.6
+cd httpd-2.4.7
 /bin/cp -R ../apr-1.4.8 ./srclib/apr
 /bin/cp -R ../apr-util-1.5.2 ./srclib/apr-util
 ./configure --prefix=$apache_install_dir --enable-headers --enable-deflate --enable-mime-magic --enable-so --enable-rewrite --enable-ssl --with-ssl --enable-expires --enable-static-support --enable-suexec --disable-userdir --with-included-apr --with-mpm=prefork --disable-userdir

@@ -126,6 +126,7 @@ sed -i 's@^;opcache.memory_consumption.*@opcache.memory_consumption=128@' $php_i
 sed -i 's@^;opcache.interned_strings_buffer.*@opcache.interned_strings_buffer=8@' $php_install_dir/etc/php.ini
 sed -i 's@^;opcache.max_accelerated_files.*@opcache.max_accelerated_files=4000@' $php_install_dir/etc/php.ini
 sed -i 's@^;opcache.revalidate_freq.*@opcache.revalidate_freq=60@' $php_install_dir/etc/php.ini
+sed -i 's@^;opcache.save_comments.*@opcache.save_comments=0@' $php_install_dir/etc/php.ini
 sed -i 's@^;opcache.fast_shutdown.*@opcache.fast_shutdown=1@' $php_install_dir/etc/php.ini
 sed -i 's@^;opcache.enable_cli.*@opcache.enable_cli=1@' $php_install_dir/etc/php.ini
 

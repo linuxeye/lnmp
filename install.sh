@@ -176,8 +176,7 @@ do
                                                         read -p "Please input a number:(Default 1 press Enter) " PHP_cache
                                                         [ -z "$PHP_cache" ] && PHP_cache=1
                                                         if [ $PHP_cache != 1 -a $PHP_cache != 2 -a $PHP_cache != 3 ];then
-                                                                echo -e "\033[31minput error! Please only input number 1,2,3\033[
-0m"
+                                                                echo -e "\033[31minput error! Please only input number 1,2,3\033[0m"
                                                         else
                                                                 break
                                                         fi

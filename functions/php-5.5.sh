@@ -14,6 +14,7 @@ src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcryp
 src_url=http://downloads.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/2.6.8/mcrypt-2.6.8.tar.gz && Download_src
 [ -s "php-5.5.6.tar.gz" ] && echo "php-5.5.6.tar.gz found" || wget -c http://www.php.net/get/php-5.5.6.tar.gz/from/this/mirror
+src_url=http://www.php.net/distributions/php-5.5.6.tar.gz && Download_src
 
 tar xzf libiconv-1.14.tar.gz
 cd libiconv-1.14

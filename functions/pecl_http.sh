@@ -8,9 +8,9 @@ cd $lnmp_dir/src
 . ../functions/download.sh
 . ../options.conf
 
-src_url=http://pecl.php.net/get/pecl_http-1.7.6.tgz && Download_src
-tar xzf pecl_http-1.7.6.tgz
-cd pecl_http-1.7.6
+src_url=http://pecl.php.net/get/pecl_http-2.0.1.tgz && Download_src
+tar xzf pecl_http-2.0.1.tgz
+cd pecl_http-2.0.1
 make clean
 $php_install_dir/bin/phpize
 ./configure --with-php-config=$php_install_dir/bin/php-config

@@ -69,7 +69,7 @@ EOF
 
 mkdir $apache_install_dir/conf/vhost
 cat > $apache_install_dir/conf/vhost/default.conf << EOF
-NameVirtualHost *:8080
+NameVirtualHost *:$TMP_PORT
 <VirtualHost *:$TMP_PORT>
     ServerAdmin admin@linuxeye.com
     DocumentRoot "$home_dir/default"

@@ -13,7 +13,7 @@ apt-get -y upgrade
 [ "$upgrade_yn" == 'y' ] && apt-get -y dist-upgrade 
 
 # Install needed packages
-apt-get -y install gcc g++ make autoconf libjpeg8 libjpeg8-dev libpng12-0 libpng12-dev libpng3 libfreetype6 libfreetype6-dev libxml2 libxml2-dev zlib1g zlib1g-dev libc6 libc6-dev libglib2.0-0 libglib2.0-dev bzip2 libzip-dev libbz2-1.0 libncurses5 libncurses5-dev curl libcurl3 libcurl4-openssl-dev e2fsprogs libkrb5-3 libkrb5-dev libltdl-dev libidn11 libidn11-dev openssl libtool libevent-dev slapd ldap-utils libnss-ldap bison libsasl2-dev libxslt1-dev vim zip unzip tmux htop wget locales libcloog-ppl0
+apt-get -y install gcc g++ make autoconf libjpeg8 libjpeg8-dev libpng12-0 libpng12-dev libpng3 libfreetype6 libfreetype6-dev libxml2 libxml2-dev zlib1g zlib1g-dev libc6 libc6-dev libglib2.0-0 libglib2.0-dev bzip2 libzip-dev libbz2-1.0 libncurses5 libncurses5-dev curl libcurl3 libcurl4-openssl-dev e2fsprogs libkrb5-3 libkrb5-dev libltdl-dev libidn11 libidn11-dev openssl libtool libevent-dev slapd ldap-utils libnss-ldap bison libsasl2-dev libxslt1-dev locales libcloog-ppl0 vim zip unzip tmux htop wget 
 
 # PS1
 [ -z "`cat ~/.bashrc | grep ^PS1`" ] && echo "PS1='\${debian_chroot:+(\$debian_chroot)}\\[\\e[1;32m\\]\\u@\\h\\[\\033[00m\\]:\\[\\033[01;34m\\]\\w\\[\\033[00m\\]\\$ '" >> ~/.bashrc 
@@ -38,13 +38,11 @@ EOF
 rm -rf /etc/localtime
 ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
-# Set OpenDNS
-if [ ! -z "`cat /etc/resolv.conf | grep '8\.8\.8\.8'`" ];then
+# Set DNS
 cat > /etc/resolv.conf << EOF
-nameserver 208.67.222.222
-nameserver 208.67.220.220
+nameserver 114.114.114.114
+nameserver 8.8.8.8
 EOF
-fi
 
 # alias vi
 [ -z "`cat ~/.bashrc | grep 'alias vi='`" ] && sed -i "s@^alias l=\(.*\)@alias l=\1\nalias vi='vim'@" ~/.bashrc
@@ -54,11 +52,20 @@ sed -i 's@^# alias@alias@g' ~/.bashrc
 
 # /etc/sysctl.conf
 [ -z "`cat /etc/sysctl.conf | grep 'fs.file-max'`" ] && cat >> /etc/sysctl.conf << EOF
-net.ipv4.tcp_syncookies = 1
 fs.file-max=65535
+net.ipv4.tcp_syncookies = 1
+net.ipv4.tcp_fin_timeout = 2 
 net.ipv4.tcp_tw_reuse = 1
 net.ipv4.tcp_tw_recycle = 1
 net.ipv4.ip_local_port_range = 1024 65000
+net.ipv4.tcp_max_syn_backlog = 16384
+net.ipv4.tcp_max_tw_buckets = 36000
+net.ipv4.route.gc_timeout = 100
+net.ipv4.tcp_syn_retries = 1
+net.ipv4.tcp_synack_retries = 1
+net.core.somaxconn = 16384
+net.core.netdev_max_backlog = 16384
+net.ipv4.tcp_max_orphans = 16384
 EOF
 sysctl -p
 
@@ -73,7 +80,7 @@ init q
 
 # Update time
 ntpdate pool.ntp.org 
-echo '*/20 * * * * /usr/sbin/ntpdate pool.ntp.org > /dev/null 2>&1' > /var/spool/cron/crontabs/root;chmod 600 /var/spool/cron/crontabs/root 
+echo "*/20 * * * * `which ntpdate` pool.ntp.org > /dev/null 2>&1" > /var/spool/cron/crontabs/root;chmod 600 /var/spool/cron/crontabs/root 
 service cron restart
 
 # iptables

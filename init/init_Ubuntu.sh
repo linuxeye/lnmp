@@ -47,24 +47,31 @@ EOF
 rm -rf /etc/localtime
 ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
-# Set OpenDNS
-if [ ! -z "`cat /etc/resolv.conf | grep '8\.8\.8\.8'`" ];then
+# Set DNS
 cat > /etc/resolv.conf << EOF
-nameserver 208.67.222.222
-nameserver 208.67.220.220
+nameserver 114.114.114.114
+nameserver 8.8.8.8
 EOF
-fi
 
 # alias vi
 [ -z "`cat ~/.bashrc | grep 'alias vi='`" ] && sed -i "s@^alias l=\(.*\)@alias l=\1\nalias vi='vim'@" ~/.bashrc
 
 # /etc/sysctl.conf
 [ -z "`cat /etc/sysctl.conf | grep 'fs.file-max'`" ] && cat >> /etc/sysctl.conf << EOF
-net.ipv4.tcp_syncookies = 1
 fs.file-max=65535
+net.ipv4.tcp_syncookies = 1
+net.ipv4.tcp_fin_timeout = 2 
 net.ipv4.tcp_tw_reuse = 1
 net.ipv4.tcp_tw_recycle = 1
 net.ipv4.ip_local_port_range = 1024 65000
+net.ipv4.tcp_max_syn_backlog = 16384
+net.ipv4.tcp_max_tw_buckets = 36000
+net.ipv4.route.gc_timeout = 100
+net.ipv4.tcp_syn_retries = 1
+net.ipv4.tcp_synack_retries = 1
+net.core.somaxconn = 16384
+net.core.netdev_max_backlog = 16384
+net.ipv4.tcp_max_orphans = 16384
 EOF
 sysctl -p
 
@@ -75,7 +82,7 @@ sed -i 's@^@#@g' /etc/init/control-alt-delete.conf
 
 # Update time
 ntpdate pool.ntp.org 
-echo '*/20 * * * * /usr/sbin/ntpdate pool.ntp.org > /dev/null 2>&1' > /var/spool/cron/crontabs/root;chmod 600 /var/spool/cron/crontabs/root 
+echo "*/20 * * * * `which ntpdate` pool.ntp.org > /dev/null 2>&1" > /var/spool/cron/crontabs/root;chmod 600 /var/spool/cron/crontabs/root 
 service cron restart
 
 # iptables

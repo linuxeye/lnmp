@@ -14,26 +14,26 @@ yum clean all
 
 public_IP=`../functions/get_public_ip.py`
 if [ "`../functions/get_ip_area.py $public_IP`" == 'CN' ];then
-        mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo_bk
+        mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
 	if [ ! -z "$(cat /etc/redhat-release | grep '6\.')" ];then
-		#wget -c http://mirrors.163.com/.help/CentOS6-Base-163.repo -P /etc/yum.repos.d
-		wget -c http://blog.linuxeye.com/wp-content/uploads/2013/12/CentOS6-Base.repo -P /etc/yum.repos.d
+		wget -c http://mirrors.163.com/.help/CentOS6-Base-163.repo -P /etc/yum.repos.d
+		#wget -c http://blog.linuxeye.com/wp-content/uploads/2013/12/CentOS6-Base.repo -P /etc/yum.repos.d
 		if [ ! -z "$(cat /etc/redhat-release | grep 'Red Hat')" ];then
-			#sed -i 's@\$releasever@6@g' /etc/yum.repos.d/CentOS6-Base-163.repo
-	                #sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS6-Base-163.repo
-			sed -i 's@\$releasever@6@g' /etc/yum.repos.d/CentOS6-Base.repo
-	                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS6-Base.repo
+			sed -i 's@\$releasever@6@g' /etc/yum.repos.d/CentOS6-Base-163.repo
+	                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS6-Base-163.repo
+			#sed -i 's@\$releasever@6@g' /etc/yum.repos.d/CentOS6-Base.repo
+	                #sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS6-Base.repo
 		fi
 	fi
 
 	if [ ! -z "$(cat /etc/redhat-release | grep '5\.')" ];then
-		#wget -c http://mirrors.163.com/.help/CentOS5-Base-163.repo -P /etc/yum.repos.d
-		wget -c http://blog.linuxeye.com/wp-content/uploads/2013/12/CentOS5-Base.repo -P /etc/yum.repos.d
+		wget -c http://mirrors.163.com/.help/CentOS5-Base-163.repo -P /etc/yum.repos.d
+		#wget -c http://blog.linuxeye.com/wp-content/uploads/2013/12/CentOS5-Base.repo -P /etc/yum.repos.d
 		if [ ! -z "$(cat /etc/redhat-release | grep 'Red Hat')" ];then
-			#sed -i 's@\$releasever@5@g' /etc/yum.repos.d/CentOS5-Base-163.repo
-	                #sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS5-Base-163.repo
-			sed -i 's@\$releasever@5@g' /etc/yum.repos.d/CentOS5-Base.repo
-	                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS5-Base.repo
+			sed -i 's@\$releasever@5@g' /etc/yum.repos.d/CentOS5-Base-163.repo
+	                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS5-Base-163.repo
+			#sed -i 's@\$releasever@5@g' /etc/yum.repos.d/CentOS5-Base.repo
+	                #sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS5-Base.repo
 		fi
 	fi
 
@@ -52,7 +52,7 @@ yum check-update
 [ "$upgrade_yn" == 'y' ] && yum -y update 
 
 # Install needed packages
-yum -y install gcc gcc-c++ make autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel nss_ldap openldap openldap-devel openldap-clients openldap-servers libxslt-devel libevent-devel ntp libtool libtool-ltdl bison gd-devel vim-enhanced pcre-devel zip unzip
+yum -y install gcc gcc-c++ make autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel nss_ldap openldap openldap-devel openldap-clients openldap-servers libxslt-devel libevent-devel libtool libtool-ltdl bison gd-devel vim-enhanced pcre-devel zip unzip ntpdate sysstat
 
 # use gcc-4.4
 if [ ! -z "`gcc --version | head -n1 | grep 4\.1`" ];then
@@ -64,15 +64,8 @@ fi
 [ "$sendmail_yn" == 'y' ] && yum -y install sendmail && service sendmail restart
 
 # closed Unnecessary services and remove obsolete rpm package
-chkconfig --list | awk '{print "chkconfig " $1 " off"}' > /tmp/chkconfiglist.sh;/bin/sh /tmp/chkconfiglist.sh;rm -rf /tmp/chkconfiglist.sh
-chkconfig sshd on
-chkconfig crond on
-chkconfig irqbalance on
-chkconfig network on
-chkconfig iptables on
-chkconfig rsyslog on #CentOS 6
-chkconfig syslog on #CentOS 5
-chkconfig sendmail on
+for Service in `chkconfig --list | grep 3:on | awk '{print $1}'`;do chkconfig --level 3 $Service off;done
+for Service in ssh network crond iptables irqbalance syslog rsyslog sendmail;do chkconfig --level 3 $Service on;done
 
 # Close SELINUX
 setenforce 0
@@ -105,13 +98,11 @@ EOF
 rm -rf /etc/localtime
 ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
-# Set OpenDNS
-if [ ! -z "`cat /etc/resolv.conf | grep '8\.8\.8\.8'`" ];then
+# Set DNS
 cat > /etc/resolv.conf << EOF
-nameserver 208.67.222.222
-nameserver 208.67.220.220
+nameserver 114.114.114.114 
+nameserver 8.8.8.8 
 EOF
-fi
 
 # Wrong password five times locked 180s
 [ -z "`cat /etc/pam.d/system-auth | grep 'pam_tally2.so'`" ] && sed -i '4a auth        required      pam_tally2.so deny=5 unlock_time=180' /etc/pam.d/system-auth
@@ -123,9 +114,18 @@ fi
 sed -i 's/net.ipv4.tcp_syncookies.*$/net.ipv4.tcp_syncookies = 1/g' /etc/sysctl.conf
 [ -z "`cat /etc/sysctl.conf | grep 'fs.file-max'`" ] && cat >> /etc/sysctl.conf << EOF
 fs.file-max=65535
+net.ipv4.tcp_fin_timeout = 2 
 net.ipv4.tcp_tw_reuse = 1
 net.ipv4.tcp_tw_recycle = 1
 net.ipv4.ip_local_port_range = 1024 65000
+net.ipv4.tcp_max_syn_backlog = 16384
+net.ipv4.tcp_max_tw_buckets = 36000
+net.ipv4.route.gc_timeout = 100
+net.ipv4.tcp_syn_retries = 1
+net.ipv4.tcp_synack_retries = 1
+net.core.somaxconn = 16384
+net.core.netdev_max_backlog = 16384
+net.ipv4.tcp_max_orphans = 16384
 EOF
 sysctl -p
 
@@ -144,7 +144,7 @@ init q
 
 # Update time
 ntpdate pool.ntp.org 
-echo '*/20 * * * * /usr/sbin/ntpdate pool.ntp.org > /dev/null 2>&1' > /var/spool/cron/root;chmod 600 /var/spool/cron/root
+echo "*/20 * * * * `which ntpdate` pool.ntp.org > /dev/null 2>&1" > /var/spool/cron/root;chmod 600 /var/spool/cron/root
 service crond restart
 
 # iptables

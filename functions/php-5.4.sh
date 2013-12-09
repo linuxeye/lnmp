@@ -70,6 +70,8 @@ cd ../
 
 tar xzf php-5.4.22.tar.gz
 useradd -M -s /sbin/nologin www
+wget -O fpm-race-condition.patch 'https://bugs.php.net/patch-display.php?bug_id=65398&patch=fpm-race-condition.patch&revision=1375772074&download=1'
+patch -d php-5.4.22 -p0 < fpm-race-condition.patch
 cd php-5.4.22
 make clean
 if [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then

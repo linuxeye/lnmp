@@ -57,6 +57,8 @@ if [ -e "php-$php_version.tar.gz" ];then
         echo "Press Ctrl+c to cancel or Press any key to continue..."
         char=`get_char`
         tar xzf php-$php_version.tar.gz
+	wget -O fpm-race-condition.patch 'https://bugs.php.net/patch-display.php?bug_id=65398&patch=fpm-race-condition.patch&revision=1375772074&download=1'
+	patch -d php-$php_version -p0 < fpm-race-condition.patch
         cd php-$php_version
 	make clean
         $php_install_dir/bin/php -i |grep 'Configure Command' | awk -F'=>' '{print $2}' | bash

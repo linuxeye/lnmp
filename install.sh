@@ -33,7 +33,7 @@ mkdir -p $home_dir/default $wwwlogs_dir $lnmp_dir/{src,conf}
 # choice upgrade OS
 while :
 do
-	echo -e "\033[32m \033[0m\n"
+	echo
         read -p "Do you want to upgrade operating system ? [y/n]: " upgrade_yn
         if [ "$upgrade_yn" != 'y' -a "$upgrade_yn" != 'n' ];then
                 echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"

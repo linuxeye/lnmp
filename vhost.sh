@@ -18,7 +18,7 @@ Input_domain()
 {
 while :
 do
-	echo -e "\033[32m \033[0m"
+	echo
 	read -p "Please input domain(example: www.linuxeye.com linuxeye.com): " domain
 	if [ -z "`echo $domain | grep '.*\..*'`" ]; then
 		echo -e "\033[31minput error! \033[0m"

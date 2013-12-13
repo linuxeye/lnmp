@@ -41,7 +41,6 @@ cmake . -DCMAKE_INSTALL_PREFIX=$percona_install_dir \
 -DENABLED_LOCAL_INFILE=1 \
 -DDEFAULT_CHARSET=utf8 \
 -DDEFAULT_COLLATION=utf8_general_ci \
--DWITH_SSL=system \
 $EXE_LINKER
 make && make install
 

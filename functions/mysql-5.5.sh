@@ -42,7 +42,6 @@ cmake . -DCMAKE_INSTALL_PREFIX=$mysql_install_dir \
 -DDEFAULT_CHARSET=utf8 \
 -DDEFAULT_COLLATION=utf8_general_ci \
 -DWITH_EMBEDDED_SERVER=1 \
--DWITH_SSL=system \
 $EXE_LINKER
 make && make install
 

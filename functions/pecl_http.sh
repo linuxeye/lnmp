@@ -8,9 +8,25 @@ cd $lnmp_dir/src
 . ../functions/download.sh
 . ../options.conf
 
-src_url=http://pecl.php.net/get/pecl_http-2.0.1.tgz && Download_src
-tar xzf pecl_http-2.0.1.tgz
-cd pecl_http-2.0.1
+src_url=http://pecl.php.net/get/raphf-1.0.4.tgz && Download_src
+src_url=http://pecl.php.net/get/propro-1.0.0.tgz && Download_src
+src_url=http://pecl.php.net/get/pecl_http-2.0.3.tgz && Download_src
+tar xzf raphf-1.0.4.tgz
+cd raphf-1.0.4
+$php_install_dir/bin/phpize
+./configure --with-php-config=$php_install_dir/bin/php-config
+make && make install
+cd ..
+
+tar xzf propro-1.0.0.tgz
+cd propro-1.0.0
+$php_install_dir/bin/phpize
+./configure --with-php-config=$php_install_dir/bin/php-config
+make && make install
+cd ..
+
+tar xzf pecl_http-2.0.3.tgz
+cd pecl_http-2.0.3
 make clean
 $php_install_dir/bin/phpize
 ./configure --with-php-config=$php_install_dir/bin/php-config

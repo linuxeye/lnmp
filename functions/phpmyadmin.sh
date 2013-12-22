@@ -12,6 +12,10 @@ src_url=http://downloads.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.1.1/php
 
 tar xzf phpMyAdmin-4.1.1-all-languages.tar.gz
 /bin/mv phpMyAdmin-4.1.1-all-languages $home_dir/default/phpMyAdmin
+/bin/cp $home_dir/default/phpMyAdmin{config.sample.inc.php,config.inc.php}
+mkdir $home_dir/default/phpMyAdmin{upload,save}
+sed -i "s@UploadDir.*@UploadDir'\] = 'upload';@" $home_dir/default/phpMyAdmin/config.inc.php
+sed -i "s@SaveDir.*@SaveDir'\] = 'save';@" $home_dir/default/phpMyAdmin/config.inc.php
 chown -R www.www $home_dir/default/phpMyAdmin
 cd ..
 }

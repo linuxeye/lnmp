@@ -115,7 +115,11 @@ if [ -e "tengine-$tengine_version.tar.gz" ];then
         make
         if [ -f "objs/nginx" ];then
                 /bin/mv $web_install_dir/sbin/nginx $web_install_dir/sbin/nginx$(date +%m%d)
+                /bin/mv $web_install_dir/sbin/dso_tool $web_install_dir/sbin/dso_tool$(date +%m%d)
+                /bin/mv $web_install_dir/modules $web_install_dir/modules$(date +%m%d)
                 /bin/cp objs/nginx $web_install_dir/sbin/nginx
+                /bin/cp objs/dso_tool $web_install_dir/sbin/dso_tool
+                /bin/cp -R objs/modules $web_install_dir/
                 kill -USR2 `cat /var/run/nginx.pid`
                 kill -QUIT `cat /var/run/nginx.pid.oldbin`
                 echo -e "You have \033[32msuccessfully\033[0m upgrade from \033[32m$Old_tengine_version\033[0m to \033[32m$tengine_version\033[0m"

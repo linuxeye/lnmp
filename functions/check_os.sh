@@ -4,7 +4,7 @@
 
 if [ -f /etc/redhat-release ];then
         OS=CentOS
-elif [ ! -z "`cat /etc/issue | grep Debian`" ];then
+elif [ ! -z "`cat /etc/issue | grep bian`" ];then
         OS=Debian
 elif [ ! -z "`cat /etc/issue | grep Ubuntu`" ];then
         OS=Ubuntu

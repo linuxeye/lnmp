@@ -9,13 +9,13 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://downloads.sourceforge.net/project/pcre/pcre/8.33/pcre-8.33.tar.gz && Download_src
+src_url=http://downloads.sourceforge.net/project/pcre/pcre/8.34/pcre-8.34.tar.gz && Download_src
 src_url=http://archive.apache.org/dist/apr/apr-1.4.8.tar.gz && Download_src 
 src_url=http://archive.apache.org/dist/apr/apr-util-1.5.2.tar.gz && Download_src 
 src_url=http://www.apache.org/dist/httpd/httpd-2.4.7.tar.gz && Download_src 
 
-tar xzf pcre-8.33.tar.gz
-cd pcre-8.33
+tar xzf pcre-8.34.tar.gz
+cd pcre-8.34
 ./configure
 make && make install
 cd ../

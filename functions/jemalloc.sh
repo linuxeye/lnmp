@@ -7,10 +7,10 @@ Install_jemalloc()
 cd $lnmp_dir/src
 . ../functions/download.sh
 
-src_url=http://www.canonware.com/download/jemalloc/jemalloc-3.4.1.tar.bz2 && Download_src
+src_url=http://www.canonware.com/download/jemalloc/jemalloc-3.5.0.tar.bz2 && Download_src
 
-tar xjf jemalloc-3.4.1.tar.bz2
-cd jemalloc-3.4.1
+tar xjf jemalloc-3.5.0.tar.bz2
+cd jemalloc-3.5.0
 ./configure
 make && make install
 if [ -f "/usr/local/lib/libjemalloc.so" ];then

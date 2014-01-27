@@ -70,6 +70,8 @@ Memcached:
 ```bash
    ./upgrade_php.sh # upgrade PHP
    ./upgrade_web.sh # upgrade Nginx/Tengine
+   ./upgrade_redis.sh # upgrade Redis 
+   ./upgrade_phpmyadmin.sh # upgrade phpMyAdmin 
 ```
 
 ## How to uninstall 

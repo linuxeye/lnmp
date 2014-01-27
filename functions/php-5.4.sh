@@ -48,16 +48,8 @@ ldconfig
 OS_CentOS='ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config \n
 if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ];then \n
         ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1 \n
-        ln -s /usr/lib64/libldap* /usr/lib \n
 else \n
         ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1 \n
-fi'
-OS_Debian_Ubuntu='if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ];then \n
-        ln -s /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/ \n
-	ln -s /usr/lib/x86_64-linux-gnu/liblber.so /usr/lib/ \n
-else \n
-        ln -s /usr/lib/i386-linux-gnu/libldap.so /usr/lib/ \n
-        ln -s /usr/lib/i386-linux-gnu/liblber.so /usr/lib/ \n
 fi'
 OS_command
 
@@ -80,20 +72,20 @@ CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=
 --with-mysqli=$db_install_dir/bin/mysql_config --with-pdo-mysql=$db_install_dir/bin/mysql_config \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
---enable-sysvsem --enable-inline-optimization --with-curl --with-kerberos --enable-mbregex \
---enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-xsl --with-openssl \
---with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc \
---enable-ftp --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
+--enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex \
+--enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl \
+--with-mhash --enable-pcntl --enable-sockes --with-xmlrpc --enable-ftp \
+--with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
 else
 CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
 --with-fpm-user=www --with-fpm-group=www --enable-fpm --disable-fileinfo --with-mysql=$db_install_dir \
 --with-mysqli=$db_install_dir/bin/mysql_config --with-pdo-mysql=$db_install_dir/bin/mysql_config \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
---enable-sysvsem --enable-inline-optimization --with-curl --with-kerberos --enable-mbregex \
---enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-xsl --with-openssl \
---with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc \
---enable-ftp --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
+--enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex \
+--enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl \
+--with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp \
+--with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
 fi
 make ZEND_EXTRA_LIBS='-liconv'
 make install

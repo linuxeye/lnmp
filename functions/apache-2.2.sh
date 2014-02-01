@@ -40,7 +40,7 @@ if [ "$Nginx_version" == '3' ];then
         TMP_IP=$local_IP
 elif [ "$Nginx_version" == '1' -o "$Nginx_version" == '2' ];then
 	sed -i 's/^#ServerName www.example.com:80/ServerName 127.0.0.1:8080/' $apache_install_dir/conf/httpd.conf
-	sed -i 's@^Listen@Listen 127.0.0.1:8080@' $apache_install_dir/conf/httpd.conf
+	sed -i 's@^Listen.*@Listen 127.0.0.1:8080@' $apache_install_dir/conf/httpd.conf
 	TMP_PORT=8080
 	TMP_IP=127.0.0.1
 fi

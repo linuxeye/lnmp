@@ -326,9 +326,9 @@ if ( \$query_string ~* ".*[\;'\<\>].*" ){
         }
 $anti_hotlinking
 `echo -e $ngx_pagespeed`
-#location / {
-#        try_files \$uri @apache;
-#        }
+location ~ / {
+        try_files \$uri @apache;
+        }
 
 location @apache {
         internal;

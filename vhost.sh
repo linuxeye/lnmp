@@ -326,24 +326,24 @@ if ( \$query_string ~* ".*[\;'\<\>].*" ){
         }
 $anti_hotlinking
 `echo -e $ngx_pagespeed`
-location / {
-        try_files \$uri @apache;
-        }
+#location / {
+#        try_files \$uri @apache;
+#        }
 
 location @apache {
         internal;
         proxy_pass http://127.0.0.1:8080;
-}
+	}
 
 location ~ .*\.(php|php5)?$ {
         proxy_pass http://127.0.0.1:8080;
         }
-location ~ .*\.(htm|html|gif|jpg|jpeg|png|bmp|swf|ioc|rar|zip|txt|flv|mid|doc|ppt|pdf|xls|mp3|wma)$ {
-        expires      30d;
+location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|ico)$ {
+        expires 30d;
         }
 
 location ~ .*\.(js|css)?$ {
-        expires      1h;
+        expires 7d;
         }
 }
 EOF

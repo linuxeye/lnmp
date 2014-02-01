@@ -10,7 +10,7 @@ cd $lnmp_dir/src
 . ../options.conf
 
 src_url=http://www.cmake.org/files/v2.8/cmake-2.8.12.1.tar.gz && Download_src 
-src_url=http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.15.tar.gz && Download_src
+src_url=http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.16.tar.gz && Download_src
 
 useradd -M -s /sbin/nologin mysql
 mkdir -p $mysql_data_dir;chown mysql.mysql -R $mysql_data_dir
@@ -21,8 +21,8 @@ if [ ! -e "`which cmake`" ];then
         make && make install
         cd ..
 fi
-tar zxf mysql-5.6.15.tar.gz
-cd mysql-5.6.15
+tar zxf mysql-5.6.16.tar.gz
+cd mysql-5.6.16
 if [ "$je_tc_malloc" == '1' ];then
         EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
 elif [ "$je_tc_malloc" == '2' ];then

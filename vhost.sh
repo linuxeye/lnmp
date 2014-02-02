@@ -318,7 +318,6 @@ listen 80;
 server_name $domain$moredomainame;
 $N_log
 index index.html index.htm index.jsp index.php;
-include $rewrite.conf;
 root $vhostdir;
 #error_page 404 /404.html;
 if ( \$query_string ~* ".*[\;'\<\>].*" ){
@@ -418,7 +417,7 @@ elif [ -d "$web_install_dir" -a -d "$apache_install_dir" ];then
 	Input_domain
 	Ngx_pagespeed
 	Nginx_anti_hotlinking
-	Nginx_rewrite
+	#Nginx_rewrite
 	Nginx_log
 	Apache_log
 	Create_nginx_apache_conf

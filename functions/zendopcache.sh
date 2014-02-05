@@ -27,6 +27,7 @@ opcache.revalidate_freq=60
 opcache.save_comments=0
 opcache.fast_shutdown=1
 opcache.enable_cli=1
+opcache.optimization_level=0
 EOF
         [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
 else

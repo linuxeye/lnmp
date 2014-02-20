@@ -8,14 +8,14 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://www.cmake.org/files/v2.8/cmake-2.8.12.1.tar.gz && Download_src 
+src_url=http://www.cmake.org/files/v2.8/cmake-2.8.12.2.tar.gz && Download_src 
 src_url=http://www.percona.com/redir/downloads/Percona-Server-5.5/Percona-Server-5.5.35-rel33.0/source/Percona-Server-5.5.35-rel33.0.tar.gz && Download_src
 
 useradd -M -s /sbin/nologin mysql
 mkdir -p $percona_data_dir;chown mysql.mysql -R $percona_data_dir
 if [ ! -e "`which cmake`" ];then
-        tar xzf cmake-2.8.12.1.tar.gz
-        cd cmake-2.8.12.1
+        tar xzf cmake-2.8.12.2.tar.gz
+        cd cmake-2.8.12.2
         CFLAGS= CXXFLAGS= ./configure
         make && make install
         cd ..

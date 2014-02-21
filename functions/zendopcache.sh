@@ -5,13 +5,12 @@
 Install_ZendOPcache()
 {
 cd $lnmp_dir/src
-. ../functions/download.sh
 . ../options.conf
 
-src_url=https://github.com/zendtech/ZendOptimizerPlus/tarball/master && Download_src
-/bin/mv master zendtech-ZendOptimizerPlus.tar.gz 
-tar xzf zendtech-ZendOptimizerPlus.tar.gz 
-cd zendtech-ZendOptimizerPlus*
+rm -rf ZendOptimizerPlus-master*
+wget -c --no-check-certificate -O ZendOptimizerPlus-master.zip https://github.com/zendtech/ZendOptimizerPlus/archive/master.zip 
+unzip -q ZendOptimizerPlus-master.zip 
+cd ZendOptimizerPlus-master 
 make clean
 $php_install_dir/bin/phpize
 ./configure --with-php-config=$php_install_dir/bin/php-config

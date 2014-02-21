@@ -13,8 +13,8 @@ src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/2.6.8/mcrypt-2.6.8.tar.gz && Download_src
-[ -s "php-5.3.28.tar.gz" ] && echo "php-5.3.28.tar.gz found" || wget -c http://www.php.net/get/php-5.3.28.tar.gz/from/this/mirror
-src_url=http://www.php.net/distributions/php-5.3.28.tar.gz && Download_src
+[ -s "php-5.3.28.tar.gz" ] && echo "php-5.3.28.tar.gz found" || wget -c http://cn2.php.net/distributions/php-5.3.28.tar.gz
+src_url=http://cn2.php.net/distributions/php-5.3.28.tar.gz && Download_src
 
 tar xzf libiconv-1.14.tar.gz
 cd libiconv-1.14

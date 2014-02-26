@@ -22,6 +22,10 @@ else
         echo -e "\033[31mApache install failed, Please contact the author! \033[0m"
         kill -9 $$
 fi
+
+[ -n "`cat /etc/profile | grep 'export PATH='`" -a -z "`cat /etc/profile | grep $apache_install_dir`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=\1:$apache_install_dir/bin@" /etc/profile
+. /etc/profile
+
 cd ..
 /bin/cp $apache_install_dir/bin/apachectl  /etc/init.d/httpd
 sed -i '2a # chkconfig: - 85 15' /etc/init.d/httpd

@@ -44,6 +44,10 @@ else
         echo -e "\033[31mTengine install failed, Please Contact the author! \033[0m"
         kill -9 $$
 fi
+
+[ -n "`cat /etc/profile | grep 'export PATH='`" -a -z "`cat /etc/profile | grep $tengine_install_dir`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=\1:$tengine_install_dir/bin@" /etc/profile
+. /etc/profile
+
 cd ../../
 OS_CentOS='/bin/cp init/Nginx-init-CentOS /etc/init.d/nginx \n
 chkconfig --add nginx \n

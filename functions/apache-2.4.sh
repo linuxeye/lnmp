@@ -58,6 +58,7 @@ elif [ "$Nginx_version" == '1' -o "$Nginx_version" == '2' ];then
 	TMP_IP=127.0.0.1
 fi
 sed -i "s@AddType\(.*\)Z@AddType\1Z\n    AddType application/x-httpd-php .php .phtml\n    AddType application/x-httpd-php-source .phps@" $apache_install_dir/conf/httpd.conf
+sed -i 's@^#LoadModule rewrite_module@LoadModule rewrite_module@' $apache_install_dir/conf/httpd.conf
 sed -i 's@^#LoadModule\(.*\)mod_deflate.so@LoadModule\1mod_deflate.so@' $apache_install_dir/conf/httpd.conf
 sed -i 's@DirectoryIndex index.html@DirectoryIndex index.html index.php@' $apache_install_dir/conf/httpd.conf
 sed -i "s@^DocumentRoot.*@DocumentRoot \"$home_dir/default\"@" $apache_install_dir/conf/httpd.conf

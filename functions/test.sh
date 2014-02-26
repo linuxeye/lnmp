@@ -20,5 +20,6 @@ unzip -q tz.zip -d $home_dir/default
 [ "$Web_yn" == 'y' -a "$Nginx_version" == '3' -a "$Apache_version" != '3' ] && sed -i 's@LNMP@LAMP@g' $home_dir/default/index.html
 chown -R www.www $home_dir/default
 [ -z "`ps -ef | grep -v grep | grep mysql`" ] && service mysqld start
+[ -z "`ps -ef | grep -v grep | grep apache`" ] && service httpd restart 
 cd ..
 }

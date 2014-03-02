@@ -57,7 +57,7 @@ xcache.coveragedump_directory = ""
 EOF
 	[ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
 else
-        echo -e "\033[31meAccelerator module install failed, Please contact the author! \033[0m"
+        echo -e "\033[31meXcache module install failed, Please contact the author! \033[0m"
 fi
 cd ../../
 }

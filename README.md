@@ -9,7 +9,7 @@
 - You can freely choose to install Nginx or Tengine 
 - You can freely choose to install Apache version (Apache-2.4, Apache-2.2) 
 - According to their needs can to install ngx_pagespeed
-- According to their needs can to install ZendOPcache, eAccelerator, xcache and ZendGuardLoader (php-5.4, php-5.3) 
+- According to their needs can to install ZendOPcache, xcache, APCU, eAccelerator and ZendGuardLoader (php-5.4, php-5.3) 
 - According to their needs can to install Pureftpd, phpMyAdmin
 - According to their needs can to install memcached, redis
 - According to their needs can to optimize MySQL and Nginx with jemalloc or tcmalloc 

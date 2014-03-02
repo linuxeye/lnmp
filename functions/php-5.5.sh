@@ -66,9 +66,10 @@ wget -O fpm-race-condition.patch 'https://bugs.php.net/patch-display.php?bug_id=
 patch -d php-5.5.9 -p0 < fpm-race-condition.patch
 cd php-5.5.9
 make clean
+[ "$PHP_cache" == '1' ] && PHP_cache_tmp='--enable-opcache' || PHP_cache_tmp='--disable-opcache'
 if [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
 CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
---with-apxs2=$apache_install_dir/bin/apxs --enable-opcache --disable-fileinfo --with-mysql=$db_install_dir \
+--with-apxs2=$apache_install_dir/bin/apxs $PHP_cache_tmp --disable-fileinfo --with-mysql=$db_install_dir \
 --with-mysqli=$db_install_dir/bin/mysql_config --with-pdo-mysql=$db_install_dir/bin/mysql_config \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
@@ -78,7 +79,7 @@ CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=
 --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
 else
 CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
---with-fpm-user=www --with-fpm-group=www --enable-fpm --enable-opcache --disable-fileinfo --with-mysql=$db_install_dir \
+--with-fpm-user=www --with-fpm-group=www --enable-fpm $PHP_cache_tmp --disable-fileinfo --with-mysql=$db_install_dir \
 --with-mysqli=$db_install_dir/bin/mysql_config --with-pdo-mysql=$db_install_dir/bin/mysql_config \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
@@ -120,6 +121,7 @@ sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,c
 sed -i 's@^session.cookie_httponly.*@session.cookie_httponly = 1@' $php_install_dir/etc/php.ini
 [ -e /usr/sbin/sendmail ] && sed -i 's@^;sendmail_path.*@sendmail_path = /usr/sbin/sendmail -t -i@' $php_install_dir/etc/php.ini
 
+if [ "$PHP_cache" == '1' ];then
 sed -i 's@^\[opcache\]@[opcache]\nzend_extension=opcache.so@' $php_install_dir/etc/php.ini
 sed -i 's@^;opcache.enable=.*@opcache.enable=1@' $php_install_dir/etc/php.ini
 sed -i 's@^;opcache.memory_consumption.*@opcache.memory_consumption=128@' $php_install_dir/etc/php.ini
@@ -130,6 +132,7 @@ sed -i 's@^;opcache.save_comments.*@opcache.save_comments=0@' $php_install_dir/e
 sed -i 's@^;opcache.fast_shutdown.*@opcache.fast_shutdown=1@' $php_install_dir/etc/php.ini
 sed -i 's@^;opcache.enable_cli.*@opcache.enable_cli=1@' $php_install_dir/etc/php.ini
 sed -i 's@^;opcache.optimization_level.*@opcache.optimization_level=0@' $php_install_dir/etc/php.ini
+fi
 
 if [ "$Apache_version" != '1' -a "$Apache_version" != '2' ];then
 # php-fpm Init Script
@@ -180,7 +183,7 @@ pm.min_spare_servers = 6
 pm.max_spare_servers = 12
 pm.max_requests = 20480
 
-request_terminate_timeout = 0
+request_terminate_timeout = 600
 request_slowlog_timeout = 0
 
 slowlog = log/slow.log

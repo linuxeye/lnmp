@@ -169,7 +169,7 @@ pm.min_spare_servers = 6
 pm.max_spare_servers = 12
 pm.max_requests = 20480
 
-request_terminate_timeout = 0
+request_terminate_timeout = 600
 request_slowlog_timeout = 0
 
 slowlog = log/slow.log

@@ -17,7 +17,7 @@ unzip -q ngx_pagespeed-1.7.30.3-beta.zip
 tar xzf 1.7.30.3.tar.gz -C ngx_pagespeed-1.7.30.3-beta 
 
 if [ "$Nginx_version" == '1' ];then
-	cd nginx-1.4.5
+	cd nginx-1.4.6
 	make clean
 	$web_install_dir/sbin/nginx -V &> $$
 	nginx_configure_arguments=`cat $$ | grep 'configure arguments:' | awk -F: '{print $2}'`

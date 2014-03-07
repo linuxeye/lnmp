@@ -107,7 +107,7 @@ if [ -e "tengine-$tengine_version.tar.gz" ];then
         echo "Press Ctrl+c to cancel or Press any key to continue..."
         char=`get_char`
         tar xzf tengine-$tengine_version.tar.gz
-        cd tengine-$tengine_version
+        cd tengine
         make clean
         $web_install_dir/sbin/nginx -V &> $$
         tengine_configure_arguments=`cat $$ | grep 'configure arguments:' | awk -F: '{print $2}'`

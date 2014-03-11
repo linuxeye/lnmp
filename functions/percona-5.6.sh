@@ -20,8 +20,8 @@ if [ ! -e "`which cmake`" ];then
         make && make install
         cd ..
 fi
-tar zxf percona-Server-5.6.16-rel64.0.tar.gz
-cd percona-Server-5.6.16-rel64.0
+tar zxf percona-server-5.6.16-64.0.tar.gz 
+cd percona-server-5.6.16-64.0
 if [ "$je_tc_malloc" == '1' ];then
         EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
 elif [ "$je_tc_malloc" == '2' ];then

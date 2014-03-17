@@ -9,12 +9,12 @@ cd $lnmp_dir/src
 . ../options.conf
 
 rm -rf ngx_pagespeed*
-src_url=https://dl.google.com/dl/page-speed/psol/1.7.30.3.tar.gz && Download_src
-[ -s "ngx_pagespeed-1.7.30.3-beta.zip" ] && echo "ngx_pagespeed-1.7.30.3-beta.zip found" || wget -c --no-check-certificate -O ngx_pagespeed-1.7.30.3-beta.zip https://github.com/pagespeed/ngx_pagespeed/archive/master.zip 
+src_url=https://dl.google.com/dl/page-speed/psol/1.7.30.4.tar.gz && Download_src
+[ -s "ngx_pagespeed-1.7.30.4-beta.zip" ] && echo "ngx_pagespeed-1.7.30.4-beta.zip found" || wget -c --no-check-certificate -O ngx_pagespeed-1.7.30.4-beta.zip https://github.com/pagespeed/ngx_pagespeed/archive/master.zip 
 
-unzip -q ngx_pagespeed-1.7.30.3-beta.zip 
-/bin/mv ngx_pagespeed-master ngx_pagespeed-1.7.30.3-beta 
-tar xzf 1.7.30.3.tar.gz -C ngx_pagespeed-1.7.30.3-beta 
+unzip -q ngx_pagespeed-1.7.30.4-beta.zip 
+/bin/mv ngx_pagespeed-master ngx_pagespeed-1.7.30.4-beta 
+tar xzf 1.7.30.4.tar.gz -C ngx_pagespeed-1.7.30.4-beta 
 
 if [ "$Nginx_version" == '1' ];then
 	cd nginx-1.4.6
@@ -24,9 +24,9 @@ if [ "$Nginx_version" == '1' ];then
 	rm -rf $$
 
 	if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ] ;then
-		./configure $nginx_configure_arguments --add-module=../ngx_pagespeed-1.7.30.3-beta --with-cc-opt='-DLINUX=2 -D_REENTRANT -D_LARGEFILE64_SOURCE -pthread'
+		./configure $nginx_configure_arguments --add-module=../ngx_pagespeed-1.7.30.4-beta --with-cc-opt='-DLINUX=2 -D_REENTRANT -D_LARGEFILE64_SOURCE -pthread'
 	else
-		./configure $nginx_configure_arguments --add-module=../ngx_pagespeed-1.7.30.3-beta --with-cc-opt='-DLINUX=2 -D_REENTRANT -D_LARGEFILE64_SOURCE -march=i686 -pthread'
+		./configure $nginx_configure_arguments --add-module=../ngx_pagespeed-1.7.30.4-beta --with-cc-opt='-DLINUX=2 -D_REENTRANT -D_LARGEFILE64_SOURCE -march=i686 -pthread'
 	fi
 
 	make
@@ -43,7 +43,7 @@ if [ "$Nginx_version" == '1' ];then
 	fi
 	cd ../
 elif [ "$Nginx_version" == '2' ];then
-	$web_install_dir/sbin/dso_tool --add-module=$lnmp_dir/src/ngx_pagespeed-1.7.30.3-beta
+	$web_install_dir/sbin/dso_tool --add-module=$lnmp_dir/src/ngx_pagespeed-1.7.30.4-beta
 	if [ -f "$web_install_dir/modules/ngx_pagespeed.so" ];then
 		sed -i "s@^dso\(.*\)@dso\1\n\tload ngx_pagespeed.so;@" $web_install_dir/conf/nginx.conf
 		mkdir /var/ngx_pagespeed_cache

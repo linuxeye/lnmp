@@ -9,7 +9,7 @@ cd $lnmp_dir/src
 . ../options.conf
 
 src_url=http://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/1.3.19/GraphicsMagick-1.3.19.tar.gz && Download_src
-src_url=http://pecl.php.net/get/gmagick-1.1.7RC1.tgz && Download_src
+src_url=http://pecl.php.net/get/gmagick-1.1.7RC2.tgz && Download_src
 
 tar xzf GraphicsMagick-1.3.19.tar.gz 
 cd GraphicsMagick-1.3.19
@@ -17,8 +17,8 @@ cd GraphicsMagick-1.3.19
 make && make install
 cd ../
 
-tar xzf gmagick-1.1.7RC1.tgz 
-cd gmagick-1.1.7RC1
+tar xzf gmagick-1.1.7RC2.tgz 
+cd gmagick-1.1.7RC2
 make clean
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 $php_install_dir/bin/phpize

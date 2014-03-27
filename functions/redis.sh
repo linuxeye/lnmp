@@ -9,11 +9,11 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://pecl.php.net/get/redis-2.2.4.tgz && Download_src
-src_url=http://download.redis.io/releases/redis-2.8.7.tar.gz && Download_src
+src_url=http://pecl.php.net/get/redis-2.2.5.tgz && Download_src
+src_url=http://download.redis.io/releases/redis-2.8.8.tar.gz && Download_src
 
-tar xzf redis-2.2.4.tgz
-cd redis-2.2.4
+tar xzf redis-2.2.5.tgz
+cd redis-2.2.5
 make clean
 $php_install_dir/bin/phpize
 ./configure --with-php-config=$php_install_dir/bin/php-config
@@ -27,8 +27,8 @@ else
         echo -e "\033[31mPHP Redis module install failed, Please contact the author! \033[0m"
 fi
 
-tar xzf redis-2.8.7.tar.gz
-cd redis-2.8.7
+tar xzf redis-2.8.8.tar.gz
+cd redis-2.8.8
 if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 32 ];then
 	sed -i '1i\CFLAGS= -march=i686' src/Makefile
 	sed -i 's@^OPT=.*@OPT=-O2 -march=i686@' src/.make-settings
@@ -45,6 +45,22 @@ if [ -f "src/redis-server" ];then
 	sed -i "s@logfile.*@logfile $redis_install_dir/var/redis.log@" $redis_install_dir/etc/redis.conf
 	sed -i "s@^dir.*@dir $redis_install_dir/var@" $redis_install_dir/etc/redis.conf
 	sed -i 's@daemonize no@daemonize yes@' $redis_install_dir/etc/redis.conf
+
+	Memtatol=`free -m | grep 'Mem:' | awk '{print $2}'`
+	if [ $Memtatol -le 512 ];then
+		[ -z "`grep ^maxmemory $redis_install_dir/etc/redis.conf`" ] && sed -i 's@maxmemory <bytes>@maxmemory <bytes>\nmaxmemory 64000000@' $redis_install_dir/etc/redis.conf
+	elif [ $Memtatol -gt 512 -a $Memtatol -le 1024 ];then
+		[ -z "`grep ^maxmemory $redis_install_dir/etc/redis.conf`" ] && sed -i 's@maxmemory <bytes>@maxmemory <bytes>\nmaxmemory 128000000@' $redis_install_dir/etc/redis.conf
+	elif [ $Memtatol -gt 1024 -a $Memtatol -le 1500 ];then
+		[ -z "`grep ^maxmemory $redis_install_dir/etc/redis.conf`" ] && sed -i 's@maxmemory <bytes>@maxmemory <bytes>\nmaxmemory 256000000@' $redis_install_dir/etc/redis.conf
+	elif [ $Memtatol -gt 1500 -a $Memtatol -le 2500 ];then
+		[ -z "`grep ^maxmemory $redis_install_dir/etc/redis.conf`" ] && sed -i 's@maxmemory <bytes>@maxmemory <bytes>\nmaxmemory 360000000@' $redis_install_dir/etc/redis.conf
+	elif [ $Memtatol -gt 2500 -a $Memtatol -le 3500 ];then
+		[ -z "`grep ^maxmemory $redis_install_dir/etc/redis.conf`" ] && sed -i 's@maxmemory <bytes>@maxmemory <bytes>\nmaxmemory 512000000@' $redis_install_dir/etc/redis.conf
+	elif [ $Memtatol -gt 3500 ];then
+		[ -z "`grep ^maxmemory $redis_install_dir/etc/redis.conf`" ] && sed -i 's@maxmemory <bytes>@maxmemory <bytes>\nmaxmemory 1024000000@' $redis_install_dir/etc/redis.conf
+	fi
+
 	cd ../../
 	OS_CentOS='/bin/cp init/Redis-server-init-CentOS /etc/init.d/redis-server \n
 chkconfig --add redis-server \n

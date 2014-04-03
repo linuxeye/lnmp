@@ -9,8 +9,8 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://blog.linuxeye.com/lnmp/src/memcached-1.4.17.tar.gz && Download_src
-src_url=https://launchpad.net/libmemcached/1.0/1.0.16/+download/libmemcached-1.0.16.tar.gz && Download_src
+src_url=http://www.memcached.org/files/memcached-1.4.17.tar.gz && Download_src
+src_url=https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.gz && Download_src
 src_url=http://pecl.php.net/get/memcached-2.2.0.tgz && Download_src
 src_url=http://pecl.php.net/get/memcache-2.2.7.tgz && Download_src
 
@@ -53,8 +53,8 @@ else
 fi
 
 # php memcached extension
-tar xzf libmemcached-1.0.16.tar.gz
-cd libmemcached-1.0.16
+tar xzf libmemcached-1.0.18.tar.gz
+cd libmemcached-1.0.18
 ./configure --with-memcached=$memcached_install_dir
 make && make install
 cd ..

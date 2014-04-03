@@ -9,11 +9,11 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://www.apache.org/dist/httpd/httpd-2.2.26.tar.gz && Download_src 
+src_url=http://www.apache.org/dist/httpd/httpd-2.2.27.tar.gz && Download_src 
 
 useradd -M -s /sbin/nologin www
-tar xzf httpd-2.2.26.tar.gz
-cd httpd-2.2.26
+tar xzf httpd-2.2.27.tar.gz
+cd httpd-2.2.27
 ./configure --prefix=$apache_install_dir --enable-headers --enable-deflate --enable-mime-magic --enable-so --enable-rewrite --enable-ssl --with-ssl --enable-expires --enable-static-support --enable-suexec --disable-userdir --with-included-apr --with-mpm=prefork --disable-userdir
 make && make install
 if [ -d "$apache_install_dir" ];then

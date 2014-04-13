@@ -53,6 +53,8 @@ else
 fi
 
 # php memcached extension
+OS_CentOS='yum -y install cyrus-sasl-devel'
+OS_command
 tar xzf libmemcached-1.0.18.tar.gz
 cd libmemcached-1.0.18
 ./configure --with-memcached=$memcached_install_dir

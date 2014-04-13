@@ -9,7 +9,7 @@ cd $lnmp_dir/src
 . ../options.conf
 
 src_url=http://www.cmake.org/files/v2.8/cmake-2.8.12.2.tar.gz && Download_src 
-src_url=http://www.percona.com/redir/downloads/Percona-Server-5.5/Percona-Server-5.5.36-34.2/source/tarball/percona-server-5.5.36-34.2.tar.gz && Download_src
+src_url=http://www.percona.com/redir/downloads/Percona-Server-5.5/Percona-Server-5.5.35-rel33.0/source/Percona-Server-5.5.35-rel33.0.tar.gz && Download_src
 
 useradd -M -s /sbin/nologin mysql
 mkdir -p $percona_data_dir;chown mysql.mysql -R $percona_data_dir
@@ -20,8 +20,8 @@ if [ ! -e "`which cmake`" ];then
         make && make install
         cd ..
 fi
-tar zxf percona-server-5.5.36-34.2.tar.gz
-cd percona-server-5.5.36-34.2
+tar zxf Percona-Server-5.5.35-rel33.0.tar.gz 
+cd Percona-Server-5.5.35-rel33.0 
 if [ "$je_tc_malloc" == '1' ];then
         EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
 elif [ "$je_tc_malloc" == '2' ];then

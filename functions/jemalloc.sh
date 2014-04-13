@@ -9,7 +9,6 @@ cd $lnmp_dir/src
 
 src_url=http://www.canonware.com/download/jemalloc/jemalloc-3.6.0.tar.bz2 && Download_src
 
-
 tar xjf jemalloc-3.6.0.tar.bz2
 cd jemalloc-3.6.0
 ./configure

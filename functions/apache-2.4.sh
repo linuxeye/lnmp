@@ -9,13 +9,13 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://downloads.sourceforge.net/project/pcre/pcre/8.34/pcre-8.34.tar.gz && Download_src
+src_url=http://downloads.sourceforge.net/project/pcre/pcre/8.35/pcre-8.35.tar.gz && Download_src
 src_url=http://archive.apache.org/dist/apr/apr-1.5.0.tar.gz && Download_src 
 src_url=http://archive.apache.org/dist/apr/apr-util-1.5.3.tar.gz && Download_src 
 src_url=http://www.apache.org/dist/httpd/httpd-2.4.9.tar.gz && Download_src 
 
-tar xzf pcre-8.34.tar.gz
-cd pcre-8.34
+tar xzf pcre-8.35.tar.gz
+cd pcre-8.35
 ./configure
 make && make install
 cd ../
@@ -49,8 +49,8 @@ chkconfig httpd on'
 OS_Debian_Ubuntu='update-rc.d httpd defaults'
 OS_command
 
-sed -i 's/^User daemon/User www/' $apache_install_dir/conf/httpd.conf
-sed -i 's/^Group daemon/Group www/' $apache_install_dir/conf/httpd.conf
+sed -i 's@^User daemon@User www@' $apache_install_dir/conf/httpd.conf
+sed -i 's@^Group daemon@Group www@' $apache_install_dir/conf/httpd.conf
 if [ "$Nginx_version" == '3' ];then
 	sed -i 's/^#ServerName www.example.com:80/ServerName 0.0.0.0:80/' $apache_install_dir/conf/httpd.conf
 	TMP_PORT=80

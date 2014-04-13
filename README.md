@@ -4,7 +4,7 @@
 - Constant updates 
 - Source compiler installation, most source code is the latest stable version, and downloaded from the official website
 - Fixes some security issues 
-- You can freely choose to install database version (MySQL-5.6, MySQL-5.5, MariaDB-5.5, Percona-5.5, Percona-5.6)
+- You can freely choose to install database version (MySQL-5.6, MySQL-5.5, MariaDB-10.0, MariaDB-5.5, Percona-5.6, Percona-5.5)
 - You can freely choose to install PHP version (php-5.5, php-5.4, php-5.3)
 - You can freely choose to install Nginx or Tengine 
 - You can freely choose to install Apache version (Apache-2.4, Apache-2.2) 

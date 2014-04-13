@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # Blog:  http://blog.linuxeye.com
 #
-# Version: 0.6 2-Mar-2014 lj2007331 AT gmail.com
+# Version: 0.7 7-Apr-2014 lj2007331 AT gmail.com
 # Notes: LNMP/LAMP/LANMP for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+ 
 #
 # This script's project home is:
@@ -87,18 +87,21 @@ do
                                                 fi
                                         done
                                 fi
-                                echo
-                                echo 'Please select Apache server:'
-                                echo -e "\t\033[32m1\033[0m. Install Apache-2.4"
-                                echo -e "\t\033[32m2\033[0m. Install Apache-2.2"
-                                echo -e "\t\033[32m3\033[0m. Do not install"
-                                read -p "Please input a number:(Default 3 press Enter) " Apache_version
-                                [ -z "$Apache_version" ] && Apache_version=3
-                                if [ $Apache_version != 1 -a $Apache_version != 2 -a $Apache_version != 3 ];then
-                                        echo -e "\033[31minput error! Please only input number 1,2,3\033[0m"
-                                else
-                                        break
-                                fi
+				while :
+				do
+                                	echo
+	                                echo 'Please select Apache server:'
+	                                echo -e "\t\033[32m1\033[0m. Install Apache-2.4"
+	                                echo -e "\t\033[32m2\033[0m. Install Apache-2.2"
+	                                echo -e "\t\033[32m3\033[0m. Do not install"
+	                                read -p "Please input a number:(Default 3 press Enter) " Apache_version
+	                                [ -z "$Apache_version" ] && Apache_version=3
+	                                if [ $Apache_version != 1 -a $Apache_version != 2 -a $Apache_version != 3 ];then
+	                                        echo -e "\033[31minput error! Please only input number 1,2,3\033[0m"
+	                                else
+	                                        break
+	                                fi
+				done
                                 break
                                 fi
                         done
@@ -123,13 +126,14 @@ do
                                 echo 'Please select a version of the Database:'
                                 echo -e "\t\033[32m1\033[0m. Install MySQL-5.6"
                                 echo -e "\t\033[32m2\033[0m. Install MySQL-5.5"
-                                echo -e "\t\033[32m3\033[0m. Install MariaDB-5.5"
-                                echo -e "\t\033[32m4\033[0m. Install Percona-5.5"
+                                echo -e "\t\033[32m3\033[0m. Install MariaDB-10.0"
+                                echo -e "\t\033[32m4\033[0m. Install MariaDB-5.5"
                                 echo -e "\t\033[32m5\033[0m. Install Percona-5.6"
+                                echo -e "\t\033[32m6\033[0m. Install Percona-5.5"
                                 read -p "Please input a number:(Default 1 press Enter) " DB_version
                                 [ -z "$DB_version" ] && DB_version=1
-                                if [ $DB_version != 1 -a $DB_version != 2 -a $DB_version != 3 -a $DB_version != 4 -a $DB_version != 5 ];then
-                                        echo -e "\033[31minput error! Please only input number 1,2,3,4,5 \033[0m"
+                                if [ $DB_version != 1 -a $DB_version != 2 -a $DB_version != 3 -a $DB_version != 4 -a $DB_version != 5 -a $DB_version != 6 ];then
+                                        echo -e "\033[31minput error! Please only input number 1,2,3,4,5,6 \033[0m"
                                 else
                                         while :
                                         do
@@ -453,14 +457,17 @@ elif [ "$DB_version" == '2' ];then
         . functions/mysql-5.5.sh
         Install_MySQL-5-5 2>&1 | tee -a $lnmp_dir/install.log
 elif [ "$DB_version" == '3' ];then
+	. functions/mariadb-10.0.sh
+	Install_MariaDB-10-0 2>&1 | tee -a $lnmp_dir/install.log 
+elif [ "$DB_version" == '4' ];then
 	. functions/mariadb-5.5.sh
 	Install_MariaDB-5-5 2>&1 | tee -a $lnmp_dir/install.log 
-elif [ "$DB_version" == '4' ];then
-	. functions/percona-5.5.sh 
-	Install_Percona-5-5 2>&1 | tee -a $lnmp_dir/install.log 
 elif [ "$DB_version" == '5' ];then
         . functions/percona-5.6.sh
         Install_Percona-5-6 2>&1 | tee -a $lnmp_dir/install.log
+elif [ "$DB_version" == '6' ];then
+	. functions/percona-5.5.sh 
+	Install_Percona-5-5 2>&1 | tee -a $lnmp_dir/install.log 
 fi
 
 # PHP MySQL Client

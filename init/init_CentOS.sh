@@ -4,7 +4,7 @@
 
 cd src
 . ../functions/download.sh
-src_url=http://blog.linuxeye.com/lnmp/src/yum-3.4.3.tar.gz && Download_src
+src_url=http://yum.baseurl.org/download/3.4/yum-3.4.3.tar.gz && Download_src
 tar zxf yum-3.4.3.tar.gz
 cd yum-3.4.3
 ./yummain.py install yum -y

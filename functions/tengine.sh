@@ -9,11 +9,11 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh 
 . ../options.conf
 
-src_url=http://downloads.sourceforge.net/project/pcre/pcre/8.34/pcre-8.34.tar.gz && Download_src
+src_url=http://downloads.sourceforge.net/project/pcre/pcre/8.35/pcre-8.35.tar.gz && Download_src
 src_url=http://tengine.taobao.org/download/tengine-1.5.2.tar.gz && Download_src
 
-tar xzf pcre-8.34.tar.gz
-cd pcre-8.34
+tar xzf pcre-8.35.tar.gz
+cd pcre-8.35
 ./configure
 make && make install
 cd ../

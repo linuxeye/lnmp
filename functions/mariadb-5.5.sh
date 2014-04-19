@@ -10,7 +10,7 @@ cd $lnmp_dir/src
 . ../options.conf
 
 src_url=http://www.cmake.org/files/v2.8/cmake-2.8.12.2.tar.gz && Download_src 
-src_url=http://ftp.osuosl.org/pub/mariadb/mariadb-5.5.36/kvm-tarbake-jaunty-x86/mariadb-5.5.36.tar.gz && Download_src 
+src_url=https://downloads.mariadb.org/f/mariadb-5.5.37/source/mariadb-5.5.37.tar.gz && Download_src 
 
 useradd -M -s /sbin/nologin mysql
 mkdir -p $mariadb_data_dir;chown mysql.mysql -R $mariadb_data_dir
@@ -21,12 +21,12 @@ if [ ! -e "`which cmake`" ];then
         make && make install
         cd ..
 fi
-tar zxf mariadb-5.5.36.tar.gz
-cd mariadb-5.5.36
+tar zxf mariadb-5.5.37.tar.gz
+cd mariadb-5.5.37
 if [ "$je_tc_malloc" == '1' ];then
-	EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
+        EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
 elif [ "$je_tc_malloc" == '2' ];then
-	EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"
+        EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"
 fi
 make clean
 cmake . -DCMAKE_INSTALL_PREFIX=$mariadb_install_dir \

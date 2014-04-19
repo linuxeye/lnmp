@@ -10,7 +10,7 @@ cd $lnmp_dir/src
 . ../options.conf
 
 src_url=http://www.cmake.org/files/v2.8/cmake-2.8.12.2.tar.gz && Download_src 
-src_url=http://ftp.osuosl.org/pub/mariadb/mariadb-10.0.10/kvm-tarbake-jaunty-x86/mariadb-10.0.10.tar.gz && Download_src 
+src_url=https://downloads.mariadb.org/f/mariadb-10.0.10/kvm-tarbake-jaunty-x86/mariadb-10.0.10.tar.gz && Download_src 
 
 useradd -M -s /sbin/nologin mysql
 mkdir -p $mariadb_data_dir;chown mysql.mysql -R $mariadb_data_dir

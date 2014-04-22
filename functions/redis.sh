@@ -10,7 +10,7 @@ cd $lnmp_dir/src
 . ../options.conf
 
 src_url=http://pecl.php.net/get/redis-2.2.5.tgz && Download_src
-src_url=http://download.redis.io/releases/redis-2.8.8.tar.gz && Download_src
+src_url=http://download.redis.io/releases/redis-2.8.9.tar.gz && Download_src
 
 tar xzf redis-2.2.5.tgz
 cd redis-2.2.5
@@ -27,8 +27,8 @@ else
         echo -e "\033[31mPHP Redis module install failed, Please contact the author! \033[0m"
 fi
 
-tar xzf redis-2.8.8.tar.gz
-cd redis-2.8.8
+tar xzf redis-2.8.9.tar.gz
+cd redis-2.8.9
 if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 32 ];then
 	sed -i '1i\CFLAGS= -march=i686' src/Makefile
 	sed -i 's@^OPT=.*@OPT=-O2 -march=i686@' src/.make-settings

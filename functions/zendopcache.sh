@@ -15,11 +15,23 @@ make clean
 $php_install_dir/bin/phpize
 ./configure --with-php-config=$php_install_dir/bin/php-config
 make && make install
+Mem=`free -m | awk '/Mem:/{print $2}'`
+if [ $Mem -gt 1024 -a $Mem -le 1500 ];then
+        Memory_limit=192
+elif [ $Mem -gt 1500 -a $Mem -le 3500 ];then
+        Memory_limit=256
+elif [ $Mem -gt 3500 -a $Mem -le 4500 ];then
+        Memory_limit=320
+elif [ $Mem -gt 4500 ];then
+        Memory_limit=448
+else
+        Memory_limit=128
+fi
 if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/opcache.so" ];then
         cat >> $php_install_dir/etc/php.ini << EOF
 [opcache]
 zend_extension="$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/opcache.so"
-opcache.memory_consumption=128
+opcache.memory_consumption=$Memory_limit
 opcache.interned_strings_buffer=8
 opcache.max_accelerated_files=4000
 opcache.revalidate_freq=60

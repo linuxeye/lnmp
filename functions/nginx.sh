@@ -10,7 +10,7 @@ cd $lnmp_dir/src
 . ../options.conf
 
 src_url=http://downloads.sourceforge.net/project/pcre/pcre/8.35/pcre-8.35.tar.gz && Download_src
-src_url=http://nginx.org/download/nginx-1.4.7.tar.gz && Download_src
+src_url=http://nginx.org/download/nginx-1.6.0.tar.gz && Download_src
 
 tar xzf pcre-8.35.tar.gz
 cd pcre-8.35
@@ -18,9 +18,9 @@ cd pcre-8.35
 make && make install
 cd ../
 
-tar xzf nginx-1.4.7.tar.gz
+tar xzf nginx-1.6.0.tar.gz
 useradd -M -s /sbin/nologin www
-cd nginx-1.4.7
+cd nginx-1.6.0
 
 # Modify Nginx version
 #sed -i 's@#define NGINX_VERSION.*$@#define NGINX_VERSION      "1.2"@' src/core/nginx.h

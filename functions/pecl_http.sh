@@ -10,7 +10,7 @@ cd $lnmp_dir/src
 
 src_url=http://pecl.php.net/get/raphf-1.0.4.tgz && Download_src
 src_url=http://pecl.php.net/get/propro-1.0.0.tgz && Download_src
-src_url=http://pecl.php.net/get/pecl_http-2.0.5.tgz && Download_src
+src_url=http://pecl.php.net/get/pecl_http-2.0.6.tgz && Download_src
 tar xzf raphf-1.0.4.tgz
 cd raphf-1.0.4
 $php_install_dir/bin/phpize
@@ -25,8 +25,8 @@ $php_install_dir/bin/phpize
 make && make install
 cd ..
 
-tar xzf pecl_http-2.0.5.tgz
-cd pecl_http-2.0.5
+tar xzf pecl_http-2.0.6.tgz
+cd pecl_http-2.0.6
 make clean
 $php_install_dir/bin/phpize
 ./configure --with-php-config=$php_install_dir/bin/php-config

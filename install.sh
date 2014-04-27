@@ -170,6 +170,21 @@ else
                         if [ $PHP_version != 1 -a $PHP_version != 2 -a $PHP_version != 3 ];then
                                 echo -e "\033[31minput error! Please only input number 1,2,3 \033[0m"
                         else
+                                while :
+                                        do
+                                        echo
+                                        echo 'You can either use the mysqlnd or libmysql library to connect from PHP to MySQL:'
+                                        echo -e "\t\033[32m1\033[0m. MySQL native driver (mysqlnd)"
+                                        echo -e "\t\033[32m2\033[0m. MySQL Client Library (libmysql)"
+                                        read -p "Please input a number:(Default 1 press Enter) " PHP_MySQL_driver
+                                        [ -z "$PHP_MySQL_driver" ] && PHP_MySQL_driver=1
+                                        if [ $PHP_MySQL_driver != 1 -a $PHP_MySQL_driver != 2 ];then
+                                                echo -e "\033[31minput error! Please only input number 1,2\033[0m"
+                                        else
+                                                break
+                                        fi
+                                done
+
 				while :
 				do
 					echo
@@ -471,7 +486,7 @@ elif [ "$DB_version" == '6' ];then
 fi
 
 # PHP MySQL Client
-if [ "$DB_yn" == 'n' -a "$PHP_yn" == 'y' ];then
+if [ "$DB_yn" == 'n' -a "$PHP_yn" == 'y' -a "$PHP_MySQL_driver" == '2' ];then
 	. functions/php-mysql-client.sh
 	Install_PHP-MySQL-Client 2>&1 | tee -a $lnmp_dir/install.log
 fi

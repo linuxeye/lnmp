@@ -4,7 +4,7 @@
 
 cd src
 . ../functions/download.sh
-src_url=http://yum.baseurl.org/download/3.4/yum-3.4.3.tar.gz && Download_src
+src_url=http://blog.linuxeye.com/lnmp/src/yum-3.4.3.tar.gz && Download_src
 tar zxf yum-3.4.3.tar.gz
 cd yum-3.4.3
 ./yummain.py install yum -y
@@ -45,7 +45,7 @@ fi
 yum check-update
 
 # check upgrade OS
-[ "$upgrade_yn" == 'y' ] && yum -y update 
+[ "$upgrade_yn" == 'y' ] && yum -y upgrade
 
 # Install needed packages
 yum -y install gcc gcc-c++ make autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel libxslt-devel libevent-devel libtool libtool-ltdl bison gd-devel vim-enhanced pcre-devel zip unzip ntpdate sysstat patch

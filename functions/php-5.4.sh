@@ -13,7 +13,6 @@ src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/2.6.8/mcrypt-2.6.8.tar.gz && Download_src
-[ -s "php-5.4.27.tar.gz" ] && echo "php-5.4.27.tar.gz found" || wget -c http://www.php.net/get/php-5.4.27.tar.gz/from/this/mirror
 src_url=http://www.php.net/distributions/php-5.4.27.tar.gz && Download_src
 
 tar xzf libiconv-1.14.tar.gz
@@ -40,8 +39,13 @@ make && make install
 cd ../
 
 # linked library
-[ "$DB_yn" == 'n' ] && db_install_dir=$mysql_install_dir
-ln -s $db_install_dir/include /usr/include/mysql
+if [ "$PHP_MySQL_driver" == '1' ];then
+        PHP_MySQL_options="--with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd"
+elif [ "$PHP_MySQL_driver" == '2' ];then
+        [ "$DB_yn" == 'n' ] && db_install_dir=$mysql_install_dir
+        ln -s $db_install_dir/include /usr/include/mysql
+        PHP_MySQL_options="--with-mysql=$db_install_dir --with-mysqli=$db_install_dir/bin/mysql_config --with-pdo-mysql=$db_install_dir/bin/mysql_config"
+fi
 echo "$db_install_dir/lib" > /etc/ld.so.conf.d/mysql.conf
 echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
 ldconfig
@@ -68,8 +72,7 @@ cd php-5.4.27
 make clean
 if [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
 CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
---with-apxs2=$apache_install_dir/bin/apxs --disable-fileinfo --with-mysql=$db_install_dir \
---with-mysqli=$db_install_dir/bin/mysql_config --with-pdo-mysql=$db_install_dir/bin/mysql_config \
+--with-apxs2=$apache_install_dir/bin/apxs $PHP_MySQL_options --disable-fileinfo \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
 --enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex \
@@ -78,8 +81,7 @@ CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=
 --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
 else
 CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
---with-fpm-user=www --with-fpm-group=www --enable-fpm --disable-fileinfo --with-mysql=$db_install_dir \
---with-mysqli=$db_install_dir/bin/mysql_config --with-pdo-mysql=$db_install_dir/bin/mysql_config \
+--with-fpm-user=www --with-fpm-group=www --enable-fpm $PHP_MySQL_options --disable-fileinfo \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
 --enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex \
@@ -106,6 +108,19 @@ fi
 /bin/cp php.ini-production $php_install_dir/etc/php.ini
 
 # Modify php.ini
+Mem=`free -m | awk '/Mem:/{print $2}'`
+if [ $Mem -gt 1024 -a $Mem -le 1500 ];then
+        Memory_limit=192
+elif [ $Mem -gt 1500 -a $Mem -le 3500 ];then
+        Memory_limit=256
+elif [ $Mem -gt 3500 -a $Mem -le 4500 ];then
+        Memory_limit=320
+elif [ $Mem -gt 4500 ];then
+        Memory_limit=448
+else
+        Memory_limit=128
+fi
+sed -i "s@^memory_limit.*@memory_limit = ${Memory_limit}M@" $php_install_dir/etc/php.ini
 sed -i 's@^output_buffering =@output_buffering = On\noutput_buffering =@' $php_install_dir/etc/php.ini
 sed -i 's@^;cgi.fix_pathinfo.*@cgi.fix_pathinfo=0@' $php_install_dir/etc/php.ini
 sed -i 's@^short_open_tag = Off@short_open_tag = On@' $php_install_dir/etc/php.ini
@@ -183,7 +198,6 @@ env[TMP] = /tmp
 env[TMPDIR] = /tmp
 env[TEMP] = /tmp
 EOF
-Mem=`free -m | awk '/Mem:/{print $2}'`
 sed -i "s@^pm.max_children.*@pm.max_children = $(($Mem/2/20))@" $php_install_dir/etc/php-fpm.conf
 sed -i "s@^pm.start_servers.*@pm.start_servers = $(($Mem/2/30))@" $php_install_dir/etc/php-fpm.conf
 sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = $(($Mem/2/40))@" $php_install_dir/etc/php-fpm.conf

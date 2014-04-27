@@ -6,8 +6,6 @@ apt-get -y remove apache2 apache2-doc apache2-utils apache2.2-common apache2.2-b
 dpkg -P apache2 apache2-doc apache2-mpm-prefork apache2-utils apache2.2-common libmysqlclient15off libmysqlclient15-dev mysql-common php5 php5-common php5-cgi php5-mysql php5-curl php5-gd
 
 apt-get -y update
-# update packages
-apt-get -y upgrade
 
 # check upgrade OS
 [ "$upgrade_yn" == 'y' ] && apt-get -y dist-upgrade 

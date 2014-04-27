@@ -24,9 +24,9 @@ fi
 tar zxf mariadb-10.0.10.tar.gz
 cd mariadb-10.0.10
 if [ "$je_tc_malloc" == '1' ];then
-        EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
+	EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
 elif [ "$je_tc_malloc" == '2' ];then
-        EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"
+	EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"
 fi
 make clean
 cmake . -DCMAKE_INSTALL_PREFIX=$mariadb_install_dir \

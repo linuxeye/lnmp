@@ -28,6 +28,7 @@ local_IP=`./functions/get_local_ip.py`
 
 # Definition Directory
 . ./options.conf
+. functions/check_os.sh
 mkdir -p $home_dir/default $wwwlogs_dir $lnmp_dir/{src,conf}
 
 # choice upgrade OS
@@ -40,16 +41,18 @@ do
         else
                 [ -e init/init_*.ed -a "$upgrade_yn" == 'y' ] && echo -e "\033[31mYour system is already upgraded! \033[0m" && upgrade_yn=n && break
                 # check sendmail
-                while :
-                do
-                        echo
-                        read -p "Do you want to install sendmail ? [y/n]: " sendmail_yn
-                        if [ "$sendmail_yn" != 'y' -a "$sendmail_yn" != 'n' ];then
-                                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
-                        else
-                                break
-                        fi
-                done
+		if [ "$OS" != 'Debian' ];then
+	                while :
+	                do
+	                        echo
+	                        read -p "Do you want to install sendmail ? [y/n]: " sendmail_yn
+	                        if [ "$sendmail_yn" != 'y' -a "$sendmail_yn" != 'n' ];then
+	                                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
+	                        else
+	                                break
+	                        fi
+	                done
+		fi
                 break
         fi
 done
@@ -431,7 +434,6 @@ fi
 chmod +x functions/*.sh init/* *.sh
 
 # init
-. functions/check_os.sh
 if [ "$OS" == 'CentOS' ];then
 	. init/init_CentOS.sh 2>&1 | tee -a $lnmp_dir/install.log
 	/bin/mv init/init_CentOS.sh init/init_CentOS.ed

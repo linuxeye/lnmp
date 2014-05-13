@@ -9,7 +9,7 @@ cd $lnmp_dir/src
 . ../options.conf
 
 src_url=http://www.yahei.net/tz/tz.zip && Download_src
-src_url=https://gist.github.com/ck-on/4959032/raw/0b871b345fd6cfcd6d2be030c1f33d1ad6a475cb/ocp.php && Download_src
+src_url=https://gist.githubusercontent.com/ck-on/4959032/raw/0b871b345fd6cfcd6d2be030c1f33d1ad6a475cb/ocp.php && Download_src
 
 echo '<?php phpinfo() ?>' > $home_dir/default/phpinfo.php
 /bin/cp $lnmp_dir/conf/index.html $home_dir/default

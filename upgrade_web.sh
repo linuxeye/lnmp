@@ -125,14 +125,14 @@ if [ -e "tengine-$tengine_version.tar.gz" ];then
 		if [ -e "$web_install_dir/modules$(date +%m%d)/ngx_pagespeed.so" ];then
 			cd $lnmp_dir/src
 			rm -rf ngx_pagespeed*
-			src_url=https://dl.google.com/dl/page-speed/psol/1.7.30.4.tar.gz && Download_src
-			[ -s "ngx_pagespeed-1.7.30.4-beta.zip" ] && echo "ngx_pagespeed-1.7.30.4-beta.zip found" || wget -c --no-check-certificate -O ngx_pagespeed-1.7.30.4-beta.zip https://github.com/pagespeed/ngx_pagespeed/archive/master.zip
+			src_url=https://dl.google.com/dl/page-speed/psol/1.8.31.2.tar.gz && Download_src
+			[ -s "ngx_pagespeed-1.8.31.2-beta.zip" ] && echo "ngx_pagespeed-1.8.31.2-beta.zip found" || wget -c --no-check-certificate -O ngx_pagespeed-1.8.31.2-beta.zip https://github.com/pagespeed/ngx_pagespeed/archive/master.zip
 
-			unzip -q ngx_pagespeed-1.7.30.4-beta.zip
-			/bin/mv ngx_pagespeed-master ngx_pagespeed-1.7.30.4-beta
-			tar xzf 1.7.30.4.tar.gz -C ngx_pagespeed-1.7.30.4-beta
+			unzip -q ngx_pagespeed-1.8.31.2-beta.zip
+			/bin/mv ngx_pagespeed-master ngx_pagespeed-1.8.31.2-beta
+			tar xzf 1.8.31.2.tar.gz -C ngx_pagespeed-1.8.31.2-beta
 			cd tengine-$tengine_version
-			$web_install_dir/sbin/dso_tool --add-module=$lnmp_dir/src/ngx_pagespeed-1.7.30.4-beta
+			$web_install_dir/sbin/dso_tool --add-module=$lnmp_dir/src/ngx_pagespeed-1.8.31.2-beta
 		fi
 
                 kill -USR2 `cat /var/run/nginx.pid`

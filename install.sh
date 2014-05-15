@@ -357,7 +357,6 @@ do
 done
 fi
 
-if [ "$PHP_yn" == 'y' ];then
 # check redis
 while :
 do
@@ -387,7 +386,6 @@ do
                 break
         fi
 done
-fi
 
 # gcc sane CFLAGS and CXXFLAGS
 #while :

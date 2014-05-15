@@ -9,24 +9,25 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://pecl.php.net/get/redis-2.2.5.tgz && Download_src
-src_url=http://download.redis.io/releases/redis-2.8.9.tar.gz && Download_src
-
-tar xzf redis-2.2.5.tgz
-cd redis-2.2.5
-make clean
-$php_install_dir/bin/phpize
-./configure --with-php-config=$php_install_dir/bin/php-config
-make && make install
-cd ..
-if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/redis.so" ];then
-	[ -z "`cat $php_install_dir/etc/php.ini | grep '^extension_dir'`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions/`\"@" $php_install_dir/etc/php.ini
-	sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "redis.so"@' $php_install_dir/etc/php.ini
-	[ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
-else
-        echo -e "\033[31mPHP Redis module install failed, Please contact the author! \033[0m"
+if [ -e "$php_install_dir/bin/phpize" ];then
+	src_url=http://pecl.php.net/get/redis-2.2.5.tgz && Download_src
+	tar xzf redis-2.2.5.tgz
+	cd redis-2.2.5
+	make clean
+	$php_install_dir/bin/phpize
+	./configure --with-php-config=$php_install_dir/bin/php-config
+	make && make install
+	cd ..
+	if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/redis.so" ];then
+		[ -z "`cat $php_install_dir/etc/php.ini | grep '^extension_dir'`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions/`\"@" $php_install_dir/etc/php.ini
+		sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "redis.so"@' $php_install_dir/etc/php.ini
+		[ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
+	else
+	        echo -e "\033[31mPHP Redis module install failed, Please contact the author! \033[0m"
+	fi
 fi
 
+src_url=http://download.redis.io/releases/redis-2.8.9.tar.gz && Download_src
 tar xzf redis-2.8.9.tar.gz
 cd redis-2.8.9
 if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 32 ];then

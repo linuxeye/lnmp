@@ -25,7 +25,7 @@
    tar xzf lnmp.tar.gz
    cd lnmp
    chmod +x install.sh
-   # Prevent interrupt the installation process. If the network is down, you can execute commands `srceen -r lnmp` network reconnect the installation window.
+   # Prevent interrupt the installation process. If the network is down, you can execute commands `screen -r lnmp` network reconnect the installation window.
    screen -S lnmp
    ./install.sh
 ```

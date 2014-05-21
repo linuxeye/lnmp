@@ -77,7 +77,7 @@ CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
 --enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex \
 --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl \
---with-mhash --enable-pcntl --enable-sockes --with-xmlrpc --enable-ftp \
+--with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp \
 --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
 else
 CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
@@ -182,11 +182,9 @@ pm.max_children = 12
 pm.start_servers = 8
 pm.min_spare_servers = 6
 pm.max_spare_servers = 12
-pm.max_requests = 20480
-pm.process_idle_timeout = 10s
+pm.max_requests = 2048
+pm.process_idle_timeout = 10
 request_terminate_timeout = 120
-
-request_terminate_timeout = 600
 request_slowlog_timeout = 0
 
 slowlog = log/slow.log

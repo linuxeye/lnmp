@@ -78,7 +78,7 @@ server-id = 1
 
 skip-name-resolve
 #skip-networking
-back_log = 600
+back_log = 300
 
 max_connections = 1000
 max_connect_errors = 6000

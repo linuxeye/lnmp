@@ -8,10 +8,10 @@ cd $lnmp_dir/src
 . ../functions/download.sh 
 . ../options.conf 
 
-src_url=http://downloads.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.2.1/phpMyAdmin-4.2.1-all-languages.tar.gz && Download_src
+src_url=http://downloads.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.2.2/phpMyAdmin-4.2.2-all-languages.tar.gz && Download_src
 
-tar xzf phpMyAdmin-4.2.1-all-languages.tar.gz
-/bin/mv phpMyAdmin-4.2.1-all-languages $home_dir/default/phpMyAdmin
+tar xzf phpMyAdmin-4.2.2-all-languages.tar.gz
+/bin/mv phpMyAdmin-4.2.2-all-languages $home_dir/default/phpMyAdmin
 /bin/cp $home_dir/default/phpMyAdmin/{config.sample.inc.php,config.inc.php}
 mkdir $home_dir/default/phpMyAdmin/{upload,save}
 sed -i "s@UploadDir.*@UploadDir'\] = 'upload';@" $home_dir/default/phpMyAdmin/config.inc.php

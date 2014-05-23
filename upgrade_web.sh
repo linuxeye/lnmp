@@ -109,6 +109,9 @@ if [ -e "tengine-$tengine_version.tar.gz" ];then
         tar xzf tengine-$tengine_version.tar.gz
         cd tengine-$tengine_version
         make clean
+	# make[1]: *** [objs/src/event/ngx_event_openssl.o] Error 1
+	sed -i 's@\(.*\)this option allow a potential SSL 2.0 rollback (CAN-2005-2969)\(.*\)@#ifdef SSL_OP_MSIE_SSLV2_RSA_PADDING\n\1this option allow a potential SSL 2.0 rollback (CAN-2005-2969)\2@' src/event/ngx_event_openssl.c
+	sed -i 's@\(.*\)SSL_CTX_set_options(ssl->ctx, SSL_OP_MSIE_SSLV2_RSA_PADDING)\(.*\)@\1SSL_CTX_set_options(ssl->ctx, SSL_OP_MSIE_SSLV2_RSA_PADDING)\2\n#endif@' src/event/ngx_event_openssl.c
         $web_install_dir/sbin/nginx -V &> $$
         tengine_configure_arguments=`cat $$ | grep 'configure arguments:' | awk -F: '{print $2}'`
         rm -rf $$

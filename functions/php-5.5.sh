@@ -213,6 +213,8 @@ env[TMPDIR] = /tmp
 env[TEMP] = /tmp
 EOF
 
+[ -d "/run/shm" -a ! -e "/dev/shm" ] && sed -i 's@/dev/shm@/run/shm@' $php_install_dir/etc/php-fpm.conf $lnmp_dir/vhost.sh $lnmp_dir/conf/nginx.conf 
+
 if [ $Mem -le 3000 ];then
 	sed -i "s@^pm.max_children.*@pm.max_children = $(($Mem/2/20))@" $php_install_dir/etc/php-fpm.conf
 	sed -i "s@^pm.start_servers.*@pm.start_servers = $(($Mem/2/30))@" $php_install_dir/etc/php-fpm.conf

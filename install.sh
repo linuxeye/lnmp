@@ -39,20 +39,20 @@ do
         if [ "$upgrade_yn" != 'y' -a "$upgrade_yn" != 'n' ];then
                 echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
         else
-                [ -e init/init_*.ed -a "$upgrade_yn" == 'y' ] && echo -e "\033[31mYour system is already upgraded! \033[0m" && upgrade_yn=n && break
+		[ -e init/init_*.ed -a "$upgrade_yn" == 'y' ] && { echo -e "\033[31mYour system is already upgraded! \033[0m" ; upgrade_yn=n ; }
                 # check sendmail
-		if [ "$OS" != 'Debian' ];then
-	                while :
-	                do
-	                        echo
-	                        read -p "Do you want to install sendmail ? [y/n]: " sendmail_yn
-	                        if [ "$sendmail_yn" != 'y' -a "$sendmail_yn" != 'n' ];then
-	                                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
-	                        else
-	                                break
-	                        fi
-	                done
-		fi
+		#if [ "$OS" != 'Debian' ];then
+	        #        while :
+	        #        do
+	        #                echo
+	        #                read -p "Do you want to install sendmail ? [y/n]: " sendmail_yn
+	        #                if [ "$sendmail_yn" != 'y' -a "$sendmail_yn" != 'n' ];then
+	        #                        echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
+	        #                else
+	        #                        break
+	        #                fi
+	        #        done
+		#fi
                 break
         fi
 done
@@ -66,7 +66,7 @@ do
                 echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
         else
                 if [ "$Web_yn" == 'y' ];then
-                        [ -d "$web_install_dir" ] && echo -e "\033[31mThe web service already installed! \033[0m" && Web_yn=n && break
+                        [ -d "$web_install_dir" ] && { echo -e "\033[31mThe web service already installed! \033[0m" ; Web_yn=n ; break ; }
                         while :
                         do
                                 echo
@@ -122,7 +122,7 @@ do
                 echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
         else
                 if [ "$DB_yn" == 'y' ];then
-                        [ -d "$db_install_dir" ] && echo -e "\033[31mThe database already installed! \033[0m" && DB_yn=n && break
+                        [ -d "$db_install_dir" ] && { echo -e "\033[31mThe database already installed! \033[0m" ; DB_yn=n ; break ; }
                         while :
                         do
                                 echo
@@ -160,7 +160,7 @@ if [ "$PHP_yn" != 'y' -a "$PHP_yn" != 'n' ];then
         echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
 else
         if [ "$PHP_yn" == 'y' ];then
-                [ -d "$php_install_dir" ] && echo -e "\033[31mThe php already installed! \033[0m" && PHP_yn=n && break
+                [ -d "$php_install_dir" ] && { echo -e "\033[31mThe php already installed! \033[0m" ; PHP_yn=n ; break ; }
                 while :
                 do
                         echo
@@ -254,7 +254,7 @@ else
                                         while :
                                         do
                                                 read -p "Please input xcache admin password: " xcache_admin_pass
-                                                (( ${#xcache_admin_pass} >= 5 )) && xcache_admin_md5_pass=`echo -n "$xcache_admin_pass" | md5sum | awk '{print $1}'` && break || echo -e "\033[31mxcache admin password least 5 characters! \033[0m"
+                                                (( ${#xcache_admin_pass} >= 5 )) && { xcache_admin_md5_pass=`echo -n "$xcache_admin_pass" | md5sum | awk '{print $1}'` ; break ; } || echo -e "\033[31mxcache admin password least 5 characters! \033[0m"
                                         done
                                 fi
 				if [ "$PHP_version" == '2' -o "$PHP_version" == '3' ];then
@@ -269,6 +269,17 @@ else
                                                 fi
                                         done
                                 fi
+
+                                while :
+                                do
+                                        echo
+                                        read -p "Do you want to install ionCube? [y/n]: " ionCube_yn
+                                        if [ "$ionCube_yn" != 'y' -a "$ionCube_yn" != 'n' ];then
+                                                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
+                                        else
+                                                break
+                                        fi
+                                done
 
                                 while :
                                 do
@@ -296,16 +307,16 @@ else
                                         done
                                 fi
 
-                                while :
-                                do
-                                        echo
-                                        read -p "Do you want to install pecl_http PHP extension(Support HTTP request curls)? [y/n]: " pecl_http_yn
-                                        if [ "$pecl_http_yn" != 'y' -a "$pecl_http_yn" != 'n' ];then
-                                                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
-                                        else
-                                                break
-                                        fi
-                                done
+                                #while :
+                                #do
+                                #        echo
+                                #        read -p "Do you want to install pecl_http PHP extension(Support HTTP request curls)? [y/n]: " pecl_http_yn
+                                #        if [ "$pecl_http_yn" != 'y' -a "$pecl_http_yn" != 'n' ];then
+                                #                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
+                                #        else
+                                #                break
+                                #        fi
+                                #done
                                 break
                         fi
                 done
@@ -325,7 +336,7 @@ do
         else
 
                 if [ "$FTP_yn" == 'y' ];then
-                        [ -d "$pureftpd_install_dir" ] && echo -e "\033[31mThe FTP service already installed! \033[0m" && FTP_yn=n && break
+                        [ -d "$pureftpd_install_dir" ] && { echo -e "\033[31mThe FTP service already installed! \033[0m" ; FTP_yn=n ; break ; }
                         while :
                         do
                                 read -p "Please input the manager password of Pure-FTPd: " ftpmanagerpwd
@@ -340,6 +351,7 @@ do
                 break
         fi
 done
+fi
 
 # check phpMyAdmin
 while :
@@ -355,7 +367,6 @@ do
                 break
         fi
 done
-fi
 
 # check redis
 while :
@@ -366,7 +377,7 @@ do
                 echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
 	else
 		if [ "$redis_yn" == 'y' ];then
-			[ -d "$redis_install_dir" ] && echo -e "\033[31mThe redis already installed! \033[0m" && redis_yn=n && break
+			[ -d "$redis_install_dir" ] && { echo -e "\033[31mThe redis already installed! \033[0m" ; redis_yn=n ; break ; }
 		fi
 		break
 	fi
@@ -381,7 +392,7 @@ do
                 echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
         else
 		if [ "$memcached_yn" == 'y' ];then
-			[ -d "$memcached_install_dir" ] && echo -e "\033[31mThe memcached already installed! \033[0m" && memcached_yn=n && break
+			[ -d "$memcached_install_dir" ] && { echo -e "\033[31mThe memcached already installed! \033[0m" ; memcached_yn=n ; break ; }
 		fi
                 break
         fi
@@ -433,14 +444,14 @@ chmod +x functions/*.sh init/* *.sh
 
 # init
 if [ "$OS" == 'CentOS' ];then
-	. init/init_CentOS.sh 2>&1 | tee -a $lnmp_dir/install.log
+	. init/init_CentOS.sh 2>&1 | tee $lnmp_dir/install.log
 	/bin/mv init/init_CentOS.sh init/init_CentOS.ed
 	[ ! -z "`gcc --version | head -n1 | grep 4\.1`" ] && export CC="gcc44" CXX="g++44"
 elif [ "$OS" == 'Debian' ];then
-	. init/init_Debian.sh 2>&1 | tee -a $lnmp_dir/install.log
+	. init/init_Debian.sh 2>&1 | tee $lnmp_dir/install.log
 	/bin/mv init/init_Debian.sh init/init_Debian.ed
 elif [ "$OS" == 'Ubuntu' ];then
-	. init/init_Ubuntu.sh 2>&1 | tee -a $lnmp_dir/install.log
+	. init/init_Ubuntu.sh 2>&1 | tee $lnmp_dir/install.log
 	/bin/mv init/init_Ubuntu.sh init/init_Ubuntu.ed
 fi
 
@@ -549,6 +560,12 @@ fi
 if [ "$ZendGuardLoader_yn" == 'y' ];then
 	. functions/ZendGuardLoader.sh
         Install_ZendGuardLoader 2>&1 | tee -a $lnmp_dir/install.log
+fi
+
+# ionCube 
+if [ "$ionCube_yn" == 'y' ];then
+        . functions/ioncube.sh
+        Install_ionCube 2>&1 | tee -a $lnmp_dir/install.log
 fi
 
 # Web server

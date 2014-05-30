@@ -95,10 +95,10 @@ rm -rf /etc/localtime
 ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 # Set DNS
-cat > /etc/resolv.conf << EOF
-nameserver 114.114.114.114 
-nameserver 8.8.8.8 
-EOF
+#cat > /etc/resolv.conf << EOF
+#nameserver 114.114.114.114 
+#nameserver 8.8.8.8 
+#EOF
 
 # Wrong password five times locked 180s
 [ -z "`cat /etc/pam.d/system-auth | grep 'pam_tally2.so'`" ] && sed -i '4a auth        required      pam_tally2.so deny=5 unlock_time=180' /etc/pam.d/system-auth

@@ -46,10 +46,10 @@ rm -rf /etc/localtime
 ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 # Set DNS
-cat > /etc/resolv.conf << EOF
-nameserver 114.114.114.114
-nameserver 8.8.8.8
-EOF
+#cat > /etc/resolv.conf << EOF
+#nameserver 114.114.114.114
+#nameserver 8.8.8.8
+#EOF
 
 # alias vi
 [ -z "`cat ~/.bashrc | grep 'alias vi='`" ] && sed -i "s@^alias l=\(.*\)@alias l=\1\nalias vi='vim'@" ~/.bashrc

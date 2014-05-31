@@ -445,14 +445,14 @@ chmod +x functions/*.sh init/* *.sh
 # init
 if [ "$OS" == 'CentOS' ];then
 	. init/init_CentOS.sh 2>&1 | tee $lnmp_dir/install.log
-	/bin/mv init/init_CentOS.sh init/init_CentOS.ed
+	#/bin/mv init/init_CentOS.sh init/init_CentOS.ed
 	[ ! -z "`gcc --version | head -n1 | grep 4\.1`" ] && export CC="gcc44" CXX="g++44"
 elif [ "$OS" == 'Debian' ];then
 	. init/init_Debian.sh 2>&1 | tee $lnmp_dir/install.log
-	/bin/mv init/init_Debian.sh init/init_Debian.ed
+	#/bin/mv init/init_Debian.sh init/init_Debian.ed
 elif [ "$OS" == 'Ubuntu' ];then
 	. init/init_Ubuntu.sh 2>&1 | tee $lnmp_dir/install.log
-	/bin/mv init/init_Ubuntu.sh init/init_Ubuntu.ed
+	#/bin/mv init/init_Ubuntu.sh init/init_Ubuntu.ed
 fi
 
 # Optimization compiled code using safe, sane CFLAGS and CXXFLAGS

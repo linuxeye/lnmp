@@ -76,7 +76,7 @@ CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=
 --with-apxs2=$apache_install_dir/bin/apxs $PHP_cache_tmp $PHP_MySQL_options --disable-fileinfo \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
---enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex \
+--enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex --enable-inline-optimization \
 --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl \
 --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp \
 --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
@@ -85,7 +85,7 @@ CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=
 --with-fpm-user=www --with-fpm-group=www --enable-fpm $PHP_cache_tmp $PHP_MySQL_options --disable-fileinfo \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
---enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex \
+--enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex --enable-inline-optimization \
 --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl \
 --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp \
 --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug

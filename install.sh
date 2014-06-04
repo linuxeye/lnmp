@@ -538,6 +538,12 @@ if [ "$pecl_http_yn" == 'y' ];then
 	Install_pecl_http 2>&1 | tee -a $lnmp_dir/install.log
 fi
 
+# ionCube
+if [ "$ionCube_yn" == 'y' ];then
+        . functions/ioncube.sh
+        Install_ionCube 2>&1 | tee -a $lnmp_dir/install.log
+fi
+
 # PHP opcode cache
 if [ "$PHP_cache" == '1' -a "$PHP_version" != '1' ];then
         . functions/zendopcache.sh
@@ -554,12 +560,6 @@ elif [ "$PHP_cache" == '4' -a "$PHP_version" == '2' ];then
 elif [ "$PHP_cache" == '4' -a "$PHP_version" == '3' ];then
         . functions/eaccelerator-0.9.sh
         Install_eAccelerator-0-9 2>&1 | tee -a $lnmp_dir/install.log
-fi
-
-# ionCube 
-if [ "$ionCube_yn" == 'y' ];then
-        . functions/ioncube.sh
-        Install_ionCube 2>&1 | tee -a $lnmp_dir/install.log
 fi
 
 # ZendGuardLoader (php <= 5.4)

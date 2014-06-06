@@ -58,7 +58,7 @@ ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 [ -z "`cat /etc/sysctl.conf | grep 'fs.file-max'`" ] && cat >> /etc/sysctl.conf << EOF
 fs.file-max=65535
 net.ipv4.tcp_syncookies = 1
-net.ipv4.tcp_fin_timeout = 2 
+net.ipv4.tcp_fin_timeout = 30 
 net.ipv4.tcp_tw_reuse = 1
 net.ipv4.tcp_tw_recycle = 1
 net.ipv4.ip_local_port_range = 1024 65000

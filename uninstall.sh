@@ -24,6 +24,8 @@ Uninstall()
 [ -e "$redis_install_dir" ] && service redis-server stop && rm -rf /etc/init.d/redis-server
 [ -e "$memcached_install_dir" ] && service memcached stop && rm -rf /etc/init.d/memcached
 
+/bin/mv ${home_dir}{,_$(date +%F)}
+/bin/mv ${db_data_dir}{,_$(date +%F)}
 for D in `cat ./options.conf | grep dir= | grep -v lnmp | awk -F'=' '{print $2}' | sort | uniq`
 do
         [ -e "$D" ] && rm -rf $D

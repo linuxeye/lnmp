@@ -72,8 +72,8 @@ chown -R redis:redis $redis_install_dir/var/ \n
 update-rc.d redis-server defaults"
 	OS_command
 	sed -i "s@/usr/local/redis@$redis_install_dir@g" /etc/init.d/redis-server
-	echo 'vm.overcommit_memory = 1' >> /etc/sysctl.conf
-	sysctl -p
+	#[ -z "`grep 'vm.overcommit_memory' /etc/sysctl.conf`" ] && echo 'vm.overcommit_memory = 1' >> /etc/sysctl.conf
+	#sysctl -p
 	service redis-server start
 else
 	cd ../../

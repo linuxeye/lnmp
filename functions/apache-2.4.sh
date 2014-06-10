@@ -86,7 +86,7 @@ endscript
 EOF
 
 mkdir $apache_install_dir/conf/vhost
-cat > $apache_install_dir/conf/vhost/default.conf << EOF
+cat >> $apache_install_dir/conf/httpd.conf << EOF
 <VirtualHost *:$TMP_PORT>
     ServerAdmin admin@linuxeye.com
     DocumentRoot "$home_dir/default"
@@ -111,7 +111,6 @@ ServerSignature Off
 AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml text/javascript
 DeflateCompressionLevel 6
 SetOutputFilter DEFLATE
-Include conf/vhost/default.conf
 Include conf/vhost/*.conf
 EOF
 

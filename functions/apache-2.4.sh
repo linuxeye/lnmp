@@ -36,7 +36,7 @@ else
         kill -9 $$
 fi
 
-[ -n "`cat /etc/profile | grep 'export PATH='`" -a -z "`cat /etc/profile | grep $apache_install_dir`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=\1:$apache_install_dir/bin@" /etc/profile
+[ -n "`cat /etc/profile | grep 'export PATH='`" -a -z "`cat /etc/profile | grep $apache_install_dir`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$apache_install_dir/bin:\1@" /etc/profile
 . /etc/profile
 
 cd ..
@@ -111,6 +111,7 @@ ServerSignature Off
 AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml text/javascript
 DeflateCompressionLevel 6
 SetOutputFilter DEFLATE
+Include conf/vhost/default.conf
 Include conf/vhost/*.conf
 EOF
 

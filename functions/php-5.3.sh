@@ -99,7 +99,7 @@ else
         kill -9 $$
 fi
 
-[ -n "`cat /etc/profile | grep 'export PATH='`" -a -z "`cat /etc/profile | grep $php_install_dir`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=\1:$php_install_dir/bin@" /etc/profile
+[ -n "`cat /etc/profile | grep 'export PATH='`" -a -z "`cat /etc/profile | grep $php_install_dir`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$php_install_dir/bin:\1@" /etc/profile
 . /etc/profile
 
 # wget -c http://pear.php.net/go-pear.phar

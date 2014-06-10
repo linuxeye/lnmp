@@ -187,8 +187,8 @@ $mariadb_install_dir/scripts/mysql_install_db --user=mysql --basedir=$mariadb_in
 
 chown mysql.mysql -R $mariadb_data_dir
 service mysqld start
-export PATH=$PATH:$mariadb_install_dir/bin
-echo "export PATH=\$PATH:$mariadb_install_dir/bin" >> /etc/profile
+export PATH=$mariadb_install_dir/bin:$PATH
+[ -z "`cat /etc/profile | grep $mariadb_install_dir`" ] && echo "export PATH=$mariadb_install_dir/bin:\$PATH" >> /etc/profile 
 . /etc/profile
 
 $mariadb_install_dir/bin/mysql -e "grant all privileges on *.* to root@'127.0.0.1' identified by \"$dbrootpwd\" with grant option;"

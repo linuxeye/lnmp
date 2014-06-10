@@ -23,7 +23,7 @@ else
         kill -9 $$
 fi
 
-[ -n "`cat /etc/profile | grep 'export PATH='`" -a -z "`cat /etc/profile | grep $apache_install_dir`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=\1:$apache_install_dir/bin@" /etc/profile
+[ -n "`cat /etc/profile | grep 'export PATH='`" -a -z "`cat /etc/profile | grep $apache_install_dir`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$apache_install_dir/bin:\1@" /etc/profile
 . /etc/profile
 
 cd ..
@@ -98,12 +98,13 @@ ServerSignature Off
 AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml text/javascript
 DeflateCompressionLevel 6
 SetOutputFilter DEFLATE
+Include conf/vhost/default.conf
 Include conf/vhost/*.conf
 EOF
 
 if [ "$Nginx_version" != '3' ];then
 	mkdir mod_remoteip;cd mod_remoteip
-	src_url=https://raw.github.com/ttkzw/mod_remoteip-httpd22/master/mod_remoteip.c && Download_src
+	src_url=https://raw.githubusercontent.com/ttkzw/mod_remoteip-httpd22/master/mod_remoteip.c && Download_src
 	$apache_install_dir/bin/apxs -i -c -n mod_remoteip.so mod_remoteip.c
 	cat > $apache_install_dir/conf/extra/httpd-remoteip.conf << EOF
 LoadModule remoteip_module modules/mod_remoteip.so

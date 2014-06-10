@@ -47,7 +47,7 @@ else
         kill -9 $$
 fi
 
-[ -n "`cat /etc/profile | grep 'export PATH='`" -a -z "`cat /etc/profile | grep $nginx_install_dir`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=\1:$nginx_install_dir/bin@" /etc/profile
+[ -n "`cat /etc/profile | grep 'export PATH='`" -a -z "`cat /etc/profile | grep $nginx_install_dir`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$nginx_install_dir/bin:\1@" /etc/profile
 . /etc/profile
 
 cd ../../
@@ -59,13 +59,13 @@ update-rc.d nginx defaults'
 OS_command
 sed -i "s@/usr/local/nginx@$nginx_install_dir@g" /etc/init.d/nginx
 
-mv $nginx_install_dir/conf/nginx.conf $nginx_install_dir/conf/nginx.conf_bk
-sed -i "s@/home/wwwroot/default@$home_dir/default@" conf/nginx.conf
+mv $nginx_install_dir/conf/nginx.conf{,_bk}
 if [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
 	/bin/cp conf/nginx_apache.conf $nginx_install_dir/conf/nginx.conf
 else
 	/bin/cp conf/nginx.conf $nginx_install_dir/conf/nginx.conf
 fi
+sed -i "s@/home/wwwroot/default@$home_dir/default@" $nginx_install_dir/conf/nginx.conf
 sed -i "s@/home/wwwlogs@$wwwlogs_dir@g" $nginx_install_dir/conf/nginx.conf
 [ "$je_tc_malloc" == '2' ] && sed -i 's@^pid\(.*\)@pid\1\ngoogle_perftools_profiles /tmp/tcmalloc;@' $nginx_install_dir/conf/nginx.conf 
 

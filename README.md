@@ -14,6 +14,8 @@
 - According to their needs can to install memcached, redis
 - According to their needs can to optimize MySQL and Nginx with jemalloc or tcmalloc 
 - Add a virtual host script provided 
+- Nginx/Tengine, PHP, Redis, phpMyAdmin upgrade script provided
+- Add backup script provided 
 
 ## How to use 
 
@@ -28,6 +30,21 @@
    # Prevent interrupt the installation process. If the network is down, you can execute commands `screen -r lnmp` network reconnect the installation window.
    screen -S lnmp
    ./install.sh
+```
+
+## How to add a virtual host
+
+```bash
+   ./vhost.sh
+```
+
+## Hown to backup
+
+```bash
+   ./backup_setup.sh # Set backup options 
+   ./backup.sh # Start backup, You can add cron jobs
+   # crontab -l # Examples 
+     0 1 * * * cd ~/lnmp;./backup.sh  > /dev/null 2>&1 &
 ```
 
 ## How to manage service
@@ -58,12 +75,6 @@ Redis:
 Memcached:
 ```bash
    service memcached {start|stop|status|restart|reload|force-reload}
-```
-
-## How to add a virtual host
-
-```bash
-   ./vhost.sh
 ```
 
 ## How to upgrade 

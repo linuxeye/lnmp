@@ -96,6 +96,7 @@ key_buffer_size = 4M
 
 thread_cache_size = 8
 
+query_cache_type = 1
 query_cache_size = 8M
 query_cache_limit = 2M
 

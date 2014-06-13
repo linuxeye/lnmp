@@ -27,9 +27,9 @@ if [ -e "$php_install_dir/bin/phpize" ];then
 	fi
 fi
 
-src_url=http://download.redis.io/releases/redis-2.8.10.tar.gz && Download_src
-tar xzf redis-2.8.10.tar.gz
-cd redis-2.8.10
+src_url=http://download.redis.io/releases/redis-2.8.11.tar.gz && Download_src
+tar xzf redis-2.8.11.tar.gz
+cd redis-2.8.11
 if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 32 ];then
 	sed -i '1i\CFLAGS= -march=i686' src/Makefile
 	sed -i 's@^OPT=.*@OPT=-O2 -march=i686@' src/.make-settings

@@ -64,7 +64,7 @@ fi
 
 # closed Unnecessary services and remove obsolete rpm package
 for Service in `chkconfig --list | grep 3:on | awk '{print $1}'`;do chkconfig --level 3 $Service off;done
-for Service in sshd network crond iptables irqbalance syslog rsyslog sendmail;do chkconfig --level 3 $Service on;done
+for Service in sshd network crond iptables messagebus irqbalance syslog rsyslog sendmail;do chkconfig --level 3 $Service on;done
 
 # Close SELINUX
 setenforce 0

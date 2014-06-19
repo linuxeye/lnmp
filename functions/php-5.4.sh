@@ -21,6 +21,7 @@ cd libiconv-1.14
 [ ! -z "`cat /etc/issue | grep 'Ubuntu 13'`" ] && sed -i 's@_GL_WARN_ON_USE (gets@//_GL_WARN_ON_USE (gets@' srclib/stdio.h 
 make && make install
 cd ../
+/bin/rm -rf libiconv-1.14 
 
 tar xzf libmcrypt-2.5.8.tar.gz
 cd libmcrypt-2.5.8
@@ -31,12 +32,14 @@ cd libltdl/
 ./configure --enable-ltdl-install
 make && make install
 cd ../../
+/bin/rm -rf libmcrypt-2.5.8 
 
 tar xzf mhash-0.9.9.9.tar.gz
 cd mhash-0.9.9.9
 ./configure
 make && make install
 cd ../
+/bin/rm -rf mhash-0.9.9.9 
 
 # linked library
 if [ "$PHP_MySQL_driver" == '1' ];then
@@ -63,6 +66,7 @@ ldconfig
 ./configure
 make && make install
 cd ../
+/bin/rm -rf mcrypt-2.6.8 
 
 tar xzf php-5.4.29.tar.gz
 useradd -M -s /sbin/nologin www
@@ -234,5 +238,7 @@ service php-fpm start
 elif [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
 service httpd restart
 fi
-cd ../../
+cd ..
+/bin/rm -rf php-5.4.29 
+cd ..
 }

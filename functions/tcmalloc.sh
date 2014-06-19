@@ -17,17 +17,20 @@ if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ];then
 	make CFLAGS=-fPIC
 	make CFLAGS=-fPIC install
 	cd ..
+	/bin/rm -rf libunwind-1.1
 	tar xzf gperftools-2.1.tar.gz
 	cd gperftools-2.1
 	./configure
 	make && make install
 	cd ..
+	/bin/rm -rf gperftools-2.1
 else
 	tar xzf gperftools-2.1.tar.gz
         cd gperftools-2.1
         ./configure --enable-frame-pointers
 	make && make install
 	cd ..
+	/bin/rm -rf gperftools-2.1
 fi
 if [ -f "/usr/local/lib/libtcmalloc.so" ];then
 	echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf

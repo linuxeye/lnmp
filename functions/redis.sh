@@ -18,8 +18,9 @@ if [ -e "$php_install_dir/bin/phpize" ];then
 	./configure --with-php-config=$php_install_dir/bin/php-config
 	make && make install
 	cd ..
-	if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/redis.so" ];then
-		[ -z "`cat $php_install_dir/etc/php.ini | grep '^extension_dir'`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions/`\"@" $php_install_dir/etc/php.ini
+	/bin/rm -rf redis-2.2.5
+	if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions | grep zts`/redis.so" ];then
+		[ -z "`cat $php_install_dir/etc/php.ini | grep '^extension_dir'`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions  | grep zts`\"@" $php_install_dir/etc/php.ini
 		sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "redis.so"@' $php_install_dir/etc/php.ini
 		[ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
 	else
@@ -62,7 +63,9 @@ if [ -f "src/redis-server" ];then
 		[ -z "`grep ^maxmemory $redis_install_dir/etc/redis.conf`" ] && sed -i 's@maxmemory <bytes>@maxmemory <bytes>\nmaxmemory 1024000000@' $redis_install_dir/etc/redis.conf
 	fi
 
-	cd ../../
+	cd ..
+	/bin/rm -rf redis-2.8.11
+	cd ..
 	OS_CentOS='/bin/cp init/Redis-server-init-CentOS /etc/init.d/redis-server \n
 chkconfig --add redis-server \n
 chkconfig redis-server on'

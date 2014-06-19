@@ -27,6 +27,7 @@ fi
 . /etc/profile
 
 cd ..
+/bin/rm -rf httpd-2.2.27
 /bin/cp $apache_install_dir/bin/apachectl  /etc/init.d/httpd
 sed -i '2a # chkconfig: - 85 15' /etc/init.d/httpd
 sed -i '3a # description: Apache is a World Wide Web server. It is used to serve' /etc/init.d/httpd
@@ -73,7 +74,7 @@ endscript
 EOF
 
 mkdir $apache_install_dir/conf/vhost
-cat >> $apache_install_dir/conf/httpd.conf << EOF
+cat >> $apache_install_dir/conf/vhost/0.conf << EOF
 NameVirtualHost *:$TMP_PORT
 <VirtualHost *:$TMP_PORT>
     ServerAdmin admin@linuxeye.com

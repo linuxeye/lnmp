@@ -18,6 +18,7 @@ cd memcached-1.4.20
 ./configure --prefix=$memcached_install_dir
 make && make install
 cd ../
+/bin/rm -rf memcached-1.4.20
 if [ -d "$memcached_install_dir" ];then
         echo -e "\033[32mmemcached install successfully! \033[0m"
 	ln -s $memcached_install_dir/bin/memcached /usr/bin/memcached
@@ -45,8 +46,9 @@ if [ -e "$php_install_dir/bin/phpize" ];then
 	./configure --with-php-config=$php_install_dir/bin/php-config
 	make && make install
 	cd ..
-	if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/memcache.so" ];then
-		[ -z "`cat $php_install_dir/etc/php.ini | grep '^extension_dir'`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions/`\"@" $php_install_dir/etc/php.ini
+	/bin/rm -rf memcache-2.2.7
+	if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions | grep zts`/memcache.so" ];then
+		[ -z "`cat $php_install_dir/etc/php.ini | grep '^extension_dir'`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions | grep zts`\"@" $php_install_dir/etc/php.ini
 	        sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "memcache.so"@' $php_install_dir/etc/php.ini
 	        [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
 	else
@@ -62,6 +64,7 @@ if [ -e "$php_install_dir/bin/phpize" ];then
 	./configure --with-memcached=$memcached_install_dir
 	make && make install
 	cd ..
+	/bin/rm -rf libmemcached-1.0.18
 
 	tar xzf memcached-2.2.0.tgz
 	cd memcached-2.2.0
@@ -70,8 +73,9 @@ if [ -e "$php_install_dir/bin/phpize" ];then
 	./configure --with-php-config=$php_install_dir/bin/php-config
 	make && make install
 	cd ../
-	if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/memcached.so" ];then
-		[ -z "`cat $php_install_dir/etc/php.ini | grep '^extension_dir'`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions/`\"@" $php_install_dir/etc/php.ini
+	/bin/rm -rf memcached-2.2.0
+	if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions | grep zts`/memcached.so" ];then
+		[ -z "`cat $php_install_dir/etc/php.ini | grep '^extension_dir'`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions/ | grep zts`\"@" $php_install_dir/etc/php.ini
 	        sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "memcached.so"@' $php_install_dir/etc/php.ini
 	        [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
 	else

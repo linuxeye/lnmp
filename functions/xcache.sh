@@ -15,7 +15,7 @@ make clean
 $php_install_dir/bin/phpize
 ./configure --enable-xcache --enable-xcache-coverager --enable-xcache-optimizer --with-php-config=$php_install_dir/bin/php-config
 make && make install
-if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/xcache.so" ];then
+if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions | grep zts`/xcache.so" ];then
 	/bin/cp -R htdocs $home_dir/default/xcache
 	chown -R www.www $home_dir/default/xcache
 	touch /tmp/xcache;chown www.www /tmp/xcache
@@ -59,5 +59,7 @@ EOF
 else
         echo -e "\033[31meXcache module install failed, Please contact the author! \033[0m"
 fi
-cd ../../
+cd ..
+/bin/rm -rf xcache-3.1.0
+cd ..
 }

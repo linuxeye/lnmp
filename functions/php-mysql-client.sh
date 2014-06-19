@@ -17,6 +17,7 @@ if [ ! -e "`which cmake`" ];then
         CFLAGS= CXXFLAGS= ./configure
         make && make install
         cd ..
+	/bin/rm -rf cmake-2.8.12.2
 fi
 
 tar zxf mysql-5.5.38.tar.gz
@@ -27,5 +28,7 @@ mkdir -p $mysql_install_dir/{lib,bin}
 /bin/cp libmysql/libmysqlclient* $mysql_install_dir/lib
 /bin/cp scripts/mysql_config $mysql_install_dir/bin
 /bin/cp -R include $mysql_install_dir
-cd ../../
+cd ..
+/bin/rm -rf mysql-5.5.38
+cd ..
 }

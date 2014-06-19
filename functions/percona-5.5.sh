@@ -19,6 +19,7 @@ if [ ! -e "`which cmake`" ];then
         CFLAGS= CXXFLAGS= ./configure
         make && make install
         cd ..
+	/bin/rm -rf cmake-2.8.12.2
 fi
 tar zxf Percona-Server-5.5.35-rel33.0.tar.gz 
 cd Percona-Server-5.5.35-rel33.0 
@@ -57,7 +58,9 @@ OS_CentOS='chkconfig --add mysqld \n
 chkconfig mysqld on'
 OS_Debian_Ubuntu='update-rc.d mysqld defaults'
 OS_command
-cd ../../
+cd ..
+/bin/rm -rf Percona-Server-5.5.35-rel33.0
+cd ..
 
 # my.cf
 cat > /etc/my.cnf << EOF

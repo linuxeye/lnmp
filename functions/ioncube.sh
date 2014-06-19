@@ -31,6 +31,7 @@ elif [ "$PHP_version" == '5.3' ];then
 	zend_extension="$php_install_dir/lib/php/extensions/ioncube_loader_lin_5.3.so"
 fi
 
+/bin/rm -rf ioncube
 if [ -n "`grep '^\[opcache\]' $php_install_dir/etc/php.ini`" -a -z "`grep '^\[ionCube Loader\]' $php_install_dir/etc/php.ini`" ];then
 	sed -i "s@^\[opcache\]@[ionCube Loader]\nzend_extension=\"$zend_extension\"\n[opcache]@" $php_install_dir/etc/php.ini
 elif [ -z "`grep '^\[ionCube Loader\]' $php_install_dir/etc/php.ini`" ];then

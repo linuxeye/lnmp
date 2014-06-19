@@ -15,6 +15,7 @@ cd GraphicsMagick-1.3.19
 ./configure --enable-shared
 make && make install
 cd ../
+/bin/rm -rf GraphicsMagick-1.3.19
 
 if [ -e "$php_install_dir/bin/phpize" ];then
 	src_url=http://pecl.php.net/get/gmagick-1.1.7RC2.tgz && Download_src
@@ -26,9 +27,10 @@ if [ -e "$php_install_dir/bin/phpize" ];then
 	./configure --with-php-config=$php_install_dir/bin/php-config
 	make && make install
 	cd ../
+	/bin/rm -rf gmagick-1.1.7RC2
 
-	if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/gmagick.so" ];then
-		[ -z "`cat $php_install_dir/etc/php.ini | grep '^extension_dir'`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions/`\"@" $php_install_dir/etc/php.ini
+	if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions | grep zts`/gmagick.so" ];then
+		[ -z "`cat $php_install_dir/etc/php.ini | grep '^extension_dir'`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions | grep zts`\"@" $php_install_dir/etc/php.ini
 		sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "gmagick.so"@' $php_install_dir/etc/php.ini
 	        [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
 	else

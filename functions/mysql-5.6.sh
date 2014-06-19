@@ -20,6 +20,7 @@ if [ ! -e "`which cmake`" ];then
         CFLAGS= CXXFLAGS= ./configure
         make && make install
         cd ..
+	/bin/rm -rf cmake-2.8.12.2
 fi
 tar zxf mysql-5.6.19.tar.gz
 cd mysql-5.6.19
@@ -57,7 +58,9 @@ OS_CentOS='chkconfig --add mysqld \n
 chkconfig mysqld on'
 OS_Debian_Ubuntu='update-rc.d mysqld defaults'
 OS_command
-cd ../../
+cd ..
+/bin/rm -rf mysql-5.6.19
+cd ..
 
 # my.cf
 cat > /etc/my.cnf << EOF

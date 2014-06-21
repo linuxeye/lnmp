@@ -28,20 +28,20 @@ xcache.admin.user = "admin"
 xcache.admin.pass = "$xcache_admin_md5_pass"
 
 [xcache]
-xcache.cacher = On
-xcache.size  = 20M
-xcache.count = `cat /proc/cpuinfo | grep -c processor` 
+xcache.size  = 40M
+xcache.count = $(expr `cat /proc/cpuinfo | grep -c processor` + 1) 
 xcache.slots = 8K
 xcache.ttl = 3600
 xcache.gc_interval = 300
-xcache.var_size = 4M
-xcache.var_count = 1
+xcache.var_size = 40M
+xcache.var_count = $(expr `cat /proc/cpuinfo | grep -c processor` + 1) 
 xcache.var_slots = 8K
 xcache.var_ttl = 0
 xcache.var_maxttl = 0
 xcache.var_gc_interval = 300
 xcache.test = Off
-xcache.readonly_protection = On
+xcache.readonly_protection = Off
+xcache.shm_scheme = "mmap"
 xcache.mmap_path = "/tmp/xcache"
 xcache.coredump_directory = ""
 xcache.cacher = On
@@ -52,7 +52,8 @@ xcache.optimizer = Off
 ; enabling this feature will impact performance
 ; enable only if xcache.coverager == On && xcache.coveragedump_directory == "non-empty-value"
 ; enable coverage data collecting and xcache_coverager_start/stop/get/clean() functions
-xcache.coverager = On
+xcache.coverager = Off
+xcache.coverager_autostart = On
 xcache.coveragedump_directory = ""
 EOF
 	[ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart

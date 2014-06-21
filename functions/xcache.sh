@@ -19,6 +19,22 @@ if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extens
 	/bin/cp -R htdocs $home_dir/default/xcache
 	chown -R www.www $home_dir/default/xcache
 	touch /tmp/xcache;chown www.www /tmp/xcache
+
+        Memtatol=`free -m | grep 'Mem:' | awk '{print $2}'`
+        if [ $Memtatol -le 512 ];then
+		xcache_size=40M
+        elif [ $Memtatol -gt 512 -a $Memtatol -le 1024 ];then
+		xcache_size=80M
+        elif [ $Memtatol -gt 1024 -a $Memtatol -le 1500 ];then
+		xcache_size=100M
+        elif [ $Memtatol -gt 1500 -a $Memtatol -le 2500 ];then
+		xcache_size=160M
+        elif [ $Memtatol -gt 2500 -a $Memtatol -le 3500 ];then
+		xcache_size=180M
+        elif [ $Memtatol -gt 3500 ];then
+		xcache_size=200M
+        fi
+
 	cat >> $php_install_dir/etc/php.ini << EOF
 [xcache-common]
 extension = "xcache.so"
@@ -28,12 +44,12 @@ xcache.admin.user = "admin"
 xcache.admin.pass = "$xcache_admin_md5_pass"
 
 [xcache]
-xcache.size  = 40M
+xcache.size  = $xcache_size 
 xcache.count = $(expr `cat /proc/cpuinfo | grep -c processor` + 1) 
 xcache.slots = 8K
 xcache.ttl = 3600
 xcache.gc_interval = 300
-xcache.var_size = 40M
+xcache.var_size = $xcache_size 
 xcache.var_count = $(expr `cat /proc/cpuinfo | grep -c processor` + 1) 
 xcache.var_slots = 8K
 xcache.var_ttl = 0

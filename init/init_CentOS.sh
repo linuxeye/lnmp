@@ -12,8 +12,10 @@ cd ..
 sed -i 's@^exclude@#exclude@' /etc/yum.conf
 yum clean all
 
-rename repo repo_bk /etc/yum.repos.d/*.repo
+cd /etc/yum.repos.d/
+rename repo repo_bk *.repo
 /bin/mv /etc/yum.repos.d/CentOS-Base.repo{_bk,}
+cd -
 #public_IP=`../functions/get_public_ip.py`
 #if [ "`../functions/get_ip_area.py $public_IP`" == 'CN' ];then
 	if [ ! -z "$(cat /etc/redhat-release | grep '6\.')" ];then

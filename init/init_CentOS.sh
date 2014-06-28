@@ -12,29 +12,28 @@ cd ..
 sed -i 's@^exclude@#exclude@' /etc/yum.conf
 yum clean all
 
-public_IP=`../functions/get_public_ip.py`
-if [ "`../functions/get_ip_area.py $public_IP`" == 'CN' ];then
-        /bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
+#public_IP=`../functions/get_public_ip.py`
+#if [ "`../functions/get_ip_area.py $public_IP`" == 'CN' ];then
 	if [ ! -z "$(cat /etc/redhat-release | grep '6\.')" ];then
-		wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo
 		#wget -c http://blog.linuxeye.com/wp-content/uploads/2013/12/CentOS6-Base.repo -P /etc/yum.repos.d
 		if [ ! -z "$(cat /etc/redhat-release | grep 'Red Hat')" ];then
+	        	/bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
+			wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo
 			sed -i 's@\$releasever@6@g' /etc/yum.repos.d/CentOS-Base.repo
 	                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS-Base.repo
 		fi
-	fi
-
-	if [ ! -z "$(cat /etc/redhat-release | grep '5\.')" ];then
-		wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-5.repo
+	elif [ ! -z "$(cat /etc/redhat-release | grep '5\.')" ];then
 		#wget -c http://blog.linuxeye.com/wp-content/uploads/2013/12/CentOS5-Base.repo -P /etc/yum.repos.d
 		if [ ! -z "$(cat /etc/redhat-release | grep 'Red Hat')" ];then
+	        	/bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
+			wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-5.repo
 			sed -i 's@\$releasever@5@g' /etc/yum.repos.d/CentOS-Base.repo
 	                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS-Base.repo
 		fi
 	fi
 
 	yum makecache
-fi
+#fi
 
 if [ ! -z "$(cat /etc/redhat-release | grep '6\.')" ];then
 	yum -y groupremove "FTP Server" "PostgreSQL Database client" "PostgreSQL Database server" "MySQL Database server" "MySQL Database client" "Web Server" "Office Suite and Productivity" "E-mail server" "Ruby Support" "Printing client" 
@@ -194,9 +193,9 @@ fi
 
 # install htop
 if [ ! -e "`which htop`" ];then
-	src_url=http://downloads.sourceforge.net/project/htop/htop/1.0.2/htop-1.0.2.tar.gz && Download_src 
-	tar xzf htop-1.0.2.tar.gz
-	cd htop-1.0.2
+	src_url=http://hisham.hm/htop/releases/1.0.3/htop-1.0.3.tar.gz && Download_src 
+	tar xzf htop-1.0.3.tar.gz
+	cd htop-1.0.3
 	./configure
 	make && make install
 	cd ..

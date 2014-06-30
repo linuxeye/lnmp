@@ -151,7 +151,7 @@ sed -i 's@^;opcache.revalidate_freq.*@opcache.revalidate_freq=60@' $php_install_
 sed -i 's@^;opcache.save_comments.*@opcache.save_comments=0@' $php_install_dir/etc/php.ini
 sed -i 's@^;opcache.fast_shutdown.*@opcache.fast_shutdown=1@' $php_install_dir/etc/php.ini
 sed -i 's@^;opcache.enable_cli.*@opcache.enable_cli=1@' $php_install_dir/etc/php.ini
-sed -i 's@^;opcache.optimization_level.*@opcache.optimization_level=0@' $php_install_dir/etc/php.ini
+sed -i 's@^;opcache.optimization_level.*@;opcache.optimization_level=0@' $php_install_dir/etc/php.ini
 fi
 
 if [ "$Apache_version" != '1' -a "$Apache_version" != '2' ];then

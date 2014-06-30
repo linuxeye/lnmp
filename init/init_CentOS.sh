@@ -174,7 +174,7 @@ service iptables restart
 
 # install tmux
 if [ ! -e "`which tmux`" ];then
-	src_url=http://cloud.github.com/downloads/libevent/libevent/libevent-2.0.21-stable.tar.gz && Download_src 
+	src_url=http://downloads.sourceforge.net/project/levent/libevent/libevent-2.0/libevent-2.0.21-stable.tar.gz && Download_src 
 	src_url=http://downloads.sourceforge.net/project/tmux/tmux/tmux-1.8/tmux-1.8.tar.gz && Download_src 
 	tar xzf libevent-2.0.21-stable.tar.gz
 	cd libevent-2.0.21-stable

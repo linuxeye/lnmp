@@ -15,6 +15,7 @@ yum clean all
 cd /etc/yum.repos.d/
 rename repo repo_bk *.repo
 /bin/mv /etc/yum.repos.d/CentOS-Base.repo{_bk,}
+/bin/mv /etc/yum.repos.d/centos.repo{_bk,}
 cd -
 #public_IP=`../functions/get_public_ip.py`
 #if [ "`../functions/get_ip_area.py $public_IP`" == 'CN' ];then
@@ -120,14 +121,15 @@ net.ipv4.tcp_fin_timeout = 30
 net.ipv4.tcp_tw_reuse = 1
 net.ipv4.tcp_tw_recycle = 1
 net.ipv4.ip_local_port_range = 1024 65000
-net.ipv4.tcp_max_syn_backlog = 16384
-net.ipv4.tcp_max_tw_buckets = 36000
+net.ipv4.tcp_max_syn_backlog = 262144
+net.ipv4.tcp_max_tw_buckets = 6000
 net.ipv4.route.gc_timeout = 100
 net.ipv4.tcp_syn_retries = 1
 net.ipv4.tcp_synack_retries = 1
-net.core.somaxconn = 16384
-net.core.netdev_max_backlog = 16384
-net.ipv4.tcp_max_orphans = 16384
+net.core.somaxconn = 65535 
+net.core.netdev_max_backlog = 262144
+net.ipv4.tcp_timestamps = 0
+net.ipv4.tcp_max_orphans = 262144
 EOF
 sysctl -p
 

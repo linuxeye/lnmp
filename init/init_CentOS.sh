@@ -14,8 +14,7 @@ yum clean all
 
 cd /etc/yum.repos.d/
 rename repo repo_bk *.repo
-/bin/mv /etc/yum.repos.d/CentOS-Base.repo{_bk,}
-/bin/mv /etc/yum.repos.d/centos.repo{_bk,}
+rename repo_bk repo *ent*
 cd -
 #public_IP=`../functions/get_public_ip.py`
 #if [ "`../functions/get_ip_area.py $public_IP`" == 'CN' ];then

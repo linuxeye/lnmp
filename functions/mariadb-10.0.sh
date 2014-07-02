@@ -9,18 +9,18 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://www.cmake.org/files/v2.8/cmake-2.8.12.2.tar.gz && Download_src 
+src_url=http://www.cmake.org/files/v3.0/cmake-3.0.0.tar.gz && Download_src 
 src_url=https://downloads.mariadb.org/f/mariadb-10.0.12/source/mariadb-10.0.12.tar.gz && Download_src 
 
 useradd -M -s /sbin/nologin mysql
 mkdir -p $mariadb_data_dir;chown mysql.mysql -R $mariadb_data_dir
 if [ ! -e "`which cmake`" ];then
-        tar xzf cmake-2.8.12.2.tar.gz
-        cd cmake-2.8.12.2
+        tar xzf cmake-3.0.0.tar.gz
+        cd cmake-3.0.0
         CFLAGS= CXXFLAGS= ./configure
         make && make install
         cd ..
-	/bin/rm -rf cmake-2.8.12.2
+	/bin/rm -rf cmake-3.0.0
 fi
 tar zxf mariadb-10.0.12.tar.gz
 cd mariadb-10.0.12

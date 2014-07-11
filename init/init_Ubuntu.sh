@@ -100,6 +100,7 @@ cat > /etc/iptables.up.rules << EOF
 -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 443 -j ACCEPT
 -A INPUT -p icmp -m limit --limit 100/sec --limit-burst 100 -j ACCEPT
 -A INPUT -p icmp -m limit --limit 1/s --limit-burst 10 -j ACCEPT
 -A INPUT -p tcp -m tcp --tcp-flags FIN,SYN,RST,ACK SYN -j syn-flood

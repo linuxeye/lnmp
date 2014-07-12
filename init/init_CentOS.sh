@@ -18,7 +18,7 @@ rename repo_bk repo *ent*
 cd -
 #public_IP=`../functions/get_public_ip.py`
 #if [ "`../functions/get_ip_area.py $public_IP`" == 'CN' ];then
-	if [ ! -z "$(cat /etc/redhat-release | grep '6\.')" ];then
+	if [ -n "$(cat /etc/redhat-release | grep '6\.')" ];then
 		#wget -c http://blog.linuxeye.com/wp-content/uploads/2013/12/CentOS6-Base.repo -P /etc/yum.repos.d
 		if [ ! -z "$(cat /etc/redhat-release | grep 'Red Hat')" ];then
 	        	/bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
@@ -26,7 +26,7 @@ cd -
 			sed -i 's@\$releasever@6@g' /etc/yum.repos.d/CentOS-Base.repo
 	                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS-Base.repo
 		fi
-	elif [ ! -z "$(cat /etc/redhat-release | grep '5\.')" ];then
+	elif [ -n "$(cat /etc/redhat-release | grep '5\.')" ];then
 		#wget -c http://blog.linuxeye.com/wp-content/uploads/2013/12/CentOS5-Base.repo -P /etc/yum.repos.d
 		if [ ! -z "$(cat /etc/redhat-release | grep 'Red Hat')" ];then
 	        	/bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
@@ -39,9 +39,9 @@ cd -
 	yum makecache
 #fi
 
-if [ ! -z "$(cat /etc/redhat-release | grep '6\.')" ];then
+if [ -n "$(cat /etc/redhat-release | grep '6\.')" ];then
 	yum -y groupremove "FTP Server" "PostgreSQL Database client" "PostgreSQL Database server" "MySQL Database server" "MySQL Database client" "Web Server" "Office Suite and Productivity" "E-mail server" "Ruby Support" "Printing client" 
-elif [ ! -z "$(cat /etc/redhat-release | grep '5\.')" ];then
+elif [ -n "$(cat /etc/redhat-release | grep '5\.')" ];then
 	yum -y groupremove "FTP Server" "Windows File Server" "PostgreSQL Database" "News Server" "MySQL Database" "DNS Name Server" "Web Server" "Dialup Networking Support" "Mail Server" "Ruby" "Office/Productivity" "Sound and Video" "Printing Support" "OpenFabrics Enterprise Distribution"
 fi
 
@@ -57,7 +57,7 @@ do
 done
 
 # use gcc-4.4
-if [ ! -z "`gcc --version | head -n1 | grep 4\.1`" ];then
+if [ -n "`gcc --version | head -n1 | grep '4\.1\.'`" ];then
         yum -y install gcc44 gcc44-c++ libstdc++44-devel
 	export CC="gcc44" CXX="g++44"
 fi
@@ -132,14 +132,14 @@ net.ipv4.tcp_max_orphans = 262144
 EOF
 sysctl -p
 
-if [ -z "$(cat /etc/redhat-release | grep '6\.')" ];then
+if [ -n "$(cat /etc/redhat-release | grep '5\.')" ];then
 	sed -i 's/3:2345:respawn/#3:2345:respawn/g' /etc/inittab
 	sed -i 's/4:2345:respawn/#4:2345:respawn/g' /etc/inittab
 	sed -i 's/5:2345:respawn/#5:2345:respawn/g' /etc/inittab
 	sed -i 's/6:2345:respawn/#6:2345:respawn/g' /etc/inittab
 	sed -i 's/ca::ctrlaltdel/#ca::ctrlaltdel/g' /etc/inittab
 	sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/sysconfig/i18n
-else
+elif [ -n "$(cat /etc/redhat-release | grep '6\.')" ];then
 	sed -i 's@^ACTIVE_CONSOLES.*@ACTIVE_CONSOLES=/dev/tty[1-2]@' /etc/sysconfig/init	
 	sed -i 's@^start@#start@' /etc/init/control-alt-delete.conf
 fi

@@ -28,9 +28,9 @@ if [ -e "$php_install_dir/bin/phpize" ];then
 	fi
 fi
 
-src_url=http://download.redis.io/releases/redis-2.8.12.tar.gz && Download_src
-tar xzf redis-2.8.12.tar.gz
-cd redis-2.8.12
+src_url=http://download.redis.io/releases/redis-2.8.13.tar.gz && Download_src
+tar xzf redis-2.8.13.tar.gz
+cd redis-2.8.13
 if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 32 ];then
 	sed -i '1i\CFLAGS= -march=i686' src/Makefile
 	sed -i 's@^OPT=.*@OPT=-O2 -march=i686@' src/.make-settings
@@ -64,7 +64,7 @@ if [ -f "src/redis-server" ];then
 	fi
 
 	cd ..
-	/bin/rm -rf redis-2.8.12
+	/bin/rm -rf redis-2.8.13
 	cd ..
 	OS_CentOS='/bin/cp init/Redis-server-init-CentOS /etc/init.d/redis-server \n
 chkconfig --add redis-server \n

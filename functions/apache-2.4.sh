@@ -10,9 +10,9 @@ cd $lnmp_dir/src
 . ../options.conf
 
 src_url=http://downloads.sourceforge.net/project/pcre/pcre/8.35/pcre-8.35.tar.gz && Download_src
-src_url=http://archive.apache.org/dist/apr/apr-1.5.0.tar.gz && Download_src 
+src_url=http://archive.apache.org/dist/apr/apr-1.5.1.tar.gz && Download_src 
 src_url=http://archive.apache.org/dist/apr/apr-util-1.5.3.tar.gz && Download_src 
-src_url=http://www.apache.org/dist/httpd/httpd-2.4.9.tar.gz && Download_src 
+src_url=http://www.apache.org/dist/httpd/httpd-2.4.10.tar.gz && Download_src 
 
 tar xzf pcre-8.35.tar.gz
 cd pcre-8.35
@@ -21,11 +21,11 @@ make && make install
 cd ../
 
 useradd -M -s /sbin/nologin www
-tar xzf httpd-2.4.9.tar.gz
-tar xzf apr-1.5.0.tar.gz
+tar xzf httpd-2.4.10.tar.gz
+tar xzf apr-1.5.1.tar.gz
 tar xzf apr-util-1.5.3.tar.gz
-cd httpd-2.4.9
-/bin/cp -R ../apr-1.5.0 ./srclib/apr
+cd httpd-2.4.10
+/bin/cp -R ../apr-1.5.1 ./srclib/apr
 /bin/cp -R ../apr-util-1.5.3 ./srclib/apr-util
 ./configure --prefix=$apache_install_dir --enable-headers --enable-deflate --enable-mime-magic --enable-so --enable-rewrite --enable-ssl --with-ssl --enable-expires --enable-static-support --enable-suexec --disable-userdir --with-included-apr --with-mpm=prefork --disable-userdir
 make && make install
@@ -40,7 +40,7 @@ fi
 . /etc/profile
 
 cd ..
-/bin/rm -rf httpd-2.4.9
+/bin/rm -rf httpd-2.4.10
 /bin/cp $apache_install_dir/bin/apachectl  /etc/init.d/httpd
 sed -i '2a # chkconfig: - 85 15' /etc/init.d/httpd
 sed -i '3a # description: Apache is a World Wide Web server. It is used to serve' /etc/init.d/httpd

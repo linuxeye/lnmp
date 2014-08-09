@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/sh
 #
 # chkconfig: - 55 45
 # description:  The memcached daemon is a network memory cache service.

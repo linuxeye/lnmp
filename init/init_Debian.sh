@@ -75,11 +75,8 @@ EOF
 sysctl -p
 
 sed -i 's@^ACTIVE_CONSOLES.*@ACTIVE_CONSOLES="/dev/tty[1-2]"@' /etc/default/console-setup 
-sed -i 's@^3:23:respawn@#3:23:respawn@' /etc/inittab
-sed -i 's@^4:23:respawn@#4:23:respawn@' /etc/inittab
-sed -i 's@^5:23:respawn@#5:23:respawn@' /etc/inittab
-sed -i 's@^6:23:respawn@#6:23:respawn@' /etc/inittab
-sed -i "s@^ctrlaltdel@#ctrlaltdel@" /etc/inittab
+sed -i 's@^[3-6]:23:respawn@#&@g' /etc/inittab
+sed -i "s@^ctrlaltdel@#&@" /etc/inittab
 sed -i 's@^# en_US.UTF-8@en_US.UTF-8@' /etc/locale.gen
 init q
 

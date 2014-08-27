@@ -133,11 +133,8 @@ EOF
 sysctl -p
 
 if [ -n "$(cat /etc/redhat-release | grep '5\.')" ];then
-	sed -i 's/3:2345:respawn/#3:2345:respawn/g' /etc/inittab
-	sed -i 's/4:2345:respawn/#4:2345:respawn/g' /etc/inittab
-	sed -i 's/5:2345:respawn/#5:2345:respawn/g' /etc/inittab
-	sed -i 's/6:2345:respawn/#6:2345:respawn/g' /etc/inittab
-	sed -i 's/ca::ctrlaltdel/#ca::ctrlaltdel/g' /etc/inittab
+	sed -i 's@^[3-6]:2345:respawn@#&@g' /etc/inittab
+	sed -i 's@^ca::ctrlaltdel@#&@' /etc/inittab
 	sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/sysconfig/i18n
 elif [ -n "$(cat /etc/redhat-release | grep '6\.')" ];then
 	sed -i 's@^ACTIVE_CONSOLES.*@ACTIVE_CONSOLES=/dev/tty[1-2]@' /etc/sysconfig/init	

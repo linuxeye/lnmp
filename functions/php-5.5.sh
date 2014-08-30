@@ -175,7 +175,7 @@ cat > $php_install_dir/etc/php-fpm.conf <<EOF
 [global]
 pid = run/php-fpm.pid
 error_log = log/php-fpm.log
-log_level = notice
+log_level = warning 
 
 emergency_restart_threshold = 30
 emergency_restart_interval = 60s 

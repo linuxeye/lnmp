@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # Blog:  http://blog.linuxeye.com
 #
-# Version: 0.7 7-Apr-2014 lj2007331 AT gmail.com
+# Version: 0.8 3-Sep-2014 lj2007331 AT gmail.com
 # Notes: LNMP/LAMP/LANMP for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+ 
 #
 # This script's project home is:
@@ -165,13 +165,14 @@ else
                 do
                         echo
                         echo 'Please select a version of the PHP:'
-                        echo -e "\t\033[32m1\033[0m. Install php-5.5"
+                        echo -e "\t\033[32m1\033[0m. Install php-5.3"
                         echo -e "\t\033[32m2\033[0m. Install php-5.4"
-                        echo -e "\t\033[32m3\033[0m. Install php-5.3"
+                        echo -e "\t\033[32m3\033[0m. Install php-5.5"
+                        echo -e "\t\033[32m4\033[0m. Install php-5.5"
                         read -p "Please input a number:(Default 1 press Enter) " PHP_version
                         [ -z "$PHP_version" ] && PHP_version=1
-                        if [ $PHP_version != 1 -a $PHP_version != 2 -a $PHP_version != 3 ];then
-                                echo -e "\033[31minput error! Please only input number 1,2,3 \033[0m"
+                        if [ $PHP_version != 1 -a $PHP_version != 2 -a $PHP_version != 3 -a $PHP_version != 4 ];then
+                                echo -e "\033[31minput error! Please only input number 1,2,3,4 \033[0m"
                         else
                                 while :
                                         do
@@ -196,22 +197,23 @@ else
 						echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
 					else
 						if [ "$PHP_cache_yn" == 'y' ];then	
-		                                        if [ $PHP_version == 1 ];then
-		                                                while :
-		                                                do
-		                                                        echo 'Please select a opcode cache of the PHP:'
-		                                                        echo -e "\t\033[32m1\033[0m. Install Zend OPcache"
-		                                                        echo -e "\t\033[32m2\033[0m. Install XCache"
-		                                                        echo -e "\t\033[32m3\033[0m. Install APCU"
-		                                                        read -p "Please input a number:(Default 1 press Enter) " PHP_cache
-		                                                        [ -z "$PHP_cache" ] && PHP_cache=1
-		                                                        if [ $PHP_cache != 1 -a $PHP_cache != 2 -a $PHP_cache != 3 ];then
-		                                                                echo -e "\033[31minput error! Please only input number 1,2,3\033[0m"
-		                                                        else
-		                                                                break
-		                                                        fi
-		                                                done
-		                                        fi
+                                                        if [ $PHP_version == 1 ];then
+                                                                while :
+                                                                do
+                                                                        echo 'Please select a opcode cache of the PHP:'
+                                                                        echo -e "\t\033[32m1\033[0m. Install Zend OPcache"
+                                                                        echo -e "\t\033[32m2\033[0m. Install XCache"
+                                                                        echo -e "\t\033[32m3\033[0m. Install APCU"
+                                                                        echo -e "\t\033[32m4\033[0m. Install eAccelerator-0.9"
+                                                                        read -p "Please input a number:(Default 1 press Enter) " PHP_cache
+                                                                        [ -z "$PHP_cache" ] && PHP_cache=1
+                                                                        if [ $PHP_cache != 1 -a $PHP_cache != 2 -a $PHP_cache != 3 -a $PHP_cache != 4 ];then
+                                                                                echo -e "\033[31minput error! Please only input number 1,2,3,4\033[0m"
+                                                                        else
+                                                                                break
+                                                                        fi
+                                                                done
+                                                        fi
 		                                        if [ $PHP_version == 2 ];then
 		                                                while :
 		                                                do
@@ -229,23 +231,36 @@ else
 		                                                        fi
 		                                                done
 		                                        fi
-		                                        if [ $PHP_version == 3 ];then
-		                                                while :
-		                                                do
-		                                                        echo 'Please select a opcode cache of the PHP:'
-		                                                        echo -e "\t\033[32m1\033[0m. Install Zend OPcache"
-		                                                        echo -e "\t\033[32m2\033[0m. Install XCache"
-		                                                        echo -e "\t\033[32m3\033[0m. Install APCU"
-		                                                        echo -e "\t\033[32m4\033[0m. Install eAccelerator-0.9"
-		                                                        read -p "Please input a number:(Default 1 press Enter) " PHP_cache
-		                                                        [ -z "$PHP_cache" ] && PHP_cache=1
-		                                                        if [ $PHP_cache != 1 -a $PHP_cache != 2 -a $PHP_cache != 3 -a $PHP_cache != 4 ];then
-		                                                                echo -e "\033[31minput error! Please only input number 1,2,3,4\033[0m"
-		                                                        else
-		                                                                break
-		                                                        fi
-		                                                done
-		                                        fi
+                                                        if [ $PHP_version == 3 ];then
+                                                                while :
+                                                                do
+                                                                        echo 'Please select a opcode cache of the PHP:'
+                                                                        echo -e "\t\033[32m1\033[0m. Install Zend OPcache"
+                                                                        echo -e "\t\033[32m2\033[0m. Install XCache"
+                                                                        echo -e "\t\033[32m3\033[0m. Install APCU"
+                                                                        read -p "Please input a number:(Default 1 press Enter) " PHP_cache
+                                                                        [ -z "$PHP_cache" ] && PHP_cache=1
+                                                                        if [ $PHP_cache != 1 -a $PHP_cache != 2 -a $PHP_cache != 3 ];then
+                                                                                echo -e "\033[31minput error! Please only input number 1,2,3\033[0m"
+                                                                        else
+                                                                                break
+                                                                        fi
+                                                                done
+                                                        fi
+                                                        if [ $PHP_version == 4 ];then
+                                                                while :
+                                                                do
+                                                                        echo 'Please select a opcode cache of the PHP:'
+                                                                        echo -e "\t\033[32m1\033[0m. Install Zend OPcache"
+                                                                        read -p "Please input a number:(Default 1 press Enter) " PHP_cache
+                                                                        [ -z "$PHP_cache" ] && PHP_cache=1
+                                                                        if [ $PHP_cache != 1 ];then
+                                                                                echo -e "\033[31minput error! Please only input number 1\033[0m"
+                                                                        else
+                                                                                break
+                                                                        fi
+                                                                done
+                                                        fi
                                                 fi
 						break
                                         fi
@@ -513,14 +528,17 @@ fi
 
 # PHP
 if [ "$PHP_version" == '1' ];then
-	. functions/php-5.5.sh
-	Install_PHP-5-5 2>&1 | tee -a $lnmp_dir/install.log
+	. functions/php-5.3.sh
+	Install_PHP-5-3 2>&1 | tee -a $lnmp_dir/install.log
 elif [ "$PHP_version" == '2' ];then
         . functions/php-5.4.sh
         Install_PHP-5-4 2>&1 | tee -a $lnmp_dir/install.log
 elif [ "$PHP_version" == '3' ];then
-        . functions/php-5.3.sh
-        Install_PHP-5-3 2>&1 | tee -a $lnmp_dir/install.log
+        . functions/php-5.5.sh
+        Install_PHP-5-5 2>&1 | tee -a $lnmp_dir/install.log
+elif [ "$PHP_version" == '4' ];then
+        . functions/php-5.6.sh
+        Install_PHP-5-6 2>&1 | tee -a $lnmp_dir/install.log
 fi
 
 # ImageMagick or GraphicsMagick

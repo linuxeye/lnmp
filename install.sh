@@ -563,7 +563,7 @@ if [ "$ionCube_yn" == 'y' ];then
 fi
 
 # PHP opcode cache
-if [ "$PHP_cache" == '1' -a "$PHP_version" != '1' ];then
+if [ "$PHP_cache" == '1' -a "$PHP_version" != '3' -o "$PHP_version" != '4' ];then
         . functions/zendopcache.sh
         Install_ZendOPcache 2>&1 | tee -a $lnmp_dir/install.log
 elif [ "$PHP_cache" == '2' ];then
@@ -575,7 +575,7 @@ elif [ "$PHP_cache" == '3' ];then
 elif [ "$PHP_cache" == '4' -a "$PHP_version" == '2' ];then
         . functions/eaccelerator-1.0-dev.sh
         Install_eAccelerator-1-0-dev 2>&1 | tee -a $lnmp_dir/install.log
-elif [ "$PHP_cache" == '4' -a "$PHP_version" == '3' ];then
+elif [ "$PHP_cache" == '4' -a "$PHP_version" == '1' ];then
         . functions/eaccelerator-0.9.sh
         Install_eAccelerator-0-9 2>&1 | tee -a $lnmp_dir/install.log
 fi

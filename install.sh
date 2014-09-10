@@ -272,7 +272,7 @@ else
                                                 (( ${#xcache_admin_pass} >= 5 )) && { xcache_admin_md5_pass=`echo -n "$xcache_admin_pass" | md5sum | awk '{print $1}'` ; break ; } || echo -e "\033[31mxcache admin password least 5 characters! \033[0m"
                                         done
                                 fi
-				if [ "$PHP_version" == '2' -o "$PHP_version" == '3' ];then
+				if [ "$PHP_version" == '1' -o "$PHP_version" == '2' ];then
                                         while :
                                         do
                                                 echo
@@ -285,16 +285,18 @@ else
                                         done
                                 fi
 
-                                while :
-                                do
-                                        echo
-                                        read -p "Do you want to install ionCube? [y/n]: " ionCube_yn
-                                        if [ "$ionCube_yn" != 'y' -a "$ionCube_yn" != 'n' ];then
-                                                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
-                                        else
-                                                break
-                                        fi
-                                done
+				if [ "$PHP_version" != '4' ];then
+	                                while :
+	                                do
+	                                        echo
+	                                        read -p "Do you want to install ionCube? [y/n]: " ionCube_yn
+	                                        if [ "$ionCube_yn" != 'y' -a "$ionCube_yn" != 'n' ];then
+	                                                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
+	                                        else
+	                                                break
+	                                        fi
+	                                done
+				fi
 
                                 while :
                                 do
@@ -563,7 +565,7 @@ if [ "$ionCube_yn" == 'y' ];then
 fi
 
 # PHP opcode cache
-if [ "$PHP_cache" == '1' -a "$PHP_version" != '3' -o "$PHP_version" != '4' ];then
+if [ "$PHP_cache" == '1' ] && [ "$PHP_version" != '3' -a "$PHP_version" != '4' ];then
         . functions/zendopcache.sh
         Install_ZendOPcache 2>&1 | tee -a $lnmp_dir/install.log
 elif [ "$PHP_cache" == '2' ];then

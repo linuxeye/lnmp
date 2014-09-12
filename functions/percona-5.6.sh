@@ -8,18 +8,18 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://www.cmake.org/files/v3.0/cmake-3.0.1.tar.gz && Download_src 
+src_url=http://www.cmake.org/files/v3.0/cmake-3.0.2.tar.gz && Download_src 
 src_url=http://www.percona.com/redir/downloads/Percona-Server-5.6/LATEST/source/tarball/percona-server-5.6.20-68.0.tar.gz && Download_src
 
 useradd -M -s /sbin/nologin mysql
 mkdir -p $percona_data_dir;chown mysql.mysql -R $percona_data_dir
 if [ ! -e "`which cmake`" ];then
-        tar xzf cmake-3.0.1.tar.gz
-        cd cmake-3.0.1
+        tar xzf cmake-3.0.2.tar.gz
+        cd cmake-3.0.2
         CFLAGS= CXXFLAGS= ./configure
         make && make install
         cd ..
-	/bin/rm -rf cmake-3.0.1
+	/bin/rm -rf cmake-3.0.2
 fi
 tar zxf percona-server-5.6.20-68.0.tar.gz 
 cd percona-server-5.6.20-68.0 

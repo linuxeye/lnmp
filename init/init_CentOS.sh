@@ -12,15 +12,11 @@ cd ..
 sed -i 's@^exclude@#exclude@' /etc/yum.conf
 yum clean all
 
-cd /etc/yum.repos.d/
-rename repo repo_bk *.repo
-[ -e "/etc/yum.repos.d/CentOS-Base.repo_bk" ] && /bin/mv /etc/yum.repos.d/CentOS-Base.repo{_bk,} || rename repo_bk repo *ent*
-cd -
 #public_IP=`../functions/get_public_ip.py`
 #if [ "`../functions/get_ip_area.py $public_IP`" == 'CN' ];then
 	if [ -n "$(cat /etc/redhat-release | grep '6\.')" ];then
 		#wget -c http://blog.linuxeye.com/wp-content/uploads/2013/12/CentOS6-Base.repo -P /etc/yum.repos.d
-		if [ ! -z "$(cat /etc/redhat-release | grep 'Red Hat')" ];then
+		if [ -n "$(cat /etc/redhat-release | grep 'Red Hat')" ];then
 	        	/bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
 			wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo
 			sed -i 's@\$releasever@6@g' /etc/yum.repos.d/CentOS-Base.repo
@@ -28,7 +24,7 @@ cd -
 		fi
 	elif [ -n "$(cat /etc/redhat-release | grep '5\.')" ];then
 		#wget -c http://blog.linuxeye.com/wp-content/uploads/2013/12/CentOS5-Base.repo -P /etc/yum.repos.d
-		if [ ! -z "$(cat /etc/redhat-release | grep 'Red Hat')" ];then
+		if [ -n "$(cat /etc/redhat-release | grep 'Red Hat')" ];then
 	        	/bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
 			wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-5.repo
 			sed -i 's@\$releasever@5@g' /etc/yum.repos.d/CentOS-Base.repo
@@ -49,6 +45,16 @@ yum check-update
 
 # check upgrade OS
 [ "$upgrade_yn" == 'y' ] && yum -y upgrade
+
+cd /etc/yum.repos.d/
+if [ -e "CentOS-Base.repo" -a ! -e "centos.repo" ];then
+	rename repo repo_bk *.repo
+	/bin/mv CentOS-Base.repo{_bk,}
+elif [ -e "CentOS-Base.repo" -a -e "centos.repo" ];then
+	rename repo repo_bk *.repo
+	/bin/mv centos.repo{_bk,}
+fi
+cd -
 
 # Install needed packages
 for Package in gcc gcc-c++ make autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel libxslt-devel libevent-devel libtool libtool-ltdl bison gd-devel vim-enhanced pcre-devel zip unzip ntpdate sysstat patch bc expect rsync

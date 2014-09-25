@@ -9,11 +9,11 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://www.apache.org/dist/httpd/httpd-2.2.27.tar.gz && Download_src 
+src_url=http://www.apache.org/dist/httpd/httpd-2.2.29.tar.gz && Download_src 
 
 useradd -M -s /sbin/nologin www
-tar xzf httpd-2.2.27.tar.gz
-cd httpd-2.2.27
+tar xzf httpd-2.2.29.tar.gz
+cd httpd-2.2.29
 ./configure --prefix=$apache_install_dir --enable-headers --enable-deflate --enable-mime-magic --enable-so --enable-rewrite --enable-ssl --with-ssl --enable-expires --enable-static-support --enable-suexec --disable-userdir --with-included-apr --with-mpm=prefork --disable-userdir
 make && make install
 if [ -d "$apache_install_dir" ];then
@@ -27,7 +27,7 @@ fi
 . /etc/profile
 
 cd ..
-/bin/rm -rf httpd-2.2.27
+/bin/rm -rf httpd-2.2.29
 /bin/cp $apache_install_dir/bin/apachectl  /etc/init.d/httpd
 sed -i '2a # chkconfig: - 85 15' /etc/init.d/httpd
 sed -i '3a # description: Apache is a World Wide Web server. It is used to serve' /etc/init.d/httpd

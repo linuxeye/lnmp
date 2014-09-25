@@ -252,10 +252,11 @@ else
                                                                 do
                                                                         echo 'Please select a opcode cache of the PHP:'
                                                                         echo -e "\t\033[32m1\033[0m. Install Zend OPcache"
+		                                                        echo -e "\t\033[32m2\033[0m. Install XCache"
                                                                         read -p "Please input a number:(Default 1 press Enter) " PHP_cache
                                                                         [ -z "$PHP_cache" ] && PHP_cache=1
-                                                                        if [ $PHP_cache != 1 ];then
-                                                                                echo -e "\033[31minput error! Please only input number 1\033[0m"
+                                                                        if [ $PHP_cache != 1 -a $PHP_cache != 2 ];then
+                                                                                echo -e "\033[31minput error! Please only input number 1,2\033[0m"
                                                                         else
                                                                                 break
                                                                         fi

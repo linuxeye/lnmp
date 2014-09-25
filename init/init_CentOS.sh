@@ -62,6 +62,8 @@ do
 	yum -y install $Package
 done
 
+yum -y update bash openssl
+
 # use gcc-4.4
 if [ -n "`gcc --version | head -n1 | grep '4\.1\.'`" ];then
         yum -y install gcc44 gcc44-c++ libstdc++44-devel
@@ -180,15 +182,15 @@ service iptables restart
 # install tmux
 if [ ! -e "`which tmux`" ];then
 	src_url=http://downloads.sourceforge.net/project/levent/libevent/libevent-2.0/libevent-2.0.21-stable.tar.gz && Download_src 
-	src_url=http://downloads.sourceforge.net/project/tmux/tmux/tmux-1.8/tmux-1.8.tar.gz && Download_src 
+	src_url=http://downloads.sourceforge.net/project/tmux/tmux/tmux-1.9/tmux-1.9a.tar.gz && Download_src 
 	tar xzf libevent-2.0.21-stable.tar.gz
 	cd libevent-2.0.21-stable
 	./configure
 	make && make install
 	cd ..
 
-	tar xzf tmux-1.8.tar.gz
-	cd tmux-1.8
+	tar xzf tmux-1.9a.tar.gz
+	cd tmux-1.9a
 	CFLAGS="-I/usr/local/include" LDFLAGS="-L//usr/local/lib" ./configure
 	make && make install
 	cd ..

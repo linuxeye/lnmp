@@ -8,9 +8,9 @@ cd $lnmp_dir/src
 . ../functions/download.sh
 . ../options.conf
 
-src_url=http://xcache.lighttpd.net/pub/Releases/3.1.0/xcache-3.1.0.tar.gz && Download_src
-tar xzf xcache-3.1.0.tar.gz 
-cd xcache-3.1.0
+src_url=http://xcache.lighttpd.net/pub/Releases/3.2.0/xcache-3.2.0.tar.gz && Download_src
+tar xzf xcache-3.2.0.tar.gz 
+cd xcache-3.2.0
 make clean
 $php_install_dir/bin/phpize
 ./configure --enable-xcache --enable-xcache-coverager --enable-xcache-optimizer --with-php-config=$php_install_dir/bin/php-config
@@ -77,6 +77,6 @@ else
         echo -e "\033[31meXcache module install failed, Please contact the author! \033[0m"
 fi
 cd ..
-/bin/rm -rf xcache-3.1.0
+/bin/rm -rf xcache-3.2.0
 cd ..
 }

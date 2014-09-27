@@ -188,7 +188,7 @@ pm.start_servers = 8
 pm.min_spare_servers = 6
 pm.max_spare_servers = 12
 pm.max_requests = 2048
-pm.process_idle_timeout = 10
+pm.process_idle_timeout = 10s
 request_terminate_timeout = 120
 request_slowlog_timeout = 0
 

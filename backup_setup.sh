@@ -91,7 +91,7 @@ if [ "$remote_bankup_yn" == 'y' ];then
 	do
 		echo
 		read -p "Please enter the remote host ip: " remote_ip
-		[ -z "$remote_ip" ] && continue
+		[ -z "$remote_ip" -o "$remote_ip" == '127.0.0.1' ] && continue
 		echo
 		read -p "Please enter the remote host port(Default: 22) : " remote_port
 		[ -z "$remote_port" ] && remote_port=22 

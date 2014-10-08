@@ -76,7 +76,7 @@ if [ -e "$php_install_dir/bin/phpize" ];then
 	/bin/rm -rf memcached-2.2.0
 	if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions | grep zts`/memcached.so" ];then
 		[ -z "`cat $php_install_dir/etc/php.ini | grep '^extension_dir'`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions/ | grep zts`\"@" $php_install_dir/etc/php.ini
-	        sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "memcached.so"@' $php_install_dir/etc/php.ini
+	        sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "memcached.so"\nmemcached.use_sasl = 1@' $php_install_dir/etc/php.ini
 	        [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
 	else
 	        echo -e "\033[31mPHP memcached module install failed, Please contact the author! \033[0m"

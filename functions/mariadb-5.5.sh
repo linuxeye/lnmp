@@ -10,7 +10,7 @@ cd $lnmp_dir/src
 . ../options.conf
 
 src_url=http://www.cmake.org/files/v3.0/cmake-3.0.2.tar.gz && Download_src 
-src_url=https://downloads.mariadb.org/f/mariadb-5.5.39/source/mariadb-5.5.39.tar.gz && Download_src 
+src_url=https://downloads.mariadb.org/f/mariadb-5.5.40/source/mariadb-5.5.40.tar.gz && Download_src 
 
 useradd -M -s /sbin/nologin mysql
 mkdir -p $mariadb_data_dir;chown mysql.mysql -R $mariadb_data_dir
@@ -22,8 +22,8 @@ if [ ! -e "`which cmake`" ];then
         cd ..
 	/bin/rm -rf cmake-3.0.2
 fi
-tar zxf mariadb-5.5.39.tar.gz
-cd mariadb-5.5.39
+tar zxf mariadb-5.5.40.tar.gz
+cd mariadb-5.5.40
 if [ "$je_tc_malloc" == '1' ];then
 	EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
 elif [ "$je_tc_malloc" == '2' ];then
@@ -63,7 +63,7 @@ chkconfig mysqld on'
 OS_Debian_Ubuntu='update-rc.d mysqld defaults'
 OS_command
 cd ..
-/bin/rm -rf mariadb-5.5.39 
+/bin/rm -rf mariadb-5.5.40 
 cd ..
 
 # my.cf

@@ -33,4 +33,4 @@ chown -R www.www $home_dir/default
 [ -e "$db_install_dir" -a -z "`ps -ef | grep -v grep | grep mysql`" ] && service mysqld start
 [ -e "$apache_install_dir" -a -z "`ps -ef | grep -v grep | grep apache`" ] && service httpd restart 
 cd ..
-
+}

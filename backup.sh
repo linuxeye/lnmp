@@ -44,12 +44,12 @@ elif [ "$local_bankup_yn" == 'n' -a "$remote_bankup_yn" == 'y' ];then
 	echo "com:::[ ! -e "$backup_dir" ] && mkdir -p $backup_dir" > $lnmp_dir/tools/config.txt
 	DB_Remote_BK
 	WEB_Remote_BK
-	./mabs.sh | tee mabs.log	
+	./mabs.sh -T -1 | tee mabs.log	
 elif [ "$local_bankup_yn" == 'y' -a "$remote_bankup_yn" == 'y' ];then
 	echo "com:::[ ! -e "$backup_dir" ] && mkdir -p $backup_dir" > $lnmp_dir/tools/config.txt
 	WEB_Local_BK
 	WEB_Remote_BK
 	DB_Local_BK
 	DB_Remote_BK
-	./mabs.sh | tee mabs.log	
+	./mabs.sh -T -1 | tee mabs.log	
 fi

@@ -141,7 +141,7 @@ do
                                         while :
                                         do
                                                 read -p "Please input the root password of database: " dbrootpwd
-						[ -n "`echo $dbrootpwd | grep +`" ] && { echo -e "\033[31minput error,not contain a plus sign (+).\033[0m"; continue; }
+						[ -n "`echo $dbrootpwd | grep '[+|&]'`" ] && { echo -e "\033[31minput error,not contain a plus sign (+) and & \033[0m"; continue; }
                                                 (( ${#dbrootpwd} >= 5 )) && sed -i "s+^dbrootpwd.*+dbrootpwd='$dbrootpwd'+" ./options.conf && break || echo -e "\033[31mdatabase root password least 5 characters! \033[0m"
                                         done
                                         break
@@ -359,7 +359,7 @@ do
                         while :
                         do
                                 read -p "Please input the manager password of Pure-FTPd: " ftpmanagerpwd
-				[ -n "`echo $ftpmanagerpwd | grep +`" ] && { echo -e "\033[31minput error,not contain a plus sign (+).\033[0m"; continue; }
+				[ -n "`echo $ftpmanagerpwd | grep '[+|&]'`" ] && { echo -e "\033[31minput error,not contain a plus sign (+) and &\033[0m"; continue; }
                                 if (( ${#ftpmanagerpwd} >= 5 ));then
                                         sed -i "s+^ftpmanagerpwd.*+ftpmanagerpwd='$ftpmanagerpwd'+" options.conf
                                         break

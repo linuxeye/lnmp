@@ -71,9 +71,7 @@ sed -i "s@/home/wwwlogs@$wwwlogs_dir@g" $nginx_install_dir/conf/nginx.conf
 
 # worker_cpu_affinity
 CPU_num=`cat /proc/cpuinfo | grep processor | wc -l`
-if [ $CPU_num == 1 ];then
-        sed -i 's@^worker_processes.*@worker_processes 1;@' $nginx_install_dir/conf/nginx.conf
-elif [ $CPU_num == 2 ];then
+if [ $CPU_num == 2 ];then
         sed -i 's@^worker_processes.*@worker_processes 2;\nworker_cpu_affinity 10 01;@' $nginx_install_dir/conf/nginx.conf
 elif [ $CPU_num == 3 ];then
         sed -i 's@^worker_processes.*@worker_processes 3;\nworker_cpu_affinity 100 010 001;@' $nginx_install_dir/conf/nginx.conf

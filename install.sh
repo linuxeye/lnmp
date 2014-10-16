@@ -79,17 +79,17 @@ do
                                 if [ $Nginx_version != 1 -a $Nginx_version != 2 -a $Nginx_version != 3 ];then
                                         echo -e "\033[31minput error! Please only input number 1,2,3\033[0m"
                                 else
-                                if [ $Nginx_version = 1 -o $Nginx_version = 2 ];then
-                                        while :
-                                        do
-                                                read -p "Do you want to install ngx_pagespeed module? [y/n]: " ngx_pagespeed_yn
-                                                if [ "$ngx_pagespeed_yn" != 'y' -a "$ngx_pagespeed_yn" != 'n' ];then
-                                                        echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
-                                                else
-                                                        break
-                                                fi
-                                        done
-                                fi
+                                #if [ $Nginx_version = 1 -o $Nginx_version = 2 ];then
+                                #        while :
+                                #        do
+                                #                read -p "Do you want to install ngx_pagespeed module? [y/n]: " ngx_pagespeed_yn
+                                #                if [ "$ngx_pagespeed_yn" != 'y' -a "$ngx_pagespeed_yn" != 'n' ];then
+                                #                        echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
+                                #                else
+                                #                        break
+                                #                fi
+                                #        done
+                                #fi
 				while :
 				do
                                 	echo

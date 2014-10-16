@@ -42,9 +42,9 @@ for {} {1} {} {
 if { $direction == "pull" } {
 
 	if { $bwlimit > 0 } {
-		spawn rsync -crazP --bwlimit=$bwlimit -e "/usr/bin/ssh -o GSSAPIAuthentication=no -q -l$user -p$port" $ip:$sourcefile $destdir
+		spawn rsync -crazP --delete --bwlimit=$bwlimit -e "/usr/bin/ssh -o GSSAPIAuthentication=no -q -l$user -p$port" $ip:$sourcefile $destdir
 	} elseif { $bwlimit == 0 } {
-		spawn rsync -crazP -e "/usr/bin/ssh -o GSSAPIAuthentication=no -q -l$user -p$port" $ip:$sourcefile $destdir
+		spawn rsync -crazP --delete -e "/usr/bin/ssh -o GSSAPIAuthentication=no -q -l$user -p$port" $ip:$sourcefile $destdir
 	} else {
 		Usage_Exit $argv0
 	}
@@ -52,9 +52,9 @@ if { $direction == "pull" } {
 } elseif { $direction == "push" } {
 
 	if { $bwlimit > 0 } {
-		spawn rsync -crazP --bwlimit=$bwlimit -e "/usr/bin/ssh -o GSSAPIAuthentication=no -q -l$user -p$port" $sourcefile $ip:$destdir
+		spawn rsync -crazP --delete --bwlimit=$bwlimit -e "/usr/bin/ssh -o GSSAPIAuthentication=no -q -l$user -p$port" $sourcefile $ip:$destdir
 	} elseif { $bwlimit == 0 } {
-		spawn rsync -crazP -e "/usr/bin/ssh -o GSSAPIAuthentication=no -q -l$user -p$port" $sourcefile $ip:$destdir
+		spawn rsync -crazP --delete -e "/usr/bin/ssh -o GSSAPIAuthentication=no -q -l$user -p$port" $sourcefile $ip:$destdir
 	} else {
 		Usage_Exit $argv0
 	}

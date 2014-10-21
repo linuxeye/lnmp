@@ -323,6 +323,7 @@ else
                                                 else
                                                         break
                                                 fi
+						[ -n "`cat /etc/issue | grep 'Ubuntu 14'`" -a "$Magick" == '1' ] && Magick=9
                                         done
                                 fi
 

@@ -20,7 +20,10 @@ else
 fi
 
 [ ! -e "$php_install_dir/lib/php/extensions/" ] && mkdir $php_install_dir/lib/php/extensions/
-if [ "$PHP_version" == '5.5' ];then
+if [ "$PHP_version" == '5.6' ];then
+        /bin/cp ioncube/ioncube_loader_lin_5.6.so $php_install_dir/lib/php/extensions/
+	zend_extension="$php_install_dir/lib/php/extensions/ioncube_loader_lin_5.6.so"
+elif [ "$PHP_version" == '5.5' ];then
         /bin/cp ioncube/ioncube_loader_lin_5.5.so $php_install_dir/lib/php/extensions/
 	zend_extension="$php_install_dir/lib/php/extensions/ioncube_loader_lin_5.5.so"
 elif [ "$PHP_version" == '5.4' ];then
@@ -29,6 +32,8 @@ elif [ "$PHP_version" == '5.4' ];then
 elif [ "$PHP_version" == '5.3' ];then
         /bin/cp ioncube/ioncube_loader_lin_5.3.so $php_install_dir/lib/php/extensions/
 	zend_extension="$php_install_dir/lib/php/extensions/ioncube_loader_lin_5.3.so"
+else
+	exit 1
 fi
 
 /bin/rm -rf ioncube

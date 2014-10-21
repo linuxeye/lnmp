@@ -18,7 +18,8 @@ src_url=http://www.php.net/distributions/php-5.4.34.tar.gz && Download_src
 tar xzf libiconv-1.14.tar.gz
 cd libiconv-1.14
 ./configure --prefix=/usr/local
-[ ! -z "`cat /etc/issue | grep 'Ubuntu 13'`" ] && sed -i 's@_GL_WARN_ON_USE (gets@//_GL_WARN_ON_USE (gets@' srclib/stdio.h 
+[ -n "`cat /etc/issue | grep 'Ubuntu 13'`" ] && sed -i 's@_GL_WARN_ON_USE (gets@//_GL_WARN_ON_USE (gets@' srclib/stdio.h 
+[ -n "`cat /etc/issue | grep 'Ubuntu 14'`" ] && sed -i 's@gets is a security@@' srclib/stdio.h 
 make && make install
 cd ../
 /bin/rm -rf libiconv-1.14 

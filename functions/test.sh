@@ -20,6 +20,7 @@ if [ "$FLAG_IP"x == "CN"x ];then
 else
 	src_url=http://www.yahei.net/tz/tz_e.zip && Download_src
 	unzip -q tz_e.zip -d $home_dir/default;/bin/mv $home_dir/default/{tz_e.php,proberv.php}
+	sed -i 's@https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js@http://lib.sinaapp.com/js/jquery/1.7/jquery.min.js@' $home_dir/default/proberv.php 
 	/bin/cp $lnmp_dir/conf/index.html $home_dir/default
 fi
 src_url=https://gist.githubusercontent.com/ck-on/4959032/raw/0b871b345fd6cfcd6d2be030c1f33d1ad6a475cb/ocp.php && Download_src

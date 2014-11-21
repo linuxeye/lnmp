@@ -9,20 +9,21 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://www.cmake.org/files/v2.8/cmake-2.8.12.2.tar.gz && Download_src 
-src_url=https://downloads.mariadb.org/f/mariadb-10.0.10/kvm-tarbake-jaunty-x86/mariadb-10.0.10.tar.gz && Download_src 
+src_url=http://www.cmake.org/files/v3.0/cmake-3.0.2.tar.gz && Download_src 
+src_url=https://downloads.mariadb.org/f/mariadb-10.0.14/source/mariadb-10.0.14.tar.gz && Download_src 
 
 useradd -M -s /sbin/nologin mysql
 mkdir -p $mariadb_data_dir;chown mysql.mysql -R $mariadb_data_dir
 if [ ! -e "`which cmake`" ];then
-        tar xzf cmake-2.8.12.2.tar.gz
-        cd cmake-2.8.12.2
+        tar xzf cmake-3.0.2.tar.gz
+        cd cmake-3.0.2
         CFLAGS= CXXFLAGS= ./configure
         make && make install
         cd ..
+	/bin/rm -rf cmake-3.0.2
 fi
-tar zxf mariadb-10.0.10.tar.gz
-cd mariadb-10.0.10
+tar zxf mariadb-10.0.14.tar.gz
+cd mariadb-10.0.14
 if [ "$je_tc_malloc" == '1' ];then
 	EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
 elif [ "$je_tc_malloc" == '2' ];then
@@ -61,7 +62,9 @@ OS_CentOS='chkconfig --add mysqld \n
 chkconfig mysqld on'
 OS_Debian_Ubuntu='update-rc.d mysqld defaults'
 OS_command
-cd ../../
+cd ..
+/bin/rm -rf mariadb-10.0.14 
+cd ..
 
 # my.cf
 cat > /etc/my.cnf << EOF
@@ -82,7 +85,7 @@ server-id = 1
 
 skip-name-resolve
 #skip-networking
-back_log = 600
+back_log = 300
 
 max_connections = 1000
 max_connect_errors = 6000
@@ -101,6 +104,7 @@ key_buffer_size = 4M
 
 thread_cache_size = 8
 
+query_cache_type = 1
 query_cache_size = 8M
 query_cache_limit = 2M
 
@@ -187,8 +191,8 @@ $mariadb_install_dir/scripts/mysql_install_db --user=mysql --basedir=$mariadb_in
 
 chown mysql.mysql -R $mariadb_data_dir
 service mysqld start
-export PATH=$PATH:$mariadb_install_dir/bin
-echo "export PATH=\$PATH:$mariadb_install_dir/bin" >> /etc/profile
+export PATH=$mariadb_install_dir/bin:$PATH
+[ -z "`cat /etc/profile | grep $mariadb_install_dir`" ] && echo "export PATH=$mariadb_install_dir/bin:\$PATH" >> /etc/profile 
 . /etc/profile
 
 $mariadb_install_dir/bin/mysql -e "grant all privileges on *.* to root@'127.0.0.1' identified by \"$dbrootpwd\" with grant option;"

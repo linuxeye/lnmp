@@ -6,7 +6,7 @@ class Get_public_ip:
             myip = self.visit("http://www.whereismyip.com/")
         except:
             try:
-                myip = self.visit("http://www.ip138.com/ip2city.asp")
+                myip = self.visit("http://20140507.ip138.com/ic.asp")
             except:
                 myip = "So sorry!!!"
         return myip

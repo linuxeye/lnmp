@@ -9,26 +9,28 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://pecl.php.net/get/redis-2.2.5.tgz && Download_src
-src_url=http://download.redis.io/releases/redis-2.8.9.tar.gz && Download_src
-
-tar xzf redis-2.2.5.tgz
-cd redis-2.2.5
-make clean
-$php_install_dir/bin/phpize
-./configure --with-php-config=$php_install_dir/bin/php-config
-make && make install
-cd ..
-if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/redis.so" ];then
-	[ -z "`cat $php_install_dir/etc/php.ini | grep '^extension_dir'`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions/`\"@" $php_install_dir/etc/php.ini
-	sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "redis.so"@' $php_install_dir/etc/php.ini
-	[ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
-else
-        echo -e "\033[31mPHP Redis module install failed, Please contact the author! \033[0m"
+if [ -e "$php_install_dir/bin/phpize" ];then
+	src_url=http://pecl.php.net/get/redis-2.2.5.tgz && Download_src
+	tar xzf redis-2.2.5.tgz
+	cd redis-2.2.5
+	make clean
+	$php_install_dir/bin/phpize
+	./configure --with-php-config=$php_install_dir/bin/php-config
+	make && make install
+	cd ..
+	/bin/rm -rf redis-2.2.5
+	if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions | grep zts`/redis.so" ];then
+		[ -z "`cat $php_install_dir/etc/php.ini | grep '^extension_dir'`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions  | grep zts`\"@" $php_install_dir/etc/php.ini
+		sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "redis.so"@' $php_install_dir/etc/php.ini
+		[ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
+	else
+	        echo -e "\033[31mPHP Redis module install failed, Please contact the author! \033[0m"
+	fi
 fi
 
-tar xzf redis-2.8.9.tar.gz
-cd redis-2.8.9
+src_url=http://download.redis.io/releases/redis-2.8.17.tar.gz && Download_src
+tar xzf redis-2.8.17.tar.gz
+cd redis-2.8.17
 if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 32 ];then
 	sed -i '1i\CFLAGS= -march=i686' src/Makefile
 	sed -i 's@^OPT=.*@OPT=-O2 -march=i686@' src/.make-settings
@@ -61,7 +63,9 @@ if [ -f "src/redis-server" ];then
 		[ -z "`grep ^maxmemory $redis_install_dir/etc/redis.conf`" ] && sed -i 's@maxmemory <bytes>@maxmemory <bytes>\nmaxmemory 1024000000@' $redis_install_dir/etc/redis.conf
 	fi
 
-	cd ../../
+	cd ..
+	/bin/rm -rf redis-2.8.17
+	cd ..
 	OS_CentOS='/bin/cp init/Redis-server-init-CentOS /etc/init.d/redis-server \n
 chkconfig --add redis-server \n
 chkconfig redis-server on'
@@ -71,8 +75,8 @@ chown -R redis:redis $redis_install_dir/var/ \n
 update-rc.d redis-server defaults"
 	OS_command
 	sed -i "s@/usr/local/redis@$redis_install_dir@g" /etc/init.d/redis-server
-	echo 'vm.overcommit_memory = 1' >> /etc/sysctl.conf
-	sysctl -p
+	#[ -z "`grep 'vm.overcommit_memory' /etc/sysctl.conf`" ] && echo 'vm.overcommit_memory = 1' >> /etc/sysctl.conf
+	#sysctl -p
 	service redis-server start
 else
 	cd ../../

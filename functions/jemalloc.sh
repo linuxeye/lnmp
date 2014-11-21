@@ -20,5 +20,7 @@ else
         echo -e "\033[31mjemalloc install failed, Please contact the author! \033[0m"
         kill -9 $$
 fi
-cd ../../
+cd ..
+/bin/rm -rf jemalloc-3.6.0
+cd ..
 }

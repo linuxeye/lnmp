@@ -16,11 +16,11 @@ $php_install_dir/bin/phpize
 ./configure --enable-eaccelerator=shared --with-php-config=$php_install_dir/bin/php-config
 make && make install
 
-if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/eaccelerator.so" ];then
+if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions | grep zts`/eaccelerator.so" ];then
 	mkdir /var/eaccelerator_cache;chown -R www.www /var/eaccelerator_cache
 	cat >> $php_install_dir/etc/php.ini << EOF
 [eaccelerator]
-zend_extension="$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/eaccelerator.so"
+zend_extension="$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions | grep zts`/eaccelerator.so"
 eaccelerator.shm_size="64"
 eaccelerator.cache_dir="/var/eaccelerator_cache"
 eaccelerator.enable="1"
@@ -44,5 +44,7 @@ EOF
 else
         echo -e "\033[31meAccelerator module install failed, Please contact the author! \033[0m"
 fi
-cd ../../
+cd ..
+/bin/rm -rf eaccelerator-0.9.6.1
+cd ..
 }

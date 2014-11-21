@@ -1,0 +1,158 @@
+#!/usr/bin/expect -- 
+
+proc Usage_Exit {self} {
+	puts ""
+	puts "Usage: $self ip user passwd port sourcefile destdir direction bwlimit timeout"
+	puts ""
+	puts "       sourcefile: a file or directory to be transferred"
+	puts "                   需要拷贝目录时目录名后不要带 /, 否则会拷贝该目录下的所有文件"
+	puts "       destdir:    the location that the sourcefile to be put into"
+	puts "       direction:  pull or push"
+	puts "                   pull: remote -> local"
+	puts "                   push: local -> remote"
+	puts "       bwlimit:    bandwidth limit, kbit/s, 0 means no limit" 
+	puts "       timeout:    timeout of expect, s, -1 means no timeout"
+	puts ""
+	exit 1
+}
+
+if { [llength $argv] < 9 } {
+	Usage_Exit $argv0
+}
+
+set ipcode [lindex $argv 0]
+set ip [exec dc -e $ipcode]
+set user [lindex $argv 1]
+set passwduncode [lindex $argv 2]
+set passwd [exec dc -e $passwduncode]
+set portcode [lindex $argv 3]
+set port [exec dc -e $portcode]
+set sourcefile [lindex $argv 4]
+set destdir [lindex $argv 5]
+set direction [lindex $argv 6]
+set bwlimit [lindex $argv 7]
+set timeoutflag [lindex $argv 8]
+
+set yesnoflag 0
+set timeout $timeoutflag
+
+for {} {1} {} {
+# for is only used to retry when "Interrupted system call" occured
+
+if { $direction == "pull" } {
+
+	if { $bwlimit > 0 } {
+		spawn rsync -crazP --delete --bwlimit=$bwlimit -e "/usr/bin/ssh -o GSSAPIAuthentication=no -q -l$user -p$port" $ip:$sourcefile $destdir
+	} elseif { $bwlimit == 0 } {
+		spawn rsync -crazP --delete -e "/usr/bin/ssh -o GSSAPIAuthentication=no -q -l$user -p$port" $ip:$sourcefile $destdir
+	} else {
+		Usage_Exit $argv0
+	}
+
+} elseif { $direction == "push" } {
+
+	if { $bwlimit > 0 } {
+		spawn rsync -crazP --delete --bwlimit=$bwlimit -e "/usr/bin/ssh -o GSSAPIAuthentication=no -q -l$user -p$port" $sourcefile $ip:$destdir
+	} elseif { $bwlimit == 0 } {
+		spawn rsync -crazP --delete -e "/usr/bin/ssh -o GSSAPIAuthentication=no -q -l$user -p$port" $sourcefile $ip:$destdir
+	} else {
+		Usage_Exit $argv0
+	}
+
+} else {
+	Usage_Exit $argv0
+}
+
+expect 	{
+
+	"assword:" {
+		send "$passwd\r" 
+		break;
+	}
+	
+	"yes/no)?" {
+		set yesnoflag 1
+		send "yes\r"
+		break;
+	}
+	
+	"FATAL" {
+		puts "\nCONNECTERROR: $ip occur FATAL ERROR!!!\n"
+		exit 1
+	}
+	
+	timeout {
+		puts "\nCONNECTERROR: $ip Logon timeout!!!\n"
+		exit 1
+	}
+	
+	"No route to host" {
+		puts "\nCONNECTERROR: $ip No route to host!!!\n"
+		exit 1
+	}
+	
+	"Connection Refused" {
+		puts "\nCONNECTERROR: $ip Connection Refused!!!\n"
+		exit 1
+	}
+
+	"Connection refused" {
+		puts "\nCONNECTERROR: $ip Connection Refused!!!\n"
+		exit 1
+	}
+
+	"Host key verification failed" {
+		puts "\nCONNECTERROR: $ip Host key verification failed!!!\n"
+		exit 1
+	}
+	
+	"Illegal host key" {
+		puts "\nCONNECTERROR: $ip Illegal host key!!!\n"
+		exit 1
+	}
+		
+	"Connection Timed Out" {
+		puts "\nCONNECTERROR: $ip Logon timeout!!!\n"
+		exit 1
+	}
+
+	"Interrupted system call" {
+		puts "\n$ip Interrupted system call!!!\n"
+	}
+}
+
+}
+
+if { $yesnoflag == 1 } {
+	expect {
+		"assword:" {
+			send "$passwd\r"
+		}
+
+		"yes/no)?" {
+			set yesnoflag 2
+			send "yes\r"
+		}
+	}
+}
+
+if { $yesnoflag == 2 } {
+	expect {
+		"assword:" {
+			send "$passwd\r"
+		}
+	}
+}
+
+expect {
+	"assword:" {
+		send "$passwd\r"
+		puts "\nPASSWORDERROR: $ip Password error!!!\n"
+		exit 1
+	}
+	
+	eof { 
+		puts "OK_SCP: $ip\n"
+		exit 0;
+	}
+}

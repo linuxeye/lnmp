@@ -19,7 +19,7 @@ Input_domain()
 while :
 do
 	echo
-	read -p "Please input domain(example: www.linuxeye.com linuxeye.com): " domain
+	read -p "Please input domain(example: www.linuxeye.com): " domain
 	if [ -z "`echo $domain | grep '.*\..*'`" ]; then
 		echo -e "\033[31minput error! \033[0m"
 	else
@@ -224,7 +224,7 @@ if [ $? == 0 ];then
 	echo "Restart Nginx......"
 	$web_install_dir/sbin/nginx -s reload
 else
-	rm -rf $web_install_dir/conf/vhost/$domain.conf $vhostdir
+	rm -rf $web_install_dir/conf/vhost/$domain.conf
 	echo -e "Create virtualhost ... \033[31m[FAILED]\033[0m"
 	exit 1
 fi
@@ -292,7 +292,7 @@ if [ $? == 0 ];then
 	echo "Restart Apache......"
 	/etc/init.d/httpd restart
 else
-	rm -rf $apache_install_dir/conf/vhost/$domain.conf $vhostdir
+	rm -rf $apache_install_dir/conf/vhost/$domain.conf
 	echo -e "Create virtualhost ... \033[31m[FAILED]\033[0m"
 	exit 1
 fi
@@ -353,7 +353,7 @@ if [ $? == 0 ];then
         echo "Restart Nginx......"
         $web_install_dir/sbin/nginx -s reload
 else
-        rm -rf $web_install_dir/conf/vhost/$domain.conf $vhostdir
+        rm -rf $web_install_dir/conf/vhost/$domain.conf
 	echo -e "Create virtualhost ... \033[31m[FAILED]\033[0m"
 fi
 
@@ -386,7 +386,7 @@ if [ $? == 0 ];then
         echo "Restart Apache......"
         /etc/init.d/httpd restart
 else
-        rm -rf $apache_install_dir/conf/vhost/$domain.conf $vhostdir
+        rm -rf $apache_install_dir/conf/vhost/$domain.conf
 	exit 1
 fi
 printf "

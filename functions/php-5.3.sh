@@ -13,14 +13,16 @@ src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/2.6.8/mcrypt-2.6.8.tar.gz && Download_src
-src_url=http://www.php.net/distributions/php-5.3.28.tar.gz && Download_src
+src_url=http://www.php.net/distributions/php-5.3.29.tar.gz && Download_src
 
 tar xzf libiconv-1.14.tar.gz
 cd libiconv-1.14
 ./configure --prefix=/usr/local
-[ ! -z "`cat /etc/issue | grep 'Ubuntu 13'`" ] && sed -i 's@_GL_WARN_ON_USE (gets@//_GL_WARN_ON_USE (gets@' srclib/stdio.h 
+[ -n "`cat /etc/issue | grep 'Ubuntu 13'`" ] && sed -i 's@_GL_WARN_ON_USE (gets@//_GL_WARN_ON_USE (gets@' srclib/stdio.h 
+[ -n "`cat /etc/issue | grep 'Ubuntu 14'`" ] && sed -i 's@gets is a security@@' srclib/stdio.h 
 make && make install
 cd ../
+/bin/rm -rf libiconv-1.14
 
 tar xzf libmcrypt-2.5.8.tar.gz
 cd libmcrypt-2.5.8
@@ -31,12 +33,14 @@ cd libltdl/
 ./configure --enable-ltdl-install
 make && make install
 cd ../../
+/bin/rm -rf libmcrypt-2.5.8
 
 tar xzf mhash-0.9.9.9.tar.gz
 cd mhash-0.9.9.9
 ./configure
 make && make install
 cd ../
+/bin/rm -rf mhash-0.9.9.9 
 
 # linked library
 if [ "$PHP_MySQL_driver" == '1' ];then
@@ -63,12 +67,13 @@ ldconfig
 ./configure
 make && make install
 cd ../
+/bin/rm -rf mcrypt-2.6.8 
 
-tar xzf php-5.3.28.tar.gz
+tar xzf php-5.3.29.tar.gz
 useradd -M -s /sbin/nologin www
 wget -O fpm-race-condition.patch 'https://bugs.php.net/patch-display.php?bug_id=65398&patch=fpm-race-condition.patch&revision=1375772074&download=1'
-patch -d php-5.3.28 -p0 < fpm-race-condition.patch
-cd php-5.3.28
+patch -d php-5.3.29 -p0 < fpm-race-condition.patch
+cd php-5.3.29
 make clean
 if [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
 CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
@@ -99,7 +104,7 @@ else
         kill -9 $$
 fi
 
-[ -n "`cat /etc/profile | grep 'export PATH='`" -a -z "`cat /etc/profile | grep $php_install_dir`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=\1:$php_install_dir/bin@" /etc/profile
+[ -n "`cat /etc/profile | grep 'export PATH='`" -a -z "`cat /etc/profile | grep $php_install_dir`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$php_install_dir/bin:\1@" /etc/profile
 . /etc/profile
 
 # wget -c http://pear.php.net/go-pear.phar
@@ -131,8 +136,9 @@ sed -i 's@^post_max_size.*@post_max_size = 50M@' $php_install_dir/etc/php.ini
 sed -i 's@^upload_max_filesize.*@upload_max_filesize = 50M@' $php_install_dir/etc/php.ini
 sed -i 's@^;upload_tmp_dir.*@upload_tmp_dir = /tmp@' $php_install_dir/etc/php.ini
 sed -i 's@^max_execution_time.*@max_execution_time = 300@' $php_install_dir/etc/php.ini
-sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,stream_socket_server,fsocket@' $php_install_dir/etc/php.ini
+sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,stream_socket_server,fsocket,popen@' $php_install_dir/etc/php.ini
 sed -i 's@^session.cookie_httponly.*@session.cookie_httponly = 1@' $php_install_dir/etc/php.ini
+sed -i 's@^mysqlnd.collect_memory_statistics.*@mysqlnd.collect_memory_statistics = On@' $php_install_dir/etc/php.ini
 [ -e /usr/sbin/sendmail ] && sed -i 's@^;sendmail_path.*@sendmail_path = /usr/sbin/sendmail -t -i@' $php_install_dir/etc/php.ini
 
 if [ "$Apache_version" != '1' -a "$Apache_version" != '2' ];then
@@ -156,7 +162,7 @@ cat > $php_install_dir/etc/php-fpm.conf <<EOF
 [global]
 pid = run/php-fpm.pid
 error_log = log/php-fpm.log
-log_level = notice
+log_level = warning 
 
 emergency_restart_threshold = 30
 emergency_restart_interval = 60s 
@@ -182,9 +188,9 @@ pm.max_children = 12
 pm.start_servers = 8
 pm.min_spare_servers = 6
 pm.max_spare_servers = 12
-pm.max_requests = 20480
-
-request_terminate_timeout = 600
+pm.max_requests = 2048
+pm.process_idle_timeout = 10s
+request_terminate_timeout = 120
 request_slowlog_timeout = 0
 
 slowlog = log/slow.log
@@ -198,14 +204,42 @@ env[TMP] = /tmp
 env[TMPDIR] = /tmp
 env[TEMP] = /tmp
 EOF
-sed -i "s@^pm.max_children.*@pm.max_children = $(($Mem/2/20))@" $php_install_dir/etc/php-fpm.conf
-sed -i "s@^pm.start_servers.*@pm.start_servers = $(($Mem/2/30))@" $php_install_dir/etc/php-fpm.conf
-sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = $(($Mem/2/40))@" $php_install_dir/etc/php-fpm.conf
-sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = $(($Mem/2/20))@" $php_install_dir/etc/php-fpm.conf
+
+[ -d "/run/shm" -a ! -e "/dev/shm" ] && sed -i 's@/dev/shm@/run/shm@' $php_install_dir/etc/php-fpm.conf $lnmp_dir/vhost.sh $lnmp_dir/conf/nginx.conf 
+
+if [ $Mem -le 3000 ];then
+        sed -i "s@^pm.max_children.*@pm.max_children = $(($Mem/2/20))@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.start_servers.*@pm.start_servers = $(($Mem/2/30))@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = $(($Mem/2/40))@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = $(($Mem/2/20))@" $php_install_dir/etc/php-fpm.conf
+elif [ $Mem -gt 3000 -a $Mem -le 4500 ];then
+        sed -i "s@^pm.max_children.*@pm.max_children = 80@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.start_servers.*@pm.start_servers = 50@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = 40@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 80@" $php_install_dir/etc/php-fpm.conf
+elif [ $Mem -gt 4500 -a $Mem -le 6500 ];then
+        sed -i "s@^pm.max_children.*@pm.max_children = 90@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.start_servers.*@pm.start_servers = 60@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = 50@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 90@" $php_install_dir/etc/php-fpm.conf
+elif [ $Mem -gt 6500 -a $Mem -le 8500 ];then
+        sed -i "s@^pm.max_children.*@pm.max_children = 100@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.start_servers.*@pm.start_servers = 70@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = 60@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 100@" $php_install_dir/etc/php-fpm.conf
+elif [ $Mem -gt 8500 ];then
+        sed -i "s@^pm.max_children.*@pm.max_children = 120@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.start_servers.*@pm.start_servers = 80@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = 70@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 120@" $php_install_dir/etc/php-fpm.conf
+fi
+
 [ "$Web_yn" == 'n' ] && sed -i "s@^listen =.*@listen = $local_IP:9000@" $php_install_dir/etc/php-fpm.conf 
 service php-fpm start
 elif [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
 service httpd restart
 fi
-cd ../../
+cd ..
+/bin/rm -rf php-5.3.29 
+cd ..
 }

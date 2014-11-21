@@ -9,18 +9,16 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://www.memcached.org/files/memcached-1.4.18.tar.gz && Download_src
-src_url=https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.gz && Download_src
-src_url=http://pecl.php.net/get/memcached-2.2.0.tgz && Download_src
-src_url=http://pecl.php.net/get/memcache-2.2.7.tgz && Download_src
+src_url=http://www.memcached.org/files/memcached-1.4.21.tar.gz && Download_src
 
 # memcached server
 useradd -M -s /sbin/nologin memcached
-tar xzf memcached-1.4.18.tar.gz
-cd memcached-1.4.18
+tar xzf memcached-1.4.21.tar.gz
+cd memcached-1.4.21
 ./configure --prefix=$memcached_install_dir
 make && make install
 cd ../
+/bin/rm -rf memcached-1.4.21
 if [ -d "$memcached_install_dir" ];then
         echo -e "\033[32mmemcached install successfully! \033[0m"
 	ln -s $memcached_install_dir/bin/memcached /usr/bin/memcached
@@ -36,46 +34,53 @@ else
         echo -e "\033[31mmemcached install failed, Please contact the author! \033[0m"
 fi
 
-# php memcache extension
-tar xzf memcache-2.2.7.tgz 
-cd memcache-2.2.7 
-make clean
-$php_install_dir/bin/phpize
-./configure --with-php-config=$php_install_dir/bin/php-config
-make && make install
-cd ..
-if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/memcache.so" ];then
-	[ -z "`cat $php_install_dir/etc/php.ini | grep '^extension_dir'`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions/`\"@" $php_install_dir/etc/php.ini
-        sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "memcache.so"@' $php_install_dir/etc/php.ini
-        [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
-else
-        echo -e "\033[31mPHP memcache module install failed, Please contact the author! \033[0m"
+if [ -e "$php_install_dir/bin/phpize" ];then
+	src_url=https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.gz && Download_src
+	src_url=http://pecl.php.net/get/memcached-2.2.0.tgz && Download_src
+	src_url=http://pecl.php.net/get/memcache-2.2.7.tgz && Download_src
+	# php memcache extension
+	tar xzf memcache-2.2.7.tgz 
+	cd memcache-2.2.7 
+	make clean
+	$php_install_dir/bin/phpize
+	./configure --with-php-config=$php_install_dir/bin/php-config
+	make && make install
+	cd ..
+	/bin/rm -rf memcache-2.2.7
+	if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions | grep zts`/memcache.so" ];then
+		[ -z "`cat $php_install_dir/etc/php.ini | grep '^extension_dir'`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions | grep zts`\"@" $php_install_dir/etc/php.ini
+	        sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "memcache.so"@' $php_install_dir/etc/php.ini
+	        [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
+	else
+	        echo -e "\033[31mPHP memcache module install failed, Please contact the author! \033[0m"
+	fi
+
+	# php memcached extension
+	tar xzf libmemcached-1.0.18.tar.gz
+	cd libmemcached-1.0.18
+	OS_CentOS='yum -y install cyrus-sasl-devel'
+	OS_Debian_Ubuntu='sed -i "s@lthread -pthread -pthreads@lthread -lpthread -pthreads@" ./configure'
+	OS_command
+	./configure --with-memcached=$memcached_install_dir
+	make && make install
+	cd ..
+	/bin/rm -rf libmemcached-1.0.18
+
+	tar xzf memcached-2.2.0.tgz
+	cd memcached-2.2.0
+	make clean
+	$php_install_dir/bin/phpize
+	./configure --with-php-config=$php_install_dir/bin/php-config
+	make && make install
+	cd ../
+	/bin/rm -rf memcached-2.2.0
+	if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions | grep zts`/memcached.so" ];then
+		[ -z "`cat $php_install_dir/etc/php.ini | grep '^extension_dir'`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions/ | grep zts`\"@" $php_install_dir/etc/php.ini
+	        sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "memcached.so"\nmemcached.use_sasl = 1@' $php_install_dir/etc/php.ini
+	        [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
+	else
+	        echo -e "\033[31mPHP memcached module install failed, Please contact the author! \033[0m"
+	fi
 fi
-
-# php memcached extension
-tar xzf libmemcached-1.0.18.tar.gz
-cd libmemcached-1.0.18
-OS_CentOS='yum -y install cyrus-sasl-devel'
-OS_Debian_Ubuntu='sed -i "s@lthread -pthread -pthreads@lthread -lpthread -pthreads@" ./configure'
-OS_command
-./configure --with-memcached=$memcached_install_dir
-make && make install
-cd ..
-
-tar xzf memcached-2.2.0.tgz
-cd memcached-2.2.0
-make clean
-$php_install_dir/bin/phpize
-./configure --with-php-config=$php_install_dir/bin/php-config
-make && make install
-cd ../
-if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions`/memcached.so" ];then
-	[ -z "`cat $php_install_dir/etc/php.ini | grep '^extension_dir'`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions/`\"@" $php_install_dir/etc/php.ini
-        sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "memcached.so"@' $php_install_dir/etc/php.ini
-        [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
-else
-        echo -e "\033[31mPHP memcached module install failed, Please contact the author! \033[0m"
-fi
-
 cd ../
 }

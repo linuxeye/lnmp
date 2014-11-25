@@ -24,9 +24,9 @@ cd src
 while :
 do
 	echo
-	read -p "Please input IP-Range(Default Range: 10.0.2): " iprange
+	read -p "Please input private IP-Range(Default Range: 10.0.2): " iprange
 	[ -z "$iprange" ] && iprange="10.0.2"
-	if [ -z "`echo $iprange | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}$'`" ];then
+	if [ -z "`echo $iprange | grep -E "^10\.|^192\.168\.|^172\." | grep -o '^[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}$'`" ];then
 		echo -e "\033[31minput error! Input format: xxx.xxx.xxx\033[0m"
 	else
 		break
@@ -202,7 +202,7 @@ logfd 2
 logfile /var/log/l2tpd.log
 EOF
 
-cat >>/etc/ppp/chap-secrets<<EOF
+cat > /etc/ppp/chap-secrets<<EOF
 $Username l2tpd $Password *
 EOF
 

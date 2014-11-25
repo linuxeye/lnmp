@@ -112,7 +112,10 @@ cat > /etc/iptables.up.rules << EOF
 -A syn-flood -j REJECT --reject-with icmp-port-unreachable
 COMMIT
 EOF
+FW_PORT_FLAG=`grep -ow "dport $SSH_PORT" /etc/iptables.up.rules` 
+[ -z "$FW_PORT_FLAG" -a "$SSH_PORT" != '22' ] && sed -i "s@dport 22 -j ACCEPT@&\n-A INPUT -p tcp -m state --state NEW -m tcp --dport $SSH_PORT -j ACCEPT@" /etc/iptables.up.rules 
 iptables-restore < /etc/iptables.up.rules
 echo 'pre-up iptables-restore < /etc/iptables.up.rules' >> /etc/network/interfaces
+service ssh restart
 
 . ~/.bashrc

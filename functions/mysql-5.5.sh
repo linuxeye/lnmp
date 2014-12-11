@@ -9,7 +9,7 @@ cd $lnmp_dir/src
 . ../options.conf
 
 src_url=http://www.cmake.org/files/v3.0/cmake-3.0.2.tar.gz && Download_src 
-src_url=http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.40.tar.gz && Download_src
+src_url=http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.41.tar.gz && Download_src
 
 useradd -M -s /sbin/nologin mysql
 mkdir -p $mysql_data_dir;chown mysql.mysql -R $mysql_data_dir
@@ -21,8 +21,8 @@ if [ ! -e "`which cmake`" ];then
 	cd ..
 	/bin/rm -rf cmake-3.0.2
 fi
-tar zxf mysql-5.5.40.tar.gz
-cd mysql-5.5.40
+tar zxf mysql-5.5.41.tar.gz
+cd mysql-5.5.41
 if [ "$je_tc_malloc" == '1' ];then
         EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
 elif [ "$je_tc_malloc" == '2' ];then
@@ -60,7 +60,7 @@ chkconfig mysqld on'
 OS_Debian_Ubuntu='update-rc.d mysqld defaults'
 OS_command
 cd ..
-/bin/rm -rf mysql-5.5.40
+/bin/rm -rf mysql-5.5.41
 cd ..
 
 # my.cf

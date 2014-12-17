@@ -19,9 +19,9 @@ do
 	apt-get -y install $Package
 done
 
-if [ ! -z "`cat /etc/issue | grep 13`" ];then
+if [ -n "`cat /etc/issue | grep -E 1'[3|4]'`" ];then
        apt-get -y install libcloog-ppl1
-elif [ ! -z "`cat /etc/issue | grep 12`" ];then
+elif [ -n "`cat /etc/issue | grep 12`" ];then
        apt-get -y install libcloog-ppl0
 fi
 

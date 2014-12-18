@@ -14,8 +14,14 @@ yum clean all
 
 #public_IP=`../functions/get_public_ip.py`
 #if [ "`../functions/get_ip_area.py $public_IP`" == 'CN' ];then
-	if [ -n "$(cat /etc/redhat-release | grep '6\.')" ];then
-		#wget -c http://blog.linuxeye.com/wp-content/uploads/2013/12/CentOS6-Base.repo -P /etc/yum.repos.d
+	if [ -n "$(cat /etc/redhat-release | grep ' 7\.')" ];then
+                if [ -n "$(cat /etc/redhat-release | grep 'Red Hat')" ];then
+                        /bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
+                        wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+                        sed -i 's@\$releasever@7@g' /etc/yum.repos.d/CentOS-Base.repo
+                        sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS-Base.repo
+                fi
+	elif [ -n "$(cat /etc/redhat-release | grep ' 6\.')" ];then
 		if [ -n "$(cat /etc/redhat-release | grep 'Red Hat')" ];then
 	        	/bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
 			wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo
@@ -23,7 +29,6 @@ yum clean all
 	                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS-Base.repo
 		fi
 	elif [ -n "$(cat /etc/redhat-release | grep '5\.')" ];then
-		#wget -c http://blog.linuxeye.com/wp-content/uploads/2013/12/CentOS5-Base.repo -P /etc/yum.repos.d
 		if [ -n "$(cat /etc/redhat-release | grep 'Red Hat')" ];then
 	        	/bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
 			wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-5.repo
@@ -35,7 +40,11 @@ yum clean all
 	yum makecache
 #fi
 
-if [ -n "$(cat /etc/redhat-release | grep '6\.')" ];then
+if [ -n "$(cat /etc/redhat-release | grep ' 7\.')" ];then
+	yum -y install iptables-service
+	systemctl mask firewalld.service
+	systemctl enable iptables.service
+elif [ -n "$(cat /etc/redhat-release | grep ' 6\.')" ];then
 	yum -y groupremove "FTP Server" "PostgreSQL Database client" "PostgreSQL Database server" "MySQL Database server" "MySQL Database client" "Web Server" "Office Suite and Productivity" "E-mail server" "Ruby Support" "Printing client" 
 elif [ -n "$(cat /etc/redhat-release | grep '5\.')" ];then
 	yum -y groupremove "FTP Server" "Windows File Server" "PostgreSQL Database" "News Server" "MySQL Database" "DNS Name Server" "Web Server" "Dialup Networking Support" "Mail Server" "Ruby" "Office/Productivity" "Sound and Video" "Printing Support" "OpenFabrics Enterprise Distribution"
@@ -75,7 +84,7 @@ fi
 
 # closed Unnecessary services and remove obsolete rpm package
 for Service in `chkconfig --list | grep 3:on | awk '{print $1}'`;do chkconfig --level 3 $Service off;done
-for Service in sshd network crond iptables iptables-services messagebus irqbalance syslog rsyslog sendmail;do chkconfig --level 3 $Service on;done
+for Service in sshd network crond iptables messagebus irqbalance syslog rsyslog sendmail;do chkconfig --level 3 $Service on;done
 
 # Close SELINUX
 setenforce 0

@@ -32,7 +32,7 @@ echo '<?php phpinfo() ?>' > $home_dir/default/phpinfo.php
 [ "$Web_yn" == 'y' -a "$Nginx_version" != '3' -a "$Apache_version" != '3' ] && sed -i 's@LNMP@LANMP@g' $home_dir/default/index.html
 [ "$Web_yn" == 'y' -a "$Nginx_version" == '3' -a "$Apache_version" != '3' ] && sed -i 's@LNMP@LAMP@g' $home_dir/default/index.html
 chown -R www.www $home_dir/default
-[ -e "$db_install_dir" -a -z "`ps -ef | grep -v grep | grep mysql`" ] && service mysqld start
-[ -e "$apache_install_dir" -a -z "`ps -ef | grep -v grep | grep apache`" ] && service httpd restart 
+[ -e "$db_install_dir" -a -z "`ps -ef | grep -v grep | grep mysql`" ] && /etc/init.d/mysqld restart 
+[ -e "$apache_install_dir" -a -z "`ps -ef | grep -v grep | grep apache`" ] && /etc/init.d/httpd restart 
 cd ..
 }

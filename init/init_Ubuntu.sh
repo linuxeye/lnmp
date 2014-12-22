@@ -2,6 +2,9 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # Blog:  http://blog.linuxeye.com
 
+cd src
+. ../functions/download.sh
+
 for Package in apache2 apache2-doc apache2-utils apache2.2-common apache2.2-bin apache2-mpm-prefork apache2-doc apache2-mpm-worker mysql-client mysql-server mysql-common php5 php5-common php5-cgi php5-mysql php5-curl php5-gd libmysql* mysql-*
 do
 	apt-get -y remove $Package 
@@ -14,15 +17,25 @@ apt-get -y update
 [ "$upgrade_yn" == 'y' ] && apt-get -y upgrade 
 
 # Install needed packages
-for Package in gcc g++ make autoconf libjpeg8 libjpeg8-dev libpng12-0 libpng12-dev libpng3 libfreetype6 libfreetype6-dev libxml2 libxml2-dev zlib1g zlib1g-dev libc6 libc6-dev libglib2.0-0 libglib2.0-dev bzip2 libzip-dev libbz2-1.0 libncurses5 libncurses5-dev curl libcurl3 libcurl4-openssl-dev e2fsprogs libkrb5-3 libkrb5-dev libltdl-dev libidn11 libidn11-dev openssl libtool libevent-dev bison libsasl2-dev libxslt1-dev patch vim zip unzip tmux htop wget bc expect rsync
+for Package in gcc g++ make cmake autoconf libjpeg8 libjpeg8-dev libpng12-0 libpng12-dev libpng3 libfreetype6 libfreetype6-dev libxml2 libxml2-dev zlib1g zlib1g-dev libc6 libc6-dev libglib2.0-0 libglib2.0-dev bzip2 libzip-dev libbz2-1.0 libncurses5 libncurses5-dev curl libcurl3 libcurl4-openssl-dev e2fsprogs libkrb5-3 libkrb5-dev libltdl-dev libidn11 libidn11-dev openssl libssl-dev libtool libevent-dev re2c libsasl2-dev libxslt1-dev patch vim zip unzip tmux htop wget bc expect rsync git
 do
 	apt-get -y install $Package
 done
 
-if [ -n "`cat /etc/issue | grep -E 1'[3|4]'`" ];then
-       apt-get -y install libcloog-ppl1
-elif [ -n "`cat /etc/issue | grep 12`" ];then
-       apt-get -y install libcloog-ppl0
+if [ -n "`cat /etc/issue | grep -E 14`" ];then
+	apt-get -y install libcloog-ppl1
+	apt-get -y remove bison
+	src_url=http://ftp.gnu.org/gnu/bison/bison-2.7.1.tar.gz && Download_src 
+	tar xzf bison-2.7.1.tar.gz
+	cd bison-2.7.1
+	./configure
+	make && make install
+	cd ..
+	rm -rf bison-2.7.1
+elif [ -n "`cat /etc/issue | grep -E 13`" ];then
+	apt-get -y install bison libcloog-ppl1
+elif [ -n "`cat /etc/issue | grep -E 12`" ];then
+	apt-get -y install bison libcloog-ppl0
 fi
 
 # check sendmail

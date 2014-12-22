@@ -138,7 +138,8 @@ sed -i 's@^;date.timezone.*@date.timezone = Asia/Shanghai@' $php_install_dir/etc
 sed -i 's@^post_max_size.*@post_max_size = 50M@' $php_install_dir/etc/php.ini
 sed -i 's@^upload_max_filesize.*@upload_max_filesize = 50M@' $php_install_dir/etc/php.ini
 sed -i 's@^;upload_tmp_dir.*@upload_tmp_dir = /tmp@' $php_install_dir/etc/php.ini
-sed -i 's@^max_execution_time.*@max_execution_time = 5@' $php_install_dir/etc/php.ini
+sed -i 's@^max_execution_time.*@max_execution_time = 600@' $php_install_dir/etc/php.ini
+sed -i 's@^;realpath_cache_size.*@realpath_cache_size = 2M@' $php_install_dir/etc/php.ini
 sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,stream_socket_server,fsocket,popen@' $php_install_dir/etc/php.ini
 sed -i 's@^session.cookie_httponly.*@session.cookie_httponly = 1@' $php_install_dir/etc/php.ini
 sed -i 's@^mysqlnd.collect_memory_statistics.*@mysqlnd.collect_memory_statistics = On@' $php_install_dir/etc/php.ini
@@ -153,7 +154,12 @@ sed -i 's@^;opcache.max_accelerated_files.*@opcache.max_accelerated_files=4000@'
 sed -i 's@^;opcache.revalidate_freq.*@opcache.revalidate_freq=60@' $php_install_dir/etc/php.ini
 sed -i 's@^;opcache.save_comments.*@opcache.save_comments=0@' $php_install_dir/etc/php.ini
 sed -i 's@^;opcache.fast_shutdown.*@opcache.fast_shutdown=1@' $php_install_dir/etc/php.ini
+sed -i 's@^;opcache.validate_timestamps.*@opcache.validate_timestamps=1@' $php_install_dir/etc/php.ini
 sed -i 's@^;opcache.enable_cli.*@opcache.enable_cli=1@' $php_install_dir/etc/php.ini
+sed -i 's@^;opcache.use_cwd.*@opcache.use_cwd=1@' $php_install_dir/etc/php.ini
+sed -i 's@^opcache.max_accelerated_files.*@opcache.max_accelerated_files=100000@' $php_install_dir/etc/php.ini
+sed -i 's@^;opcache.max_wasted_percentage.*@opcache.max_wasted_percentage=5@' $php_install_dir/etc/php.ini
+sed -i 's@^;opcache.consistency_checks.*@opcache.consistency_checks=0@' $php_install_dir/etc/php.ini
 sed -i 's@^;opcache.optimization_level.*@;opcache.optimization_level=0@' $php_install_dir/etc/php.ini
 fi
 

@@ -5,9 +5,9 @@
 cd src
 . ../functions/download.sh
 
-for Package in apache2 apache2-doc apache2-utils apache2.2-common apache2.2-bin apache2-mpm-prefork apache2-doc apache2-mpm-worker mysql-client mysql-server mysql-common php5 php5-common php5-cgi php5-mysql php5-curl php5-gd libmysql* mysql-*
+for Package in apache2 apache2-doc apache2-utils apache2.2-common apache2.2-bin apache2-mpm-prefork apache2-doc apache2-mpm-worker mysql-client mysql-server mysql-common libmysqlclient18 php5 php5-common php5-cgi php5-mysql php5-curl php5-gd libmysql* mysql-*
 do
-	apt-get -y remove $Package 
+        apt-get -y remove --purge $Package
 done
 dpkg -l | grep ^rc | awk '{print $2}' | xargs dpkg -P
 

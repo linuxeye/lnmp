@@ -38,7 +38,7 @@ elif [ "$je_tc_malloc" == '2' ];then
 	chown -R www.www /tmp/tcmalloc
 fi
 
-./configure --prefix=$nginx_install_dir --user=www --group=www --with-http_stub_status_module --with-http_ssl_module --with-http_flv_module --with-http_gzip_static_module $malloc_module
+./configure --prefix=$nginx_install_dir --user=www --group=www --with-http_stub_status_module --with-http_spdy_module --with-http_ssl_module --with-http_flv_module --with-http_gzip_static_module $malloc_module
 make && make install
 if [ -d "$nginx_install_dir" ];then
         echo -e "\033[32mNginx install successfully! \033[0m"

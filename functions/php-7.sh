@@ -69,10 +69,10 @@ cd ../
 /bin/rm -rf mcrypt-2.6.8
 
 useradd -M -s /sbin/nologin www
-git clone https://git.php.net/repository/php-src.git
-cd php-src
-git branch phpng origin/phpng
-git checkout phpng
+rm -rf php-src* 
+wget -c --no-check-certificate -O php-src-master.zip https://github.com/php/php-src/archive/master.zip 
+unzip -q php-src-master.zip
+cd php-src*
 ./buildconf
 
 make clean

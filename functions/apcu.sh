@@ -8,9 +8,9 @@ cd $lnmp_dir/src
 . ../functions/download.sh
 . ../options.conf
 
-src_url=http://pecl.php.net/get/apcu-4.0.6.tgz && Download_src
-tar xzf apcu-4.0.6.tgz
-cd apcu-4.0.6
+src_url=http://pecl.php.net/get/apcu-4.0.7.tgz && Download_src
+tar xzf apcu-4.0.7.tgz
+cd apcu-4.0.7
 make clean
 $php_install_dir/bin/phpize
 ./configure --with-php-config=$php_install_dir/bin/php-config

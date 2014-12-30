@@ -8,14 +8,14 @@ cd $lnmp_dir/src
 . ../functions/download.sh
 . ../options.conf
 
-src_url=http://blog.linuxeye.com/lnmp/src/ImageMagick-6.9.0-0.tar.gz && Download_src
+src_url=http://blog.linuxeye.com/lnmp/src/ImageMagick-6.9.0-2.tar.gz && Download_src
 
-tar xzf ImageMagick-6.9.0-0.tar.gz
-cd ImageMagick-6.9.0-0
+tar xzf ImageMagick-6.9.0-2.tar.gz
+cd ImageMagick-6.9.0-2
 ./configure
 make && make install
 cd ../
-/bin/rm -rf ImageMagick-6.9.0-0
+/bin/rm -rf ImageMagick-6.9.0-2
 ln -s /usr/local/include/ImageMagick-6 /usr/local/include/ImageMagick
 
 if [ -e "$php_install_dir/bin/phpize" ];then

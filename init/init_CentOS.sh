@@ -41,7 +41,7 @@ yum clean all
 #fi
 
 if [ -n "$(cat /etc/redhat-release | grep ' 7\.')" ];then
-	yum -y install iptables-service
+	yum -y install iptables-services 
 	systemctl mask firewalld.service
 	systemctl enable iptables.service
 elif [ -n "$(cat /etc/redhat-release | grep ' 6\.')" ];then

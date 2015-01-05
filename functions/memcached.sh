@@ -9,16 +9,16 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://www.memcached.org/files/memcached-1.4.21.tar.gz && Download_src
+src_url=http://www.memcached.org/files/memcached-1.4.22.tar.gz && Download_src
 
 # memcached server
 useradd -M -s /sbin/nologin memcached
-tar xzf memcached-1.4.21.tar.gz
-cd memcached-1.4.21
+tar xzf memcached-1.4.22.tar.gz
+cd memcached-1.4.22
 ./configure --prefix=$memcached_install_dir
 make && make install
 cd ../
-/bin/rm -rf memcached-1.4.21
+/bin/rm -rf memcached-1.4.22
 if [ -d "$memcached_install_dir" ];then
         echo -e "\033[32mmemcached install successfully! \033[0m"
 	ln -s $memcached_install_dir/bin/memcached /usr/bin/memcached

@@ -10,15 +10,15 @@ cd $lnmp_dir/src
 . ../options.conf
 
 if [ -e "$php_install_dir/bin/phpize" ];then
-	src_url=http://pecl.php.net/get/redis-2.2.6.tgz && Download_src
-	tar xzf redis-2.2.6.tgz
-	cd redis-2.2.6
+	src_url=http://pecl.php.net/get/redis-2.2.5.tgz && Download_src
+	tar xzf redis-2.2.5.tgz
+	cd redis-2.2.5
 	make clean
 	$php_install_dir/bin/phpize
 	./configure --with-php-config=$php_install_dir/bin/php-config
 	make && make install
 	cd ..
-	/bin/rm -rf redis-2.2.6
+	/bin/rm -rf redis-2.2.5
 	if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions | grep zts`/redis.so" ];then
 		[ -z "`cat $php_install_dir/etc/php.ini | grep '^extension_dir'`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions  | grep zts`\"@" $php_install_dir/etc/php.ini
 		sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "redis.so"@' $php_install_dir/etc/php.ini

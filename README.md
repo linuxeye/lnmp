@@ -6,7 +6,7 @@
 - Fixes some security issues 
 - You can freely choose to install database version (MySQL-5.6, MySQL-5.5, MariaDB-10.0, MariaDB-5.5, Percona-5.6, Percona-5.5)
 - You can freely choose to install PHP version (php-5.3, php-5.4, php-5.5, php-5.6, php-7/phpng(alpha))
-- You can freely choose to install PHP version (CentOS6.5 64bit, CentOS7 64bit)
+- You can freely choose to install HHVM version (CentOS6.5 64bit, CentOS7 64bit)
 - You can freely choose to install Nginx or Tengine
 - You can freely choose to install Apache version (Apache-2.4, Apache-2.2)
 - According to their needs can to install ZendOPcache, xcache, APCU, eAccelerator, ionCube and ZendGuardLoader (php-5.4, php-5.3)

@@ -16,7 +16,8 @@ DB_Remote_BK() {
         do
                 cd $lnmp_dir/tools
                 ./db_bk.sh $D
-                DB_FILE=`ls -lrt $backup_dir | grep DB_$D | tail -1 | awk '{print $NF}'`
+		DB_GREP="DB_${D}_`date +%Y`"
+                DB_FILE=`ls -lrt $backup_dir | grep ${DB_GREP} | tail -1 | awk '{print $NF}'`
                 echo "file:::$backup_dir/$DB_FILE $backup_dir push" >> $lnmp_dir/tools/config.txt
                 echo "com:::[ -e "$backup_dir/$DB_FILE" ] && rm -rf $backup_dir/DB_${D}_$(date +%Y%m%d --date="$expired_days days ago")_*.tgz" >> $lnmp_dir/tools/config.txt
         done

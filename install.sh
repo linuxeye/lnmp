@@ -35,7 +35,7 @@ mkdir -p $home_dir/default $wwwlogs_dir $lnmp_dir/{src,conf}
 while :
 do
 	echo
-        read -p "Do you want to upgrade operating system ? [y/n]: " upgrade_yn
+        read -p "Do you want to upgrade operating system? [y/n]: " upgrade_yn
         if [ "$upgrade_yn" != 'y' -a "$upgrade_yn" != 'n' ];then
                 echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
         else
@@ -45,7 +45,7 @@ do
 	                while :
 	                do
 	                        echo
-	                        read -p "Do you want to install sendmail ? [y/n]: " sendmail_yn
+	                        read -p "Do you want to install sendmail? [y/n]: " sendmail_yn
 	                        if [ "$sendmail_yn" != 'y' -a "$sendmail_yn" != 'n' ];then
 	                                echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
 	                        else
@@ -501,6 +501,23 @@ if [ "$Web_yn" == 'y' -o "$DB_yn" == 'y' ];then
         done
 fi
 
+if [ "$OS" == 'CentOS' ];then
+	if [ -n "`cat /etc/redhat-release | grep -E ' 7\.| 6\.'`" -a -d "/lib64" ];then
+			while :
+                        do
+                                echo
+                                read -p "Do you want to install HHVM? [y/n]: " HHVM_yn
+                                if [ "$HHVM_yn" != 'y' -a "$HHVM_yn" != 'n' ];then
+                                        echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
+                                else
+                                        break
+                                fi
+                        done
+	else
+	        echo -e "\033[31mOnly support CentOS6.5 64bit, CentOS7 64bit! \033[0m"
+	fi
+fi
+
 chmod +x functions/*.sh init/* *.sh
 
 # init
@@ -681,6 +698,11 @@ fi
 if [ ! -e "$home_dir/default/index.html" -a "$Web_yn" == 'y' ];then
 	. functions/test.sh
 	TEST 2>&1 | tee -a $lnmp_dir/install.log 
+fi
+
+if [ "$HHVM_yn" == 'y' ];then
+	. functions/hhvm_CentOS.sh 
+	Install_hhvm_CentOS 2>&1 | tee -a $lnmp_dir/install.log 
 fi
 
 echo "####################Congratulations########################"

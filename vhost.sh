@@ -14,6 +14,31 @@ printf "
 "
 . ./options.conf
 
+HHVM_YN()
+{
+if [ -e "/usr/bin/hhvm" -o -e "/usr/local/bin/hhvm" ];then
+        while :
+        do
+                echo
+                echo 'Please choose to use PHP or HHVM:'
+                echo -e "\t\033[32m1\033[0m. Use php"
+                echo -e "\t\033[32m2\033[0m. Use hhvm"
+                read -p "Please input a number:(Default 1 press Enter) " PHP_HHVM
+                [ -z "$PHP_HHVM" ] && PHP_HHVM=1
+                if [ $PHP_HHVM != 1 -a $PHP_HHVM != 2 ];then
+                        echo -e "\033[31minput error! Please only input number 1,2\033[0m"
+                else
+                        break
+                fi
+        done
+fi
+if [ "$PHP_HHVM" == '2' ];then
+        NGX_CONF="fastcgi_pass unix:/var/run/hhvm/sock;\n\tfastcgi_index index.php;\n\tfastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;\n\tinclude fastcgi_params;"
+else
+        NGX_CONF="#fastcgi_pass remote_php_ip:9000;\n\tfastcgi_pass unix:/dev/shm/php-cgi.sock;\n\tfastcgi_index index.php;\n\tinclude fastcgi.conf;"
+fi
+}
+
 Input_domain()
 {
 while :
@@ -50,7 +75,7 @@ if [ "$moredomainame_yn" == 'y' ]; then
         while :
         do
                 echo
-                read -p "Type domainname,example(blog.linuxeye.com bbs.linuxeye.com): " moredomain
+                read -p "Type domainname,example(linuxeye.com www.example.com): " moredomain
                 if [ -z "`echo $moredomain | grep '.*\..*'`" ]; then
                         echo -e "\033[31minput error\033[0m"
                 else
@@ -202,10 +227,7 @@ if ( \$query_string ~* ".*[\;'\<\>].*" ){
 $anti_hotlinking
 `echo -e $ngx_pagespeed`
 location ~ .*\.(php|php5)?$  {
-	#fastcgi_pass remote_php_ip:9000;
-	fastcgi_pass unix:/dev/shm/php-cgi.sock;
-	fastcgi_index index.php;
-	include fastcgi.conf;
+	`echo -e $NGX_CONF`
 	}
 
 location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|ico)$ {
@@ -403,6 +425,7 @@ echo -e "`printf "%-32s" "Directory of:"`\033[32m$vhostdir\033[0m"
 }
 
 if [ -d "$web_install_dir" -a ! -d "$apache_install_dir" ];then
+	HHVM_YN
 	Input_domain
 	Ngx_pagespeed
 	Nginx_anti_hotlinking

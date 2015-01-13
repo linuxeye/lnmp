@@ -64,6 +64,8 @@ EOF
 
 yum --enablerepo=remi -y install libwebp mysql mysql-devel mysql-libs
 
+yum -y remove boost-system boost-filesystem
+
 cat > /etc/yum.repos.d/gleez.repo << EOF
 [gleez]
 name=Gleez repo
@@ -158,7 +160,7 @@ chmod +x /etc/init.d/hhvm
 chkconfig hhvm on
 service hhvm start
 fi
-if [ -e "/usr/bin/hhvm" -o -e "/usr/local/bin/hhvm" ];then
+if [ -e "/usr/bin/hhvm" ];then
 	sed -i 's@/dev/shm/php-cgi.sock@/var/run/hhvm/sock@' $web_install_dir/conf/nginx.conf 
 	[ -z "`grep 'fastcgi_param SCRIPT_FILENAME' $web_install_dir/conf/nginx.conf`" ] && sed -i "s@fastcgi_index index.php;@&\n\t\tfastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;@" $web_install_dir/conf/nginx.conf 
 	sed -i 's@include fastcgi.conf;@include fastcgi_params;@' $web_install_dir/conf/nginx.conf 

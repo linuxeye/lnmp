@@ -16,7 +16,7 @@ printf "
 
 HHVM_YN()
 {
-if [ -e "/usr/bin/hhvm" -o -e "/usr/local/bin/hhvm" ];then
+if [ -e "/usr/bin/hhvm" ];then
         while :
         do
                 echo

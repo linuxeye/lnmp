@@ -146,6 +146,7 @@ cat > /etc/systemd/system/hhvm.service << EOF
 Description=HHVM HipHop Virtual Machine (FCGI)
 
 [Service]
+ExecStartPre=/usr/bin/mkdir /var/run/hhvm ; /usr/bin/chown www.www /var/run/hhvm
 ExecStart=/usr/bin/hhvm --mode daemon --user www --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
 
 [Install]

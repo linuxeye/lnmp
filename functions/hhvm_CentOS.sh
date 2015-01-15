@@ -146,8 +146,8 @@ cat > /etc/systemd/system/hhvm.service << EOF
 Description=HHVM HipHop Virtual Machine (FCGI)
 
 [Service]
-ExecStartPre=/usr/bin/mkdir /var/run/hhvm ; /usr/bin/chown www.www /var/run/hhvm
-ExecStart=/usr/bin/hhvm --mode daemon --user www --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
+ExecStartPre=/usr/bin/rm -rf /var/run/hhvm ; /usr/bin/mkdir /var/run/hhvm ; /usr/bin/chown www.www /var/run/hhvm
+ExecStart=/usr/bin/hhvm --mode server --user www --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
 
 [Install]
 WantedBy=multi-user.target
@@ -167,5 +167,25 @@ if [ -e "/usr/bin/hhvm" ];then
 	sed -i 's@include fastcgi.conf;@include fastcgi_params;@' $web_install_dir/conf/nginx.conf 
 	service nginx reload
 fi
+
+# Supervisor
+yum -y install python-setuptools
+easy_install supervisor
+echo_supervisord_conf > /etc/supervisord.conf
+sed -i 's@pidfile=/tmp/supervisord.pid@pidfile=/var/run/supervisord.pid@' /etc/supervisord.conf
+[ -z "`grep 'program:hhvm' /etc/supervisord.conf`" ] && cat >> /etc/supervisord.conf << EOF
+[program:hhvm]
+command=/usr/bin/hhvm --mode server --user www --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
+numprocs=1 ; number of processes copies to start (def 1)
+directory=/tmp ; directory to cwd to before exec (def no cwd)
+autostart=true ; start at supervisord start (default: true)
+autorestart=unexpected ; whether/when to restart (default: unexpected)
+stopwaitsecs=10 ; max num secs to wait b4 SIGKILL (default 10)
+EOF
+src_url=https://github.com/Supervisor/initscripts/raw/master/redhat-init-mingalevme && Download_src
+/bin/mv redhat-init-mingalevme /etc/init.d/supervisord
+chmod +x /etc/init.d/supervisord
+chkconfig supervisord on
+service supervisord start
 cd ..
 }

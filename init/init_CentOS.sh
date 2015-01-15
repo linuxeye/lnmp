@@ -4,6 +4,27 @@
 
 cd src
 . ../functions/download.sh
+
+# add swapfile
+Mem=`free -m | awk '/Mem:/{print $2}'`
+Swap=`free -m | awk '/Swap:/{print $2}'`
+if [ "$Swap" == '0' ] ;then
+if [ $Mem -le 1024 ];then
+        dd if=/dev/zero of=/swapfile count=1024 bs=1M
+        mkswap /swapfile
+        swapon /swapfile
+        chmod 600 /swapfile
+elif [ $Mem -gt 1024 -a $Mem -le 2048 ];then
+        dd if=/dev/zero of=/swapfile count=2048 bs=1M
+        mkswap /swapfile
+        swapon /swapfile
+        chmod 600 /swapfile
+fi
+cat >> /etc/fstab << EOF
+/swapfile    swap    swap    defaults    0 0
+EOF
+fi
+
 src_url=http://blog.linuxeye.com/lnmp/src/yum-3.4.3.tar.gz && Download_src
 tar zxf yum-3.4.3.tar.gz
 cd yum-3.4.3

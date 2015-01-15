@@ -575,10 +575,10 @@ elif [ "$DB_version" == '6' ];then
 fi
 
 # PHP MySQL Client
-if [ "$DB_yn" == 'n' -a "$PHP_yn" == 'y' -a "$PHP_MySQL_driver" == '2' ];then
-	. functions/php-mysql-client.sh
-	Install_PHP-MySQL-Client 2>&1 | tee -a $lnmp_dir/install.log
-fi
+#if [ "$DB_yn" == 'n' -a "$PHP_yn" == 'y' -a "$PHP_MySQL_driver" == '2' ];then
+#	. functions/php-mysql-client.sh
+#	Install_PHP-MySQL-Client 2>&1 | tee -a $lnmp_dir/install.log
+#fi
 
 # Apache
 if [ "$Apache_version" == '1' ];then

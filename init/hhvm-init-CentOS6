@@ -50,7 +50,7 @@ fi
 start() {
 	echo -n $"Starting $prog: "
 	dir=$(dirname ${pidfile})
-	[ -d $dir ] || mkdir $dir
+	[ -d $dir ] || { mkdir $dir; chown $USER:$USER $dir; }
 	daemon ${HHVM} --mode ${MODE} --user ${USER} ${ARGS}
 	RETVAL=$?
 	echo

@@ -30,8 +30,14 @@ enabled=1
 gpgcheck=0
 EOF
 fi
-src_url=http://blog.linuxeye.com/lnmp/src/hhvm-3.4.2-2.el7.centos.x86_64.rpm && Download_src
-yum -y localinstall hhvm-3.4.2-2.el7.centos.x86_64.rpm
+cat > /etc/yum.repos.d/gleez.repo << EOF
+[gleez]
+name=Gleez repo
+baseurl=http://yum.gleez.com/7/\$basearch/
+enabled=0
+gpgcheck=0
+EOF
+yum --enablerepo=gleez -y install hhvm
 fi
 
 if [ "$CentOS_RHL" == '6' ];then
@@ -73,7 +79,7 @@ baseurl=http://yum.gleez.com/6/\$basearch/
 enabled=0
 gpgcheck=0
 EOF
-yum --enablerepo=gleez -y install hhvm-stable
+yum --enablerepo=gleez -y install hhvm
 fi
 
 userdel -r nginx

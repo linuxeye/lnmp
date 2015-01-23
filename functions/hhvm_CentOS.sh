@@ -82,7 +82,7 @@ EOF
 yum --enablerepo=gleez -y install hhvm
 fi
 
-userdel -r nginx
+userdel -r nginx;userdel -r saslauth
 rm -rf /var/run/hhvm/ /var/log/hhvm/
 mkdir /var/run/hhvm/ /var/log/hhvm/
 chown -R www.www /var/run/hhvm /var/log/hhvm

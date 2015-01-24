@@ -38,7 +38,7 @@ lockfile=${LOCKFILE-/var/run/hhvm/lock}
 CONFIG_HDF_FILE="/etc/hhvm/config.hdf"
 CONFIG_FILE="/etc/hhvm/server.ini"
 SYSTEM_CONFIG_FILE="/etc/hhvm/php.ini"
-MODE=server
+MODE=daemon
 USER=www
 ARGS="--config ${CONFIG_FILE} --config ${SYSTEM_CONFIG_FILE} --config ${CONFIG_HDF_FILE}"
 

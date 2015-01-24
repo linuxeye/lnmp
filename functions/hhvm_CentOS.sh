@@ -153,7 +153,7 @@ Description=HHVM HipHop Virtual Machine (FCGI)
 
 [Service]
 ExecStartPre=/usr/bin/rm -rf /var/run/hhvm ; /usr/bin/mkdir /var/run/hhvm ; /usr/bin/chown www.www /var/run/hhvm
-ExecStart=/usr/bin/hhvm --mode server --user www --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
+ExecStart=/usr/bin/hhvm --mode daemon --user www --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
 
 [Install]
 WantedBy=multi-user.target
@@ -181,7 +181,7 @@ echo_supervisord_conf > /etc/supervisord.conf
 sed -i 's@pidfile=/tmp/supervisord.pid@pidfile=/var/run/supervisord.pid@' /etc/supervisord.conf
 [ -z "`grep 'program:hhvm' /etc/supervisord.conf`" ] && cat >> /etc/supervisord.conf << EOF
 [program:hhvm]
-command=/usr/bin/hhvm --mode server --user www --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
+command=/usr/bin/hhvm --mode daemon --user www --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
 numprocs=1 ; number of processes copies to start (def 1)
 directory=/tmp ; directory to cwd to before exec (def no cwd)
 autostart=true ; start at supervisord start (default: true)

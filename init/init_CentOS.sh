@@ -87,7 +87,7 @@ do
 	yum -y install $Package
 done
 
-yum -y update bash openssl
+yum -y update bash openssl glibc
 
 # use gcc-4.4
 if [ -n "`gcc --version | head -n1 | grep '4\.1\.'`" ];then

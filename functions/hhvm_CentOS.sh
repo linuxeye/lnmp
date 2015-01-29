@@ -174,6 +174,8 @@ if [ -e "/usr/bin/hhvm" ];then
 	service nginx reload
 fi
 
+rm -rf /etc/ld.so.conf.d/*_64.conf
+ldconfig
 # Supervisor
 yum -y install python-setuptools
 easy_install supervisor

@@ -545,10 +545,10 @@ if [ "$gcc_sane_yn" == 'y' ];then
 fi
 
 # jemalloc or tcmalloc
-if [ "$je_tc_malloc_yn" == 'y' -a "$je_tc_malloc" == '1' ];then
+if [ "$je_tc_malloc_yn" == 'y' -a "$je_tc_malloc" == '1' -a ! -e "/usr/local/lib/libjemalloc.so" ];then
 	. functions/jemalloc.sh
 	Install_jemalloc | tee -a $lnmp_dir/install.log
-elif [ "$je_tc_malloc_yn" == 'y' -a "$je_tc_malloc" == '2' ];then
+elif [ "$je_tc_malloc_yn" == 'y' -a "$je_tc_malloc" == '2' -a ! -e "/usr/local/lib/libtcmalloc.so" ];then
 	. functions/tcmalloc.sh
 	Install_tcmalloc | tee -a $lnmp_dir/install.log
 fi

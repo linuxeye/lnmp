@@ -177,23 +177,23 @@ fi
 rm -rf /etc/ld.so.conf.d/*_64.conf
 ldconfig
 # Supervisor
-yum -y install python-setuptools
-easy_install supervisor
-echo_supervisord_conf > /etc/supervisord.conf
-sed -i 's@pidfile=/tmp/supervisord.pid@pidfile=/var/run/supervisord.pid@' /etc/supervisord.conf
-[ -z "`grep 'program:hhvm' /etc/supervisord.conf`" ] && cat >> /etc/supervisord.conf << EOF
-[program:hhvm]
-command=/usr/bin/hhvm --mode daemon --user www --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
-numprocs=1 ; number of processes copies to start (def 1)
-directory=/tmp ; directory to cwd to before exec (def no cwd)
-autostart=true ; start at supervisord start (default: true)
-autorestart=unexpected ; whether/when to restart (default: unexpected)
-stopwaitsecs=10 ; max num secs to wait b4 SIGKILL (default 10)
-EOF
-src_url=https://github.com/Supervisor/initscripts/raw/master/redhat-init-mingalevme && Download_src
-/bin/mv redhat-init-mingalevme /etc/init.d/supervisord
-chmod +x /etc/init.d/supervisord
-chkconfig supervisord on
-service supervisord start
+#yum -y install python-setuptools
+#easy_install supervisor
+#echo_supervisord_conf > /etc/supervisord.conf
+#sed -i 's@pidfile=/tmp/supervisord.pid@pidfile=/var/run/supervisord.pid@' /etc/supervisord.conf
+#[ -z "`grep 'program:hhvm' /etc/supervisord.conf`" ] && cat >> /etc/supervisord.conf << EOF
+#[program:hhvm]
+#command=/usr/bin/hhvm --mode daemon --user www --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
+#numprocs=1 ; number of processes copies to start (def 1)
+#directory=/tmp ; directory to cwd to before exec (def no cwd)
+#autostart=true ; start at supervisord start (default: true)
+#autorestart=unexpected ; whether/when to restart (default: unexpected)
+#stopwaitsecs=10 ; max num secs to wait b4 SIGKILL (default 10)
+#EOF
+#src_url=https://github.com/Supervisor/initscripts/raw/master/redhat-init-mingalevme && Download_src
+#/bin/mv redhat-init-mingalevme /etc/init.d/supervisord
+#chmod +x /etc/init.d/supervisord
+#chkconfig supervisord on
+#service supervisord start
 cd ..
 }

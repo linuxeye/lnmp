@@ -12,7 +12,7 @@ src_url=http://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/1
 
 tar xzf GraphicsMagick-1.3.20.tar.gz 
 cd GraphicsMagick-1.3.20
-./configure --enable-shared
+./configure --enable-shared --prefix=/usr/local/graphicsmagick
 make && make install
 cd ../
 /bin/rm -rf GraphicsMagick-1.3.20
@@ -24,7 +24,7 @@ if [ -e "$php_install_dir/bin/phpize" ];then
 	make clean
 	export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 	$php_install_dir/bin/phpize
-	./configure --with-php-config=$php_install_dir/bin/php-config
+	./configure --with-php-config=$php_install_dir/bin/php-config --with-gmagick=/usr/local/graphicsmagick
 	make && make install
 	cd ../
 	/bin/rm -rf gmagick-1.1.7RC2

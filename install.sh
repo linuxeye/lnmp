@@ -362,7 +362,6 @@ else
                                                         break
                                                 fi
                                         done
-					[ -n "`cat /etc/issue | grep 'Ubuntu 14'`" -a "$Magick" == '1' ] && Magick=9
                                 fi
 
                                 #while :

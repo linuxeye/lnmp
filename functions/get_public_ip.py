@@ -3,10 +3,10 @@ import re,urllib2
 class Get_public_ip:
     def getip(self):
         try:
-            myip = self.visit("http://www.whereismyip.com/")
+            myip = self.visit("http://ipv4.icanhazip.com/")
         except:
             try:
-                myip = self.visit("http://20140507.ip138.com/ic.asp")
+                myip = self.visit("http://www.whereismyip.com/")
             except:
                 myip = "So sorry!!!"
         return myip

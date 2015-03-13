@@ -38,7 +38,7 @@
    ./vhost.sh
 ```
 
-## Hown to backup
+## How to backup
 
 ```bash
    ./backup_setup.sh # Set backup options 

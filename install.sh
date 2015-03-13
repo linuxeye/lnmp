@@ -196,22 +196,6 @@ else
                         if [ $PHP_version != 1 -a $PHP_version != 2 -a $PHP_version != 3 -a $PHP_version != 4 -a $PHP_version != 5 ];then
                                 echo -e "\033[31minput error! Please only input number 1,2,3,4,5 \033[0m"
                         else
-				PHP_MySQL_driver=1
-                                #while :
-                                #        do
-                                #        echo
-                                #        echo 'You can either use the mysqlnd or libmysql library to connect from PHP to MySQL:'
-                                #        echo -e "\t\033[32m1\033[0m. MySQL native driver (mysqlnd)"
-                                #        echo -e "\t\033[32m2\033[0m. MySQL Client Library (libmysql)"
-                                #        read -p "Please input a number:(Default 1 press Enter) " PHP_MySQL_driver
-                                #        [ -z "$PHP_MySQL_driver" ] && PHP_MySQL_driver=1
-                                #        if [ $PHP_MySQL_driver != 1 -a $PHP_MySQL_driver != 2 ];then
-                                #                echo -e "\033[31minput error! Please only input number 1,2\033[0m"
-                                #        else
-                                #                break
-                                #        fi
-                                #done
-
 				while :
 				do
 					echo

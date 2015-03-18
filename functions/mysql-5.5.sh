@@ -36,7 +36,8 @@ cmake . -DCMAKE_INSTALL_PREFIX=$mysql_install_dir \
 -DDEFAULT_COLLATION=utf8_general_ci \
 -DWITH_EMBEDDED_SERVER=1 \
 $EXE_LINKER
-make && make install
+make -j `grep processor /proc/cpuinfo | wc -l` 
+make install
 
 if [ -d "$mysql_install_dir" ];then
         echo -e "\033[32mMySQL install successfully! \033[0m"

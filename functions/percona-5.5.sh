@@ -35,7 +35,8 @@ cmake . -DCMAKE_INSTALL_PREFIX=$percona_install_dir \
 -DDEFAULT_CHARSET=utf8 \
 -DDEFAULT_COLLATION=utf8_general_ci \
 $EXE_LINKER
-make && make install
+make -j `grep processor /proc/cpuinfo | wc -l` 
+make install
 
 cd $percona_install_dir/lib/
 ln -s libperconaserverclient.so libmysqlclient.so

@@ -9,9 +9,11 @@ cd $lnmp_dir/src
 . ../options.conf
 
 public_IP=`../functions/get_public_ip.py`
-if [ "`../functions/get_ip_area.py $public_IP`" == 'CN' ];then
+if [ "`../functions/get_ip_area.py $public_IP`" == '\u4e2d\u56fd' ];then
 	FLAG_IP=CN
 fi
+
+echo $public_IP $FLAG_IP
 
 if [ "$FLAG_IP"x == "CN"x ];then
 	src_url=http://www.yahei.net/tz/tz.zip && Download_src

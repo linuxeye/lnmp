@@ -485,7 +485,7 @@ if [ "$Web_yn" == 'y' -o "$DB_yn" == 'y' ];then
 fi
 
 if [ "$OS" == 'CentOS' ];then
-	if [ -n "`cat /etc/redhat-release | grep -E ' 7\.| 6\.'`" -a -d "/lib64" ];then
+	if [ -n "`grep -E ' 7\.| 6\.' /etc/redhat-release`" -a -d "/lib64" ];then
 			while :
                         do
                                 echo

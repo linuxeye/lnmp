@@ -28,41 +28,38 @@ fi
 sed -i 's@^exclude@#exclude@' /etc/yum.conf
 yum clean all
 
-#public_IP=`../functions/get_public_ip.py`
-#if [ "`../functions/get_ip_area.py $public_IP`" == 'CN' ];then
-	if [ -n "$(cat /etc/redhat-release | grep ' 7\.')" ];then
-                if [ -n "$(cat /etc/redhat-release | grep 'Red Hat')" ];then
-                        /bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
-                        wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
-                        sed -i 's@\$releasever@7@g' /etc/yum.repos.d/CentOS-Base.repo
-                        sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS-Base.repo
-                fi
-	elif [ -n "$(cat /etc/redhat-release | grep ' 6\.')" ];then
-		if [ -n "$(cat /etc/redhat-release | grep 'Red Hat')" ];then
-	        	/bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
-			wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo
-			sed -i 's@\$releasever@6@g' /etc/yum.repos.d/CentOS-Base.repo
-	                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS-Base.repo
-		fi
-	elif [ -n "$(cat /etc/redhat-release | grep '5\.')" ];then
-		if [ -n "$(cat /etc/redhat-release | grep 'Red Hat')" ];then
-	        	/bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
-			wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-5.repo
-			sed -i 's@\$releasever@5@g' /etc/yum.repos.d/CentOS-Base.repo
-	                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS-Base.repo
-		fi
+if [ -n "`grep ' 7\.' /etc/redhat-release`" ];then
+        if [ -n "`grep 'Red Hat' /etc/redhat-release`" ];then
+                /bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
+                wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+                sed -i 's@\$releasever@7@g' /etc/yum.repos.d/CentOS-Base.repo
+                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS-Base.repo
+        fi
+elif [ -n "`grep ' 6\.' /etc/redhat-release`" ];then
+        if [ -n "`grep 'Red Hat' /etc/redhat-release`" ];then
+        	/bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
+		wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo
+		sed -i 's@\$releasever@6@g' /etc/yum.repos.d/CentOS-Base.repo
+                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS-Base.repo
 	fi
+elif [ -n "`grep ' 5\.' /etc/redhat-release`" ];then
+        if [ -n "`grep 'Red Hat' /etc/redhat-release`" ];then
+        	/bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
+		wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-5.repo
+		sed -i 's@\$releasever@5@g' /etc/yum.repos.d/CentOS-Base.repo
+                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS-Base.repo
+	fi
+fi
 
-	yum makecache
-#fi
+yum makecache
 
-if [ -n "$(cat /etc/redhat-release | grep ' 7\.')" ];then
+if [ -n "`grep ' 7\.' /etc/redhat-release`" ];then
 	yum -y install iptables-services 
 	systemctl mask firewalld.service
 	systemctl enable iptables.service
-elif [ -n "$(cat /etc/redhat-release | grep ' 6\.')" ];then
+elif [ -n "`grep ' 6\.' /etc/redhat-release`" ];then
 	yum -y groupremove "FTP Server" "PostgreSQL Database client" "PostgreSQL Database server" "MySQL Database server" "MySQL Database client" "Web Server" "Office Suite and Productivity" "E-mail server" "Ruby Support" "Printing client" 
-elif [ -n "$(cat /etc/redhat-release | grep '5\.')" ];then
+elif [ -n "`grep ' 5\.' /etc/redhat-release`" ];then
 	yum -y groupremove "FTP Server" "Windows File Server" "PostgreSQL Database" "News Server" "MySQL Database" "DNS Name Server" "Web Server" "Dialup Networking Support" "Mail Server" "Ruby" "Office/Productivity" "Sound and Video" "Printing Support" "OpenFabrics Enterprise Distribution"
 fi
 
@@ -165,11 +162,11 @@ net.ipv4.tcp_max_orphans = 262144
 EOF
 sysctl -p
 
-if [ -n "$(cat /etc/redhat-release | grep '5\.')" ];then
+if [ -n "`grep ' 5\.' /etc/redhat-release`" ];then
 	sed -i 's@^[3-6]:2345:respawn@#&@g' /etc/inittab
 	sed -i 's@^ca::ctrlaltdel@#&@' /etc/inittab
 	sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/sysconfig/i18n
-elif [ -n "$(cat /etc/redhat-release | grep '6\.')" ];then
+elif [ -n "`grep ' 6\.' /etc/redhat-release`" ];then
 	sed -i 's@^ACTIVE_CONSOLES.*@ACTIVE_CONSOLES=/dev/tty[1-2]@' /etc/sysconfig/init	
 	sed -i 's@^start@#start@' /etc/init/control-alt-delete.conf
 fi

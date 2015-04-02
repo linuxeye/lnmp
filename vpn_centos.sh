@@ -43,7 +43,7 @@ done
 clear
 
 
-if [ -n "`grep 'CentOS Linux release 7' /etc/redhat-release`" ];then
+if [ -f /etc/redhat-release -a -n "`grep ' 7\.' /etc/redhat-release`" ];then
         #CentOS_REL=7
 	if [ ! -e /etc/yum.repos.d/epel.repo ];then
 		cat > /etc/yum.repos.d/epel.repo << EOF
@@ -61,7 +61,7 @@ fi
                 yum -y install $Package
         done
         echo 'net.ipv4.ip_forward = 1' >> /etc/sysctl.conf
-elif [ -n "`grep 'CentOS release 6' /etc/redhat-release`" ];then
+elif [ -f /etc/redhat-release -a -n "`grep ' 6\.' /etc/redhat-release`" ];then
         #CentOS_REL=6
         for Package in wget make openssl gcc-c++ iptables ppp 
         do
@@ -92,9 +92,12 @@ fi
 echo "$VPN_USER pptpd $VPN_PASS *" >> /etc/ppp/chap-secrets
 
 ETH=`route | grep default | awk '{print $NF}'`
-iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport 1723 -j ACCEPT
+[ -z "`grep '1723 -j ACCEPT' /etc/sysconfig/iptables`" ] && iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport 1723 -j ACCEPT
+[ -z "`grep 'gre -j ACCEPT' /etc/sysconfig/iptables`" ] && iptables -I INPUT 5 -p gre -j ACCEPT 
 iptables -t nat -A POSTROUTING -o $ETH -j MASQUERADE
 service iptables save
+sed -i 's@^-A INPUT -j REJECT --reject-with icmp-host-prohibited@#-A INPUT -j REJECT --reject-with icmp-host-prohibited@' /etc/sysconfig/iptables 
+sed -i 's@^-A FORWARD -j REJECT --reject-with icmp-host-prohibited@#-A FORWARD -j REJECT --reject-with icmp-host-prohibited@' /etc/sysconfig/iptables 
 service iptables restart
 
 service pptpd restart

@@ -7,7 +7,6 @@ Install_ZendOPcache()
 cd $lnmp_dir/src
 . ../options.conf
 
-rm -rf ZendOptimizerPlus-*
 [ ! -e "ZendOptimizerPlus-7.0.4.tar.gz" ] && wget -c --no-check-certificate -O ZendOptimizerPlus-7.0.4.tar.gz https://github.com/zendtech/ZendOptimizerPlus/archive/v7.0.4.tar.gz
 tar xzf ZendOptimizerPlus-7.0.4.tar.gz
 cd ZendOptimizerPlus-7.0.4 

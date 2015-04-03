@@ -22,12 +22,14 @@
 ```bash
    yum -y install wget screen # for CentOS/Redhat
    #apt-get -y install wget screen # for Debian/Ubuntu 
-   wget http://blog.linuxeye.com/lnmp.tar.gz
-   #or wget http://blog.linuxeye.com/lnmp-full.tar.gz # include source packages
+   wget http://mirrors.linuxeye.com/lnmp.tar.gz
+   # or download include source packages
+   wget http://mirrors.linuxeye.com/lnmp-full.tar.gz
    tar xzf lnmp.tar.gz
+   # or tar xzf lnmp-full.tar.gz
    cd lnmp
-   chmod +x install.sh
-   # Prevent interrupt the installation process. If the network is down, you can execute commands `screen -r lnmp` network reconnect the installation window.
+   # Prevent interrupt the installation process. If the network is down, 
+   # you can execute commands `screen -r lnmp` network reconnect the installation window.
    screen -S lnmp
    ./install.sh
 ```
@@ -50,31 +52,31 @@
 ## How to manage service
 Nginx/Tengine:
 ```bash
-   service nginx {start|stop|status|restart|condrestart|try-restart|reload|force-reload|configtest}
+   service nginx {start|stop|status|restart|reload|configtest}
 ```
 MySQL/MariaDB/Percona:
 ```bash
-   service mysqld {start|stop|restart|reload|force-reload|status}
+   service mysqld {start|stop|restart|reload|status}
 ```
 PHP:
 ```bash
-   service php-fpm {start|stop|force-quit|restart|reload|status}
+   service php-fpm {start|stop|restart|reload|status}
 ```
 Apache:
 ```bash
-   service httpd {start|restart|graceful|graceful-stop|stop}
+   service httpd {start|restart|stop}
 ```
 Pure-Ftpd:
 ```bash
-   service pureftpd {start|stop|restart|condrestart|status}
+   service pureftpd {start|stop|restart|status}
 ```
 Redis:
 ```bash
-   service redis-server {start|stop|status|restart|condrestart|try-restart|reload|force-reload}
+   service redis-server {start|stop|status|restart|reload}
 ```
 Memcached:
 ```bash
-   service memcached {start|stop|status|restart|reload|force-reload}
+   service memcached {start|stop|status|restart|reload}
 ```
 
 ## How to upgrade 

@@ -42,14 +42,6 @@ make && make install
 cd ../
 /bin/rm -rf mhash-0.9.9.9 
 
-# linked library
-if [ "$PHP_MySQL_driver" == '1' ];then
-        PHP_MySQL_options="--with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd"
-elif [ "$PHP_MySQL_driver" == '2' ];then
-        [ "$DB_yn" == 'n' ] && db_install_dir=$mysql_install_dir
-        ln -s $db_install_dir/include /usr/include/mysql
-        PHP_MySQL_options="--with-mysql=$db_install_dir --with-mysqli=$db_install_dir/bin/mysql_config --with-pdo-mysql=$db_install_dir/bin/mysql_config"
-fi
 echo "$db_install_dir/lib" > /etc/ld.so.conf.d/mysql.conf
 echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
 ldconfig
@@ -77,7 +69,8 @@ cd php-5.3.29
 make clean
 if [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
 CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
---with-apxs2=$apache_install_dir/bin/apxs $PHP_MySQL_options --disable-fileinfo \
+--with-apxs2=$apache_install_dir/bin/apxs --disable-fileinfo \
+--with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
 --enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex \
@@ -86,7 +79,8 @@ CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=
 --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
 else
 CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
---with-fpm-user=www --with-fpm-group=www --enable-fpm $PHP_MySQL_options --disable-fileinfo \
+--with-fpm-user=www --with-fpm-group=www --enable-fpm --disable-fileinfo \
+--with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
 --enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex \

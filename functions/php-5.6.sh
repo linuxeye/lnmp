@@ -13,7 +13,7 @@ src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/2.6.8/mcrypt-2.6.8.tar.gz && Download_src
-src_url=http://www.php.net/distributions/php-5.6.5.tar.gz && Download_src
+src_url=http://www.php.net/distributions/php-5.6.7.tar.gz && Download_src
 
 tar xzf libiconv-1.14.tar.gz
 cd libiconv-1.14
@@ -42,14 +42,6 @@ make && make install
 cd ../
 /bin/rm -rf mhash-0.9.9.9
 
-# linked library
-if [ "$PHP_MySQL_driver" == '1' ];then
-	PHP_MySQL_options="--with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd"
-elif [ "$PHP_MySQL_driver" == '2' ];then
-	[ "$DB_yn" == 'n' ] && db_install_dir=$mysql_install_dir
-	ln -s $db_install_dir/include /usr/include/mysql
-	PHP_MySQL_options="--with-mysql=$db_install_dir --with-mysqli=$db_install_dir/bin/mysql_config --with-pdo-mysql=$db_install_dir/bin/mysql_config"
-fi
 echo "$db_install_dir/lib" > /etc/ld.so.conf.d/mysql.conf
 echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
 ldconfig
@@ -69,16 +61,17 @@ make && make install
 cd ../
 /bin/rm -rf mcrypt-2.6.8
 
-tar xzf php-5.6.5.tar.gz
+tar xzf php-5.6.7.tar.gz
 useradd -M -s /sbin/nologin www
 wget -O fpm-race-condition.patch 'https://bugs.php.net/patch-display.php?bug_id=65398&patch=fpm-race-condition.patch&revision=1375772074&download=1'
-patch -d php-5.6.5 -p0 < fpm-race-condition.patch
-cd php-5.6.5
+patch -d php-5.6.7 -p0 < fpm-race-condition.patch
+cd php-5.6.7
 make clean
 [ "$PHP_cache" == '1' ] && PHP_cache_tmp='--enable-opcache' || PHP_cache_tmp='--disable-opcache'
 if [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
 CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
---with-apxs2=$apache_install_dir/bin/apxs $PHP_cache_tmp $PHP_MySQL_options --disable-fileinfo \
+--with-apxs2=$apache_install_dir/bin/apxs $PHP_cache_tmp --disable-fileinfo \
+--with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
 --enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex --enable-inline-optimization \
@@ -87,7 +80,8 @@ CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=
 --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
 else
 CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
---with-fpm-user=www --with-fpm-group=www --enable-fpm $PHP_cache_tmp $PHP_MySQL_options --disable-fileinfo \
+--with-fpm-user=www --with-fpm-group=www --enable-fpm $PHP_cache_tmp --disable-fileinfo \
+--with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
 --enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex --enable-inline-optimization \
@@ -254,6 +248,6 @@ elif [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
 service httpd restart
 fi
 cd ..
-/bin/rm -rf php-5.6.5
+/bin/rm -rf php-5.6.7
 cd ..
 }

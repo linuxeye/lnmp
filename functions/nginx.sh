@@ -10,7 +10,7 @@ cd $lnmp_dir/src
 . ../options.conf
 
 src_url=http://downloads.sourceforge.net/project/pcre/pcre/8.36/pcre-8.36.tar.gz && Download_src
-src_url=http://nginx.org/download/nginx-1.6.2.tar.gz && Download_src
+src_url=http://nginx.org/download/nginx-1.6.3.tar.gz && Download_src
 
 tar xzf pcre-8.36.tar.gz
 cd pcre-8.36
@@ -18,9 +18,9 @@ cd pcre-8.36
 make && make install
 cd ../
 
-tar xzf nginx-1.6.2.tar.gz
+tar xzf nginx-1.6.3.tar.gz
 useradd -M -s /sbin/nologin www
-cd nginx-1.6.2
+cd nginx-1.6.3
 
 # Modify Nginx version
 #sed -i 's@#define NGINX_VERSION.*$@#define NGINX_VERSION      "1.2"@' src/core/nginx.h
@@ -47,7 +47,7 @@ else
         kill -9 $$
 fi
 
-[ -n "`cat /etc/profile | grep 'export PATH='`" -a -z "`cat /etc/profile | grep $nginx_install_dir`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$nginx_install_dir/bin:\1@" /etc/profile
+[ -n "`cat /etc/profile | grep 'export PATH='`" -a -z "`cat /etc/profile | grep $nginx_install_dir`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$nginx_install_dir/sbin:\1@" /etc/profile
 . /etc/profile
 
 cd ../../

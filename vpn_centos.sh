@@ -1,10 +1,9 @@
 #!/bin/bash
+#
 # Author:  yeho <lj2007331 AT gmail.com>
 # Blog:  http://blog.linuxeye.com
 #
-# This script's project home is:
-#       http://blog.linuxeye.com/31.html
-#       https://github.com/lj2007331/lnmp
+# Installs a PPTP VPN-only system for CentOS
 
 # Check if user is root
 [ $(id -u) != "0" ] && echo "Error: You must be root to run this script" && exit 1
@@ -17,211 +16,95 @@ printf "
 # For more information please visit http://blog.linuxeye.com/31.html  #
 #######################################################################
 "
-[ ! -e "src" ] && mkdir src
-cd src
-. ../functions/download.sh
+
+[ ! -e '/usr/bin/curl' ] && yum -y install curl
+
+VPN_IP=`curl ipv4.icanhazip.com`
+
+VPN_USER="linuxeye"
+VPN_PASS="linuxeye"
+
+VPN_LOCAL="192.168.0.150"
+VPN_REMOTE="192.168.0.151-200"
 
 while :
 do
-	echo
-	read -p "Please input private IP-Range(Default Range: 10.0.2): " iprange
-	[ -z "$iprange" ] && iprange="10.0.2"
-	if [ -z "`echo $iprange | grep -E "^10\.|^192\.168\.|^172\." | grep -o '^[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}$'`" ];then
-		echo -e "\033[31minput error! Input format: xxx.xxx.xxx\033[0m"
-	else
-		break
-	fi
-done
-
-echo
-read -p "Please input PSK(Default PSK: psk): " MYPSK
-[ -z "$MYPSK" ] && MYPSK="psk"
-
-while :
-do
-	echo
-        read -p "Please input username: " Username 
-        [ -n "$Username" ] && break 
+        echo
+        read -p "Please input username: " VPN_USER 
+        [ -n "$VPN_USER" ] && break
 done
 
 while :
 do
-	echo
-        read -p "Please input password: " Password 
-        [ -n "$Password" ] && break 
+        echo
+        read -p "Please input password: " VPN_PASS
+        [ -n "$VPN_PASS" ] && break
 done
 clear
 
-public_IP=`../functions/get_public_ip.py`
 
-get_char()
-{
-SAVEDSTTY=`stty -g`
-stty -echo
-stty cbreak
-dd if=/dev/tty bs=1 count=1 2> /dev/null
-stty -raw
-stty echo
-stty $SAVEDSTTY
-}
-
-echo ""
-echo "ServerIP:$public_IP"
-echo ""
-echo "Server Local IP:$iprange.1"
-echo ""
-echo "Client Remote IP Range:$iprange.2-$iprange.254"
-echo ""
-echo "PSK:$MYPSK"
-echo ""
-echo "Press any key to start..."
-char=`get_char`
-clear
-
-if [ -n "`grep 'CentOS Linux release 7' /etc/redhat-release`" ];then
-        CentOS_REL=7
-        for Package in wget ppp iptables iptables-services make gcc gmp-devel xmlto bison flex xmlto libpcap-devel lsof vim-enhanced
+if [ -f /etc/redhat-release -a -n "`grep ' 7\.' /etc/redhat-release`" ];then
+        #CentOS_REL=7
+	if [ ! -e /etc/yum.repos.d/epel.repo ];then
+		cat > /etc/yum.repos.d/epel.repo << EOF
+[epel]
+name=Extra Packages for Enterprise Linux 7 - \$basearch
+#baseurl=http://download.fedoraproject.org/pub/epel/7/\$basearch
+mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=\$basearch
+failovermethod=priority
+enabled=1
+gpgcheck=0
+EOF
+fi
+        for Package in wget make openssl gcc-c++ ppp pptpd iptables iptables-services 
         do
                 yum -y install $Package
         done
         echo 'net.ipv4.ip_forward = 1' >> /etc/sysctl.conf
-elif [ -n "`grep 'CentOS release 6' /etc/redhat-release`" ];then
-        CentOS_REL=6
-        for Package in wget ppp iptables make gcc gmp-devel xmlto bison flex xmlto libpcap-devel lsof vim-enhanced
+elif [ -f /etc/redhat-release -a -n "`grep ' 6\.' /etc/redhat-release`" ];then
+        #CentOS_REL=6
+        for Package in wget make openssl gcc-c++ iptables ppp 
         do
                 yum -y install $Package
         done
-        sed -i 's@net.ipv4.ip_forward.*@net.ipv4.ip_forward = 1@g' /etc/sysctl.conf
+	sed -i 's@net.ipv4.ip_forward.*@net.ipv4.ip_forward = 1@g' /etc/sysctl.conf
+	rpm -Uvh http://poptop.sourceforge.net/yum/stable/rhel6/pptp-release-current.noarch.rpm
+	yum -y install pptpd
 else
         echo -e "\033[31mDoes not support this OS, Please contact the author! \033[0m"
         exit 1
 fi
 
-sysctl -p
-mknod /dev/random c 1 9
-src_url=https://download.openswan.org/openswan/old/openswan-2.6/openswan-2.6.38.tar.gz && Download_src
-tar xzf openswan-2.6.38.tar.gz
-cd openswan-2.6.38
-make programs install
-cd ..
 
-cat >/etc/ipsec.conf<<EOF
-config setup
-    nat_traversal=yes
-    virtual_private=%v4:10.0.0.0/8,%v4:192.168.0.0/16,%v4:172.16.0.0/12
-    oe=off
-    protostack=netkey
-    plutostderrlog=/var/log/ipsec.log
+echo "1" > /proc/sys/net/ipv4/ip_forward
 
-conn L2TP-PSK-NAT
-    rightsubnet=vhost:%priv
-    also=L2TP-PSK-noNAT
+sysctl -p /etc/sysctl.conf
 
-conn L2TP-PSK-noNAT
-    authby=secret
-    type=tunnel
-    pfs=no
-    auto=add
-    keyingtries=3
-    rekey=no
-    ikelifetime=8h
-    keylife=1h
-    left=$public_IP
-    leftprotoport=17/1701
-    right=%any
-    rightprotoport=17/%any
-    rightsubnetwithin=0.0.0.0/0
-    dpddelay=30
-    dpdtimeout=120
-    dpdaction=clear
-EOF
+[ -z "`grep '^localip' /etc/pptpd.conf`" ] && echo "localip $VPN_LOCAL" >> /etc/pptpd.conf # Local IP address of your VPN server
+[ -z "`grep '^remoteip' /etc/pptpd.conf`" ] && echo "remoteip $VPN_REMOTE" >> /etc/pptpd.conf # Scope for your home network
 
-cat >/etc/ipsec.secrets<<EOF
-$public_IP %any: PSK "$MYPSK"
-EOF
+if [ -z "`grep '^ms-dns' /etc/ppp/options.pptpd`" ];then
+	echo "ms-dns 8.8.8.8" >> /etc/ppp/options.pptpd # Google DNS Primary
+	echo "ms-dns 209.244.0.3" >> /etc/ppp/options.pptpd # Level3 Primary
+	echo "ms-dns 208.67.222.222" >> /etc/ppp/options.pptpd # OpenDNS Primary
+fi
 
-cat > /usr/bin/zl2tpset << EOF
-#!/bin/bash
-for each in /proc/sys/net/ipv4/conf/*
-do
-	echo 0 > \$each/accept_redirects
-	echo 0 > \$each/send_redirects
-done
-EOF
+echo "$VPN_USER pptpd $VPN_PASS *" >> /etc/ppp/chap-secrets
 
-chmod +x /usr/bin/zl2tpset
-/usr/bin/zl2tpset
-[ -z "`grep zl2tpset /etc/rc.local`" ] &&  echo '/usr/bin/zl2tpset' >> /etc/rc.local
-service ipsec restart
-src_url=http://pkgs.fedoraproject.org/repo/pkgs/xl2tpd/xl2tpd-1.3.6.tar.gz/2f526cc0c36cf6d8a74f1fb2e08c18ec/xl2tpd-1.3.6.tar.gz && Download_src
-tar xzf xl2tpd-1.3.6.tar.gz
-cd xl2tpd-1.3.6
-make install
-
-[ ! -e "/var/run/xl2tpd" ] && mkdir /var/run/xl2tpd
-[ ! -e "/etc/xl2tpd" ] && mkdir /etc/xl2tpd
-cd ..
-
-cat >/etc/xl2tpd/xl2tpd.conf<<EOF
-[global]
-listen-addr = $public_IP
-ipsec saref = yes
-[lns default]
-ip range = $iprange.2-$iprange.254
-local ip = $iprange.1
-refuse chap = yes
-refuse pap = yes
-require authentication = yes
-ppp debug = yes
-pppoptfile = /etc/ppp/options.xl2tpd
-length bit = yes
-EOF
-
-cat >/etc/ppp/options.xl2tpd<<EOF
-require-mschap-v2
-ms-dns 8.8.8.8
-ms-dns 8.8.4.4
-noccp
-asyncmap 0
-auth
-crtscts
-lock
-hide-password
-modem
-debug
-name l2tpd
-proxyarp
-lcp-echo-interval 30
-lcp-echo-failure 4
-idle 1800
-mtu 1410
-mru 1410
-nodefaultroute
-connect-delay 5000
-logfd 2
-logfile /var/log/l2tpd.log
-EOF
-
-cat > /etc/ppp/chap-secrets<<EOF
-$Username l2tpd $Password *
-EOF
-
-NETWORK_INT=`route | grep default | awk '{print $NF}'`
-iptables -t nat -A POSTROUTING -s ${iprange}.0/24 -o $NETWORK_INT -j MASQUERADE
-iptables -I FORWARD -s ${iprange}.0/24 -j ACCEPT
-iptables -I FORWARD -d ${iprange}.0/24 -j ACCEPT
-iptables -I INPUT -p udp --dport 1701 -j ACCEPT
-iptables -I INPUT -p udp --dport 500 -j ACCEPT
-iptables -I INPUT -p udp --dport 4500 -j ACCEPT
+ETH=`route | grep default | awk '{print $NF}'`
+[ -z "`grep '1723 -j ACCEPT' /etc/sysconfig/iptables`" ] && iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport 1723 -j ACCEPT
+[ -z "`grep 'gre -j ACCEPT' /etc/sysconfig/iptables`" ] && iptables -I INPUT 5 -p gre -j ACCEPT 
+iptables -t nat -A POSTROUTING -o $ETH -j MASQUERADE
 service iptables save
-service ipsec restart
-xl2tpd 
-chkconfig ipsec on
+sed -i 's@^-A INPUT -j REJECT --reject-with icmp-host-prohibited@#-A INPUT -j REJECT --reject-with icmp-host-prohibited@' /etc/sysconfig/iptables 
+sed -i 's@^-A FORWARD -j REJECT --reject-with icmp-host-prohibited@#-A FORWARD -j REJECT --reject-with icmp-host-prohibited@' /etc/sysconfig/iptables 
+service iptables restart
+
+service pptpd restart
+chkconfig pptpd on
 clear
-ipsec verify
-printf "
-Serverip:$public_IP
-PSK:$MYPSK
-username:$Username
-password:$Password
-"
+
+echo -e "You can now connect to your VPN via your external IP \033[32m${VPN_IP}\033[0m"
+
+echo -e "Username: \033[32m${VPN_USER}\033[0m"
+echo -e "Password: \033[32m${VPN_PASS}\033[0m"

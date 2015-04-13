@@ -10,9 +10,9 @@ cd $lnmp_dir/src
 
 useradd -M -s /sbin/nologin www
 
-if [ -n "$(cat /etc/redhat-release | grep ' 7\.')" ];then
+if [ -n "$(grep ' 7\.' /etc/redhat-release)" ];then
 	CentOS_RHL=7
-elif [ -n "$(cat /etc/redhat-release | grep ' 6\.')" ];then
+elif [ -n "$(grep ' 6\.' /etc/redhat-release)" ];then
 	CentOS_RHL=6
 fi
 

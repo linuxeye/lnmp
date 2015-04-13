@@ -23,6 +23,8 @@ Uninstall()
 [ -e "$pureftpd_install_dir" ] && service pureftpd stop && rm -rf /etc/init.d/pureftpd
 [ -e "$redis_install_dir" ] && service redis-server stop && rm -rf /etc/init.d/redis-server
 [ -e "$memcached_install_dir" ] && service memcached stop && rm -rf /etc/init.d/memcached
+[ -e "/usr/local/imagemagick" ] && rm -rf /usr/local/imagemagick 
+[ -e "/usr/local/graphicsmagick" ] && rm -rf /usr/local/graphicsmagick 
 
 /bin/mv ${home_dir}{,_$(date +%F)}
 /bin/mv ${db_data_dir}{,_$(date +%F)}
@@ -68,6 +70,8 @@ done
 [ -e "$pureftpd_install_dir" ] && echo '/etc/init.d/pureftpd'
 [ -e "$memcached_install_dir" ] && echo '/etc/init.d/memcached' 
 [ -e "$redis_install_dir" ] && echo '/etc/init.d/redis-server' 
+[ -e "/usr/local/imagemagick" ] && echo '/usr/local/imagemagick' 
+[ -e "/usr/local/graphicsmagick" ] && echo '/usr/local/graphicsmagick' 
 echo 
 echo "Press Ctrl+c to cancel or Press any key to continue..."
 char=`get_char`
@@ -83,4 +87,4 @@ do
         fi
 done
 
-[ "$uninstall_yn" == 'y' ] && Uninstall 
+[ "$uninstall_yn" == 'y' ] && Uninstall

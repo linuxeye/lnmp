@@ -40,7 +40,7 @@ elif [ "$je_tc_malloc" == '2' ];then
 	chown -R www.www /tmp/tcmalloc
 fi
 
-./configure --prefix=$tengine_install_dir --user=www --group=www --with-http_stub_status_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_flv_module --with-http_concat_module=shared --with-http_sysguard_module=shared $malloc_module
+./configure --prefix=$tengine_install_dir --user=www --group=www --with-http_stub_status_module --with-http_spdy_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_flv_module --with-http_concat_module=shared --with-http_sysguard_module=shared $malloc_module
 make && make install
 if [ -d "$tengine_install_dir" ];then
         echo -e "\033[32mTengine install successfully! \033[0m"
@@ -49,7 +49,7 @@ else
         kill -9 $$
 fi
 
-[ -n "`cat /etc/profile | grep 'export PATH='`" -a -z "`cat /etc/profile | grep $tengine_install_dir`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$tengine_install_dir/bin:\1@" /etc/profile
+[ -n "`cat /etc/profile | grep 'export PATH='`" -a -z "`cat /etc/profile | grep $tengine_install_dir`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$tengine_install_dir/sbin:\1@" /etc/profile
 . /etc/profile
 
 cd ../../

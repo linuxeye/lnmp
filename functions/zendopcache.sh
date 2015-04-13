@@ -7,10 +7,9 @@ Install_ZendOPcache()
 cd $lnmp_dir/src
 . ../options.conf
 
-rm -rf ZendOptimizerPlus-master*
-wget -c --no-check-certificate -O ZendOptimizerPlus-master.zip https://github.com/zendtech/ZendOptimizerPlus/archive/master.zip 
-unzip -q ZendOptimizerPlus-master.zip 
-cd ZendOptimizerPlus-master 
+[ ! -e "ZendOptimizerPlus-7.0.4.tar.gz" ] && wget -c --no-check-certificate -O ZendOptimizerPlus-7.0.4.tar.gz https://github.com/zendtech/ZendOptimizerPlus/archive/v7.0.4.tar.gz
+tar xzf ZendOptimizerPlus-7.0.4.tar.gz
+cd ZendOptimizerPlus-7.0.4 
 make clean
 $php_install_dir/bin/phpize
 ./configure --with-php-config=$php_install_dir/bin/php-config
@@ -45,6 +44,6 @@ else
         echo -e "\033[31meZend OPcache module install failed, Please contact the author! \033[0m"
 fi
 cd ..
-/bin/rm -rf ZendOptimizerPlus-master
+/bin/rm -rf ZendOptimizerPlus-7.0.4
 cd ..
 }

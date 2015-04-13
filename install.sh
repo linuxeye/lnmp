@@ -196,22 +196,6 @@ else
                         if [ $PHP_version != 1 -a $PHP_version != 2 -a $PHP_version != 3 -a $PHP_version != 4 -a $PHP_version != 5 ];then
                                 echo -e "\033[31minput error! Please only input number 1,2,3,4,5 \033[0m"
                         else
-				PHP_MySQL_driver=1
-                                #while :
-                                #        do
-                                #        echo
-                                #        echo 'You can either use the mysqlnd or libmysql library to connect from PHP to MySQL:'
-                                #        echo -e "\t\033[32m1\033[0m. MySQL native driver (mysqlnd)"
-                                #        echo -e "\t\033[32m2\033[0m. MySQL Client Library (libmysql)"
-                                #        read -p "Please input a number:(Default 1 press Enter) " PHP_MySQL_driver
-                                #        [ -z "$PHP_MySQL_driver" ] && PHP_MySQL_driver=1
-                                #        if [ $PHP_MySQL_driver != 1 -a $PHP_MySQL_driver != 2 ];then
-                                #                echo -e "\033[31minput error! Please only input number 1,2\033[0m"
-                                #        else
-                                #                break
-                                #        fi
-                                #done
-
 				while :
 				do
 					echo
@@ -310,7 +294,7 @@ else
                                                 (( ${#xcache_admin_pass} >= 5 )) && { xcache_admin_md5_pass=`echo -n "$xcache_admin_pass" | md5sum | awk '{print $1}'` ; break ; } || echo -e "\033[31mxcache admin password least 5 characters! \033[0m"
                                         done
                                 fi
-				if [ "$PHP_version" == '1' -o "$PHP_version" == '2' ];then
+				if [ "$PHP_version" != '5' ];then
                                         while :
                                         do
                                                 echo
@@ -362,7 +346,6 @@ else
                                                         break
                                                 fi
                                         done
-					[ -n "`cat /etc/issue | grep 'Ubuntu 14'`" -a "$Magick" == '1' ] && Magick=9
                                 fi
 
                                 #while :
@@ -502,7 +485,7 @@ if [ "$Web_yn" == 'y' -o "$DB_yn" == 'y' ];then
 fi
 
 if [ "$OS" == 'CentOS' ];then
-	if [ -n "`cat /etc/redhat-release | grep -E ' 7\.| 6\.'`" -a -d "/lib64" ];then
+	if [ -n "`grep -E ' 7\.| 6\.' /etc/redhat-release`" -a -d "/lib64" ];then
 			while :
                         do
                                 echo

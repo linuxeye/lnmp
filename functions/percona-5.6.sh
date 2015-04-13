@@ -8,12 +8,12 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://www.percona.com/redir/downloads/Percona-Server-5.6/LATEST/source/tarball/percona-server-5.6.22-72.0.tar.gz && Download_src
+src_url=http://www.percona.com/redir/downloads/Percona-Server-5.6/LATEST/source/tarball/percona-server-5.6.23-72.1.tar.gz && Download_src
 
 useradd -M -s /sbin/nologin mysql
 mkdir -p $percona_data_dir;chown mysql.mysql -R $percona_data_dir
-tar zxf percona-server-5.6.22-72.0.tar.gz 
-cd percona-server-5.6.22-72.0 
+tar zxf percona-server-5.6.23-72.1.tar.gz 
+cd percona-server-5.6.23-72.1 
 if [ "$je_tc_malloc" == '1' ];then
         EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
 elif [ "$je_tc_malloc" == '2' ];then
@@ -34,7 +34,8 @@ cmake . -DCMAKE_INSTALL_PREFIX=$percona_install_dir \
 -DDEFAULT_CHARSET=utf8 \
 -DDEFAULT_COLLATION=utf8_general_ci \
 $EXE_LINKER
-make && make install
+make -j `grep processor /proc/cpuinfo | wc -l` 
+make install
 
 cd $percona_install_dir/lib/
 ln -s libperconaserverclient.so libmysqlclient.so
@@ -54,7 +55,7 @@ chkconfig mysqld on'
 OS_Debian_Ubuntu='update-rc.d mysqld defaults'
 OS_command
 cd ..
-/bin/rm -rf percona-server-5.6.22-72.0
+/bin/rm -rf percona-server-5.6.23-72.1
 cd ..
 
 # my.cf

@@ -52,6 +52,7 @@ if [ -n "`cat /etc/issue | grep -E 14`" ];then
 	make && make install
 	cd ..
 	rm -rf bison-2.7.1
+	ln -sf /usr/include/freetype2 /usr/include/freetype2/freetype
 elif [ -n "`cat /etc/issue | grep -E 13`" ];then
 	apt-get -y install bison libcloog-ppl1
 elif [ -n "`cat /etc/issue | grep -E 12`" ];then

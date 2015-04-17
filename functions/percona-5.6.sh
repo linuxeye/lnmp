@@ -55,7 +55,7 @@ chkconfig mysqld on'
 OS_Debian_Ubuntu='update-rc.d mysqld defaults'
 OS_command
 cd ..
-/bin/rm -rf percona-server-5.6.23-72.1
+[ -d "$percona_install_dir" ] && /bin/rm -rf percona-server-5.6.23-72.1
 cd ..
 
 # my.cf

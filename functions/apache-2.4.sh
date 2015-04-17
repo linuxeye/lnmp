@@ -40,7 +40,7 @@ fi
 . /etc/profile
 
 cd ..
-/bin/rm -rf httpd-2.4.12
+[ -d "$apache_install_dir" ] && /bin/rm -rf httpd-2.4.12
 /bin/cp $apache_install_dir/bin/apachectl  /etc/init.d/httpd
 sed -i '2a # chkconfig: - 85 15' /etc/init.d/httpd
 sed -i '3a # description: Apache is a World Wide Web server. It is used to serve' /etc/init.d/httpd

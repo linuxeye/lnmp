@@ -53,7 +53,7 @@ chkconfig mysqld on'
 OS_Debian_Ubuntu='update-rc.d mysqld defaults'
 OS_command
 cd ..
-/bin/rm -rf mysql-5.5.43
+[ -d "$mysql_install_dir" ] && /bin/rm -rf mysql-5.5.43
 cd ..
 
 # my.cf

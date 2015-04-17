@@ -8,14 +8,14 @@ cd $lnmp_dir/src
 . ../functions/download.sh
 . ../options.conf
 
-src_url=http://downloads.sourceforge.net/project/imagemagick/old-sources/6.x/6.8/ImageMagick-6.8.9-10.tar.gz && Download_src
+src_url=http://downloads.sourceforge.net/project/imagemagick/old-sources/6.x/6.8/ImageMagick-6.8.8-10.tar.gz && Download_src
 
-tar xzf ImageMagick-6.8.9-10.tar.gz
-cd ImageMagick-6.8.9-10
+tar xzf ImageMagick-6.8.8-10.tar.gz
+cd ImageMagick-6.8.8-10
 ./configure --prefix=/usr/local/imagemagick
 make && make install
 cd ../
-/bin/rm -rf ImageMagick-6.8.9-10
+/bin/rm -rf ImageMagick-6.8.8-10
 
 if [ -e "$php_install_dir/bin/phpize" ];then
 	src_url=http://pecl.php.net/get/imagick-3.1.2.tgz && Download_src

@@ -9,11 +9,11 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.36.tar.gz && Download_src
+src_url=http://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.37.tar.gz && Download_src
 src_url=http://machiel.generaal.net/files/pureftpd/ftp_v2.1.tar.gz && Download_src
 
-tar xzf pure-ftpd-1.0.36.tar.gz
-cd pure-ftpd-1.0.36
+tar xzf pure-ftpd-1.0.37.tar.gz
+cd pure-ftpd-1.0.37
 [ $OS == 'Ubuntu' ] && ln -s $db_install_dir/lib/libmysqlclient.so /usr/lib
 ./configure --prefix=$pureftpd_install_dir CFLAGS=-O2 --with-mysql=$db_install_dir --with-quotas --with-cookie --with-virtualhosts --with-virtualchroot --with-diraliases --with-sysquotas --with-ratios --with-altlog --with-paranoidmsg --with-shadow --with-welcomemsg  --with-throttling --with-uploadscript --with-language=english --with-rfc2640
 make && make install

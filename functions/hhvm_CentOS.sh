@@ -30,14 +30,16 @@ enabled=1
 gpgcheck=0
 EOF
 fi
-cat > /etc/yum.repos.d/gleez.repo << EOF
-[gleez]
-name=Gleez repo
-baseurl=http://yum.gleez.com/7/\$basearch/
-enabled=0
+cat > /etc/yum.repos.d/hhvm.repo << EOF
+[hhvm]
+name=Copr repo for hhvm-repo owned by no1youknowz
+baseurl=https://copr-be.cloud.fedoraproject.org/results/no1youknowz/hhvm-repo/epel-7-$basearch/
+skip_if_unavailable=True
 gpgcheck=0
+enabled=0
 EOF
-yum --enablerepo=gleez -y install hhvm
+yum --enablerepo=hhvm -y install hhvm
+[ ! -e "/usr/bin/hhvm" -a "/usr/local/bin/hhvm" ] && ln -s /usr/local/bin/hhvm /usr/bin/hhvm
 fi
 
 if [ "$CentOS_RHL" == '6' ];then
@@ -68,7 +70,8 @@ enabled=0
 gpgcheck=0
 EOF
 
-yum --enablerepo=remi -y install libwebp mysql mysql-devel mysql-libs
+yum -y remove libwebp
+yum --enablerepo=remi --disablerepo=epel -y install libwebp mysql mysql-devel mysql-libs
 
 yum -y remove boost-system boost-filesystem
 
@@ -153,7 +156,7 @@ Description=HHVM HipHop Virtual Machine (FCGI)
 
 [Service]
 ExecStartPre=/usr/bin/rm -rf /var/run/hhvm ; /usr/bin/mkdir /var/run/hhvm ; /usr/bin/chown www.www /var/run/hhvm
-ExecStart=/usr/bin/hhvm --mode daemon --user www --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
+ExecStart=/usr/bin/hhvm --mode server --user www --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
 
 [Install]
 WantedBy=multi-user.target
@@ -177,23 +180,23 @@ fi
 rm -rf /etc/ld.so.conf.d/*_64.conf
 ldconfig
 # Supervisor
-#yum -y install python-setuptools
-#easy_install supervisor
-#echo_supervisord_conf > /etc/supervisord.conf
-#sed -i 's@pidfile=/tmp/supervisord.pid@pidfile=/var/run/supervisord.pid@' /etc/supervisord.conf
-#[ -z "`grep 'program:hhvm' /etc/supervisord.conf`" ] && cat >> /etc/supervisord.conf << EOF
-#[program:hhvm]
-#command=/usr/bin/hhvm --mode daemon --user www --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
-#numprocs=1 ; number of processes copies to start (def 1)
-#directory=/tmp ; directory to cwd to before exec (def no cwd)
-#autostart=true ; start at supervisord start (default: true)
-#autorestart=unexpected ; whether/when to restart (default: unexpected)
-#stopwaitsecs=10 ; max num secs to wait b4 SIGKILL (default 10)
-#EOF
-#src_url=https://github.com/Supervisor/initscripts/raw/master/redhat-init-mingalevme && Download_src
-#/bin/mv redhat-init-mingalevme /etc/init.d/supervisord
-#chmod +x /etc/init.d/supervisord
-#chkconfig supervisord on
-#service supervisord start
+yum -y install python-setuptools
+easy_install supervisor
+echo_supervisord_conf > /etc/supervisord.conf
+sed -i 's@pidfile=/tmp/supervisord.pid@pidfile=/var/run/supervisord.pid@' /etc/supervisord.conf
+[ -z "`grep 'program:hhvm' /etc/supervisord.conf`" ] && cat >> /etc/supervisord.conf << EOF
+[program:hhvm]
+command=/usr/bin/hhvm --mode server --user www --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
+numprocs=1 ; number of processes copies to start (def 1)
+directory=/tmp ; directory to cwd to before exec (def no cwd)
+autostart=true ; start at supervisord start (default: true)
+autorestart=unexpected ; whether/when to restart (default: unexpected)
+stopwaitsecs=10 ; max num secs to wait b4 SIGKILL (default 10)
+EOF
+src_url=https://github.com/Supervisor/initscripts/raw/master/redhat-init-mingalevme && Download_src
+/bin/mv redhat-init-mingalevme /etc/init.d/supervisord
+chmod +x /etc/init.d/supervisord
+chkconfig supervisord on
+service supervisord start
 cd ..
 }

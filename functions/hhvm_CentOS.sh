@@ -162,13 +162,13 @@ ExecStart=/usr/bin/hhvm --mode server --user www --config /etc/hhvm/server.ini -
 WantedBy=multi-user.target
 EOF
 
-systemctl enable hhvm
-systemctl start hhvm
+#systemctl enable hhvm
+#systemctl start hhvm
 elif [ "$CentOS_RHL" == '6' ];then
 /bin/cp ../init/hhvm-init-CentOS6 /etc/init.d/hhvm
 chmod +x /etc/init.d/hhvm
-chkconfig hhvm on
-service hhvm start
+#chkconfig hhvm on
+#service hhvm start
 fi
 if [ -e "/usr/bin/hhvm" ];then
 	sed -i 's@/dev/shm/php-cgi.sock@/var/run/hhvm/sock@' $web_install_dir/conf/nginx.conf 

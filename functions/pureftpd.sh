@@ -10,7 +10,10 @@ cd $lnmp_dir/src
 . ../options.conf
 
 src_url=http://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.37.tar.gz && Download_src
-src_url=http://machiel.generaal.net/files/pureftpd/ftp_v2.1.tar.gz && Download_src
+# the following not works anymore and this stop the installation !
+# src_url=http://machiel.generaal.net/files/pureftpd/ftp_v2.1.tar.gz && Download_src
+# the new one works
+src_url=https://acelnmp.googlecode.com/files/ftp_v2.1.tar.gz && Download_src
 
 tar xzf pure-ftpd-1.0.37.tar.gz
 cd pure-ftpd-1.0.37

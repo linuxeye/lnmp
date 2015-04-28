@@ -59,7 +59,7 @@ fi
 yum -y install libmcrypt-devel glog-devel jemalloc-devel tbb-devel libdwarf-devel mysql-devel \
 libxml2-devel libicu-devel pcre-devel gd-devel boost-devel sqlite-devel pam-devel \
 bzip2-devel oniguruma-devel openldap-devel readline-devel libc-client-devel libcap-devel \
-libevent-devel libcurl-devel libmemcached-devel
+libevent-devel libcurl-devel libmemcached-devel lcms2 inotify-tools
 
 cat > /etc/yum.repos.d/remi.repo << EOF
 [remi]
@@ -82,7 +82,7 @@ baseurl=http://yum.gleez.com/6/\$basearch/
 enabled=0
 gpgcheck=0
 EOF
-yum --enablerepo=gleez -y install hhvm
+yum --enablerepo=gleez --disablerepo=epel -y install hhvm
 fi
 
 userdel -r nginx;userdel -r saslauth

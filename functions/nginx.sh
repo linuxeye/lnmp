@@ -10,7 +10,7 @@ cd $lnmp_dir/src
 . ../options.conf
 
 src_url=http://downloads.sourceforge.net/project/pcre/pcre/8.36/pcre-8.36.tar.gz && Download_src
-src_url=http://nginx.org/download/nginx-1.6.3.tar.gz && Download_src
+src_url=http://nginx.org/download/nginx-1.8.0.tar.gz && Download_src
 
 tar xzf pcre-8.36.tar.gz
 cd pcre-8.36
@@ -18,9 +18,9 @@ cd pcre-8.36
 make && make install
 cd ../
 
-tar xzf nginx-1.6.3.tar.gz
+tar xzf nginx-1.8.0.tar.gz
 useradd -M -s /sbin/nologin www
-cd nginx-1.6.3
+cd nginx-1.8.0
 
 # Modify Nginx version
 #sed -i 's@#define NGINX_VERSION.*$@#define NGINX_VERSION      "1.2"@' src/core/nginx.h
@@ -38,7 +38,7 @@ elif [ "$je_tc_malloc" == '2' ];then
 	chown -R www.www /tmp/tcmalloc
 fi
 
-./configure --prefix=$nginx_install_dir --user=www --group=www --with-http_stub_status_module --with-http_spdy_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_flv_module $malloc_module
+./configure --prefix=$nginx_install_dir --user=www --group=www --with-http_stub_status_module --with-http_spdy_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module $malloc_module
 make && make install
 if [ -d "$nginx_install_dir" ];then
         echo -e "\033[32mNginx install successfully! \033[0m"

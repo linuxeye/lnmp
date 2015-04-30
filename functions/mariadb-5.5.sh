@@ -55,7 +55,7 @@ chkconfig mysqld on'
 OS_Debian_Ubuntu='update-rc.d mysqld defaults'
 OS_command
 cd ..
-/bin/rm -rf mariadb-5.5.42 
+[ -d "$mariadb_install_dir" ] && /bin/rm -rf mariadb-5.5.42 
 cd ..
 
 # my.cf

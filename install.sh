@@ -20,6 +20,17 @@ printf "
 # For more information please visit http://blog.linuxeye.com/31.html  #
 #######################################################################"
 
+get_char()
+{
+SAVEDSTTY=`stty -g`
+stty -echo
+stty cbreak
+dd if=/dev/tty bs=1 count=1 2> /dev/null
+stty -raw
+stty echo
+stty $SAVEDSTTY
+}
+
 #get pwd
 sed -i "s@^lnmp_dir.*@lnmp_dir=`pwd`@" ./options.conf
 
@@ -485,7 +496,7 @@ if [ "$Web_yn" == 'y' -o "$DB_yn" == 'y' ];then
 fi
 
 if [ "$OS" == 'CentOS' ];then
-	if [ -n "`grep -E ' 7\.| 6\.' /etc/redhat-release`" -a -d "/lib64" ];then
+	if [ -n "`grep -E ' 7\.| 6\.5| 6\.6' /etc/redhat-release`" -a -d "/lib64" ];then
 			while :
                         do
                                 echo
@@ -497,7 +508,9 @@ if [ "$OS" == 'CentOS' ];then
                                 fi
                         done
 	else
-	        echo -e "\033[31mOnly support CentOS6.5 64bit, CentOS7 64bit! \033[0m"
+	        echo -e "\033[31mHHVM only support CentOS6.5/6.6 64bit, CentOS7 64bit! \033[0m"
+		echo "Press Ctrl+c to cancel or Press any key to continue..."
+		char=`get_char`
 	fi
 fi
 

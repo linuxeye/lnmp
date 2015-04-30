@@ -234,6 +234,6 @@ elif [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
 service httpd restart
 fi
 cd ..
-/bin/rm -rf php-5.3.29 
+[ -d "$php_install_dir" ] && /bin/rm -rf php-5.3.29 
 cd ..
 }

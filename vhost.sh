@@ -53,8 +53,8 @@ do
 done
 
 if [ -e "$web_install_dir/conf/vhost/$domain.conf" -o -e "$apache_install_dir/conf/vhost/$domain.conf" ]; then
-	[ -e "$web_install_dir/conf/vhost/$domain.conf" ] && echo -e "$domain in the Nginx/Tengine already exist!\nYou can delete \033[32m$web_install_dir/conf/vhost/$domain.conf\033[0m and re-create"
-	[ -e "$apache_install_dir/conf/vhost/$domain.conf" ] && echo -e "$domain in the Apache already exist!\nYou can delete \033[32m$apache_install_dir/conf/vhost/$domain.conf\033[0m and re-create"
+	[ -e "$web_install_dir/conf/vhost/$domain.conf" ] && echo -e "$domain in the Nginx/Tengine already exist! \nYou can delete \033[32m$web_install_dir/conf/vhost/$domain.conf\033[0m and re-create"
+	[ -e "$apache_install_dir/conf/vhost/$domain.conf" ] && echo -e "$domain in the Apache already exist! \nYou can delete \033[32m$apache_install_dir/conf/vhost/$domain.conf\033[0m and re-create"
 	exit 1
 else
 	echo "domain=$domain"
@@ -100,30 +100,6 @@ echo "Create Virtul Host directory......"
 mkdir -p $vhostdir
 echo "set permissions of Virtual Host directory......"
 chown -R www.www $vhostdir
-}
-
-Ngx_pagespeed()
-{
-# check ngx_pagespeed and add ngx_pagespeed
-$web_install_dir/sbin/nginx -V &> ngx_tmp
-if [ ! -z "`cat ngx_tmp | grep ngx_pagespeed`" ];then
-	rm -rf ngx_tmp 
-        while :
-        do
-		echo ''
-                read -p "Do you want to use ngx_pagespeed module? [y/n]: " ngx_pagespeed_yn
-                if [ "$ngx_pagespeed_yn" != 'y' ] && [ "$ngx_pagespeed_yn" != 'n' ];then
-                        echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
-                else
-                        if [ "$ngx_pagespeed_yn" == 'y' ];then
-                                ngx_pagespeed='pagespeed on;\npagespeed FileCachePath /var/ngx_pagespeed_cache;\npagespeed RewriteLevel CoreFilters;\npagespeed EnableFilters local_storage_cache;\npagespeed EnableFilters collapse_whitespace,remove_comments;\npagespeed EnableFilters outline_css;\npagespeed EnableFilters flatten_css_imports;\npagespeed EnableFilters move_css_above_scripts;\npagespeed EnableFilters move_css_to_head;\npagespeed EnableFilters outline_javascript;\npagespeed EnableFilters combine_javascript;\npagespeed EnableFilters combine_css;\npagespeed EnableFilters rewrite_javascript;\npagespeed EnableFilters rewrite_css,sprite_images;\npagespeed EnableFilters rewrite_style_attributes;\npagespeed EnableFilters recompress_images;\npagespeed EnableFilters resize_images;\npagespeed EnableFilters convert_meta_tags;\nlocation ~ "\\.pagespeed\\.([a-z]\\.)?[a-z]{2}\\.[^.]{10}\\.[^.]+" { add_header "" ""; }\nlocation ~ "^/ngx_pagespeed_static/" { }\nlocation ~ "^/ngx_pagespeed_beacon$" { }\nlocation /ngx_pagespeed_statistics { allow 127.0.0.1; deny all; }\nlocation /ngx_pagespeed_message { allow 127.0.0.1; deny all; }'
-                        else
-                                ngx_pagespeed=
-                        fi
-                        break
-                fi
-        done
-fi
 }
 
 Nginx_anti_hotlinking()
@@ -427,18 +403,18 @@ echo -e "`printf "%-32s" "Directory of:"`\033[32m$vhostdir\033[0m"
 if [ -d "$web_install_dir" -a ! -d "$apache_install_dir" ];then
 	HHVM_YN
 	Input_domain
-	Ngx_pagespeed
 	Nginx_anti_hotlinking
 	Nginx_rewrite
 	Nginx_log
 	Create_nginx_conf
 elif [ ! -d "$web_install_dir" -a -d "$apache_install_dir" ];then
+	HHVM_YN
 	Input_domain
 	Apache_log
 	Create_apache_conf
 elif [ -d "$web_install_dir" -a -d "$apache_install_dir" ];then
+	HHVM_YN
 	Input_domain
-	Ngx_pagespeed
 	Nginx_anti_hotlinking
 	#Nginx_rewrite
 	Nginx_log

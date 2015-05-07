@@ -33,7 +33,7 @@ fi
 cat > /etc/yum.repos.d/hhvm.repo << EOF
 [hhvm]
 name=Copr repo for hhvm-repo owned by no1youknowz
-baseurl=https://copr-be.cloud.fedoraproject.org/results/no1youknowz/hhvm-repo/epel-7-$basearch/
+baseurl=https://copr-be.cloud.fedoraproject.org/results/no1youknowz/hhvm-repo/epel-7-\$basearch/
 skip_if_unavailable=True
 gpgcheck=0
 enabled=0

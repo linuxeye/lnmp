@@ -22,12 +22,12 @@ LIBC_VERSION=`getconf -a | grep GNU_LIBC_VERSION | awk '{print $NF}'`
 LIBC_YN=`echo "$LIBC_VERSION < 2.14" | bc`
 [ $LIBC_YN == '1' ] && GLIBC_FLAG=linux || GLIBC_FLAG=linux-glibc_214 
 
-src_url=$DOWN_ADDR/mariadb-10.0.17/bintar-${GLIBC_FLAG}-$SYS_BIT_a/mariadb-10.0.17-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz && Download_src
+src_url=$DOWN_ADDR/mariadb-10.0.18/bintar-${GLIBC_FLAG}-$SYS_BIT_a/mariadb-10.0.18-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz && Download_src
 
 useradd -M -s /sbin/nologin mysql
 mkdir -p $mariadb_data_dir;chown mysql.mysql -R $mariadb_data_dir
-tar zxf mariadb-10.0.17-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz 
-mv mariadb-10.0.17-linux-${SYS_BIT_b} $mariadb_install_dir 
+tar zxf mariadb-10.0.18-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz 
+mv mariadb-10.0.18-linux-${SYS_BIT_b} $mariadb_install_dir 
 if [ "$je_tc_malloc" == '1' ];then
 	sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' $mariadb_install_dir/bin/mysqld_safe
 elif [ "$je_tc_malloc" == '2' ];then

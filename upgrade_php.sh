@@ -7,11 +7,13 @@
 
 export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 clear
-echo "#######################################################################"
-echo "#         LNMP for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+          #"
-echo "#                    Upgrade PHP for LNMP                             #"
-echo "# For more information Please visit http://blog.linuxeye.com/31.html  #"
-echo "#######################################################################"
+printf "
+#######################################################################
+#    LNMP/LAMP/LANMP for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+    #
+#                    Upgrade PHP for LNMP                             #
+# For more information please visit http://blog.linuxeye.com/31.html  #
+#######################################################################
+"
 
 cd src
 . ../options.conf

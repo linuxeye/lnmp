@@ -178,6 +178,7 @@ ntpdate pool.ntp.org
 service crond restart
 
 # iptables
+[ -e '/etc/sysconfig/iptables' ] && [ -n "`grep '20000:30000' /etc/sysconfig/iptables`" ] && IPTABLES_FTP_FLAG=yes 
 cat > /etc/sysconfig/iptables << EOF
 # Firewall configuration written by system-config-securitylevel
 # Manual customization of this file is not recommended.
@@ -200,6 +201,8 @@ cat > /etc/sysconfig/iptables << EOF
 COMMIT
 EOF
 
+[ "$IPTABLES_FTP_FLAG" == 'yes' ] && sed -i "s@dport 443 -j ACCEPT@&\n-A INPUT -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT\n-A INPUT -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT@" /etc/sysconfig/iptables
+
 FW_PORT_FLAG=`grep -ow "dport $SSH_PORT" /etc/sysconfig/iptables`
 [ -z "$FW_PORT_FLAG" -a "$SSH_PORT" != '22' ] && sed -i "s@dport 22 -j ACCEPT@&\n-A INPUT -p tcp -m state --state NEW -m tcp --dport $SSH_PORT -j ACCEPT@" /etc/sysconfig/iptables 
 service iptables restart
@@ -207,16 +210,16 @@ service sshd restart
 
 # install tmux
 if [ ! -e "`which tmux`" ];then
-	src_url=http://downloads.sourceforge.net/project/levent/libevent/libevent-2.0/libevent-2.0.21-stable.tar.gz && Download_src 
-	src_url=http://downloads.sourceforge.net/project/tmux/tmux/tmux-1.9/tmux-1.9a.tar.gz && Download_src 
-	tar xzf libevent-2.0.21-stable.tar.gz
-	cd libevent-2.0.21-stable
+	src_url=http://downloads.sourceforge.net/project/levent/libevent/libevent-2.0/libevent-2.0.22-stable.tar.gz && Download_src 
+	src_url=http://downloads.sourceforge.net/project/tmux/tmux/tmux-2.0/tmux-2.0.tar.gz && Download_src 
+	tar xzf libevent-2.0.22-stable.tar.gz
+	cd libevent-2.0.22-stable
 	./configure
 	make && make install
 	cd ..
 
-	tar xzf tmux-1.9a.tar.gz
-	cd tmux-1.9a
+	tar xzf tmux-2.0.tar.gz
+	cd tmux-2.0
 	CFLAGS="-I/usr/local/include" LDFLAGS="-L//usr/local/lib" ./configure
 	make && make install
 	cd ..

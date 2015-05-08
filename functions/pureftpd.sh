@@ -41,7 +41,7 @@ update-rc.d pureftpd defaults"
 	sed -i "s@^MySQLConfigFile.*@MySQLConfigFile   $pureftpd_install_dir/pureftpd-mysql.conf@" $pureftpd_install_dir/pure-ftpd.conf
 	sed -i "s@^LimitRecursion.*@LimitRecursion	65535 8@" $pureftpd_install_dir/pure-ftpd.conf
 	/bin/cp conf/pureftpd-mysql.conf $pureftpd_install_dir/
-	conn_ftpusers_dbpwd=`cat /dev/urandom | head -1 | md5sum | head -c 8`
+	[ -z "$conn_ftpusers_dbpwd" ] && conn_ftpusers_dbpwd=`cat /dev/urandom | head -1 | md5sum | head -c 8`
 	sed -i "s@^conn_ftpusers_dbpwd.*@conn_ftpusers_dbpwd=$conn_ftpusers_dbpwd@" options.conf
 	sed -i 's/tmppasswd/'$conn_ftpusers_dbpwd'/g' $pureftpd_install_dir/pureftpd-mysql.conf
 	sed -i 's/conn_ftpusers_dbpwd/'$conn_ftpusers_dbpwd'/g' conf/script.mysql
@@ -55,8 +55,8 @@ update-rc.d pureftpd defaults"
 	tar xzf ftp_v2.1.tar.gz
 	sed -i 's/tmppasswd/'$conn_ftpusers_dbpwd'/' ftp/config.php
 	sed -i "s/myipaddress.com/`echo $local_IP`/" ftp/config.php
-	sed -i 's@\$DEFUserID.*;@\$DEFUserID = "501";@' ftp/config.php
-	sed -i 's@\$DEFGroupID.*;@\$DEFGroupID = "501";@' ftp/config.php
+        sed -i "s@\$DEFUserID.*;@\$DEFUserID = `id -u www`;@" ftp/config.php
+        sed -i "s@\$DEFGroupID.*;@\$DEFGroupID = `id -g www`;@" ftp/config.php
 	sed -i 's@iso-8859-1@UTF-8@' ftp/language/english.php
 	/bin/cp ../conf/chinese.php ftp/language/
 	sed -i 's@\$LANG.*;@\$LANG = "chinese";@' ftp/config.php
@@ -65,8 +65,17 @@ update-rc.d pureftpd defaults"
 	cd ..
 
 	# iptables Ftp
-	iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
-	iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
+	if [ -e '/etc/sysconfig/iptables' ];then
+		if [ -z "`grep '20000:30000' /etc/sysconfig/iptables`" ];then
+			iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
+			iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
+		fi
+	elif [ -e '/etc/iptables.up.rules' ];then
+		if [ -z "`grep '20000:30000' /etc/iptables.up.rules`" ];then
+			iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
+			iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
+		fi
+	fi
 	OS_CentOS='service iptables save'
 	OS_Debian_Ubuntu='iptables-save > /etc/iptables.up.rules'
 	OS_command

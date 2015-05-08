@@ -125,5 +125,8 @@ EOF
 	sed -i "s@LogFormat \"%h %l@LogFormat \"%h %a %l@g" $apache_install_dir/conf/httpd.conf
 fi
 cd ..
+[ "$Nginx_version" == '3' -a "$Apache_version" != '3' ] && sed -i "s@^web_install_dir.*@web_install_dir=$apache_install_dir@" options.conf
+sed -i "s@/home/wwwroot@$home_dir@g" vhost.sh
+sed -i "s@/home/wwwlogs@$wwwlogs_dir@g" vhost.sh
 service httpd start
 }

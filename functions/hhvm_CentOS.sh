@@ -71,7 +71,9 @@ gpgcheck=0
 EOF
 
 yum -y remove libwebp
-yum --enablerepo=remi --disablerepo=epel -y install libwebp mysql mysql-devel mysql-libs
+src_url=http://rpms.famillecollet.com/enterprise/6/olds/x86_64/libwebp-0.3.1-2.el6.remi.x86_64.rpm && Download_src
+rpm -ivh libwebp-0.3.1-2.el6.remi.x86_64.rpm
+yum --enablerepo=remi --disablerepo=epel -y install mysql mysql-devel mysql-libs
 
 yum -y remove boost-system boost-filesystem
 

@@ -365,21 +365,23 @@ do
                 echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
         else
 
-                if [ "$FTP_yn" == 'y' -a "$Web_yn" != 'n' -a "$DB_yn" != 'n' -a "$PHP_yn" != 'n' ];then
-                        [ -d "$pureftpd_install_dir" ] && { echo -e "\033[31mThe FTP service already installed! \033[0m" ; FTP_yn=Other ; break ; }
-                        while :
-                        do
-                                read -p "Please input the manager password of Pure-FTPd: " ftpmanagerpwd
-				[ -n "`echo $ftpmanagerpwd | grep '[+|&]'`" ] && { echo -e "\033[31minput error,not contain a plus sign (+) and &\033[0m"; continue; }
-                                if (( ${#ftpmanagerpwd} >= 5 ));then
-                                        sed -i "s+^ftpmanagerpwd.*+ftpmanagerpwd='$ftpmanagerpwd'+" options.conf
-                                        break
-                                else
-                                        echo -e "\033[31mFtp manager password least 5 characters! \033[0m"
-                                fi
-                        done
-		else
-	                echo -e "\033[31mYou did not choose to install the Web server,Database and PHP\033[0m"
+                if [ "$FTP_yn" == 'y' ];then
+			if [ "$Web_yn" != 'n' -a "$DB_yn" != 'n' -a "$PHP_yn" != 'n' ];then
+	                        [ -d "$pureftpd_install_dir" ] && { echo -e "\033[31mThe FTP service already installed! \033[0m" ; FTP_yn=Other ; break ; }
+	                        while :
+	                        do
+	                                read -p "Please input the manager password of Pure-FTPd: " ftpmanagerpwd
+					[ -n "`echo $ftpmanagerpwd | grep '[+|&]'`" ] && { echo -e "\033[31minput error,not contain a plus sign (+) and &\033[0m"; continue; }
+	                                if (( ${#ftpmanagerpwd} >= 5 ));then
+	                                        sed -i "s+^ftpmanagerpwd.*+ftpmanagerpwd='$ftpmanagerpwd'+" options.conf
+	                                        break
+	                                else
+	                                        echo -e "\033[31mFtp manager password least 5 characters! \033[0m"
+	                                fi
+	                        done
+			else
+		                echo -e "\033[31mYou did not choose to install the Web server,Database and PHP\033[0m"
+			fi
                 fi
                 break
         fi

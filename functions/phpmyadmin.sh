@@ -16,6 +16,6 @@ tar xzf phpMyAdmin-4.4.6-all-languages.tar.gz
 mkdir $home_dir/default/phpMyAdmin/{upload,save}
 sed -i "s@UploadDir.*@UploadDir'\] = 'upload';@" $home_dir/default/phpMyAdmin/config.inc.php
 sed -i "s@SaveDir.*@SaveDir'\] = 'save';@" $home_dir/default/phpMyAdmin/config.inc.php
-chown -R www.www $home_dir/default/phpMyAdmin
+chown -R ${run_user}.$run_user $home_dir/default/phpMyAdmin
 cd ..
 }

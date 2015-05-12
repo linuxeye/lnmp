@@ -55,8 +55,8 @@ update-rc.d pureftpd defaults"
 	tar xzf ftp_v2.1.tar.gz
 	sed -i 's/tmppasswd/'$conn_ftpusers_dbpwd'/' ftp/config.php
 	sed -i "s/myipaddress.com/`echo $local_IP`/" ftp/config.php
-        sed -i "s@\$DEFUserID.*;@\$DEFUserID = `id -u www`;@" ftp/config.php
-        sed -i "s@\$DEFGroupID.*;@\$DEFGroupID = `id -g www`;@" ftp/config.php
+        sed -i "s@\$DEFUserID.*;@\$DEFUserID = `id -u $run_user`;@" ftp/config.php
+        sed -i "s@\$DEFGroupID.*;@\$DEFGroupID = `id -g $run_user`;@" ftp/config.php
 	sed -i 's@iso-8859-1@UTF-8@' ftp/language/english.php
 	/bin/cp ../conf/chinese.php ftp/language/
 	sed -i 's@\$LANG.*;@\$LANG = "chinese";@' ftp/config.php

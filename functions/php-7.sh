@@ -60,7 +60,8 @@ make && make install
 cd ../
 /bin/rm -rf mcrypt-2.6.8
 
-useradd -M -s /sbin/nologin www
+id -u $run_user >/dev/null 2>&1
+[ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 
 rm -rf php-src* 
 wget -c --no-check-certificate -O php-src-master.zip https://github.com/php/php-src/archive/master.zip 
 unzip -q php-src-master.zip
@@ -82,7 +83,7 @@ CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=
 --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
 else
 CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
---with-fpm-user=www --with-fpm-group=www --enable-fpm $PHP_cache_tmp --disable-fileinfo \
+--with-fpm-user=$run_user --with-fpm-group=$run_user --enable-fpm $PHP_cache_tmp --disable-fileinfo \
 --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
@@ -189,15 +190,15 @@ daemonize = yes
 ; Pool Definitions ;
 ;;;;;;;;;;;;;;;;;;;;
 
-[www]
+[$run_user]
 listen = /dev/shm/php-cgi.sock
 listen.backlog = -1
 listen.allowed_clients = 127.0.0.1
-listen.owner = www
-listen.group = www
+listen.owner = $run_user 
+listen.group = $run_user 
 listen.mode = 0666
-user = www
-group = www
+user = $run_user 
+group = $run_user 
 
 pm = dynamic
 pm.max_children = 12 
@@ -250,7 +251,7 @@ elif [ $Mem -gt 8500 ];then
         sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 120@" $php_install_dir/etc/php-fpm.conf
 fi
 
-[ "$Web_yn" == 'n' ] && sed -i "s@^listen =.*@listen = $local_IP:9000@" $php_install_dir/etc/php-fpm.conf 
+#[ "$Web_yn" == 'n' ] && sed -i "s@^listen =.*@listen = $local_IP:9000@" $php_install_dir/etc/php-fpm.conf 
 service php-fpm start
 elif [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
 service httpd restart

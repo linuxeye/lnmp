@@ -8,7 +8,8 @@ cd $lnmp_dir/src
 . ../functions/download.sh 
 . ../options.conf
 
-useradd -M -s /sbin/nologin www
+id -u $run_user >/dev/null 2>&1
+[ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 
 
 if [ -n "$(grep ' 7\.' /etc/redhat-release)" ];then
 	CentOS_RHL=7
@@ -88,9 +89,9 @@ yum --enablerepo=gleez --disablerepo=epel -y install hhvm
 fi
 
 userdel -r nginx;userdel -r saslauth
-rm -rf /var/run/hhvm/ /var/log/hhvm/
-mkdir /var/run/hhvm/ /var/log/hhvm/
-chown -R www.www /var/run/hhvm /var/log/hhvm
+rm -rf /var/log/hhvm
+mkdir /var/log/hhvm
+chown -R ${run_user}.$run_user /var/log/hhvm
 cat > /etc/hhvm/config.hdf << EOF
 ResourceLimit {
   CoreFileSize = 0          # in bytes
@@ -132,16 +133,16 @@ EOF
 
 cat > /etc/hhvm/server.ini << EOF
 ; php options
-pid = /var/run/hhvm/pid
+pid = /var/log/hhvm/pid
 
 ; hhvm specific
 ;hhvm.server.port = 9001
-hhvm.server.file_socket = /var/run/hhvm/sock
+hhvm.server.file_socket = /var/log/hhvm/sock
 hhvm.server.type = fastcgi
 hhvm.server.default_document = index.php
 hhvm.log.use_log_file = true
 hhvm.log.file = /var/log/hhvm/error.log
-hhvm.repo.central.path = /var/run/hhvm/hhvm.hhbc
+hhvm.repo.central.path = /var/log/hhvm/hhvm.hhbc
 EOF
 
 cat > /etc/hhvm/php.ini << EOF
@@ -157,8 +158,8 @@ cat > /etc/systemd/system/hhvm.service << EOF
 Description=HHVM HipHop Virtual Machine (FCGI)
 
 [Service]
-ExecStartPre=/usr/bin/rm -rf /var/run/hhvm ; /usr/bin/mkdir /var/run/hhvm ; /usr/bin/chown www.www /var/run/hhvm
-ExecStart=/usr/bin/hhvm --mode server --user www --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
+ExecStartPre=/usr/bin/rm -rf /var/log/hhvm ; /usr/bin/mkdir /var/log/hhvm ; /usr/bin/chown ${run_user}.$run_user /var/log/hhvm 
+ExecStart=/usr/bin/hhvm --mode server --user $run_user --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
 
 [Install]
 WantedBy=multi-user.target
@@ -168,12 +169,13 @@ EOF
 #systemctl start hhvm
 elif [ "$CentOS_RHL" == '6' ];then
 /bin/cp ../init/hhvm-init-CentOS6 /etc/init.d/hhvm
+sed -i "s@^USER=www@USER=$run_user@" /etc/init.d/hhvm
 chmod +x /etc/init.d/hhvm
 #chkconfig hhvm on
 #service hhvm start
 fi
 if [ -e "/usr/bin/hhvm" -a ! -e "$php_install_dir" ];then
-	sed -i 's@/dev/shm/php-cgi.sock@/var/run/hhvm/sock@' $web_install_dir/conf/nginx.conf 
+	sed -i 's@/dev/shm/php-cgi.sock@/var/log/hhvm/sock@' $web_install_dir/conf/nginx.conf 
 	[ -z "`grep 'fastcgi_param SCRIPT_FILENAME' $web_install_dir/conf/nginx.conf`" ] && sed -i "s@fastcgi_index index.php;@&\n\t\tfastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;@" $web_install_dir/conf/nginx.conf 
 	sed -i 's@include fastcgi.conf;@include fastcgi_params;@' $web_install_dir/conf/nginx.conf 
 	service nginx reload
@@ -188,7 +190,7 @@ echo_supervisord_conf > /etc/supervisord.conf
 sed -i 's@pidfile=/tmp/supervisord.pid@pidfile=/var/run/supervisord.pid@' /etc/supervisord.conf
 [ -z "`grep 'program:hhvm' /etc/supervisord.conf`" ] && cat >> /etc/supervisord.conf << EOF
 [program:hhvm]
-command=/usr/bin/hhvm --mode server --user www --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
+command=/usr/bin/hhvm --mode server --user $run_user --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
 numprocs=1 ; number of processes copies to start (def 1)
 directory=/tmp ; directory to cwd to before exec (def no cwd)
 autostart=true ; start at supervisord start (default: true)

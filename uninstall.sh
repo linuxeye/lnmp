@@ -27,6 +27,11 @@ Uninstall()
 [ -e "$memcached_install_dir" ] && service memcached stop && rm -rf /etc/init.d/memcached
 [ -e "/usr/local/imagemagick" ] && rm -rf /usr/local/imagemagick 
 [ -e "/usr/local/graphicsmagick" ] && rm -rf /usr/local/graphicsmagick 
+[ -e "/etc/init.d/supervisord" ] && service supervisord stop && { rm -rf /etc/supervisord.conf; /etc/init.d/supervisord; } 
+[ -e "/etc/systemd/system/hhvm.service" ] && service hhvm stop && { rpm -e hhvm ;rm -rf /etc/systemd/system/hhvm.service /etc/hhvm /var/log/hhvm; } 
+[ -e "/etc/init.d/hhvm" ] && service hhvm stop && { rpm -e hhvm ;rm -rf /etc/init.d/hhvm /etc/hhvm /var/log/hhvm; } 
+id -u $run_user >/dev/null 2>&1 ; [ $? -eq 0 ] && userdel $run_user
+id -u mysql >/dev/null 2>&1 ; [ $? -eq 0 ] && userdel mysql 
 
 /bin/mv ${home_dir}{,_$(date +%F)}
 /bin/mv ${db_data_dir}{,_$(date +%F)}

@@ -381,6 +381,7 @@ do
 	                        done
 			else
 		                echo -e "\033[31mYou did not choose to install the Web server,Database and PHP\033[0m"
+				FTP_yn=n
 			fi
                 fi
                 break

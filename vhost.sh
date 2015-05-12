@@ -33,7 +33,7 @@ if [ -e "/usr/bin/hhvm" ];then
         done
 fi
 if [ "$PHP_HHVM" == '2' ];then
-        NGX_CONF="fastcgi_pass unix:/var/run/hhvm/sock;\n\tfastcgi_index index.php;\n\tfastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;\n\tinclude fastcgi_params;"
+        NGX_CONF="fastcgi_pass unix:/var/log/hhvm/sock;\n\tfastcgi_index index.php;\n\tfastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;\n\tinclude fastcgi_params;"
 else
         NGX_CONF="#fastcgi_pass remote_php_ip:9000;\n\tfastcgi_pass unix:/dev/shm/php-cgi.sock;\n\tfastcgi_index index.php;\n\tinclude fastcgi.conf;"
 fi
@@ -99,7 +99,7 @@ echo
 echo "Create Virtul Host directory......"
 mkdir -p $vhostdir
 echo "set permissions of Virtual Host directory......"
-chown -R www.www $vhostdir
+chown -R ${run_user}.$run_user $vhostdir
 }
 
 Nginx_anti_hotlinking()

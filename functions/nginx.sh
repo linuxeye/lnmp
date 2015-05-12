@@ -19,7 +19,8 @@ make && make install
 cd ../
 
 tar xzf nginx-1.8.0.tar.gz
-useradd -M -s /sbin/nologin www
+id -u $run_user >/dev/null 2>&1
+[ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 
 cd nginx-1.8.0
 
 # Modify Nginx version
@@ -35,10 +36,10 @@ if [ "$je_tc_malloc" == '1' ];then
 elif [ "$je_tc_malloc" == '2' ];then
 	malloc_module='--with-google_perftools_module'
 	mkdir /tmp/tcmalloc
-	chown -R www.www /tmp/tcmalloc
+	chown -R ${run_user}.$run_user /tmp/tcmalloc
 fi
 
-./configure --prefix=$nginx_install_dir --user=www --group=www --with-http_stub_status_module --with-http_spdy_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module $malloc_module
+./configure --prefix=$nginx_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_spdy_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module $malloc_module
 make && make install
 if [ -d "$nginx_install_dir" ];then
         echo -e "\033[32mNginx install successfully! \033[0m"
@@ -67,6 +68,7 @@ else
 fi
 sed -i "s@/home/wwwroot/default@$home_dir/default@" $nginx_install_dir/conf/nginx.conf
 sed -i "s@/home/wwwlogs@$wwwlogs_dir@g" $nginx_install_dir/conf/nginx.conf
+sed -i "s@^user www www@user $run_user $run_user@" $nginx_install_dir/conf/nginx.conf
 [ "$je_tc_malloc" == '2' ] && sed -i 's@^pid\(.*\)@pid\1\ngoogle_perftools_profiles /tmp/tcmalloc;@' $nginx_install_dir/conf/nginx.conf 
 
 # worker_cpu_affinity

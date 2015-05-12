@@ -17,8 +17,8 @@ $php_install_dir/bin/phpize
 make && make install
 if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions | grep zts`/xcache.so" ];then
 	/bin/cp -R htdocs $home_dir/default/xcache
-	chown -R www.www $home_dir/default/xcache
-	touch /tmp/xcache;chown www.www /tmp/xcache
+	chown -R ${run_user}.$run_user $home_dir/default/xcache
+	touch /tmp/xcache;chown ${run_user}.$run_user /tmp/xcache
 
         Memtatol=`free -m | grep 'Mem:' | awk '{print $2}'`
         if [ $Memtatol -le 512 ];then

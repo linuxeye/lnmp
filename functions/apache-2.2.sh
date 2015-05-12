@@ -11,7 +11,8 @@ cd $lnmp_dir/src
 
 src_url=http://www.apache.org/dist/httpd/httpd-2.2.29.tar.gz && Download_src 
 
-useradd -M -s /sbin/nologin www
+id -u $run_user >/dev/null 2>&1
+[ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 
 tar xzf httpd-2.2.29.tar.gz
 cd httpd-2.2.29
 ./configure --prefix=$apache_install_dir --enable-headers --enable-deflate --enable-mime-magic --enable-so --enable-rewrite --enable-ssl --with-ssl --enable-expires --enable-static-support --enable-suexec --disable-userdir --with-included-apr --with-mpm=prefork --disable-userdir
@@ -37,8 +38,8 @@ chkconfig httpd on'
 OS_Debian_Ubuntu='update-rc.d httpd defaults'
 OS_command
 
-sed -i 's@^User daemon@User www@' $apache_install_dir/conf/httpd.conf
-sed -i 's@^Group daemon@Group www@' $apache_install_dir/conf/httpd.conf
+sed -i "s@^User daemon@User $run_user@" $apache_install_dir/conf/httpd.conf
+sed -i "s@^Group daemon@Group $run_user@" $apache_install_dir/conf/httpd.conf
 if [ "$Nginx_version" == '3' ];then
 	sed -i 's/^#ServerName www.example.com:80/ServerName 0.0.0.0:80/' $apache_install_dir/conf/httpd.conf
 	TMP_PORT=80

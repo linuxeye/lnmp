@@ -20,7 +20,8 @@ cd pcre-8.36
 make && make install
 cd ../
 
-useradd -M -s /sbin/nologin www
+id -u $run_user >/dev/null 2>&1
+[ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 
 tar xzf httpd-2.4.12.tar.gz
 tar xzf apr-1.5.1.tar.gz
 tar xzf apr-util-1.5.4.tar.gz
@@ -50,8 +51,8 @@ chkconfig httpd on'
 OS_Debian_Ubuntu='update-rc.d httpd defaults'
 OS_command
 
-sed -i 's@^User daemon@User www@' $apache_install_dir/conf/httpd.conf
-sed -i 's@^Group daemon@Group www@' $apache_install_dir/conf/httpd.conf
+sed -i "s@^User daemon@User $run_user@" $apache_install_dir/conf/httpd.conf
+sed -i "s@^Group daemon@Group $run_user@" $apache_install_dir/conf/httpd.conf
 if [ "$Nginx_version" == '3' ];then
 	sed -i 's/^#ServerName www.example.com:80/ServerName 0.0.0.0:80/' $apache_install_dir/conf/httpd.conf
 	TMP_PORT=80

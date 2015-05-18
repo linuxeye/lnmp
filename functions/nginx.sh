@@ -9,11 +9,11 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh 
 . ../options.conf
 
-src_url=http://downloads.sourceforge.net/project/pcre/pcre/8.36/pcre-8.36.tar.gz && Download_src
+src_url=http://downloads.sourceforge.net/project/pcre/pcre/8.37/pcre-8.37.tar.gz && Download_src
 src_url=http://nginx.org/download/nginx-1.8.0.tar.gz && Download_src
 
-tar xzf pcre-8.36.tar.gz
-cd pcre-8.36
+tar xzf pcre-8.37.tar.gz
+cd pcre-8.37
 ./configure
 make && make install
 cd ../

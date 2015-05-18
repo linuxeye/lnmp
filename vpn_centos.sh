@@ -6,7 +6,7 @@
 # Installs a PPTP VPN-only system for CentOS
 
 # Check if user is root
-[ $(id -u) != "0" ] && echo "Error: You must be root to run this script" && exit 1
+[ $(id -u) != "0" ] && { echo -e "\033[31mError: You must be root to run this script\033[0m"; exit 1; } 
 
 export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 clear

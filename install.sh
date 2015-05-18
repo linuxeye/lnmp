@@ -10,7 +10,7 @@
 #       https://github.com/lj2007331/lnmp
 
 # Check if user is root
-[ $(id -u) != "0" ] && echo "Error: You must be root to run this script" && exit 1 
+[ $(id -u) != "0" ] && { echo -e "\033[31mError: You must be root to run this script\033[0m"; exit 1; } 
 
 export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 clear
@@ -364,31 +364,10 @@ do
         if [ "$FTP_yn" != 'y' -a "$FTP_yn" != 'n' ];then
                 echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
         else
-
-                if [ "$FTP_yn" == 'y' ];then
-			if [ "$Web_yn" != 'n' -a "$DB_yn" != 'n' -a "$PHP_yn" != 'n' ];then
-	                        [ -d "$pureftpd_install_dir" ] && { echo -e "\033[31mThe FTP service already installed! \033[0m" ; FTP_yn=Other ; break ; }
-	                        while :
-	                        do
-	                                read -p "Please input the manager password of Pure-FTPd: " ftpmanagerpwd
-					[ -n "`echo $ftpmanagerpwd | grep '[+|&]'`" ] && { echo -e "\033[31minput error,not contain a plus sign (+) and &\033[0m"; continue; }
-	                                if (( ${#ftpmanagerpwd} >= 5 ));then
-	                                        sed -i "s+^ftpmanagerpwd.*+ftpmanagerpwd='$ftpmanagerpwd'+" options.conf
-	                                        break
-	                                else
-	                                        echo -e "\033[31mFtp manager password least 5 characters! \033[0m"
-	                                fi
-	                        done
-			else
-		                echo -e "\033[31mYou did not choose to install the Web server,Database and PHP\033[0m"
-				FTP_yn=n
-			fi
-                fi
+                [ "$FTP_yn" == 'y' -a -d "$pureftpd_install_dir" ] && { echo -e "\033[31mThe FTP service already installed! \033[0m" ; FTP_yn=Other ; break ; }
                 break
         fi
 done
-
-[ "$FTP_yn" == 'Other' ] && $db_install_dir/bin/mysql -uroot -p$dbrootpwd < conf/script.mysql
 
 # check phpMyAdmin
 while :
@@ -399,7 +378,7 @@ do
                 echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
         else
 		if [ "$phpMyAdmin_yn" == 'y' ];then
-		        [ -d "$home_dir/default/phpMyAdmin" ] && echo -e "\033[31mThe phpMyAdmin already installed! \033[0m" && phpMyAdmin_yn=n && break
+		        [ -d "$home_dir/default/phpMyAdmin" ] && echo -e "\033[31mThe phpMyAdmin already installed! \033[0m" && phpMyAdmin_yn=Other && break
 		fi
                 break
         fi
@@ -415,7 +394,7 @@ do
                 echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
 	else
 		if [ "$redis_yn" == 'y' ];then
-			[ -d "$redis_install_dir" ] && { echo -e "\033[31mThe redis already installed! \033[0m" ; redis_yn=n ; break ; }
+			[ -d "$redis_install_dir" ] && { echo -e "\033[31mThe redis already installed! \033[0m" ; redis_yn=Other ; break ; }
 		fi
 		break
 	fi
@@ -430,7 +409,7 @@ do
                 echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
         else
 		if [ "$memcached_yn" == 'y' ];then
-			[ -d "$memcached_install_dir" ] && { echo -e "\033[31mThe memcached already installed! \033[0m" ; memcached_yn=n ; break ; }
+			[ -d "$memcached_install_dir" ] && { echo -e "\033[31mThe memcached already installed! \033[0m" ; memcached_yn=Other ; break ; }
 		fi
                 break
         fi
@@ -474,7 +453,7 @@ do
                 echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
         else
                 if [ "$HHVM_yn" == 'y' ];then
-                        if [ -n "`grep -E ' 7\.| 6\.5| 6\.6| 6\.7' /etc/redhat-release`" -a -d "/lib64" ];then
+                        if [ -e '/etc/redhat-release' ] && [ -n "`grep -E ' 7\.| 6\.5| 6\.6| 6\.7' /etc/redhat-release`" -a -d "/lib64" ];then
                                 break
                         else
                                 echo -e "\033[31mHHVM only support CentOS6.5+ 64bit, CentOS7 64bit! \033[0m"
@@ -663,8 +642,7 @@ echo "####################Congratulations########################"
 [ "$PHP_cache" == '4' ] && echo -e "`printf "%-32s" "eAccelerator user:"`\033[32madmin\033[0m"
 [ "$PHP_cache" == '4' ] && echo -e "`printf "%-32s" "eAccelerator password:"`\033[32meAccelerator\033[0m"
 [ "$FTP_yn" == 'y' ] && echo -e "\n`printf "%-32s" "Pure-FTPd install dir:"`\033[32m$pureftpd_install_dir\033[0m"
-[ "$FTP_yn" == 'y' ] && echo -e "`printf "%-32s" "Pure-FTPd php manager dir:"`\033[32m$home_dir/default/ftp\033[0m"
-[ "$FTP_yn" == 'y' ] && echo -e "`printf "%-32s" "Ftp User Control Panel url:"`\033[32mhttp://$local_IP/ftp\033[0m"
+[ "$FTP_yn" == 'y' ] && echo -e "`printf "%-32s" "Create FTP virtual script:"`\033[32m./pureftpd_vhost.sh\033[0m"
 [ "$phpMyAdmin_yn" == 'y' ] && echo -e "\n`printf "%-32s" "phpMyAdmin dir:"`\033[32m$home_dir/default/phpMyAdmin\033[0m"
 [ "$phpMyAdmin_yn" == 'y' ] && echo -e "`printf "%-32s" "phpMyAdmin Control Panel url:"`\033[32mhttp://$local_IP/phpMyAdmin\033[0m"
 [ "$redis_yn" == 'y' ] && echo -e "\n`printf "%-32s" "redis install dir:"`\033[32m$redis_install_dir\033[0m"

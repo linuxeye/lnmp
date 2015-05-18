@@ -40,6 +40,12 @@
    ./vhost.sh
 ```
 
+## How to add FTP virtual user 
+
+```bash
+   ./pureftpd_vhost.sh
+```
+
 ## How to backup
 
 ```bash

@@ -13,7 +13,7 @@ src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/2.6.8/mcrypt-2.6.8.tar.gz && Download_src
-src_url=http://www.php.net/distributions/php-5.4.40.tar.gz && Download_src
+src_url=http://www.php.net/distributions/php-5.4.41.tar.gz && Download_src
 
 tar xzf libiconv-1.14.tar.gz
 cd libiconv-1.14
@@ -61,12 +61,12 @@ make && make install
 cd ../
 /bin/rm -rf mcrypt-2.6.8 
 
-tar xzf php-5.4.40.tar.gz
+tar xzf php-5.4.41.tar.gz
 id -u $run_user >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 
 wget -O fpm-race-condition.patch 'https://bugs.php.net/patch-display.php?bug_id=65398&patch=fpm-race-condition.patch&revision=1375772074&download=1'
-patch -d php-5.4.40 -p0 < fpm-race-condition.patch
-cd php-5.4.40
+patch -d php-5.4.41 -p0 < fpm-race-condition.patch
+cd php-5.4.41
 make clean
 if [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
 CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
@@ -235,6 +235,6 @@ elif [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
 service httpd restart
 fi
 cd ..
-[ -d "$php_install_dir" ] && /bin/rm -rf php-5.4.40 
+[ -d "$php_install_dir" ] && /bin/rm -rf php-5.4.41 
 cd ..
 }

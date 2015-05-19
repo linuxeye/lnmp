@@ -9,22 +9,22 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz && Download_src
-src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz && Download_src
-src_url=http://downloads.sourceforge.net/project/mhash/mhash/0.9.9.9/mhash-0.9.9.9.tar.gz && Download_src
-src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/2.6.8/mcrypt-2.6.8.tar.gz && Download_src
+src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-$libiconv_version.tar.gz && Download_src
+src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/$libmcrypt_version/libmcrypt-$libmcrypt_version.tar.gz && Download_src
+src_url=http://downloads.sourceforge.net/project/mhash/mhash/$mhash_version/mhash-$mhash_version.tar.gz && Download_src
+src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/$mcrypt_version/mcrypt-$mcrypt_version.tar.gz && Download_src
 
-tar xzf libiconv-1.14.tar.gz
-cd libiconv-1.14
+tar xzf libiconv-$libiconv_version.tar.gz
+cd libiconv-$libiconv_version
 ./configure --prefix=/usr/local
 [ -n "`cat /etc/issue | grep 'Ubuntu 13'`" ] && sed -i 's@_GL_WARN_ON_USE (gets@//_GL_WARN_ON_USE (gets@' srclib/stdio.h 
 [ -n "`cat /etc/issue | grep 'Ubuntu 14'`" ] && sed -i 's@gets is a security@@' srclib/stdio.h 
 make && make install
 cd ../
-/bin/rm -rf libiconv-1.14
+/bin/rm -rf libiconv-$libiconv_version
 
-tar xzf libmcrypt-2.5.8.tar.gz
-cd libmcrypt-2.5.8
+tar xzf libmcrypt-$libmcrypt_version.tar.gz
+cd libmcrypt-$libmcrypt_version
 ./configure
 make && make install
 ldconfig
@@ -32,14 +32,14 @@ cd libltdl/
 ./configure --enable-ltdl-install
 make && make install
 cd ../../
-/bin/rm -rf libmcrypt-2.5.8
+/bin/rm -rf libmcrypt-$libmcrypt_version
 
-tar xzf mhash-0.9.9.9.tar.gz
-cd mhash-0.9.9.9
+tar xzf mhash-$mhash_version.tar.gz
+cd mhash-$mhash_version
 ./configure
 make && make install
 cd ../
-/bin/rm -rf mhash-0.9.9.9
+/bin/rm -rf mhash-$mhash_version
 
 echo "$db_install_dir/lib" > /etc/ld.so.conf.d/mysql.conf
 echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
@@ -52,13 +52,13 @@ else \n
 fi'
 OS_command
 
-tar xzf mcrypt-2.6.8.tar.gz
-cd mcrypt-2.6.8
+tar xzf mcrypt-$mcrypt_version.tar.gz
+cd mcrypt-$mcrypt_version
 ldconfig
 ./configure
 make && make install
 cd ../
-/bin/rm -rf mcrypt-2.6.8
+/bin/rm -rf mcrypt-$mcrypt_version
 
 id -u $run_user >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 
@@ -69,7 +69,7 @@ cd php-src*
 ./buildconf
 
 make clean
-
+[ ! -d "$php_install_dir" ] && mkdir -p $php_install_dir
 [ "$PHP_cache" == '1' ] && PHP_cache_tmp='--enable-opcache' || PHP_cache_tmp='--disable-opcache'
 if [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
 CFLAGS= CXXFLAGS= ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
@@ -95,9 +95,10 @@ fi
 make ZEND_EXTRA_LIBS='-liconv'
 make install
 
-if [ -d "$php_install_dir" ];then
+if [ -d "$php_install_dir/bin" ];then
         echo -e "\033[32mPHP install successfully! \033[0m"
 else
+	rm -rf $php_install_dir
         echo -e "\033[31mPHP install failed, Please Contact the author! \033[0m"
         kill -9 $$
 fi

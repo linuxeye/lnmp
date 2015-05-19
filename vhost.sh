@@ -201,7 +201,6 @@ if ( \$query_string ~* ".*[\;'\<\>].*" ){
 	return 404;
 	}
 $anti_hotlinking
-`echo -e $ngx_pagespeed`
 location ~ .*\.(php|php5)?$  {
 	`echo -e $NGX_CONF`
 	}
@@ -322,7 +321,6 @@ if ( \$query_string ~* ".*[\;'\<\>].*" ){
         return 404;
         }
 $anti_hotlinking
-`echo -e $ngx_pagespeed`
 location / {
         try_files \$uri @apache;
         }

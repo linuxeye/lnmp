@@ -8,26 +8,26 @@ cd $lnmp_dir/src
 . ../functions/download.sh
 . ../options.conf
 
-src_url=http://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/1.3.20/GraphicsMagick-1.3.20.tar.gz && Download_src
+src_url=http://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/$GraphicsMagick_version/GraphicsMagick-$GraphicsMagick_version.tar.gz && Download_src
 
-tar xzf GraphicsMagick-1.3.20.tar.gz 
-cd GraphicsMagick-1.3.20
+tar xzf GraphicsMagick-$GraphicsMagick_version.tar.gz 
+cd GraphicsMagick-$GraphicsMagick_version
 ./configure --enable-shared --prefix=/usr/local/graphicsmagick
 make && make install
 cd ../
-/bin/rm -rf GraphicsMagick-1.3.20
+/bin/rm -rf GraphicsMagick-$GraphicsMagick_version
 
 if [ -e "$php_install_dir/bin/phpize" ];then
-	src_url=http://pecl.php.net/get/gmagick-1.1.7RC2.tgz && Download_src
-	tar xzf gmagick-1.1.7RC2.tgz 
-	cd gmagick-1.1.7RC2
+	src_url=http://pecl.php.net/get/gmagick-$gmagick_version.tgz && Download_src
+	tar xzf gmagick-$gmagick_version.tgz 
+	cd gmagick-$gmagick_version
 	make clean
 	export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 	$php_install_dir/bin/phpize
 	./configure --with-php-config=$php_install_dir/bin/php-config --with-gmagick=/usr/local/graphicsmagick
 	make && make install
 	cd ../
-	/bin/rm -rf gmagick-1.1.7RC2
+	/bin/rm -rf gmagick-$gmagick_version
 
 	if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions | grep zts`/gmagick.so" ];then
 		[ -z "`cat $php_install_dir/etc/php.ini | grep '^extension_dir'`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions | grep zts`\"@" $php_install_dir/etc/php.ini

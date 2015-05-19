@@ -9,30 +9,32 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://downloads.sourceforge.net/project/pcre/pcre/8.37/pcre-8.37.tar.gz && Download_src
-src_url=http://archive.apache.org/dist/apr/apr-1.5.1.tar.gz && Download_src 
-src_url=http://archive.apache.org/dist/apr/apr-util-1.5.4.tar.gz && Download_src 
-src_url=http://www.apache.org/dist/httpd/httpd-2.4.12.tar.gz && Download_src 
+src_url=http://downloads.sourceforge.net/project/pcre/pcre/$pcre_version/pcre-$pcre_version.tar.gz && Download_src
+src_url=http://archive.apache.org/dist/apr/apr-$apr_version.tar.gz && Download_src 
+src_url=http://archive.apache.org/dist/apr/apr-util-$apr_util_version.tar.gz && Download_src 
+src_url=http://www.apache.org/dist/httpd/httpd-$apache_4_version.tar.gz && Download_src 
 
-tar xzf pcre-8.37.tar.gz
-cd pcre-8.37
+tar xzf pcre-$pcre_version.tar.gz
+cd pcre-$pcre_version
 ./configure
 make && make install
 cd ../
 
 id -u $run_user >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 
-tar xzf httpd-2.4.12.tar.gz
-tar xzf apr-1.5.1.tar.gz
-tar xzf apr-util-1.5.4.tar.gz
-cd httpd-2.4.12
-/bin/cp -R ../apr-1.5.1 ./srclib/apr
-/bin/cp -R ../apr-util-1.5.4 ./srclib/apr-util
+tar xzf httpd-$apache_4_version.tar.gz
+tar xzf apr-$apr_version.tar.gz
+tar xzf apr-util-$apr_util_version.tar.gz
+cd httpd-$apache_4_version
+[ ! -d "$apache_install_dir" ] && mkdir -p $apache_install_dir
+/bin/cp -R ../apr-$apr_version ./srclib/apr
+/bin/cp -R ../apr-util-$apr_util_version ./srclib/apr-util
 ./configure --prefix=$apache_install_dir --enable-headers --enable-deflate --enable-mime-magic --enable-so --enable-rewrite --enable-ssl --with-ssl --enable-expires --enable-static-support --enable-suexec --disable-userdir --with-included-apr --with-mpm=prefork --disable-userdir
 make && make install
-if [ -d "$apache_install_dir" ];then
+if [ -d "$apache_install_dir/conf" ];then
         echo -e "\033[32mApache install successfully! \033[0m"
 else
+	rm -rf $apache_install_dir
         echo -e "\033[31mApache install failed, Please contact the author! \033[0m"
         kill -9 $$
 fi
@@ -41,7 +43,7 @@ fi
 . /etc/profile
 
 cd ..
-[ -d "$apache_install_dir" ] && /bin/rm -rf httpd-2.4.12
+[ -d "$apache_install_dir/conf" ] && /bin/rm -rf httpd-$apache_4_version
 /bin/cp $apache_install_dir/bin/apachectl  /etc/init.d/httpd
 sed -i '2a # chkconfig: - 85 15' /etc/init.d/httpd
 sed -i '3a # description: Apache is a World Wide Web server. It is used to serve' /etc/init.d/httpd

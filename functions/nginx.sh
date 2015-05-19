@@ -9,19 +9,19 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh 
 . ../options.conf
 
-src_url=http://downloads.sourceforge.net/project/pcre/pcre/8.37/pcre-8.37.tar.gz && Download_src
-src_url=http://nginx.org/download/nginx-1.8.0.tar.gz && Download_src
+src_url=http://downloads.sourceforge.net/project/pcre/pcre/$pcre_version/pcre-$pcre_version.tar.gz && Download_src
+src_url=http://nginx.org/download/nginx-$nginx_version.tar.gz && Download_src
 
-tar xzf pcre-8.37.tar.gz
-cd pcre-8.37
+tar xzf pcre-$pcre_version.tar.gz
+cd pcre-$pcre_version
 ./configure
 make && make install
 cd ../
 
-tar xzf nginx-1.8.0.tar.gz
+tar xzf nginx-$nginx_version.tar.gz
 id -u $run_user >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 
-cd nginx-1.8.0
+cd nginx-$nginx_version
 
 # Modify Nginx version
 #sed -i 's@#define NGINX_VERSION.*$@#define NGINX_VERSION      "1.2"@' src/core/nginx.h
@@ -39,11 +39,13 @@ elif [ "$je_tc_malloc" == '2' ];then
 	chown -R ${run_user}.$run_user /tmp/tcmalloc
 fi
 
+[ ! -d "$nginx_install_dir" ] && mkdir -p $nginx_install_dir
 ./configure --prefix=$nginx_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_spdy_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module $malloc_module
 make && make install
-if [ -d "$nginx_install_dir" ];then
+if [ -d "$nginx_install_dir/conf" ];then
         echo -e "\033[32mNginx install successfully! \033[0m"
 else
+	rm -rf $nginx_install_dir
         echo -e "\033[31mNginx install failed, Please Contact the author! \033[0m"
         kill -9 $$
 fi

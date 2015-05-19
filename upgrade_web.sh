@@ -73,8 +73,8 @@ if [ -e "nginx-$nginx_version.tar.gz" ];then
                 kill -USR2 `cat /var/run/nginx.pid`
                 kill -QUIT `cat /var/run/nginx.pid.oldbin`
 	        echo -e "You have \033[32msuccessfully\033[0m upgrade from \033[32m$Old_nginx_version\033[0m to \033[32m$nginx_version\033[0m"
-        	echo "Restarting Nginx..."
-	        /etc/init.d/nginx restart
+        	#echo "Restarting Nginx..."
+	        #/etc/init.d/nginx restart
         else
                 echo -e "\033[31mUpgrade Nginx failed! \033[0m"
         fi
@@ -127,24 +127,11 @@ if [ -e "tengine-$tengine_version.tar.gz" ];then
                 /bin/cp objs/dso_tool $web_install_dir/sbin/dso_tool
 		chmod +x $web_install_dir/sbin/*
 		make install
-		if [ -e "$web_install_dir/modules$(date +%m%d)/ngx_pagespeed.so" ];then
-			cd $lnmp_dir/src
-			rm -rf ngx_pagespeed*
-			src_url=https://dl.google.com/dl/page-speed/psol/1.9.32.1.tar.gz && Download_src
-			[ -s "ngx_pagespeed-1.9.32.1-beta.zip" ] && echo "ngx_pagespeed-1.9.32.1-beta.zip found" || wget -c --no-check-certificate -O ngx_pagespeed-1.9.32.1-beta.zip https://github.com/pagespeed/ngx_pagespeed/archive/master.zip
-
-			unzip -q ngx_pagespeed-1.9.32.1-beta.zip
-			/bin/mv ngx_pagespeed-master ngx_pagespeed-1.9.32.1-beta
-			tar xzf 1.9.32.1.tar.gz -C ngx_pagespeed-1.9.32.1-beta
-			cd tengine-$tengine_version
-			$web_install_dir/sbin/dso_tool --add-module=$lnmp_dir/src/ngx_pagespeed-1.9.32.1-beta
-		fi
-
                 kill -USR2 `cat /var/run/nginx.pid`
                 kill -QUIT `cat /var/run/nginx.pid.oldbin`
                 echo -e "You have \033[32msuccessfully\033[0m upgrade from \033[32m$Old_tengine_version\033[0m to \033[32m$tengine_version\033[0m"
-                echo "Restarting Tengine..."
-                /etc/init.d/nginx restart
+                #echo "Restarting Tengine..."
+                #/etc/init.d/nginx restart
         else
                 echo -e "\033[31mUpgrade Tengine failed! \033[0m"
         fi

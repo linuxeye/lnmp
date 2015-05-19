@@ -9,17 +9,19 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://www.apache.org/dist/httpd/httpd-2.2.29.tar.gz && Download_src 
+src_url=http://www.apache.org/dist/httpd/httpd-$apache_2_version.tar.gz && Download_src 
 
 id -u $run_user >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 
-tar xzf httpd-2.2.29.tar.gz
-cd httpd-2.2.29
+tar xzf httpd-$apache_2_version.tar.gz
+cd httpd-$apache_2_version
+[ ! -d "$apache_install_dir" ] && mkdir -p $apache_install_dir
 ./configure --prefix=$apache_install_dir --enable-headers --enable-deflate --enable-mime-magic --enable-so --enable-rewrite --enable-ssl --with-ssl --enable-expires --enable-static-support --enable-suexec --disable-userdir --with-included-apr --with-mpm=prefork --disable-userdir
 make && make install
-if [ -d "$apache_install_dir" ];then
+if [ -d "$apache_install_dir/conf" ];then
         echo -e "\033[32mApache install successfully! \033[0m"
 else
+	rm -rf $apache_install_dir
         echo -e "\033[31mApache install failed, Please contact the author! \033[0m"
         kill -9 $$
 fi
@@ -28,7 +30,7 @@ fi
 . /etc/profile
 
 cd ..
-[ -d "$apache_install_dir" ] && /bin/rm -rf httpd-2.2.29
+[ -d "$apache_install_dir/conf" ] && /bin/rm -rf httpd-$apache_2_version
 /bin/cp $apache_install_dir/bin/apachectl  /etc/init.d/httpd
 sed -i '2a # chkconfig: - 85 15' /etc/init.d/httpd
 sed -i '3a # description: Apache is a World Wide Web server. It is used to serve' /etc/init.d/httpd

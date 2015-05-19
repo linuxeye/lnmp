@@ -10,15 +10,15 @@ cd $lnmp_dir/src
 . ../options.conf
 
 if [ -e "$php_install_dir/bin/phpize" ];then
-	src_url=http://pecl.php.net/get/redis-2.2.7.tgz && Download_src
-	tar xzf redis-2.2.7.tgz
-	cd redis-2.2.7
+	src_url=http://pecl.php.net/get/redis-$redis_pecl_version.tgz && Download_src
+	tar xzf redis-$redis_pecl_version.tgz
+	cd redis-$redis_pecl_version
 	make clean
 	$php_install_dir/bin/phpize
 	./configure --with-php-config=$php_install_dir/bin/php-config
 	make && make install
 	cd ..
-	/bin/rm -rf redis-2.2.7
+	/bin/rm -rf redis-$redis_pecl_version
 	if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions | grep zts`/redis.so" ];then
 		[ -z "`cat $php_install_dir/etc/php.ini | grep '^extension_dir'`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions  | grep zts`\"@" $php_install_dir/etc/php.ini
 		sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "redis.so"@' $php_install_dir/etc/php.ini
@@ -28,9 +28,9 @@ if [ -e "$php_install_dir/bin/phpize" ];then
 	fi
 fi
 
-src_url=http://download.redis.io/releases/redis-2.8.20.tar.gz && Download_src
-tar xzf redis-2.8.20.tar.gz
-cd redis-2.8.20
+src_url=http://download.redis.io/releases/redis-$redis_version.tar.gz && Download_src
+tar xzf redis-$redis_version.tar.gz
+cd redis-$redis_version
 if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 32 ];then
 	sed -i '1i\CFLAGS= -march=i686' src/Makefile
 	sed -i 's@^OPT=.*@OPT=-O2 -march=i686@' src/.make-settings
@@ -64,7 +64,7 @@ if [ -f "src/redis-server" ];then
 	fi
 
 	cd ..
-	/bin/rm -rf redis-2.8.20
+	/bin/rm -rf redis-$redis_version
 	cd ..
 	OS_CentOS='/bin/cp init/Redis-server-init-CentOS /etc/init.d/redis-server \n
 chkconfig --add redis-server \n

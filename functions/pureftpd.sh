@@ -9,13 +9,14 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-1.0.37.tar.gz && Download_src
+src_url=http://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-$pureftpd_version.tar.gz && Download_src
 
-tar xzf pure-ftpd-1.0.37.tar.gz
-cd pure-ftpd-1.0.37
+tar xzf pure-ftpd-$pureftpd_version.tar.gz
+cd pure-ftpd-$pureftpd_version
+[ ! -d "$pureftpd_install_dir" ] && mkdir -p $pureftpd_install_dir
 ./configure --prefix=$pureftpd_install_dir CFLAGS=-O2 --with-puredb --with-quotas --with-cookie --with-virtualhosts --with-virtualchroot --with-diraliases --with-sysquotas --with-ratios --with-altlog --with-paranoidmsg --with-shadow --with-welcomemsg  --with-throttling --with-uploadscript --with-language=english --with-rfc2640
 make && make install
-if [ -d "$pureftpd_install_dir" ];then
+if [ -d "$pureftpd_install_dir/bin" ];then
         echo -e "\033[32mPure-Ftp install successfully! \033[0m"
 	[ ! -e "$pureftpd_install_dir/etc" ] && mkdir $pureftpd_install_dir/etc
 	cp configuration-file/pure-config.pl $pureftpd_install_dir/sbin

@@ -8,18 +8,19 @@ cd $lnmp_dir/src
 . ../functions/check_os.sh
 . ../options.conf
 
-src_url=http://www.percona.com/redir/downloads/Percona-Server-5.5/LATEST/source/tarball/percona-server-5.5.43-37.2.tar.gz && Download_src
+src_url=http://www.percona.com/redir/downloads/Percona-Server-5.5/LATEST/source/tarball/percona-server-$percona_5_version.tar.gz && Download_src
 
 useradd -M -s /sbin/nologin mysql
 mkdir -p $percona_data_dir;chown mysql.mysql -R $percona_data_dir
-tar zxf percona-server-5.5.43-37.2.tar.gz 
-cd percona-server-5.5.43-37.2 
+tar zxf percona-server-$percona_5_version.tar.gz 
+cd percona-server-$percona_5_version 
 if [ "$je_tc_malloc" == '1' ];then
         EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
 elif [ "$je_tc_malloc" == '2' ];then
         EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"
 fi
 make clean
+[ ! -d "$percona_install_dir" ] && mkdir -p $percona_install_dir
 cmake . -DCMAKE_INSTALL_PREFIX=$percona_install_dir \
 -DMYSQL_DATADIR=$percona_data_dir \
 -DSYSCONFDIR=/etc \
@@ -42,9 +43,10 @@ cd $percona_install_dir/lib/
 ln -s libperconaserverclient.so libmysqlclient.so
 cd -
 
-if [ -d "$percona_install_dir" ];then
+if [ -d "$percona_install_dir/bin" ];then
         echo -e "\033[32mPercona install successfully! \033[0m"
 else
+	rm -rf $percona_install_dir
         echo -e "\033[31mPercona install failed, Please contact the author! \033[0m"
         kill -9 $$
 fi
@@ -56,7 +58,7 @@ chkconfig mysqld on'
 OS_Debian_Ubuntu='update-rc.d mysqld defaults'
 OS_command
 cd ..
-[ -d "$percona_install_dir" ] && /bin/rm -rf percona-server-5.5.43-37.2
+[ -d "$percona_install_dir" ] && /bin/rm -rf percona-server-$percona_5_version
 cd ..
 
 # my.cf

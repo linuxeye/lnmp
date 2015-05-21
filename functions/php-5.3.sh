@@ -14,6 +14,7 @@ src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/$libmcrypt_ver
 src_url=http://downloads.sourceforge.net/project/mhash/mhash/$mhash_version/mhash-$mhash_version.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/$mcrypt_version/mcrypt-$mcrypt_version.tar.gz && Download_src
 src_url=http://www.php.net/distributions/php-$php_3_version.tar.gz && Download_src
+src_url=http://mirrors.linuxeye.com/lnmp/src/php5.3patch && Download_src
 
 tar xzf libiconv-$libiconv_version.tar.gz
 cd libiconv-$libiconv_version
@@ -42,7 +43,6 @@ make && make install
 cd ../
 /bin/rm -rf mhash-$mhash_version 
 
-echo "$db_install_dir/lib" > /etc/ld.so.conf.d/mysql.conf
 echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
 ldconfig
 OS_CentOS='ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config \n
@@ -67,6 +67,7 @@ id -u $run_user >/dev/null 2>&1
 wget -O fpm-race-condition.patch 'https://bugs.php.net/patch-display.php?bug_id=65398&patch=fpm-race-condition.patch&revision=1375772074&download=1'
 patch -d php-$php_3_version -p0 < fpm-race-condition.patch
 cd php-$php_3_version
+patch -p1 < ../php5.3patch 
 make clean
 [ ! -d "$php_install_dir" ] && mkdir -p $php_install_dir
 if [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then

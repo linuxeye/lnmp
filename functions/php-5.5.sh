@@ -43,7 +43,6 @@ make && make install
 cd ../
 /bin/rm -rf mhash-$mhash_version
 
-echo "$db_install_dir/lib" > /etc/ld.so.conf.d/mysql.conf
 echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
 ldconfig
 OS_CentOS='ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config \n

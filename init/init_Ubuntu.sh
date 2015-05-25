@@ -60,7 +60,7 @@ elif [ -n "`cat /etc/issue | grep -E 12`" ];then
 fi
 
 # check sendmail
-[ "$sendmail_yn" == 'y' ] && apt-get -y install sendmail
+#[ "$sendmail_yn" == 'y' ] && apt-get -y install sendmail
 
 # PS1
 [ -z "`cat ~/.bashrc | grep ^PS1`" ] && echo "PS1='\${debian_chroot:+(\$debian_chroot)}\\[\\e[1;32m\\]\\u@\\h\\[\\033[00m\\]:\\[\\033[01;34m\\]\\w\\[\\033[00m\\]\\$ '" >> ~/.bashrc 
@@ -125,7 +125,13 @@ ntpdate pool.ntp.org
 service cron restart
 
 # iptables
-[ -e '/etc/iptables.up.rules' ] && [ -n "`grep '20000:30000' /etc/iptables.up.rules`" ] && IPTABLES_FTP_FLAG=yes 
+if [ -e '/etc/iptables.up.rules' ] && [ -n "`grep 'NEW -m tcp --dport 22 -j ACCEPT' /etc/iptables.up.rules`" ];then
+        IPTABLES_STATUS=yes
+else
+        IPTABLES_STATUS=no
+fi
+
+if [ "$IPTABLES_STATUS" == 'no' ];then
 cat > /etc/iptables.up.rules << EOF
 # Firewall configuration written by system-config-securitylevel
 # Manual customization of this file is not recommended.
@@ -147,8 +153,7 @@ cat > /etc/iptables.up.rules << EOF
 -A syn-flood -j REJECT --reject-with icmp-port-unreachable
 COMMIT
 EOF
-
-[ "$IPTABLES_FTP_FLAG" == 'yes' ] && sed -i "s@dport 443 -j ACCEPT@&\n-A INPUT -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT\n-A INPUT -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT@" /etc/iptables.up.rules 
+fi
 
 FW_PORT_FLAG=`grep -ow "dport $SSH_PORT" /etc/iptables.up.rules` 
 [ -z "$FW_PORT_FLAG" -a "$SSH_PORT" != '22' ] && sed -i "s@dport 22 -j ACCEPT@&\n-A INPUT -p tcp -m state --state NEW -m tcp --dport $SSH_PORT -j ACCEPT@" /etc/iptables.up.rules 

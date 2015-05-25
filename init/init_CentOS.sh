@@ -93,7 +93,7 @@ if [ -n "`gcc --version | head -n1 | grep '4\.1\.'`" ];then
 fi
 
 # check sendmail
-[ "$sendmail_yn" == 'y' ] && yum -y install sendmail && service sendmail restart
+#[ "$sendmail_yn" == 'y' ] && yum -y install sendmail && service sendmail restart
 
 # closed Unnecessary services and remove obsolete rpm package
 for Service in `chkconfig --list | grep 3:on | awk '{print $1}'`;do chkconfig --level 3 $Service off;done
@@ -178,7 +178,13 @@ ntpdate pool.ntp.org
 service crond restart
 
 # iptables
-[ -e '/etc/sysconfig/iptables' ] && [ -n "`grep '20000:30000' /etc/sysconfig/iptables`" ] && IPTABLES_FTP_FLAG=yes 
+if [ -e '/etc/sysconfig/iptables' ] && [ -n "`grep 'NEW -m tcp --dport 22 -j ACCEPT' /etc/sysconfig/iptables`" ];then 
+	IPTABLES_STATUS=yes
+else
+	IPTABLES_STATUS=no
+fi 
+
+if [ "$IPTABLES_STATUS" == 'no' ];then
 cat > /etc/sysconfig/iptables << EOF
 # Firewall configuration written by system-config-securitylevel
 # Manual customization of this file is not recommended.
@@ -200,8 +206,7 @@ cat > /etc/sysconfig/iptables << EOF
 -A syn-flood -j REJECT --reject-with icmp-port-unreachable
 COMMIT
 EOF
-
-[ "$IPTABLES_FTP_FLAG" == 'yes' ] && sed -i "s@dport 443 -j ACCEPT@&\n-A INPUT -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT\n-A INPUT -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT@" /etc/sysconfig/iptables
+fi
 
 FW_PORT_FLAG=`grep -ow "dport $SSH_PORT" /etc/sysconfig/iptables`
 [ -z "$FW_PORT_FLAG" -a "$SSH_PORT" != '22' ] && sed -i "s@dport 22 -j ACCEPT@&\n-A INPUT -p tcp -m state --state NEW -m tcp --dport $SSH_PORT -j ACCEPT@" /etc/sysconfig/iptables 

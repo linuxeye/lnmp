@@ -178,7 +178,7 @@ ntpdate pool.ntp.org
 service crond restart
 
 # iptables
-if [ -e '/etc/sysconfig/iptables' ] && [ -n "`grep 'NEW -m tcp --dport 22 -j ACCEPT' /etc/sysconfig/iptables`" ];then 
+if [ -e '/etc/sysconfig/iptables' ] && [ -n "`grep ':INPUT DROP' /etc/sysconfig/iptables`" -a -n "`grep 'NEW -m tcp --dport 22 -j ACCEPT' /etc/sysconfig/iptables`" -a -n "`grep 'NEW -m tcp --dport 80 -j ACCEPT' /etc/sysconfig/iptables`" ];then
 	IPTABLES_STATUS=yes
 else
 	IPTABLES_STATUS=no

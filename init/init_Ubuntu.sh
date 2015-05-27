@@ -125,7 +125,7 @@ ntpdate pool.ntp.org
 service cron restart
 
 # iptables
-if [ -e '/etc/iptables.up.rules' ] && [ -n "`grep 'NEW -m tcp --dport 22 -j ACCEPT' /etc/iptables.up.rules`" ];then
+if [ -e '/etc/iptables.up.rules' ] && [ -n "`grep ':INPUT DROP' /etc/iptables.up.rules`" -a -n "`grep 'NEW -m tcp --dport 22 -j ACCEPT' /etc/iptables.up.rules`" -a -n "`grep 'NEW -m tcp --dport 80 -j ACCEPT' /etc/iptables.up.rules`" ];then
         IPTABLES_STATUS=yes
 else
         IPTABLES_STATUS=no

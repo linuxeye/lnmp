@@ -215,7 +215,7 @@ rlimit_files = 51200
 rlimit_core = 0
 
 catch_workers_output = yes
-env[HOSTNAME] = $HOSTNAME
+;env[HOSTNAME] = $HOSTNAME
 env[PATH] = /usr/local/bin:/usr/bin:/bin
 env[TMP] = /tmp
 env[TMPDIR] = /tmp

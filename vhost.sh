@@ -398,19 +398,19 @@ echo -e "`printf "%-32s" "Directory of:"`\033[32m$vhostdir\033[0m"
 [ "$rewrite_yn" == 'y' ] && echo -e "`printf "%-32s" "Rewrite rule:"`\033[32m$rewrite\033[0m" 
 }
 
-if [ -d "$web_install_dir" -a ! -d "$apache_install_dir" ];then
+if [ -d "$web_install_dir" -a ! -d "$apache_install_dir" -a "$web_install_dir" != "$apache_install_dir" ];then
 	HHVM_YN
 	Input_domain
 	Nginx_anti_hotlinking
 	Nginx_rewrite
 	Nginx_log
 	Create_nginx_conf
-elif [ ! -d "$web_install_dir" -a -d "$apache_install_dir" ];then
+elif [ -d "$web_install_dir" -a -d "$apache_install_dir" -a "$web_install_dir" == "$apache_install_dir" ];then
 	HHVM_YN
 	Input_domain
 	Apache_log
 	Create_apache_conf
-elif [ -d "$web_install_dir" -a -d "$apache_install_dir" ];then
+elif [ -d "$web_install_dir" -a -d "$apache_install_dir" -a "$web_install_dir" != "$apache_install_dir" ];then
 	HHVM_YN
 	Input_domain
 	Nginx_anti_hotlinking

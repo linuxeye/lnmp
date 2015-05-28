@@ -72,7 +72,7 @@ gpgcheck=0
 EOF
 
 yum -y remove libwebp
-src_url=http://rpms.famillecollet.com/enterprise/6/olds/x86_64/libwebp-0.3.1-2.el6.remi.x86_64.rpm && Download_src
+src_url=http://mirrors.linuxeye.com/lnmp/src/libwebp-0.3.1-2.el6.remi.x86_64.rpm && Download_src
 rpm -ivh libwebp-0.3.1-2.el6.remi.x86_64.rpm
 yum --enablerepo=remi --disablerepo=epel -y install mysql mysql-devel mysql-libs
 

@@ -36,7 +36,7 @@ start () {
                 chown $USER /var/run/memcached
         fi
  
-        start_instance default 64;
+        start_instance default 256;
         #start_instance block 16;
         #start_instance content 128;
         #start_instance filter 128;

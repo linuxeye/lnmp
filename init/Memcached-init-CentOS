@@ -11,7 +11,7 @@
 PORT=11211
 USER=memcached
 MAXCONN=1024
-CACHESIZE=64
+CACHESIZE=256
 OPTIONS=""
 
 if [ -f /etc/sysconfig/memcached ];then

@@ -187,8 +187,8 @@ $percona_install_dir/scripts/mysql_install_db --user=mysql --basedir=$percona_in
 
 chown mysql.mysql -R $percona_data_dir
 service mysqld start
-export PATH=$percona_install_dir/bin:$PATH
-[ -z "`cat /etc/profile | grep $percona_install_dir`" ] && echo "export PATH=$percona_install_dir/bin:\$PATH" >> /etc/profile 
+[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$percona_install_dir/bin:\$PATH" >> /etc/profile 
+[ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep $percona_install_dir /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$percona_install_dir/bin:\1@" /etc/profile
 . /etc/profile
 
 $percona_install_dir/bin/mysql -e "grant all privileges on *.* to root@'127.0.0.1' identified by \"$dbrootpwd\" with grant option;"

@@ -184,8 +184,8 @@ $mysql_install_dir/scripts/mysql_install_db --user=mysql --basedir=$mysql_instal
 
 chown mysql.mysql -R $mysql_data_dir
 service mysqld start
-export PATH=$mysql_install_dir/bin:$PATH
-[ -z "`cat /etc/profile | grep $mysql_install_dir`" ] && echo "export PATH=$mysql_install_dir/bin:\$PATH" >> /etc/profile 
+[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$mysql_install_dir/bin:\$PATH" >> /etc/profile 
+[ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep $mysql_install_dir /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$mysql_install_dir/bin:\1@" /etc/profile
 . /etc/profile
 
 $mysql_install_dir/bin/mysql -e "grant all privileges on *.* to root@'127.0.0.1' identified by \"$dbrootpwd\" with grant option;"

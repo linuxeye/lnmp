@@ -13,6 +13,7 @@ src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-$libiconv_version.tar.gz &&
 src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/$libmcrypt_version/libmcrypt-$libmcrypt_version.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mhash/mhash/$mhash_version/mhash-$mhash_version.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/$mcrypt_version/mcrypt-$mcrypt_version.tar.gz && Download_src
+src_url=https://downloads.php.net/~ab/php-$php_7_version.tar.gz && Download_src
 
 tar xzf libiconv-$libiconv_version.tar.gz
 cd libiconv-$libiconv_version
@@ -59,15 +60,12 @@ make && make install
 cd ../
 /bin/rm -rf mcrypt-$mcrypt_version
 
+tar xzf php-$php_7_version.tar.gz 
 id -u $run_user >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 
-rm -rf php-src* 
-wget -c --no-check-certificate -O php-src-master.zip https://github.com/php/php-src/archive/master.zip 
-unzip -q php-src-master.zip
-cd php-src*
-./buildconf
-
+cd php-$php_7_version
 make clean
+./buildconf
 [ ! -d "$php_install_dir" ] && mkdir -p $php_install_dir
 [ "$PHP_cache" == '1' ] && PHP_cache_tmp='--enable-opcache' || PHP_cache_tmp='--disable-opcache'
 if [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
@@ -257,5 +255,7 @@ service php-fpm start
 elif [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
 service httpd restart
 fi
-cd ../../
+cd ..
+[ -d "$php_install_dir" ] && /bin/rm -rf php-$php_7_version
+cd ..
 }

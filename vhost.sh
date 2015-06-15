@@ -90,9 +90,9 @@ fi
 
 echo
 echo "Please input the directory for the domain:$domain :"
-read -p "(Default directory: /home/wwwroot/$domain): " vhostdir
+read -p "(Default directory: $home_dir/$domain): " vhostdir
 if [ -z "$vhostdir" ]; then
-        vhostdir="/home/wwwroot/$domain"
+        vhostdir="$home_dir/$domain"
         echo -e "Virtual Host Directory=\033[32m$vhostdir\033[0m"
 fi
 echo
@@ -180,8 +180,8 @@ done
 if [ "$access_yn" == 'n' ]; then
 	N_log="access_log off;"
 else
-	N_log="access_log /home/wwwlogs/${domain}_nginx.log combined;"
-	echo -e "You access log file=\033[32m/home/wwwlogs/${domain}_nginx.log\033[0m"
+	N_log="access_log $wwwlogs_dir/${domain}_nginx.log combined;"
+	echo -e "You access log file=\033[32m$wwwlogs_dir/${domain}_nginx.log\033[0m"
 fi
 }
 

@@ -64,7 +64,7 @@ cd ../
 tar xzf php-$php_5_version.tar.gz
 id -u $run_user >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 
-wget -O fpm-race-condition.patch 'https://bugs.php.net/patch-display.php?bug_id=65398&patch=fpm-race-condition.patch&revision=1375772074&download=1'
+[ ! -e "fpm-race-condition.patch" ] && wget -O fpm-race-condition.patch 'https://bugs.php.net/patch-display.php?bug_id=65398&patch=fpm-race-condition.patch&revision=1375772074&download=1'
 patch -d php-$php_5_version -p0 < fpm-race-condition.patch
 cd php-$php_5_version
 make clean

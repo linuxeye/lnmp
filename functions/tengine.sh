@@ -96,8 +96,6 @@ endscript
 EOF
 
 sed -i "s@^web_install_dir.*@web_install_dir=$tengine_install_dir@" options.conf
-sed -i "s@/home/wwwroot@$home_dir@g" vhost.sh
-sed -i "s@/home/wwwlogs@$wwwlogs_dir@g" vhost.sh
 ldconfig
 service nginx start
 }

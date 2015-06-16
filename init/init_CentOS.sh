@@ -28,28 +28,28 @@ fi
 sed -i 's@^exclude@#exclude@' /etc/yum.conf
 yum clean all
 
-if [ -n "`grep ' 7\.' /etc/redhat-release`" ];then
-        if [ -n "`grep 'Red Hat' /etc/redhat-release`" ];then
-                /bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
-                wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
-                sed -i 's@\$releasever@7@g' /etc/yum.repos.d/CentOS-Base.repo
-                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS-Base.repo
-        fi
-elif [ -n "`grep ' 6\.' /etc/redhat-release`" ];then
-        if [ -n "`grep 'Red Hat' /etc/redhat-release`" ];then
-        	/bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
-		wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo
-		sed -i 's@\$releasever@6@g' /etc/yum.repos.d/CentOS-Base.repo
-                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS-Base.repo
-	fi
-elif [ -n "`grep ' 5\.' /etc/redhat-release`" ];then
-        if [ -n "`grep 'Red Hat' /etc/redhat-release`" ];then
-        	/bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
-		wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-5.repo
-		sed -i 's@\$releasever@5@g' /etc/yum.repos.d/CentOS-Base.repo
-                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS-Base.repo
-	fi
-fi
+#if [ -n "`grep ' 7\.' /etc/redhat-release`" ];then
+#        if [ -n "`grep 'Red Hat' /etc/redhat-release`" ];then
+#                /bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
+#                wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+#                sed -i 's@\$releasever@7@g' /etc/yum.repos.d/CentOS-Base.repo
+#                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS-Base.repo
+#        fi
+#elif [ -n "`grep ' 6\.' /etc/redhat-release`" ];then
+#        if [ -n "`grep 'Red Hat' /etc/redhat-release`" ];then
+#        	/bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
+#		wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo
+#		sed -i 's@\$releasever@6@g' /etc/yum.repos.d/CentOS-Base.repo
+#                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS-Base.repo
+#	fi
+#elif [ -n "`grep ' 5\.' /etc/redhat-release`" ];then
+#        if [ -n "`grep 'Red Hat' /etc/redhat-release`" ];then
+#        	/bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
+#		wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-5.repo
+#		sed -i 's@\$releasever@5@g' /etc/yum.repos.d/CentOS-Base.repo
+#                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS-Base.repo
+#	fi
+#fi
 
 yum makecache
 

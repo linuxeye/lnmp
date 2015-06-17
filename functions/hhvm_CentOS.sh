@@ -4,7 +4,7 @@
 
 Install_hhvm_CentOS()
 {
-cd $oneinstack_dir/src
+cd $lnmp_dir/src
 . ../functions/download.sh 
 . ../options.conf
 

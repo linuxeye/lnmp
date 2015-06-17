@@ -327,11 +327,11 @@ location / {
 
 location @apache {
         internal;
-        proxy_pass http://127.0.0.1:8080;
+        proxy_pass http://127.0.0.1:9090;
 	}
 
 location ~ .*\.(php|php5)?$ {
-        proxy_pass http://127.0.0.1:8080;
+        proxy_pass http://127.0.0.1:9090;
         }
 location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|ico)$ {
         expires 30d;
@@ -357,7 +357,7 @@ fi
 [ "`$apache_install_dir/bin/apachectl -v | awk -F'.' /version/'{print $2}'`" == '4' ] && R_TMP='Require all granted' || R_TMP=
 [ ! -d $apache_install_dir/conf/vhost ] && mkdir $apache_install_dir/conf/vhost
 cat > $apache_install_dir/conf/vhost/$domain.conf << EOF
-<VirtualHost *:8080>
+<VirtualHost *:9090>
     ServerAdmin admin@linuxeye.com
     DocumentRoot "$vhostdir"
     ServerName $domain

@@ -4,7 +4,7 @@
 
 Install_hhvm_CentOS()
 {
-cd $lnmp_dir/src
+cd $oneinstack_dir/src
 . ../functions/download.sh 
 . ../options.conf
 
@@ -62,17 +62,27 @@ libxml2-devel libicu-devel pcre-devel gd-devel boost-devel sqlite-devel pam-deve
 bzip2-devel oniguruma-devel openldap-devel readline-devel libc-client-devel libcap-devel \
 libevent-devel libcurl-devel libmemcached-devel lcms2 inotify-tools
 
+public_IP=`../functions/get_public_ip.py`
+if [ "`../functions/get_ip_area.py $public_IP`" == '\u4e2d\u56fd' ];then
+        FLAG_IP=CN
+fi
+
+echo $public_IP $FLAG_IP
+
+[ "$FLAG_IP"x == "CN"x ] && REMI_ADDR=http://mirrors.swu.edu.cn || REMI_ADDR=http://mirrors.mediatemple.net
+
 cat > /etc/yum.repos.d/remi.repo << EOF
 [remi]
 name=Les RPM de remi pour Enterprise Linux 6 - \$basearch
-#baseurl=http://rpms.famillecollet.com/enterprise/6/remi/\$basearch/
-mirrorlist=http://rpms.famillecollet.com/enterprise/6/remi/mirror
+baseurl=$REMI_ADDR/remi/enterprise/6/remi/\$basearch/
+#mirrorlist=http://rpms.famillecollet.com/enterprise/6/remi/mirror
 enabled=0
 gpgcheck=0
 EOF
 
 yum -y remove libwebp
 src_url=http://mirrors.linuxeye.com/lnmp/src/libwebp-0.3.1-2.el6.remi.x86_64.rpm && Download_src
+src_url=http://mirrors.linuxeye.com/lnmp/src/hhvm-3.5.0-4.el6.x86_64.rpm && Download_src
 rpm -ivh libwebp-0.3.1-2.el6.remi.x86_64.rpm
 yum --enablerepo=remi --disablerepo=epel -y install mysql mysql-devel mysql-libs
 
@@ -85,7 +95,8 @@ baseurl=http://yum.gleez.com/6/\$basearch/
 enabled=0
 gpgcheck=0
 EOF
-yum --enablerepo=gleez --disablerepo=epel -y install hhvm
+ping yum.gleez.com -c 4 >/dev/null 2>&1
+yum --enablerepo=gleez --disablerepo=epel -y install -R 2 ./hhvm-3.5.0-4.el6.x86_64.rpm
 fi
 
 userdel -r nginx;userdel -r saslauth
@@ -185,6 +196,7 @@ rm -rf /etc/ld.so.conf.d/*_64.conf
 ldconfig
 # Supervisor
 yum -y install python-setuptools
+ping pypi.python.org -c 4 >/dev/null 2>&1
 easy_install supervisor
 echo_supervisord_conf > /etc/supervisord.conf
 sed -i 's@pidfile=/tmp/supervisord.pid@pidfile=/var/run/supervisord.pid@' /etc/supervisord.conf

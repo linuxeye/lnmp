@@ -2,41 +2,13 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # Blog:  http://blog.linuxeye.com
 
-# Check if user is root
-[ $(id -u) != "0" ] && { echo -e "\033[31mError: You must be root to run this script\033[0m"; exit 1; } 
-
-export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-clear
-printf "
-#######################################################################
-#    LNMP/LAMP/LANMP for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+    #
-#                Upgrade Nginx/Tengine for LNMP                       #
-# For more information please visit http://blog.linuxeye.com/31.html  #
-#######################################################################
-"
-
-cd src
-. ../options.conf
-. ../functions/download.sh
-
-[ ! -e "$web_install_dir/sbin/nginx" ] && echo -e "\033[31mThe Nginx/Tengine is not installed on your system!\033[0m " && exit 1
-
-get_char()
-{
-SAVEDSTTY=`stty -g`
-stty -echo
-stty cbreak
-dd if=/dev/tty bs=1 count=1 2> /dev/null
-stty -raw
-stty echo
-stty $SAVEDSTTY
-}
-echo
-
 Upgrade_Nginx()
 {
+cd $lnmp_dir/src
+[ ! -e "$nginx_install_dir/sbin/nginx" ] && echo -e "\033[31mThe Nginx is not installed on your system!\033[0m " && exit 1
 Old_nginx_version_tmp=`$web_install_dir/sbin/nginx -v 2>&1`
 Old_nginx_version=${Old_nginx_version_tmp##*/}
+echo
 echo -e "Current Nginx Version: \033[32m$Old_nginx_version\033[0m"
 while :
 do
@@ -84,8 +56,11 @@ fi
 
 Upgrade_Tengine()
 {
+cd $lnmp_dir/src
+[ ! -e "$web_install_dir/sbin/nginx" ] && echo -e "\033[31mThe Tengine is not installed on your system!\033[0m " && exit 1
 Old_tengine_version_tmp=`$web_install_dir/sbin/nginx -v 2>&1`
 Old_tengine_version="`echo ${Old_tengine_version_tmp#*/} | awk '{print $1}'`"
+echo
 echo -e "Current Tengine Version: \033[32m$Old_tengine_version\033[0m"
 while :
 do
@@ -138,9 +113,3 @@ if [ -e "tengine-$tengine_version.tar.gz" ];then
         cd ..
 fi
 }
-
-if [ ! -e "$web_install_dir/sbin/dso_tool" ];then
-	Upgrade_Nginx
-elif [ -e "$web_install_dir/sbin/dso_tool" ];then 
-	Upgrade_Tengine
-fi

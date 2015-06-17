@@ -2,34 +2,9 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # Blog:  http://blog.linuxeye.com
 
-# Check if user is root
-[ $(id -u) != "0" ] && { echo -e "\033[31mError: You must be root to run this script\033[0m"; exit 1; } 
-
-export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-clear
-printf "
-#######################################################################
-#    LNMP/LAMP/LANMP for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+    #
-#                    Upgrade PHP for LNMP                             #
-# For more information please visit http://blog.linuxeye.com/31.html  #
-#######################################################################
-"
-
-cd src
-. ../options.conf
+Upgrade_PHP(){
+cd $lnmp_dir/src
 [ ! -e "$php_install_dir" ] && echo -e "\033[31mThe PHP is not installed on your system!\033[0m " && exit 1
-
-get_char()
-{
-SAVEDSTTY=`stty -g`
-stty -echo
-stty cbreak
-dd if=/dev/tty bs=1 count=1 2> /dev/null
-stty -raw
-stty echo
-stty $SAVEDSTTY
-}
-
 echo
 Old_php_version=`$php_install_dir/bin/php -r 'echo PHP_VERSION;'`
 echo -e "Current PHP Version: \033[32m$Old_php_version\033[0m"
@@ -71,3 +46,4 @@ if [ -e "php-$php_version.tar.gz" ];then
         /etc/init.d/php-fpm restart
         echo -e "You have \033[32msuccessfully\033[0m upgrade from \033[32m$Old_php_version\033[0m to \033[32m$php_version\033[0m"
 fi
+}

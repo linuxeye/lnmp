@@ -57,10 +57,11 @@ enabled=1
 gpgcheck=0
 EOF
 fi
-yum -y install libmcrypt-devel glog-devel jemalloc-devel tbb-devel libdwarf-devel mysql-devel \
-libxml2-devel libicu-devel pcre-devel gd-devel boost-devel sqlite-devel pam-devel \
-bzip2-devel oniguruma-devel openldap-devel readline-devel libc-client-devel libcap-devel \
-libevent-devel libcurl-devel libmemcached-devel lcms2 inotify-tools
+
+for Package in libmcrypt-devel glog-devel jemalloc-devel tbb-devel libdwarf-devel mysql-devel libxml2-devel libicu-devel pcre-devel gd-devel boost-devel sqlite-devel pam-devel bzip2-devel oniguruma-devel openldap-devel readline-devel libc-client-devel libcap-devel libevent-devel libcurl-devel libmemcached-devel lcms2 inotify-tools 
+do
+        yum -y install $Package
+done
 
 public_IP=`../functions/get_public_ip.py`
 if [ "`../functions/get_ip_area.py $public_IP`" == '\u4e2d\u56fd' ];then

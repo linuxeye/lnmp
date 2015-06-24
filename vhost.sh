@@ -254,8 +254,8 @@ done
 if [ "$access_yn" == 'n' ]; then
         A_log='CustomLog "/dev/null" common'
 else
-        A_log="CustomLog \"/home/wwwlogs/${domain}_apache.log\" common"
-        echo "You access log file=/home/wwwlogs/${domain}_apache.log"
+        A_log="CustomLog \"$wwwlogs_dir/${domain}_apache.log\" common"
+        echo "You access log file=$wwwlogs_dir/${domain}_apache.log"
 fi
 }
 
@@ -269,7 +269,7 @@ cat > $apache_install_dir/conf/vhost/$domain.conf << EOF
     DocumentRoot "$vhostdir"
     ServerName $domain
     $Domain_alias
-    ErrorLog "/home/wwwlogs/${domain}_error_apache.log"
+    ErrorLog "$wwwlogs_dir/${domain}_error_apache.log"
     $A_log
 <Directory "$vhostdir">
     SetOutputFilter DEFLATE
@@ -362,7 +362,7 @@ cat > $apache_install_dir/conf/vhost/$domain.conf << EOF
     DocumentRoot "$vhostdir"
     ServerName $domain
     $Domain_alias
-    ErrorLog "/home/wwwlogs/${domain}_error_apache.log"
+    ErrorLog "$wwwlogs_dir/${domain}_error_apache.log"
     $A_log
 <Directory "$vhostdir">
     SetOutputFilter DEFLATE

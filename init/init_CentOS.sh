@@ -28,29 +28,6 @@ fi
 sed -i 's@^exclude@#exclude@' /etc/yum.conf
 yum clean all
 
-#if [ -n "`grep ' 7\.' /etc/redhat-release`" ];then
-#        if [ -n "`grep 'Red Hat' /etc/redhat-release`" ];then
-#                /bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
-#                wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
-#                sed -i 's@\$releasever@7@g' /etc/yum.repos.d/CentOS-Base.repo
-#                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS-Base.repo
-#        fi
-#elif [ -n "`grep ' 6\.' /etc/redhat-release`" ];then
-#        if [ -n "`grep 'Red Hat' /etc/redhat-release`" ];then
-#        	/bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
-#		wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo
-#		sed -i 's@\$releasever@6@g' /etc/yum.repos.d/CentOS-Base.repo
-#                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS-Base.repo
-#	fi
-#elif [ -n "`grep ' 5\.' /etc/redhat-release`" ];then
-#        if [ -n "`grep 'Red Hat' /etc/redhat-release`" ];then
-#        	/bin/mv /etc/yum.repos.d/CentOS-Base.repo{,_bk}
-#		wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-5.repo
-#		sed -i 's@\$releasever@5@g' /etc/yum.repos.d/CentOS-Base.repo
-#                sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/CentOS-Base.repo
-#	fi
-#fi
-
 yum makecache
 
 if [ -n "`grep ' 7\.' /etc/redhat-release`" ];then
@@ -67,16 +44,6 @@ yum check-update
 
 # check upgrade OS
 [ "$upgrade_yn" == 'y' ] && yum -y upgrade
-
-cd /etc/yum.repos.d/
-if [ -e "CentOS-Base.repo" -a ! -e "centos.repo" ];then
-	rename repo repo_bk *.repo
-	/bin/mv CentOS-Base.repo{_bk,}
-elif [ -e "CentOS-Base.repo" -a -e "centos.repo" ];then
-	rename repo repo_bk *.repo
-	/bin/mv centos.repo{_bk,}
-fi
-cd -
 
 # Install needed packages
 for Package in gcc gcc-c++ make cmake autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel libaio readline-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel libxslt-devel libevent-devel libtool libtool-ltdl bison gd-devel vim-enhanced pcre-devel zip unzip ntpdate sysstat patch bc expect rsync git

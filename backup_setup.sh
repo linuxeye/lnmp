@@ -66,7 +66,7 @@ do
 done
 sed -i "s@^db_name=.*@db_name=$db_name@" ./options.conf
 
-websites=`ls $home_dir | grep -vw default`
+websites=`ls $wwwroot_dir | grep -vw default`
 while :
 do
         echo
@@ -78,7 +78,7 @@ do
         echo $db_name
         for W in `echo $website_name | tr ',' ' '`
         do
-                [ ! -e "$home_dir/$W" ] && { echo -e "\033[31m$home_dir/$W not exist! \033[0m" ; W_tmp=1; }
+                [ ! -e "$wwwroot_dir/$W" ] && { echo -e "\033[31m$wwwroot_dir/$W not exist! \033[0m" ; W_tmp=1; }
         done
         [ "$W_tmp" != '1' ] && break
 done

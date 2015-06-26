@@ -90,9 +90,9 @@ fi
 
 echo
 echo "Please input the directory for the domain:$domain :"
-read -p "(Default directory: $home_dir/$domain): " vhostdir
+read -p "(Default directory: $wwwroot_dir/$domain): " vhostdir
 if [ -z "$vhostdir" ]; then
-        vhostdir="$home_dir/$domain"
+        vhostdir="$wwwroot_dir/$domain"
         echo -e "Virtual Host Directory=\033[32m$vhostdir\033[0m"
 fi
 echo

@@ -56,9 +56,9 @@ DIRECTORY() {
 while :
 do
 echo
-	read -p "Please input the directory(Default directory: $home_dir): " Directory 
+	read -p "Please input the directory(Default directory: $wwwroot_dir): " Directory 
 	if [ -z "$Directory" ]; then
-	        Directory="$home_dir"
+	        Directory="$wwwroot_dir"
 	fi
 	if [ ! -d "$Directory" ];then
 		echo -e "\033[31mThe directory does not exist\033[0m"

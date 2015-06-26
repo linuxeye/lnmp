@@ -70,8 +70,8 @@ sed -i "s@AddType\(.*\)Z@AddType\1Z\n    AddType application/x-httpd-php .php .p
 sed -i 's@^#LoadModule rewrite_module@LoadModule rewrite_module@' $apache_install_dir/conf/httpd.conf
 sed -i 's@^#LoadModule\(.*\)mod_deflate.so@LoadModule\1mod_deflate.so@' $apache_install_dir/conf/httpd.conf
 sed -i 's@DirectoryIndex index.html@DirectoryIndex index.html index.php@' $apache_install_dir/conf/httpd.conf
-sed -i "s@^DocumentRoot.*@DocumentRoot \"$home_dir/default\"@" $apache_install_dir/conf/httpd.conf
-sed -i "s@^<Directory \"$apache_install_dir/htdocs\">@<Directory \"$home_dir/default\">@" $apache_install_dir/conf/httpd.conf
+sed -i "s@^DocumentRoot.*@DocumentRoot \"$wwwroot_dir/default\"@" $apache_install_dir/conf/httpd.conf
+sed -i "s@^<Directory \"$apache_install_dir/htdocs\">@<Directory \"$wwwroot_dir/default\">@" $apache_install_dir/conf/httpd.conf
 sed -i "s@^#Include conf/extra/httpd-mpm.conf@Include conf/extra/httpd-mpm.conf@" $apache_install_dir/conf/httpd.conf
 
 #logrotate apache log
@@ -94,11 +94,11 @@ mkdir $apache_install_dir/conf/vhost
 cat >> $apache_install_dir/conf/vhost/0.conf << EOF
 <VirtualHost *:$TMP_PORT>
     ServerAdmin admin@linuxeye.com
-    DocumentRoot "$home_dir/default"
+    DocumentRoot "$wwwroot_dir/default"
     ServerName $TMP_IP 
     ErrorLog "$wwwlogs_dir/error_apache.log"
     CustomLog "$wwwlogs_dir/access_apache.log" common
-<Directory "$home_dir/default">
+<Directory "$wwwroot_dir/default">
     SetOutputFilter DEFLATE
     Options FollowSymLinks
     Require all granted

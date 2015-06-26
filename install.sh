@@ -44,7 +44,7 @@ local_IP=`./functions/get_local_ip.py`
 # Definition Directory
 . ./options.conf
 . functions/check_os.sh
-mkdir -p $home_dir/default $wwwlogs_dir $lnmp_dir/{src,conf}
+mkdir -p $wwwroot_dir/default $wwwlogs_dir $lnmp_dir/{src,conf}
 
 # choice upgrade OS
 while :
@@ -381,7 +381,7 @@ do
                 echo -e "\033[31minput error! Please only input 'y' or 'n'\033[0m"
         else
 		if [ "$phpMyAdmin_yn" == 'y' ];then
-		        [ -d "$home_dir/default/phpMyAdmin" ] && echo -e "\033[31mThe phpMyAdmin already installed! \033[0m" && phpMyAdmin_yn=Other && break
+		        [ -d "$wwwroot_dir/default/phpMyAdmin" ] && echo -e "\033[31mThe phpMyAdmin already installed! \033[0m" && phpMyAdmin_yn=Other && break
 		fi
                 break
         fi
@@ -617,7 +617,7 @@ fi
 . ./options.conf
 
 # index example
-if [ ! -e "$home_dir/default/index.html" -a "$Web_yn" == 'y' ];then
+if [ ! -e "$wwwroot_dir/default/index.html" -a "$Web_yn" == 'y' ];then
 	. functions/test.sh
 	TEST 2>&1 | tee -a $lnmp_dir/install.log 
 fi
@@ -646,7 +646,7 @@ echo "####################Congratulations########################"
 [ "$PHP_cache" == '4' ] && echo -e "`printf "%-32s" "eAccelerator password:"`\033[32meAccelerator\033[0m"
 [ "$FTP_yn" == 'y' ] && echo -e "\n`printf "%-32s" "Pure-FTPd install dir:"`\033[32m$pureftpd_install_dir\033[0m"
 [ "$FTP_yn" == 'y' ] && echo -e "`printf "%-32s" "Create FTP virtual script:"`\033[32m./pureftpd_vhost.sh\033[0m"
-[ "$phpMyAdmin_yn" == 'y' ] && echo -e "\n`printf "%-32s" "phpMyAdmin dir:"`\033[32m$home_dir/default/phpMyAdmin\033[0m"
+[ "$phpMyAdmin_yn" == 'y' ] && echo -e "\n`printf "%-32s" "phpMyAdmin dir:"`\033[32m$wwwroot_dir/default/phpMyAdmin\033[0m"
 [ "$phpMyAdmin_yn" == 'y' ] && echo -e "`printf "%-32s" "phpMyAdmin Control Panel url:"`\033[32mhttp://$local_IP/phpMyAdmin\033[0m"
 [ "$redis_yn" == 'y' ] && echo -e "\n`printf "%-32s" "redis install dir:"`\033[32m$redis_install_dir\033[0m"
 [ "$memcached_yn" == 'y' ] && echo -e "\n`printf "%-32s" "memcached install dir:"`\033[32m$memcached_install_dir\033[0m"

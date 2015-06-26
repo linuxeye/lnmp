@@ -5,8 +5,8 @@
 Upgrade_phpMyAdmin()
 {
 cd $lnmp_dir/src
-[ ! -e "$home_dir/default/phpMyAdmin" ] && echo -e "\033[31mThe phpMyAdmin is not installed on your system!\033[0m " && exit 1
-Old_phpMyAdmin_version=`grep Version $home_dir/default/phpMyAdmin/README | awk '{print $2}'`
+[ ! -e "$wwwroot_dir/default/phpMyAdmin" ] && echo -e "\033[31mThe phpMyAdmin is not installed on your system!\033[0m " && exit 1
+Old_phpMyAdmin_version=`grep Version $wwwroot_dir/default/phpMyAdmin/README | awk '{print $2}'`
 echo -e "Current phpMyAdmin Version: \033[32m$Old_phpMyAdmin_version\033[0m"
 
 while :
@@ -31,13 +31,13 @@ if [ -e "phpMyAdmin-${phpMyAdmin_version}-all-languages.tar.gz" ];then
         echo "Press Ctrl+c to cancel or Press any key to continue..."
         char=`get_char`
 	tar xzf phpMyAdmin-${phpMyAdmin_version}-all-languages.tar.gz 
-	rm -rf $home_dir/default/phpMyAdmin
-	/bin/mv phpMyAdmin-${phpMyAdmin_version}-all-languages $home_dir/default/phpMyAdmin
-	/bin/cp $home_dir/default/phpMyAdmin/{config.sample.inc.php,config.inc.php}
-	mkdir $home_dir/default/phpMyAdmin/{upload,save}
-	sed -i "s@UploadDir.*@UploadDir'\] = 'upload';@" $home_dir/default/phpMyAdmin/config.inc.php
-	sed -i "s@SaveDir.*@SaveDir'\] = 'save';@" $home_dir/default/phpMyAdmin/config.inc.php
-	chown -R ${run_user}.$run_user $home_dir/default/phpMyAdmin
+	rm -rf $wwwroot_dir/default/phpMyAdmin
+	/bin/mv phpMyAdmin-${phpMyAdmin_version}-all-languages $wwwroot_dir/default/phpMyAdmin
+	/bin/cp $wwwroot_dir/default/phpMyAdmin/{config.sample.inc.php,config.inc.php}
+	mkdir $wwwroot_dir/default/phpMyAdmin/{upload,save}
+	sed -i "s@UploadDir.*@UploadDir'\] = 'upload';@" $wwwroot_dir/default/phpMyAdmin/config.inc.php
+	sed -i "s@SaveDir.*@SaveDir'\] = 'save';@" $wwwroot_dir/default/phpMyAdmin/config.inc.php
+	chown -R ${run_user}.$run_user $wwwroot_dir/default/phpMyAdmin
 	cd ..
 	echo -e "You have \033[32msuccessfully\033[0m upgrade from \033[32m$Old_phpMyAdmin_version\033[0m to \033[32m$phpMyAdmin_version\033[0m"
 fi

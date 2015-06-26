@@ -71,7 +71,7 @@ if [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
 else
         /bin/cp conf/nginx.conf $tengine_install_dir/conf/nginx.conf
 fi
-sed -i "s@/home/wwwroot/default@$home_dir/default@" $tengine_install_dir/conf/nginx.conf
+sed -i "s@/home/wwwroot/default@$wwwroot_dir/default@" $tengine_install_dir/conf/nginx.conf
 sed -i "s@/home/wwwlogs@$wwwlogs_dir@g" $tengine_install_dir/conf/nginx.conf
 sed -i "s@^user www www@user $run_user $run_user@" $tengine_install_dir/conf/nginx.conf
 [ "$je_tc_malloc" == '2' ] && sed -i 's@^pid\(.*\)@pid\1\ngoogle_perftools_profiles /tmp/tcmalloc;@' $tengine_install_dir/conf/nginx.conf 

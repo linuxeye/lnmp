@@ -33,7 +33,7 @@ Uninstall()
 id -u $run_user >/dev/null 2>&1 ; [ $? -eq 0 ] && userdel $run_user
 id -u mysql >/dev/null 2>&1 ; [ $? -eq 0 ] && userdel mysql 
 
-/bin/mv ${home_dir}{,_$(date +%F)}
+/bin/mv ${wwwroot_dir}{,_$(date +%F)}
 /bin/mv ${db_data_dir}{,_$(date +%F)}
 for D in `cat ./options.conf | grep dir= | grep -v lnmp | awk -F'=' '{print $2}' | sort | uniq`
 do

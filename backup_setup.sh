@@ -26,17 +26,17 @@ done
 
 while :
 do
-	echo
-	echo "Please enter the directory for save the backup file: "
-	read -p "(Default directory: /home/backup): " backup_dir 
-	[ -z "$backup_dir" ] && backup_dir="/home/backup"
-        if [ -z "`echo $backup_dir | grep '^/'`" ]; then
+        echo
+        echo "Please enter the directory for save the backup file: "
+        read -p "(Default directory: $backup_dir): " NEW_backup_dir
+        [ -z "$NEW_backup_dir" ] && NEW_backup_dir="$backup_dir"
+        if [ -z "`echo $NEW_backup_dir| grep '^/'`" ]; then
                 echo -e "\033[31minput error! \033[0m"
         else
                 break
         fi
 done
-sed -i "s@^backup_dir=.*@backup_dir=$backup_dir@" ./options.conf
+sed -i "s@^backup_dir=.*@backup_dir=$NEW_backup_dir@" ./options.conf
 
 while :
 do

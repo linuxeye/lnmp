@@ -58,7 +58,7 @@ gpgcheck=0
 EOF
 fi
 
-for Package in libmcrypt-devel glog-devel jemalloc-devel tbb-devel libdwarf-devel mysql-devel libxml2-devel libicu-devel pcre-devel gd-devel boost-devel sqlite-devel pam-devel bzip2-devel oniguruma-devel openldap-devel readline-devel libc-client-devel libcap-devel libevent-devel libcurl-devel libmemcached-devel lcms2 inotify-tools 
+for Package in libmcrypt-devel glog-devel jemalloc-devel tbb-devel libdwarf-devel mysql-devel libxml2-devel libicu-devel pcre-devel gd-devel boost-devel sqlite-devel pam-devel bzip2-devel oniguruma-devel openldap-devel readline-devel libc-client-devel libcap-devel libevent-devel libcurl-devel libmemcached-devel lcms2 inotify-tools
 do
         yum -y install $Package
 done
@@ -164,28 +164,6 @@ memory_limit = 400000000
 post_max_size = 50000000
 EOF
 
-if [ "$CentOS_RHL" == '7' ];then
-cat > /etc/systemd/system/hhvm.service << EOF
-[Unit]
-Description=HHVM HipHop Virtual Machine (FCGI)
-
-[Service]
-ExecStartPre=/usr/bin/rm -rf /var/log/hhvm ; /usr/bin/mkdir /var/log/hhvm ; /usr/bin/chown ${run_user}.$run_user /var/log/hhvm 
-ExecStart=/usr/bin/hhvm --mode server --user $run_user --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-#systemctl enable hhvm
-#systemctl start hhvm
-elif [ "$CentOS_RHL" == '6' ];then
-/bin/cp ../init/hhvm-init-CentOS6 /etc/init.d/hhvm
-sed -i "s@^USER=www@USER=$run_user@" /etc/init.d/hhvm
-chmod +x /etc/init.d/hhvm
-#chkconfig hhvm on
-#service hhvm start
-fi
 if [ -e "/usr/bin/hhvm" -a ! -e "$php_install_dir" ];then
 	sed -i 's@/dev/shm/php-cgi.sock@/var/log/hhvm/sock@' $web_install_dir/conf/nginx.conf 
 	[ -z "`grep 'fastcgi_param SCRIPT_FILENAME' $web_install_dir/conf/nginx.conf`" ] && sed -i "s@fastcgi_index index.php;@&\n\t\tfastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;@" $web_install_dir/conf/nginx.conf 

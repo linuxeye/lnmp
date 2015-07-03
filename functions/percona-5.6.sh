@@ -39,10 +39,6 @@ $EXE_LINKER
 make -j `grep processor /proc/cpuinfo | wc -l` 
 make install
 
-cd $percona_install_dir/lib/
-ln -s libperconaserverclient.so libmysqlclient.so
-cd -
-
 if [ -d "$percona_install_dir/bin" ];then
         echo -e "\033[32mPercona install successfully! \033[0m"
 else

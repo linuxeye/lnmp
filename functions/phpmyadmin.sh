@@ -8,7 +8,7 @@ cd $lnmp_dir/src
 . ../functions/download.sh 
 . ../options.conf 
 
-src_url=http://downloads.sourceforge.net/project/phpmyadmin/phpMyAdmin/${phpMyAdmin_version}/phpMyAdmin-${phpMyAdmin_version}-all-languages.tar.gz && Download_src
+src_url=https://files.phpmyadmin.net/phpMyAdmin/${phpMyAdmin_version}/phpMyAdmin-${phpMyAdmin_version}-all-languages.tar.gz && Download_src
 
 tar xzf phpMyAdmin-${phpMyAdmin_version}-all-languages.tar.gz
 /bin/mv phpMyAdmin-${phpMyAdmin_version}-all-languages $wwwroot_dir/default/phpMyAdmin

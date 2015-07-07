@@ -14,7 +14,7 @@ do
         echo
         read -p "Please input upgrade phpMyAdmin Version(example: 4.1.5): " phpMyAdmin_version
 	if [ "$phpMyAdmin_version" != "$Old_phpMyAdmin_version" ];then
-	        [ ! -e "phpMyAdmin-${phpMyAdmin_version}-all-languages.tar.gz" ] && wget -c http://downloads.sourceforge.net/project/phpmyadmin/phpMyAdmin/$phpMyAdmin_version/phpMyAdmin-${phpMyAdmin_version}-all-languages.tar.gz > /dev/null 2>&1
+	        [ ! -e "phpMyAdmin-${phpMyAdmin_version}-all-languages.tar.gz" ] && wget -c https://files.phpmyadmin.net/phpMyAdmin/${phpMyAdmin_version}/phpMyAdmin-${phpMyAdmin_version}-all-languages.tar.gz > /dev/null 2>&1
 	        if [ -e "phpMyAdmin-${phpMyAdmin_version}-all-languages.tar.gz" ];then
 	                echo -e "Download \033[32mphpMyAdmin-${phpMyAdmin_version}-all-languages.tar.gz\033[0m successfully! "
 	                break

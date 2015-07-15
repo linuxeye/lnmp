@@ -34,7 +34,5 @@ echo '<?php phpinfo() ?>' > $wwwroot_dir/default/phpinfo.php
 [ "$Web_yn" == 'y' -a "$Nginx_version" != '3' -a "$Apache_version" != '3' ] && sed -i 's@LNMP@LANMP@g' $wwwroot_dir/default/index.html
 [ "$Web_yn" == 'y' -a "$Nginx_version" == '3' -a "$Apache_version" != '3' ] && sed -i 's@LNMP@LAMP@g' $wwwroot_dir/default/index.html
 chown -R ${run_user}.$run_user $wwwroot_dir/default
-[ -e "$db_install_dir" -a -z "`ps -ef | grep -v grep | grep mysql`" ] && /etc/init.d/mysqld restart 
-[ -e "$apache_install_dir" -a -z "`ps -ef | grep -v grep | grep apache`" ] && /etc/init.d/httpd restart 
 cd ..
 }

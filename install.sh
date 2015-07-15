@@ -194,7 +194,7 @@ else
                         echo -e "\t\033[32m2\033[0m. Install php-5.4"
                         echo -e "\t\033[32m3\033[0m. Install php-5.5"
                         echo -e "\t\033[32m4\033[0m. Install php-5.6"
-                        echo -e "\t\033[32m5\033[0m. Install php-7/phpng(alpha)"
+                        echo -e "\t\033[32m5\033[0m. Install php-7/phpng(beta)"
                         read -p "Please input a number:(Default 1 press Enter) " PHP_version
                         [ -z "$PHP_version" ] && PHP_version=1
                         if [ $PHP_version != 1 -a $PHP_version != 2 -a $PHP_version != 3 -a $PHP_version != 4 -a $PHP_version != 5 ];then
@@ -626,6 +626,9 @@ if [ "$HHVM_yn" == 'y' ];then
 	. functions/hhvm_CentOS.sh 
 	Install_hhvm_CentOS 2>&1 | tee -a $lnmp_dir/install.log 
 fi
+
+# Starting DB 
+[ -e "$db_install_dir" -a -z "`ps -ef | grep -v grep | grep mysql`" ] && /etc/init.d/mysqld start
 
 echo "####################Congratulations########################"
 [ "$Web_yn" == 'y' -a "$Nginx_version" != '3' -a "$Apache_version" == '3' ] && echo -e "\n`printf "%-32s" "Nginx/Tengine install dir":`\033[32m$web_install_dir\033[0m"

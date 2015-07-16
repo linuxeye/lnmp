@@ -32,8 +32,8 @@ cmake . -DCMAKE_INSTALL_PREFIX=$mysql_install_dir \
 -DWITH_MYISAM_STORAGE_ENGINE=1 \
 -DENABLED_LOCAL_INFILE=1 \
 -DENABLE_DTRACE=0 \
--DDEFAULT_CHARSET=utf8 \
--DDEFAULT_COLLATION=utf8_general_ci \
+-DDEFAULT_CHARSET=utf8mb4 \
+-DDEFAULT_COLLATION=utf8mb4_general_ci \
 -DWITH_EMBEDDED_SERVER=1 \
 $EXE_LINKER
 make -j `grep processor /proc/cpuinfo | wc -l` 
@@ -62,6 +62,7 @@ cat > /etc/my.cnf << EOF
 [client]
 port = 3306
 socket = /tmp/mysql.sock
+default-character-set = utf8mb4
 
 [mysqld]
 port = 3306
@@ -73,6 +74,9 @@ pid-file = $mysql_data_dir/mysql.pid
 user = mysql
 bind-address = 0.0.0.0
 server-id = 1
+
+init-connect = 'SET NAMES utf8mb4'
+character-set-server = utf8mb4
 
 skip-name-resolve
 #skip-networking

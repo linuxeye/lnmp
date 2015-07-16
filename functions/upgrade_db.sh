@@ -13,7 +13,7 @@ if [ "$DB_tmp" == 'MariaDB' ];then
 	if [ "`../functions/get_ip_area.py $public_IP`" == '\u4e2d\u56fd' ];then
 	        FLAG_IP=CN
 	fi
-	[ "$FLAG_IP"x == "CN"x ] && DOWN_ADDR=http://mirrors.ustc.edu.cn/mariadb || DOWN_ADDR=https://downloads.mariadb.org/f
+	[ "$FLAG_IP"x == "CN"x ] && DOWN_ADDR=http://mirrors.aliyun.com/mariadb || DOWN_ADDR=https://downloads.mariadb.org/f
 	[ -d "/lib64" ] && { SYS_BIT_a=x86_64;SYS_BIT_b=x86_64; } || { SYS_BIT_a=x86;SYS_BIT_b=i686; }
 	LIBC_VERSION=`getconf -a | grep GNU_LIBC_VERSION | awk '{print $NF}'`
 	LIBC_YN=`echo "$LIBC_VERSION < 2.14" | bc`
@@ -130,8 +130,8 @@ if [ -e "$DB_name.tar.gz" ];then
 -DWITH_READLINE=1 \
 -DENABLE_DTRACE=0 \
 -DENABLED_LOCAL_INFILE=1 \
--DDEFAULT_CHARSET=utf8 \
--DDEFAULT_COLLATION=utf8_general_ci \
+-DDEFAULT_CHARSET=utf8mb4 \
+-DDEFAULT_COLLATION=utf8mb4_general_ci \
 $EXE_LINKER
 		else
 			cmake . -DCMAKE_INSTALL_PREFIX=$db_install_dir \
@@ -145,8 +145,8 @@ $EXE_LINKER
 -DWITH_ARCHIVE_STORAGE_ENGINE=1 \
 -DENABLED_LOCAL_INFILE=1 \
 -DENABLE_DTRACE=0 \
--DDEFAULT_CHARSET=utf8 \
--DDEFAULT_COLLATION=utf8_general_ci \
+-DDEFAULT_CHARSET=utf8mb4 \
+-DDEFAULT_COLLATION=utf8mb4_general_ci \
 $EXE_LINKER
 		fi
 		make -j `grep processor /proc/cpuinfo | wc -l`
@@ -181,8 +181,8 @@ $EXE_LINKER
 -DWITH_READLINE=1 \
 -DENABLED_LOCAL_INFILE=1 \
 -DENABLE_DTRACE=0 \
--DDEFAULT_CHARSET=utf8 \
--DDEFAULT_COLLATION=utf8_general_ci \
+-DDEFAULT_CHARSET=utf8mb4 \
+-DDEFAULT_COLLATION=utf8mb4_general_ci \
 -DWITH_EMBEDDED_SERVER=1 \
 $EXE_LINKER
                 else
@@ -196,8 +196,8 @@ $EXE_LINKER
 -DWITH_MYISAM_STORAGE_ENGINE=1 \
 -DENABLED_LOCAL_INFILE=1 \
 -DENABLE_DTRACE=0 \
--DDEFAULT_CHARSET=utf8 \
--DDEFAULT_COLLATION=utf8_general_ci \
+-DDEFAULT_CHARSET=utf8mb4 \
+-DDEFAULT_COLLATION=utf8mb4_general_ci \
 -DWITH_EMBEDDED_SERVER=1 \
 $EXE_LINKER
                 fi

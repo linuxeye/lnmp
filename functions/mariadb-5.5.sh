@@ -16,7 +16,7 @@ fi
 
 echo $public_IP $FLAG_IP
 
-[ "$FLAG_IP"x == "CN"x ] && DOWN_ADDR=http://mirrors.ustc.edu.cn/mariadb || DOWN_ADDR=https://downloads.mariadb.org/f
+[ "$FLAG_IP"x == "CN"x ] && DOWN_ADDR=http://mirrors.aliyun.com/mariadb || DOWN_ADDR=https://downloads.mariadb.org/f
 [ -d "/lib64" ] && { SYS_BIT_a=x86_64;SYS_BIT_b=x86_64; } || { SYS_BIT_a=x86;SYS_BIT_b=i686; }
 LIBC_VERSION=`getconf -a | grep GNU_LIBC_VERSION | awk '{print $NF}'`
 LIBC_YN=`echo "$LIBC_VERSION < 2.14" | bc`
@@ -58,6 +58,7 @@ cat > /etc/my.cnf << EOF
 [client]
 port = 3306
 socket = /tmp/mysql.sock
+default-character-set = utf8mb4
 
 [mysqld]
 port = 3306
@@ -69,6 +70,9 @@ pid-file = $mariadb_data_dir/mysql.pid
 user = mysql
 bind-address = 0.0.0.0
 server-id = 1
+
+init-connect = 'SET NAMES utf8mb4'
+character-set-server = utf8mb4
 
 skip-name-resolve
 #skip-networking

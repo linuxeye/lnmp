@@ -156,6 +156,7 @@ $EXE_LINKER
 		[ ! -d "$db_install_dir" ] && mkdir -p $db_install_dir
                 mkdir -p $db_data_dir;chown mysql.mysql -R $db_data_dir
 		make install
+		cd ..
 		$db_install_dir/scripts/mysql_install_db --user=mysql --basedir=$db_install_dir --datadir=$db_data_dir
                 chown mysql.mysql -R $db_data_dir
                 service mysqld start
@@ -208,6 +209,7 @@ $EXE_LINKER
                 [ ! -d "$db_install_dir" ] && mkdir -p $db_install_dir
                 mkdir -p $db_data_dir;chown mysql.mysql -R $db_data_dir
                 make install
+		cd ..
 		$db_install_dir/scripts/mysql_install_db --user=mysql --basedir=$db_install_dir --datadir=$db_data_dir
                 chown mysql.mysql -R $db_data_dir
                 service mysqld start

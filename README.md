@@ -14,7 +14,7 @@
 - According to their needs can to install memcached, redis
 - According to their needs can to optimize MySQL and Nginx with jemalloc or tcmalloc
 - Add a virtual host script provided
-- Nginx/Tengine, PHP, Redis, phpMyAdmin upgrade script provided
+- Nginx/Tengine, MySQL/MariaDB/Percona, PHP, Redis, phpMyAdmin upgrade script provided
 - Add backup script provided
 
 ## How to use 

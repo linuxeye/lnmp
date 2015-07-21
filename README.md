@@ -1,57 +1,63 @@
-   This script is free collection of shell scripts for rapid deployment of `LEMP`/`LAMP`/`LNMP` stacks (`Linux`, `Nginx`/`Tengine`, `MySQL`/`MariaDB`/`Percona` and `PHP`) for CentOS/Redhat Debian and Ubuntu.
+    This script is written using the shell, in order to quickly deploy `LEMP`/`LAMP`/`LNMP` / `LNMPA`(Linux, Nginx/Tengine, MySQL in a production environment/MariaDB/Percona, PHP), applicable to CentOS 5~7(including RedHat), Debian 6~8, Ubuntu 12.04~15.04 of 32 and 64.
 
-   Script features: 
-- Constant updates 
-- Source compiler installation, most source code is the latest stable version, and downloaded from the official website
-- Fixes some security issues 
-- You can freely choose to install database version (MySQL-5.6, MySQL-5.5, MariaDB-10.0, MariaDB-5.5, Percona-5.6, Percona-5.5)
-- You can freely choose to install PHP version (php-5.3, php-5.4, php-5.5, php-5.6, php-7/phpng(alpha))
-- You can freely choose to install HHVM version (CentOS6.5 64bit, CentOS7 64bit)
-- You can freely choose to install Nginx or Tengine
-- You can freely choose to install Apache version (Apache-2.4, Apache-2.2)
-- According to their needs can to install ZendOPcache, xcache, APCU, eAccelerator, ionCube and ZendGuardLoader (php-5.4, php-5.3)
-- According to their needs can to install Pureftpd, phpMyAdmin
-- According to their needs can to install memcached, redis
-- According to their needs can to optimize MySQL and Nginx with jemalloc or tcmalloc
-- Add a virtual host script provided
-- Nginx/Tengine, MySQL/MariaDB/Percona, PHP, Redis, phpMyAdmin upgrade script provided
-- Add backup script provided
+    Script properties:
+- Continually updated
+- Source compiler installation, most stable source is the latest version, and download from the official site
+- Some security optimization
+- Providing a plurality of database versions (MySQL-5.6, MySQL-5.5, MariaDB-10.0, MariaDB-5.5, Percona-5.6, Percona-5.5)
+- Providing multiple PHP versions (php-5.3, php-5.4, php-5.5, php-5.6, php-7 / phpng (alpha))
+- Provide Nginx, Tengine
+- Providing a plurality of Apache version (Apache-2.4, Apache-2.2)
+- According to their needs to install PHP Cache Accelerator provides ZendOPcache, xcache, apcu, eAccelerator. And php encryption and decryption tool ionCube, ZendGuardLoader
+- Installation Pureftpd, phpMyAdmin according to their needs
+- Install memcached, redis according to their needs
+- Tcmalloc can use according to their needs or jemalloc optimize MySQL, Nginx
+- Providing add a virtual host script
+- Provide Nginx/Tengine, MySQL/MariaDB/Percona, PHP, Redis, phpMyAdmin upgrade script
+- Provide local backup and remote backup (rsync between servers) script
+- Provided under HHVM install CentOS 6,7
 
-## How to use 
-
+## How to use
+If your server system: CentOS/Redhat (Do not enter "//" and "// subsequent sentence)
 ```bash
-   yum -y install wget screen # for CentOS/Redhat
-   #apt-get -y install wget screen # for Debian/Ubuntu 
-   wget http://mirrors.linuxeye.com/lnmp.tar.gz
-   # or download include source packages
-   wget http://mirrors.linuxeye.com/lnmp-full.tar.gz
-   tar xzf lnmp.tar.gz
-   # or tar xzf lnmp-full.tar.gz
-   cd lnmp
-   # Prevent interrupt the installation process. If the network is down, 
-   # you can execute commands `screen -r lnmp` network reconnect the installation window.
-   screen -S lnmp
-   ./install.sh
+   yum -y install wget screen   // For CentOS / Redhat
+   wget http://mirrors.linuxeye.com/lnmp-full.tar.gz   // Contains the source code
+   tar xzf lnmp-full.tar.gz
+   cd lnmp    // If you need to modify the directory (installation, data storage, Nginx logs), modify options.conf file
+   screen -S lnmp    // if network interruption, you can execute the command `screen -r lnmp` reconnect install window
+   ./install.sh   // Do not sh install.sh or bash install.sh such execution
+```
+If your server system: Debian/Ubuntu (Do not enter "//" and "// subsequent sentence)
+```bash
+   apt-get -y install wget screen    // For Debian / Ubuntu
+   wget http://mirrors.linuxeye.com/lnmp-full.tar.gz   // Contains the source code
+   tar xzf lnmp-full.tar.gz
+   cd lnmp    // If you need to modify the directory (installation, data storage, Nginx logs), modify options.conf file
+   screen -S lnmp    // if network interruption, you can execute the command `screen -r lnmp` reconnect install window
+   ./install.sh   // Do not sh install.sh or bash install.sh such execution
 ```
 
 ## How to add a virtual host
 
 ```bash
-   ./vhost.sh
+   cd ~/lnmp    // Must enter the directory execution under lnmp
+   ./vhost.sh    // Do not sh vhost.sh or bash vhost.sh such execution
 ```
 
 ## How to add FTP virtual user 
 
 ```bash
+   cd ~/lnmp
    ./pureftpd_vhost.sh
 ```
 
 ## How to backup
 
 ```bash
-   ./backup_setup.sh # Set backup options 
-   ./backup.sh # Start backup, You can add cron jobs
-   # crontab -l # Examples 
+   cd ~/lnmp
+   ./backup_setup.sh    // Backup parameters 
+   ./backup.sh    // Perform the backup immediately 
+   crontab -l    // Can be added to scheduled tasks, such as automatic backups every day 1:00 
      0 1 * * * cd ~/lnmp;./backup.sh  > /dev/null 2>&1 &
 ```
 

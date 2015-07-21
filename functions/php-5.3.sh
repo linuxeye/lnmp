@@ -14,7 +14,7 @@ src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/$libmcrypt_ver
 src_url=http://downloads.sourceforge.net/project/mhash/mhash/$mhash_version/mhash-$mhash_version.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/$mcrypt_version/mcrypt-$mcrypt_version.tar.gz && Download_src
 src_url=http://www.php.net/distributions/php-$php_3_version.tar.gz && Download_src
-src_url=http://mirrors.linuxeye.com/lnmp/src/php5.3patch && Download_src
+src_url=http://mirrors.linuxeye.com/lnmp/srcphp5.3patch && Download_src
 
 tar xzf libiconv-$libiconv_version.tar.gz
 cd libiconv-$libiconv_version

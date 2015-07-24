@@ -298,7 +298,7 @@ else
                                                 (( ${#xcache_admin_pass} >= 5 )) && { xcache_admin_md5_pass=`echo -n "$xcache_admin_pass" | md5sum | awk '{print $1}'` ; break ; } || echo -e "\033[31mxcache admin password least 5 characters! \033[0m"
                                         done
                                 fi
-				if [ "$PHP_version" != '5' ];then
+				if [ "$PHP_version" != '5' -a "$PHP_cache" != '1' ];then
                                         while :
                                         do
                                                 echo

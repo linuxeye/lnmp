@@ -27,15 +27,14 @@ Uninstall()
 [ -e "$memcached_install_dir" ] && service memcached stop && rm -rf /etc/init.d/memcached
 [ -e "/usr/local/imagemagick" ] && rm -rf /usr/local/imagemagick 
 [ -e "/usr/local/graphicsmagick" ] && rm -rf /usr/local/graphicsmagick 
-[ -e "/etc/init.d/supervisord" ] && service supervisord stop && { rm -rf /etc/supervisord.conf; /etc/init.d/supervisord; } 
-[ -e "/etc/systemd/system/hhvm.service" ] && service hhvm stop && { rpm -e hhvm ;rm -rf /etc/systemd/system/hhvm.service /etc/hhvm /var/log/hhvm; } 
-[ -e "/etc/init.d/hhvm" ] && service hhvm stop && { rpm -e hhvm ;rm -rf /etc/init.d/hhvm /etc/hhvm /var/log/hhvm; } 
+[ -e "/etc/init.d/supervisord" ] && service supervisord stop && { rm -rf /etc/supervisord.conf /etc/init.d/supervisord; }
+[ -e "/usr/bin/hhvm" ] && { rpm -e hhvm ; rm -rf /etc/hhvm /var/log/hhvm; }
 id -u $run_user >/dev/null 2>&1 ; [ $? -eq 0 ] && userdel $run_user
 id -u mysql >/dev/null 2>&1 ; [ $? -eq 0 ] && userdel mysql 
 
 /bin/mv ${wwwroot_dir}{,_$(date +%F)}
 /bin/mv ${db_data_dir}{,_$(date +%F)}
-for D in `cat ./options.conf | grep dir= | grep -v lnmp | awk -F'=' '{print $2}' | sort | uniq`
+for D in `cat ./options.conf | grep dir= | grep -v lnmp | grep -v backup_dir | awk -F'=' '{print $2}' | sort | uniq`
 do
         [ -e "$D" ] && rm -rf $D
 done
@@ -66,7 +65,7 @@ echo
 echo -e "\033[31mYou will uninstall LNMP, Please backup your configure files and DB data! \033[0m"
 echo 
 echo -e "\033[33mThe following directory or files will be remove: \033[0m"
-for D in `cat ./options.conf | grep dir= | grep -v lnmp | awk -F'=' '{print $2}' | sort | uniq` 
+for D in `cat ./options.conf | grep dir= | grep -v lnmp | grep -v backup_dir | awk -F'=' '{print $2}' | sort | uniq` 
 do
 	[ -e "$D" ] && echo $D
 done

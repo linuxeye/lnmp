@@ -81,7 +81,7 @@ do
 \t\033[32mq\033[0m. Exit"
 	read -p "Please input the correct option: " Number 
 	if [ "$Number" != '1' -a "$Number" != '2' -a "$Number" != '3' -a "$Number" != '4' -a "$Number" != '5' -a "$Number" != '6' -a "$Number" != 'q' ];then
-		echo -e "\033[31minput error! Please only input 1 ~ 8 and q\033[0m"
+		echo -e "\033[31minput error! Please only input 1 ~ 6 and q\033[0m"
 	else
 	case "$Number" in
 	1)

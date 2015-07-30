@@ -151,7 +151,7 @@ if [ "$rewrite_yn" == 'n' ];then
 else
 	echo ''
 	echo "Please input the rewrite of programme :"
-	echo -e "\033[32mwordpress\033[0m,\033[32mdiscuz\033[0m,\033[32mphpwind\033[0m,\033[32mtypecho\033[0m,\033[32mecshop\033[0m,\033[32mdrupal\033[0m,\033[32mjoomla\033[0m rewrite was exist."
+	echo -e "\033[32mwordpress\033[0m,\033[32mdiscuz\033[0m,\033[32mphpwind\033[0m,\033[32mtypecho\033[0m,\033[32mecshop\033[0m,\033[32mdrupal\033[0m,\033[32mjoomla\033[0m,\033[32mlaravel\033[0m rewrite was exist."
 	read -p "(Default rewrite: other):" rewrite
 	if [ "$rewrite" == "" ]; then
 		rewrite="other"

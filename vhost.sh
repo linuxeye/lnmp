@@ -240,7 +240,7 @@ else
     	rewrite="other"
     fi
     echo "You choose rewrite=${CMSG}$rewrite${CEND}" 
-    if [ -s "conf/$rewrite.conf" ];then
+    if [ -e "config/$rewrite.conf" ];then
     	/bin/cp config/$rewrite.conf $web_install_dir/conf/$rewrite.conf
     else
     	touch "$web_install_dir/conf/$rewrite.conf"

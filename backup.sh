@@ -2,6 +2,11 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://blog.linuxeye.com
 #
+# Version: 1.0-Alpha Jun 15,2015 lj2007331 AT gmail.com
+# Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
+#
+# Project home page:
+#       http://oneinstack.com
 
 cd tools
 . ../options.conf

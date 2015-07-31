@@ -16,7 +16,7 @@ DB_tmp=`$db_install_dir/bin/mysql -uroot -p$dbrootpwd -e "show databases\G" | gr
 [ -z "$DB_tmp" ] && { echo "[$DBname] not exist" >> $LogFile ;  exit 1 ; }
 
 if [ -e "$OldFile" ];then
-	rm -f $OldFile
+	/bin/rm -f $OldFile
         echo "[$OldFile] Delete Old File Success" >> $LogFile
 else
         echo "[$OldFile] Delete Old Backup File" >> $LogFile

@@ -1,6 +1,12 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# Blog:  http://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.com
+#
+# Version: 1.0-Alpha Jun 15,2015 lj2007331 AT gmail.com
+# Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
+#
+# Project home page:
+#       http://oneinstack.com
 
 while : 
 do
@@ -26,10 +32,10 @@ done
 
 while :
 do
-        echo
-        echo "Please enter the directory for save the backup file: "
-        read -p "(Default directory: $backup_dir): " NEW_backup_dir
-        [ -z "$NEW_backup_dir" ] && NEW_backup_dir="$backup_dir"
+	echo
+	echo "Please enter the directory for save the backup file: "
+	read -p "(Default directory: $backup_dir): " NEW_backup_dir 
+	[ -z "$NEW_backup_dir" ] && NEW_backup_dir="$backup_dir"
         if [ -z "`echo $NEW_backup_dir| grep '^/'`" ]; then
                 echo -e "\033[31minput error! \033[0m"
         else

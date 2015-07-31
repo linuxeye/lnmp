@@ -14,7 +14,7 @@ cd $oneinstack_dir/src
 src_url=http://www.memcached.org/files/memcached-$memcached_version.tar.gz && Download_src
 
 # memcached server
-id -u mysql >/dev/null 2>&1
+id -u memcached >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin memcached
 
 tar xzf memcached-$memcached_version.tar.gz

@@ -26,7 +26,6 @@ sed -i "s@^oneinstack_dir.*@oneinstack_dir=`pwd`@" ./options.conf
 . ./include/check_os.sh
 . ./include/download.sh
 . ./include/get_char.sh
-. ./include/memory.sh
 
 # Check if user is root
 [ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; } 
@@ -500,6 +499,7 @@ do
 done
 
 # init
+. ./include/memory.sh
 if [ "$OS" == 'CentOS' ];then
     . include/init_CentOS.sh 2>&1 | tee $oneinstack_dir/install.log
     [ -n "`gcc --version | head -n1 | grep '4\.1\.'`" ] && export CC="gcc44" CXX="g++44"

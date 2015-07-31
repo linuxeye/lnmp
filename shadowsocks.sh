@@ -46,7 +46,7 @@ elif [ $OS == 'Debian' -o $OS == 'Ubuntu' ];then
     done
 fi
 
-src_url=http://mirrors.linuxeye.com/lnmp/src/ez_setup.py && Download_src
+src_url=http://mirrors.linuxeye.com/oneinstack/src/ez_setup.py && Download_src
 src_url=http://mirrors.linuxeye.com/lnmp/init/Shadowsocks-init && Download_src
 
 which pip > /dev/null 2>&1

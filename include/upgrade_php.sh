@@ -36,7 +36,7 @@ if [ -e "php-$NEW_PHP_version.tar.gz" ];then
     echo "Press Ctrl+c to cancel or Press any key to continue..."
     char=`get_char`
     tar xzf php-$NEW_PHP_version.tar.gz
-    src_url=http://mirrors.linuxeye.com/lnmp/src/fpm-race-condition.patch && Download_src
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/fpm-race-condition.patch && Download_src
     patch -d php-$NEW_PHP_version -p0 < fpm-race-condition.patch
     cd php-$NEW_PHP_version
     make clean

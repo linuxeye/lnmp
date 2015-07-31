@@ -13,11 +13,11 @@ DEMO()
 cd $oneinstack_dir/src
 
 if [ "$IPADDR_STATE"x == "CN"x ];then
-    src_url=http://mirrors.linuxeye.com/lnmp/src/tz.zip && Download_src
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/tz.zip && Download_src
     unzip -q tz.zip -d $wwwroot_dir/default
     /bin/cp ../config/index_cn.html $wwwroot_dir/default/index.html
 else
-    src_url=http://mirrors.linuxeye.com/lnmp/src/tz_e.zip && Download_src
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/tz_e.zip && Download_src
     unzip -q tz_e.zip -d $wwwroot_dir/default;/bin/mv $wwwroot_dir/default/{tz_e.php,proberv.php}
     sed -i 's@https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js@http://lib.sinaapp.com/js/jquery/1.7/jquery.min.js@' $wwwroot_dir/default/proberv.php 
     /bin/cp ../config/index.html $wwwroot_dir/default

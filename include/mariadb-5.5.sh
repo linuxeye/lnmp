@@ -190,7 +190,8 @@ $mariadb_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.db wher
 $mariadb_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.proxies_priv where Host!='localhost';"
 $mariadb_install_dir/bin/mysql -uroot -p$dbrootpwd -e "drop database test;"
 $mariadb_install_dir/bin/mysql -uroot -p$dbrootpwd -e "reset master;"
-sed -i "s@^db_install_dir.*@db_install_dir=$mariadb_install_dir@" options.conf
-sed -i "s@^db_data_dir.*@db_data_dir=$mariadb_data_dir@" options.conf
+rm -rf /etc/ld.so.conf.d/{mysql,mariadb,percona}*.conf
+echo "$mariadb_install_dir/lib" > mariadb.conf 
+ldconfig
 service mysqld stop
 }

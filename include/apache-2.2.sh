@@ -50,7 +50,7 @@ if [ "$Nginx_version" == '3' ];then
     sed -i 's/^#ServerName www.example.com:80/ServerName 0.0.0.0:80/' $apache_install_dir/conf/httpd.conf
     TMP_PORT=80
     TMP_IP=$IPADDR
-elif [ "$Nginx_version" == '1' -o "$Nginx_version" == '2' ];then
+elif [ "$Nginx_version" == '1' -o "$Nginx_version" == '2' -o -e "$web_install_dir/sbin/nginx" ];then
     sed -i 's/^#ServerName www.example.com:80/ServerName 127.0.0.1:9090/' $apache_install_dir/conf/httpd.conf
     sed -i 's@^Listen.*@Listen 127.0.0.1:9090@' $apache_install_dir/conf/httpd.conf
     TMP_PORT=9090
@@ -119,7 +119,6 @@ RemoteIPInternalProxy 127.0.0.1
 EOF
     sed -i "s@Include conf/extra/httpd-mpm.conf@Include conf/extra/httpd-mpm.conf\nInclude conf/extra/httpd-remoteip.conf@" $apache_install_dir/conf/httpd.conf
 fi
-[ "$Nginx_version" == '3' -a "$Apache_version" != '3' ] && sed -i "s@^web_install_dir.*@web_install_dir=$apache_install_dir@" options.conf
 service httpd start
 cd ..
 }

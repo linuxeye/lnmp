@@ -112,7 +112,7 @@ What Are You Doing?
 
         2)
             USER
-            [ -e "$Passwdfile" ] && [ -z "`grep ^${User}: $Passwdfile`" ] && { echo "${CQUESTION}[$User] is not existed! ${CEND}"; continue; }
+            [ -e "$Passwdfile" ] && [ -z "`grep ^${User}: $Passwdfile`" ] && { echo "${CQUESTION}[$User] was not existed! ${CEND}"; continue; }
             DIRECTORY
             $FTP_bin usermod $User -f $Passwdfile -d $Directory -m 
             $FTP_bin -f $Passwdfile -F $Puredbfile > /dev/null 2>&1 
@@ -127,7 +127,7 @@ What Are You Doing?
 
         3)
             USER
-            [ -e "$Passwdfile" ] && [ -z "`grep ^${User}: $Passwdfile`" ] && { echo "${CQUESTION}[$User] is not existed! ${CEND}"; continue; }
+            [ -e "$Passwdfile" ] && [ -z "`grep ^${User}: $Passwdfile`" ] && { echo "${CQUESTION}[$User] was not existed! ${CEND}"; continue; }
             PASSWORD
             $FTP_bin passwd $User -f $Passwdfile -m < $FTP_tmp_passfile
             $FTP_bin -f $Passwdfile -F $Puredbfile > /dev/null 2>&1 
@@ -142,13 +142,13 @@ What Are You Doing?
 
         4)
             if [ ! -e "$Passwdfile" ];then
-                echo "${CQUESTION}User is not existed! ${CEND}"
+                echo "${CQUESTION}User was not existed! ${CEND}"
             else
                 $FTP_bin list
             fi
             
             USER
-            [ -e "$Passwdfile" ] && [ -z "`grep ^${User}: $Passwdfile`" ] && { echo "${CQUESTION}[$User] is not existed! ${CEND}"; continue; } 
+            [ -e "$Passwdfile" ] && [ -z "`grep ^${User}: $Passwdfile`" ] && { echo "${CQUESTION}[$User] was not existed! ${CEND}"; continue; } 
             $FTP_bin userdel $User -f $Passwdfile -m
             $FTP_bin -f $Passwdfile -F $Puredbfile > /dev/null 2>&1
             echo
@@ -157,7 +157,7 @@ What Are You Doing?
 
         5)
             if [ ! -e "$Passwdfile" ];then
-            	echo "${CQUESTION}User is not existed! ${CEND}"
+            	echo "${CQUESTION}User was not existed! ${CEND}"
             else
             	$FTP_bin list
             fi
@@ -165,7 +165,7 @@ What Are You Doing?
 
         6)
             USER
-            [ -e "$Passwdfile" ] && [ -z "`grep ^${User}: $Passwdfile`" ] && { echo "${CQUESTION}[$User] is not existed! ${CEND}"; continue; } 
+            [ -e "$Passwdfile" ] && [ -z "`grep ^${User}: $Passwdfile`" ] && { echo "${CQUESTION}[$User] was not existed! ${CEND}"; continue; } 
             $FTP_bin show $User
             ;;
 

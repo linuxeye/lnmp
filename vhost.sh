@@ -12,20 +12,21 @@ export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 clear
 printf "
 #######################################################################
-#    LNMP/LAMP/LNMPA for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+    #
-# For more information please visit http://blog.linuxeye.com/31.html  #
+#       OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+      #
+#       For more information please visit http://oneinstack.com       #
 #######################################################################
 "
 
 . ./options.conf
 . ./include/color.sh
+. ./include/check_web.sh
 
 # Check if user is root
 [ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; } 
 
 Choose_env()
 {
-if [ -e "$php_install_dir" -a -e "$tomcat_install_dir" -a -e "/usr/bin/hhvm" ];then
+if [ -e "$php_install_dir/bin/phpize" -a -e "$tomcat_install_dir/conf/server.xml" -a -e "/usr/bin/hhvm" ];then
     Number=111
     while :
     do
@@ -45,7 +46,7 @@ if [ -e "$php_install_dir" -a -e "$tomcat_install_dir" -a -e "/usr/bin/hhvm" ];t
     [ "$Choose_number" == '1' ] && NGX_FLAG=php
     [ "$Choose_number" == '2' ] && NGX_FLAG=java
     [ "$Choose_number" == '3' ] && NGX_FLAG=hhvm
-elif [ -e "$php_install_dir" -a -e "$tomcat_install_dir" -a ! -e "/usr/bin/hhvm" ];then
+elif [ -e "$php_install_dir/bin/phpize" -a -e "$tomcat_install_dir/conf/server.xml" -a ! -e "/usr/bin/hhvm" ];then
     Number=110
     while :
     do
@@ -63,10 +64,10 @@ elif [ -e "$php_install_dir" -a -e "$tomcat_install_dir" -a ! -e "/usr/bin/hhvm"
     done
     [ "$Choose_number" == '1' ] && NGX_FLAG=php
     [ "$Choose_number" == '2' ] && NGX_FLAG=java
-elif [ -e "$php_install_dir" -a ! -e "$tomcat_install_dir" -a ! -e "/usr/bin/hhvm" ];then
+elif [ -e "$php_install_dir/bin/phpize" -a ! -e "$tomcat_install_dir/conf/server.xml" -a ! -e "/usr/bin/hhvm" ];then
     Number=100
     NGX_FLAG=php
-elif [ -e "$php_install_dir" -a ! -e "$tomcat_install_dir" -a -e "/usr/bin/hhvm" ];then
+elif [ -e "$php_install_dir/bin/phpize" -a ! -e "$tomcat_install_dir/conf/server.xml" -a -e "/usr/bin/hhvm" ];then
     Number=101
     while :
     do
@@ -84,7 +85,7 @@ elif [ -e "$php_install_dir" -a ! -e "$tomcat_install_dir" -a -e "/usr/bin/hhvm"
     done
     [ "$Choose_number" == '1' ] && NGX_FLAG=php
     [ "$Choose_number" == '2' ] && NGX_FLAG=hhvm
-elif [ ! -e "$php_install_dir" -a -e "$tomcat_install_dir" -a -e "/usr/bin/hhvm" ];then
+elif [ ! -e "$php_install_dir/bin/phpize" -a -e "$tomcat_install_dir/conf/server.xml" -a -e "/usr/bin/hhvm" ];then
     Number=011
     while :
     do
@@ -102,10 +103,10 @@ elif [ ! -e "$php_install_dir" -a -e "$tomcat_install_dir" -a -e "/usr/bin/hhvm"
     done
     [ "$Choose_number" == '1' ] && NGX_FLAG=java
     [ "$Choose_number" == '2' ] && NGX_FLAG=hhvm
-elif [ ! -e "$php_install_dir" -a -e "$tomcat_install_dir" -a ! -e "/usr/bin/hhvm" ];then
+elif [ ! -e "$php_install_dir/bin/phpize" -a -e "$tomcat_install_dir/conf/server.xml" -a ! -e "/usr/bin/hhvm" ];then
     Number=010
     NGX_FLAG=java
-elif [ ! -e "$php_install_dir" -a ! -e "$tomcat_install_dir" -a -e "/usr/bin/hhvm" ];then
+elif [ ! -e "$php_install_dir/bin/phpize" -a ! -e "$tomcat_install_dir/conf/server.xml" -a -e "/usr/bin/hhvm" ];then
     Number=001
     NGX_FLAG=hhvm
 else
@@ -280,19 +281,13 @@ server_name $domain$moredomainame;
 $N_log
 index index.html index.htm index.jsp index.php;
 root $vhostdir;
-#error_page 404 /404.html;
-#if ( \$query_string ~* ".*[\;'\<\>].*" ){
-#        return 404;
-#        }
 $anti_hotlinking
 location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|ico)$ {
         expires 30d;
         }
-
 location ~ .*\.(js|css)?$ {
         expires 7d;
         }
-
 `echo -e $NGX_CONF`
 }
 EOF
@@ -312,8 +307,8 @@ fi
 
 printf "
 #######################################################################
-#    LNMP/LAMP/LNMPA for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+    #
-# For more information please visit http://blog.linuxeye.com/31.html  #
+#       OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+      #
+#       For more information please visit http://oneinstack.com       #
 #######################################################################
 "
 echo "`printf "%-32s" "Your domain:"`${CMSG}$domain${CEND}"
@@ -322,7 +317,7 @@ echo "`printf "%-32s" "Directory of:"`${CMSG}$vhostdir${CEND}"
 
 }
 
-Create_nginx_php-fpm_conf()
+Create_nginx_php-fpm_hhvm_conf()
 {
 [ ! -d $web_install_dir/conf/vhost ] && mkdir $web_install_dir/conf/vhost
 cat > $web_install_dir/conf/vhost/$domain.conf << EOF
@@ -333,17 +328,11 @@ $N_log
 index index.html index.htm index.jsp index.php;
 include $rewrite.conf;
 root $vhostdir;
-#error_page 404 /404.html;
-if ( \$query_string ~* ".*[\;'\<\>].*" ){
-	return 404;
-	}
 $anti_hotlinking
 `echo -e $NGX_CONF`
-
 location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|ico)$ {
 	expires 30d;
 	}
-
 location ~ .*\.(js|css)?$ {
 	expires 7d;
 	}
@@ -363,8 +352,8 @@ fi
 
 printf "
 #######################################################################
-#    LNMP/LAMP/LNMPA for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+    #
-# For more information please visit http://blog.linuxeye.com/31.html  #
+#       OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+      #
+#       For more information please visit http://oneinstack.com       #
 #######################################################################
 "
 echo "`printf "%-32s" "Your domain:"`${CMSG}$domain${CEND}"
@@ -431,8 +420,8 @@ fi
 
 printf "
 #######################################################################
-#    LNMP/LAMP/LNMPA for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+    #
-# For more information please visit http://blog.linuxeye.com/31.html  #
+#       OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+      #
+#       For more information please visit http://oneinstack.com       #
 #######################################################################
 "
 echo "`printf "%-32s" "Your domain:"`${CMSG}$domain${CEND}"
@@ -451,30 +440,23 @@ server_name $domain$moredomainame;
 $N_log
 index index.html index.htm index.jsp index.php;
 root $vhostdir;
-#error_page 404 /404.html;
-if ( \$query_string ~* ".*[\;'\<\>].*" ){
-        return 404;
-        }
 $anti_hotlinking
 location / {
-        try_files \$uri @apache;
-        }
-
-location @apache {
-        internal;
-        proxy_pass http://127.0.0.1:9090;
+	try_files \$uri @apache;
 	}
-
+location @apache {
+	internal;
+	proxy_pass http://127.0.0.1:9090;
+	}
 location ~ .*\.(php|php5)?$ {
-        proxy_pass http://127.0.0.1:9090;
-        }
+	proxy_pass http://127.0.0.1:9090;
+	}
 location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|ico)$ {
-        expires 30d;
-        }
-
+	expires 30d;
+	}
 location ~ .*\.(js|css)?$ {
-        expires 7d;
-        }
+	expires 7d;
+	}
 }
 EOF
 
@@ -523,8 +505,8 @@ fi
 
 printf "
 #######################################################################
-#    LNMP/LAMP/LNMPA for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+    #
-# For more information please visit http://blog.linuxeye.com/31.html  #
+#       OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+      #
+#       For more information please visit http://oneinstack.com       #
 #######################################################################
 "
 echo "`printf "%-32s" "Your domain:"`${CMSG}$domain${CEND}"
@@ -534,7 +516,7 @@ echo "`printf "%-32s" "Directory of:"`${CMSG}$vhostdir${CEND}"
 [ "$rewrite_yn" == 'y' ] && echo "`printf "%-32s" "Rewrite rule:"`${CMSG}$rewrite${CEND}" 
 }
 
-if [ -d "$web_install_dir" -a ! -d "$apache_install_dir" -a "$web_install_dir" != "$apache_install_dir" ];then
+if [ -e "$web_install_dir/sbin/nginx" -a ! -e "$apache_install_dir/modules/libphp5.so" ];then
     Choose_env
     Input_domain
     Nginx_anti_hotlinking
@@ -544,24 +526,28 @@ if [ -d "$web_install_dir" -a ! -d "$apache_install_dir" -a "$web_install_dir" !
     else
         Nginx_rewrite
         Nginx_log
-        Create_nginx_php-fpm_conf
+        Create_nginx_php-fpm_hhvm_conf
     fi
-elif [ -d "$web_install_dir" -a -d "$apache_install_dir" -a "$web_install_dir" == "$apache_install_dir" ];then
+elif [ ! -e "$web_install_dir/sbin/nginx" -a -e "$apache_install_dir/modules/libphp5.so" ];then
     Choose_env
     Input_domain
     Apache_log
     Create_apache_conf
-elif [ -d "$web_install_dir" -a -d "$apache_install_dir" -a "$web_install_dir" != "$apache_install_dir" ];then
+elif [ -e "$web_install_dir/sbin/nginx" -a -e "$apache_install_dir/modules/libphp5.so" ];then
     Choose_env
     Input_domain
     Nginx_anti_hotlinking
     if [ "$NGX_FLAG" == 'java' ];then
         Nginx_log
         Create_nginx_tomcat_conf
-    else
+    elif [ "$NGX_FLAG" == 'hhvm' ];then
+        Nginx_rewrite
+        Nginx_log
+        Create_nginx_php-fpm_hhvm_conf
+    elif [ "$NGX_FLAG" == 'php' ];then
         #Nginx_rewrite
         Nginx_log
         Apache_log
         Create_nginx_apache_mod-php_conf
     fi
-fi 
+fi

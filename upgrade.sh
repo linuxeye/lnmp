@@ -21,6 +21,7 @@ printf "
 . ./options.conf
 . ./include/color.sh
 . ./include/check_os.sh
+. ./include/check_db.sh
 . ./include/download.sh
 . ./include/get_char.sh
 . ./include/upgrade_web.sh
@@ -67,9 +68,9 @@ What Are You Doing?
     else
         case "$Number" in
         1)
-            if [ ! -e "$web_install_dir/sbin/dso_tool" ];then
+            if [ -e "$nginx_install_dir/sbin/nginx" ];then
                 Upgrade_Nginx
-            elif [ -e "$web_install_dir/sbin/dso_tool" ];then
+            elif [ -e "$tengine_install_dir/sbin/nginx" ];then
                 Upgrade_Tengine
             fi
             ;;
@@ -102,9 +103,9 @@ if [ $# == 0 ];then
 elif [ $# == 1 ];then
     case $1 in
     web)
-        if [ ! -e "$web_install_dir/sbin/dso_tool" ];then
+        if [ -e "$nginx_install_dir/sbin/nginx" ];then
             Upgrade_Nginx
-        elif [ -e "$web_install_dir/sbin/dso_tool" ];then
+        elif [ -e "$tengine_install_dir/sbin/nginx" ];then
             Upgrade_Tengine
         fi
         ;;

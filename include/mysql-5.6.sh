@@ -201,7 +201,8 @@ $mysql_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.db where 
 $mysql_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.proxies_priv where Host!='localhost';"
 $mysql_install_dir/bin/mysql -uroot -p$dbrootpwd -e "drop database test;"
 $mysql_install_dir/bin/mysql -uroot -p$dbrootpwd -e "reset master;"
-sed -i "s@^db_install_dir.*@db_install_dir=$mysql_install_dir@" options.conf
-sed -i "s@^db_data_dir.*@db_data_dir=$mysql_data_dir@" options.conf
+rm -rf /etc/ld.so.conf.d/{mysql,mariadb,percona}*.conf
+echo "$mysql_install_dir/lib" > mysql.conf 
+ldconfig
 service mysqld stop
 }

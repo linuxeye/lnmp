@@ -202,7 +202,8 @@ $percona_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.db wher
 $percona_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.proxies_priv where Host!='localhost';"
 $percona_install_dir/bin/mysql -uroot -p$dbrootpwd -e "drop database test;"
 $percona_install_dir/bin/mysql -uroot -p$dbrootpwd -e "reset master;"
-sed -i "s@^db_install_dir.*@db_install_dir=$percona_install_dir@" options.conf
-sed -i "s@^db_data_dir.*@db_data_dir=$percona_data_dir@" options.conf
+rm -rf /etc/ld.so.conf.d/{mysql,mariadb,percona}*.conf
+echo "$percona_install_dir/lib" > percona.conf
+ldconfig
 service mysqld stop
 }

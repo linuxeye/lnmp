@@ -11,7 +11,6 @@
 Install_hhvm_CentOS()
 {
 cd $oneinstack_dir/src
-. ../options.conf
 
 id -u $run_user >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 

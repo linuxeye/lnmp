@@ -100,7 +100,6 @@ endscript
 }
 EOF
 
-sed -i "s@^web_install_dir.*@web_install_dir=$tengine_install_dir@" options.conf
 ldconfig
 service nginx start
 }

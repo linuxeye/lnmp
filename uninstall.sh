@@ -21,18 +21,20 @@ printf "
 . ./options.conf
 . ./include/color.sh
 . ./include/get_char.sh
+. ./include/check_db.sh
 
 # Check if user is root
 [ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; } 
 
 Uninstall()
 {
-[ -e "$db_install_dir" ] && service mysqld stop && rm -rf /etc/init.d/mysqld /etc/my.cnf
-[ -e "$apache_install_dir" ] && service httpd stop && rm -rf /etc/init.d/httpd
+[ -e "$db_install_dir" ] && service mysqld stop && rm -rf /etc/init.d/mysqld /etc/my.cnf /etc/ld.so.conf.d/{mysql,mariadb,percona}*.conf
+[ -e "$apache_install_dir" ] && service httpd stop && rm -rf /etc/init.d/httpd /etc/logrotate.d/apache
 [ -e "$tomcat_install_dir" ] && service tomcat stop && rm -rf /etc/init.d/tomcat
 [ -e "/usr/java" ] && rm -rf /usr/java
-[ -e "$php_install_dir" ] && service php-fpm stop && rm -rf /etc/init.d/php-fpm
-[ -e "$web_install_dir" ] && service nginx stop && rm -rf /etc/init.d/nginx /etc/logrotate.d/nginx
+[ -e "$php_install_dir/bin/phpize" ] && service php-fpm stop && rm -rf /etc/init.d/php-fpm
+[ -e "$nginx_install_dir" ] && service nginx stop && rm -rf /etc/init.d/nginx /etc/logrotate.d/nginx
+[ -e "$tengine_install_dir" ] && service nginx stop && rm -rf /etc/init.d/nginx /etc/logrotate.d/nginx
 [ -e "$pureftpd_install_dir" ] && service pureftpd stop && rm -rf /etc/init.d/pureftpd
 [ -e "$redis_install_dir" ] && service redis-server stop && rm -rf /etc/init.d/redis-server
 [ -e "$memcached_install_dir" ] && service memcached stop && rm -rf /etc/init.d/memcached
@@ -51,12 +53,10 @@ do
 done
 
 sed -i 's@^oneinstack_dir=.*@oneinstack_dir=@' ./options.conf
-sed -i 's@^web_install_dir=.*@web_install_dir=@' ./options.conf
-sed -i 's@^db_install_dir=.*@db_install_dir=@' ./options.conf
-sed -i 's@^db_data_dir=.*@db_data_dir=@' ./options.conf
 sed -i 's@^dbrootpwd=.*@dbrootpwd=@' ./options.conf
-sed -i 's@^ftpmanagerpwd=.*@ftpmanagerpwd=@' ./options.conf
-sed -i 's@^conn_ftpusers_dbpwd=.*@conn_ftpusers_dbpwd=@' ./options.conf
+sed -i 's@^website_name=.*@website_name=@' ./options.conf
+sed -i 's@^local_bankup_yn=.*@local_bankup_yn=y@' ./options.conf
+sed -i 's@^remote_bankup_yn=.*@remote_bankup_yn=n@' ./options.conf
 sed -i "s@^export.*$db_install_dir.*@@g" /etc/profile && . /etc/profile
 echo "${CMSG}Uninstall completed${CEND}"
 }
@@ -69,12 +69,13 @@ for D in `cat ./options.conf | grep dir= | grep -v oneinstack | grep -v backup_d
 do
     [ -e "$D" ] && echo $D
 done
-[ -e "$web_install_dir" ] && echo -e "/etc/init.d/nginx\n/etc/logrotate.d/nginx"
-[ -e "$apache_install_dir" ] && echo '/etc/init.d/httpd'
+[ -e "/etc/init.d/nginx" ] && echo '/etc/init.d/nginx'
+[ -e "/etc/logrotate.d/nginx" ] && echo '/etc/logrotate.d/nginx'
+[ -e "$apache_install_dir" ] && echo -e "/etc/init.d/httpd\n/etc/logrotate.d/apache"
 [ -e "$tomcat_install_dir" ] && echo '/etc/init.d/tomcat'
 [ -e "/usr/java" ] && echo '/usr/java' 
 [ -e "$db_install_dir" ] && echo -e "/etc/init.d/mysqld\n/etc/my.cnf"
-[ -e "$php_install_dir" ] && echo '/etc/init.d/php-fpm'
+[ -e "$php_install_dir/bin/phpize" ] && echo '/etc/init.d/php-fpm'
 [ -e "$pureftpd_install_dir" ] && echo '/etc/init.d/pureftpd'
 [ -e "$memcached_install_dir" ] && echo '/etc/init.d/memcached' 
 [ -e "$redis_install_dir" ] && echo '/etc/init.d/redis-server' 

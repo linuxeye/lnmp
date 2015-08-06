@@ -20,9 +20,19 @@ printf "
 . ./options.conf
 . ./include/color.sh
 . ./include/check_web.sh
+. ./include/get_char.sh
 
 # Check if user is root
 [ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; } 
+
+Usage() {
+printf "
+Usage: $0 [ ${CMSG}add${CEND} | ${CMSG}del${CEND} ]
+${CMSG}add${CEND}    --->Add Virtualhost
+${CMSG}del${CEND}    --->Delete Virtualhost
+
+"
+}
 
 Choose_env()
 {
@@ -123,7 +133,7 @@ elif [ "$NGX_FLAG" == 'hhvm' ];then
 fi
 }
 
-Input_domain()
+Input_Add_domain()
 {
 while :
 do
@@ -516,38 +526,169 @@ echo "`printf "%-32s" "Directory of:"`${CMSG}$vhostdir${CEND}"
 [ "$rewrite_yn" == 'y' ] && echo "`printf "%-32s" "Rewrite rule:"`${CMSG}$rewrite${CEND}" 
 }
 
-if [ -e "$web_install_dir/sbin/nginx" -a ! -e "$apache_install_dir/modules/libphp5.so" ];then
-    Choose_env
-    Input_domain
-    Nginx_anti_hotlinking
-    if [ "$NGX_FLAG" == 'java' ];then
-        Nginx_log
-        Create_nginx_tomcat_conf
-    else
-        Nginx_rewrite
-        Nginx_log
-        Create_nginx_php-fpm_hhvm_conf
-    fi
-elif [ ! -e "$web_install_dir/sbin/nginx" -a -e "$apache_install_dir/modules/libphp5.so" ];then
-    Choose_env
-    Input_domain
-    Apache_log
-    Create_apache_conf
-elif [ -e "$web_install_dir/sbin/nginx" -a -e "$apache_install_dir/modules/libphp5.so" ];then
-    Choose_env
-    Input_domain
-    Nginx_anti_hotlinking
-    if [ "$NGX_FLAG" == 'java' ];then
-        Nginx_log
-        Create_nginx_tomcat_conf
-    elif [ "$NGX_FLAG" == 'hhvm' ];then
-        Nginx_rewrite
-        Nginx_log
-        Create_nginx_php-fpm_hhvm_conf
-    elif [ "$NGX_FLAG" == 'php' ];then
-        #Nginx_rewrite
-        Nginx_log
+Add_Vhost() {
+    if [ -e "$web_install_dir/sbin/nginx" -a ! -e "$apache_install_dir/modules/libphp5.so" ];then
+        Choose_env
+        Input_Add_domain
+        Nginx_anti_hotlinking
+        if [ "$NGX_FLAG" == 'java' ];then
+            Nginx_log
+            Create_nginx_tomcat_conf
+        else
+            Nginx_rewrite
+            Nginx_log
+            Create_nginx_php-fpm_hhvm_conf
+        fi
+    elif [ ! -e "$web_install_dir/sbin/nginx" -a -e "$apache_install_dir/modules/libphp5.so" ];then
+        Choose_env
+        Input_Add_domain
         Apache_log
-        Create_nginx_apache_mod-php_conf
+        Create_apache_conf
+    elif [ -e "$web_install_dir/sbin/nginx" -a -e "$apache_install_dir/modules/libphp5.so" ];then
+        Choose_env
+        Input_Add_domain
+        Nginx_anti_hotlinking
+        if [ "$NGX_FLAG" == 'java' ];then
+            Nginx_log
+            Create_nginx_tomcat_conf
+        elif [ "$NGX_FLAG" == 'hhvm' ];then
+            Nginx_rewrite
+            Nginx_log
+            Create_nginx_php-fpm_hhvm_conf
+        elif [ "$NGX_FLAG" == 'php' ];then
+            #Nginx_rewrite
+            Nginx_log
+            Apache_log
+            Create_nginx_apache_mod-php_conf
+        fi
     fi
+}
+
+Del_NGX_Vhost() {
+    if [ -e "$web_install_dir/sbin/nginx" ];then
+        [ -d "$web_install_dir/conf/vhost" ] && Domain_List=`ls $web_install_dir/conf/vhost | sed "s@.conf@@g"`
+        if [ -n "$Domain_List" ];then
+            echo
+            echo "Virtualhost list:"
+	    echo ${CMSG}$Domain_List${CEND}
+            while :
+            do
+                echo
+                read -p "Please input a domain you want to delete: " domain
+                if [ -z "`echo $domain | grep '.*\..*'`" ]; then
+                    echo "${CWARNING}input error! ${CEND}"
+                else
+                    if [ -e "$web_install_dir/conf/vhost/${domain}.conf" ];then
+                        Directory=`grep ^root $web_install_dir/conf/vhost/${domain}.conf | awk -F'[ ;]' '{print $2}'`
+                        rm -rf $web_install_dir/conf/vhost/${domain}.conf
+                        $web_install_dir/sbin/nginx -s reload
+                        while :
+                        do
+                            echo ''
+                            read -p "Do you want to delete Virtul Host directory? [y/n]: " Del_NGX_wwwroot_yn 
+                            if [ "$Del_NGX_wwwroot_yn" != 'y' ] && [ "$Del_NGX_wwwroot_yn" != 'n' ];then
+                                echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
+                            else
+                                break
+                            fi
+                        done
+                        if [ "$Del_NGX_wwwroot_yn" == 'y' ];then
+                            echo "Press Ctrl+c to cancel or Press any key to continue..."
+                            char=`get_char`
+                            rm -rf $Directory
+                        fi
+                        echo "${CSUCCESS}Domain: ${domain} has been deleted.${CEND}"
+                    else
+                        echo "${CWARNING}Virtualhost: $domain was not exist! ${CEND}"
+                    fi
+                    break
+                fi
+            done
+
+        else
+            echo "${CWARNING}Virtualhost was not exist! ${CEND}"
+        fi
+    fi
+}
+
+Del_Apache_Vhost() {
+    if [ -e "$apache_install_dir/conf/httpd.conf" ];then
+        if [ -e "$web_install_dir/sbin/nginx" ];then
+            rm -rf $apache_install_dir/conf/vhost/${domain}.conf 
+            /etc/init.d/httpd restart
+        else
+            Domain_List=`ls $apache_install_dir/conf/vhost | grep -v '0.conf' | sed "s@.conf@@g"`
+            if [ -n "$Domain_List" ];then
+                echo
+                echo "Virtualhost list:"
+                echo ${CMSG}$Domain_List${CEND}
+                while :
+                do
+                    echo
+                    read -p "Please input a domain you want to delete: " domain
+                    if [ -z "`echo $domain | grep '.*\..*'`" ]; then
+                        echo "${CWARNING}input error! ${CEND}"
+                    else
+                        if [ -e "$apache_install_dir/conf/vhost/${domain}.conf" ];then
+                            Directory=`grep '^<Directory' $apache_install_dir/conf/vhost/${domain}.conf | awk -F'"' '{print $2}'`
+                            rm -rf $apache_install_dir/conf/vhost/${domain}.conf
+                            /etc/init.d/httpd restart
+                            while :
+                            do
+                                echo ''
+                                read -p "Do you want to delete Virtul Host directory? [y/n]: " Del_Apache_wwwroot_yn
+                                if [ "$Del_Apache_wwwroot_yn" != 'y' ] && [ "$Del_Apache_wwwroot_yn" != 'n' ];then
+                                    echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
+                                else
+                                    break
+                                fi
+                            done
+
+                            if [ "$Del_Apache_wwwroot_yn" == 'y' ];then
+                                echo "Press Ctrl+c to cancel or Press any key to continue..."
+                                char=`get_char`
+                                rm -rf $Directory
+                            fi
+                            echo "${CSUCCESS}Domain: ${domain} has been deleted.${CEND}"
+                        else
+                            echo "${CWARNING}Virtualhost: $domain was not exist! ${CEND}"
+                        fi
+                        break
+                    fi
+                done
+
+            else
+                echo "${CWARNING}Virtualhost was not exist! ${CEND}"
+            fi
+        fi
+    fi
+}
+
+Del_Tomcat_Vhost() {
+    if [ -e "$tomcat_install_dir/conf/server.xml" ];then
+        Num=`grep -n "docBase=\"$Directory\"" $tomcat_install_dir/conf/server.xml | awk -F: '{print $1}'`
+        [ -n "$Num" ] && { sed -i ${Num}d $tomcat_install_dir/conf/server.xml; /etc/init.d/tomcat restart; }
+    fi
+}
+
+if [ $# == 0 ];then
+    Add_Vhost 
+elif [ $# == 1 ];then
+    case $1 in
+    add)
+        Add_Vhost
+        ;;
+
+    del)
+        Del_NGX_Vhost
+        Del_Apache_Vhost
+        Del_Tomcat_Vhost
+        ;;
+
+    *)
+        Usage
+        ;;
+    esac
+else
+    Usage
 fi

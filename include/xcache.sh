@@ -33,12 +33,12 @@ xcache.admin.user = "admin"
 xcache.admin.pass = "$xcache_admin_md5_pass"
 
 [xcache]
-xcache.size  = $(expr $Memory_limit / 2) 
+xcache.size = $(expr $Memory_limit / 2)M
 xcache.count = $(expr `cat /proc/cpuinfo | grep -c processor` + 1) 
 xcache.slots = 8K
 xcache.ttl = 3600
 xcache.gc_interval = 300
-xcache.var_size = $(expr $Memory_limit / 2) 
+xcache.var_size = 4M
 xcache.var_count = $(expr `cat /proc/cpuinfo | grep -c processor` + 1) 
 xcache.var_slots = 8K
 xcache.var_ttl = 0

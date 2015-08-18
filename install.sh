@@ -47,7 +47,7 @@ do
     if [ "$upgrade_yn" != 'y' -a "$upgrade_yn" != 'n' ];then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
-        [ "$upgrade_yn" == 'y' ] && { echo "${CWARNING}Your system is already upgraded! ${CEND}" ; upgrade_yn=n ; }
+        #[ "$upgrade_status" == '0' ] && { echo "${CWARNING}Your system is already upgraded! ${CEND}" ; upgrade_yn=Other ; }
         break
     fi
 done
@@ -312,7 +312,7 @@ do
                                     do
                                         echo 'Please select a opcode cache of the PHP:'
                                         echo -e "\t${CMSG}1${CEND}. Install Zend OPcache"
-                                        read "Please input a number:(Default 1 press Enter) " PHP_cache
+                                        read -p "Please input a number:(Default 1 press Enter) " PHP_cache
                                         [ -z "$PHP_cache" ] && PHP_cache=1
                                         if [ $PHP_cache != 1 ];then
                                             echo "${CWARNING}input error! Please only input number 1${CEND}"
@@ -484,20 +484,18 @@ do
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
         if [ "$HHVM_yn" == 'y' ];then
-            [ -e "/usr/bin/hhvm" ] && { echo "${CWARNING}HHVM already installed! ${CEND}"; HHVM_yn=Other; }
+            [ -e "/usr/bin/hhvm" ] && { echo "${CWARNING}HHVM already installed! ${CEND}"; HHVM_yn=Other; break; }
             if [ "$OS" == 'CentOS' -a "$OS_BIT" == '64' ] && [ -n "`grep -E ' 7\.| 6\.5| 6\.6| 6\.7' /etc/redhat-release`" ];then
                 break
             else
                 echo
-                echo "${CFAILURE}HHVM only support CentOS6.5+ 64bit, CentOS7 64bit! ${CEND}"
+                echo "${CWARNING}HHVM only support CentOS6.5+ 64bit, CentOS7 64bit! ${CEND}"
                 echo "Press Ctrl+c to cancel or Press any key to continue..."
                 char=`get_char`
-                HHVM_yn=
-                break
+                HHVM_yn=Other
             fi
-        else
-            break
         fi
+        break
     fi
 done
 

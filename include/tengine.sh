@@ -31,10 +31,6 @@ cd tengine-$tengine_version
 # close debug
 sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc
 
-# make[1]: *** [objs/src/event/ngx_event_openssl.o] Error 1
-sed -i 's@\(.*\)this option allow a potential SSL 2.0 rollback (CAN-2005-2969)\(.*\)@#ifdef SSL_OP_MSIE_SSLV2_RSA_PADDING\n\1this option allow a potential SSL 2.0 rollback (CAN-2005-2969)\2@' src/event/ngx_event_openssl.c
-sed -i 's@\(.*\)SSL_CTX_set_options(ssl->ctx, SSL_OP_MSIE_SSLV2_RSA_PADDING)\(.*\)@\1SSL_CTX_set_options(ssl->ctx, SSL_OP_MSIE_SSLV2_RSA_PADDING)\2\n#endif@' src/event/ngx_event_openssl.c
-
 if [ "$je_tc_malloc" == '1' ];then
     malloc_module='--with-jemalloc'
 elif [ "$je_tc_malloc" == '2' ];then

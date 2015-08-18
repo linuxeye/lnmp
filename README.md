@@ -44,6 +44,13 @@ cd ~/lnmp    // Must enter the directory execution under lnmp
 ./vhost.sh    // Do not sh vhost.sh or bash vhost.sh such execution
 ```
 
+## How to delete a virtual host
+
+```bash
+cd ~/lnmp
+./vhost.sh del
+```
+
 ## How to add FTP virtual user 
 
 ```bash

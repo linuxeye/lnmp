@@ -94,8 +94,8 @@ do
                 if [ $Nginx_version != 1 -a $Nginx_version != 2 -a $Nginx_version != 3 ];then
                     echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
                 else
-                    [ -e "$nginx_install_dir/sbin/nginx" ] && { echo "${CWARNING}Nginx already installed! ${CEND}"; Nginx_version=Other; }
-                    [ -e "$tengine_install_dir/sbin/nginx" ] && { echo "${CWARNING}Tengine already installed! ${CEND}"; Nginx_version=Other; }
+                    [ "$Nginx_version" != '3' -a -e "$nginx_install_dir/sbin/nginx" ] && { echo "${CWARNING}Nginx already installed! ${CEND}"; Nginx_version=Other; }
+                    [ "$Nginx_version" != '3' -a -e "$tengine_install_dir/sbin/nginx" ] && { echo "${CWARNING}Tengine already installed! ${CEND}"; Nginx_version=Other; }
                     break
                 fi
             done
@@ -112,7 +112,7 @@ do
                 if [ $Apache_version != 1 -a $Apache_version != 2 -a $Apache_version != 3 ];then
                     echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
                 else
-                    [ -e "$apache_install_dir/conf/httpd.conf" ] && { echo "${CWARNING}Aapche already installed! ${CEND}"; Apache_version=Other; }  
+                    [ "$Apache_version" != '3' -a -e "$apache_install_dir/conf/httpd.conf" ] && { echo "${CWARNING}Aapche already installed! ${CEND}"; Apache_version=Other; }  
                     break
                 fi
             done
@@ -228,7 +228,7 @@ do
                 echo -e "\t${CMSG}2${CEND}. Install php-5.4"
                 echo -e "\t${CMSG}3${CEND}. Install php-5.5"
                 echo -e "\t${CMSG}4${CEND}. Install php-5.6"
-                echo -e "\t${CMSG}5${CEND}. Install php-7/phpng(beta)"
+                echo -e "\t${CMSG}5${CEND}. Install php-7/phpng(RC)"
                 read -p "Please input a number:(Default 1 press Enter) " PHP_version
                 [ -z "$PHP_version" ] && PHP_version=1
                 if [ $PHP_version != 1 -a $PHP_version != 2 -a $PHP_version != 3 -a $PHP_version != 4 -a $PHP_version != 5 ];then

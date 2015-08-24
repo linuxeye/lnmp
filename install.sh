@@ -40,17 +40,17 @@ PUBLIC_IPADDR=`./include/get_public_ipaddr.py`
 mkdir -p $wwwroot_dir/default $wwwlogs_dir
 
 # choice upgrade OS
-while :
-do
-    echo
-    read -p "Do you want to upgrade operating system? [y/n]: " upgrade_yn
-    if [ "$upgrade_yn" != 'y' -a "$upgrade_yn" != 'n' ];then
-        echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
-    else
-        #[ "$upgrade_status" == '0' ] && { echo "${CWARNING}Your system is already upgraded! ${CEND}" ; upgrade_yn=Other ; }
-        break
-    fi
-done
+#while :
+#do
+#    echo
+#    read -p "Do you want to upgrade operating system? [y/n]: " upgrade_yn
+#    if [ "$upgrade_yn" != 'y' -a "$upgrade_yn" != 'n' ];then
+#        echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
+#    else
+#        #[ "$upgrade_status" == '0' ] && { echo "${CWARNING}Your system is already upgraded! ${CEND}" ; upgrade_yn=Other ; }
+#        break
+#    fi
+#done
 
 # Use default SSH port 22. If you use another SSH port on your server
 [ -z "`grep ^Port /etc/ssh/sshd_config`" ] && ssh_port=22 || ssh_port=`grep ^Port /etc/ssh/sshd_config | awk '{print $2}'`
@@ -62,7 +62,7 @@ do
     if [ $SSH_PORT -eq 22 >/dev/null 2>&1 -o $SSH_PORT -gt 1024 >/dev/null 2>&1 -a $SSH_PORT -lt 65535 >/dev/null 2>&1 ];then
         break
     else
-        echo "${CWARNING}input error! Input range: 22,1024~65535${CEND}"
+        echo "${CWARNING}input error! Input range: 22,1025~65534${CEND}"
     fi
 done
 

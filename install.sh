@@ -40,17 +40,17 @@ PUBLIC_IPADDR=`./include/get_public_ipaddr.py`
 mkdir -p $wwwroot_dir/default $wwwlogs_dir
 
 # choice upgrade OS
-while :
-do
-    echo
-    read -p "Do you want to upgrade operating system? [y/n]: " upgrade_yn
-    if [ "$upgrade_yn" != 'y' -a "$upgrade_yn" != 'n' ];then
-        echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
-    else
-        [ "$upgrade_yn" == 'y' ] && { echo "${CWARNING}Your system is already upgraded! ${CEND}" ; upgrade_yn=n ; }
-        break
-    fi
-done
+#while :
+#do
+#    echo
+#    read -p "Do you want to upgrade operating system? [y/n]: " upgrade_yn
+#    if [ "$upgrade_yn" != 'y' -a "$upgrade_yn" != 'n' ];then
+#        echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
+#    else
+#        #[ "$upgrade_status" == '0' ] && { echo "${CWARNING}Your system is already upgraded! ${CEND}" ; upgrade_yn=Other ; }
+#        break
+#    fi
+#done
 
 # Use default SSH port 22. If you use another SSH port on your server
 [ -z "`grep ^Port /etc/ssh/sshd_config`" ] && ssh_port=22 || ssh_port=`grep ^Port /etc/ssh/sshd_config | awk '{print $2}'`
@@ -62,7 +62,7 @@ do
     if [ $SSH_PORT -eq 22 >/dev/null 2>&1 -o $SSH_PORT -gt 1024 >/dev/null 2>&1 -a $SSH_PORT -lt 65535 >/dev/null 2>&1 ];then
         break
     else
-        echo "${CWARNING}input error! Input range: 22,1024~65535${CEND}"
+        echo "${CWARNING}input error! Input range: 22,1025~65534${CEND}"
     fi
 done
 
@@ -94,8 +94,8 @@ do
                 if [ $Nginx_version != 1 -a $Nginx_version != 2 -a $Nginx_version != 3 ];then
                     echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
                 else
-                    [ -e "$nginx_install_dir/sbin/nginx" ] && { echo "${CWARNING}Nginx already installed! ${CEND}"; Nginx_version=Other; }
-                    [ -e "$tengine_install_dir/sbin/nginx" ] && { echo "${CWARNING}Tengine already installed! ${CEND}"; Nginx_version=Other; }
+                    [ "$Nginx_version" != '3' -a -e "$nginx_install_dir/sbin/nginx" ] && { echo "${CWARNING}Nginx already installed! ${CEND}"; Nginx_version=Other; }
+                    [ "$Nginx_version" != '3' -a -e "$tengine_install_dir/sbin/nginx" ] && { echo "${CWARNING}Tengine already installed! ${CEND}"; Nginx_version=Other; }
                     break
                 fi
             done
@@ -112,7 +112,7 @@ do
                 if [ $Apache_version != 1 -a $Apache_version != 2 -a $Apache_version != 3 ];then
                     echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
                 else
-                    [ -e "$apache_install_dir/conf/httpd.conf" ] && { echo "${CWARNING}Aapche already installed! ${CEND}"; Apache_version=Other; }  
+                    [ "$Apache_version" != '3' -a -e "$apache_install_dir/conf/httpd.conf" ] && { echo "${CWARNING}Aapche already installed! ${CEND}"; Apache_version=Other; }  
                     break
                 fi
             done
@@ -228,7 +228,7 @@ do
                 echo -e "\t${CMSG}2${CEND}. Install php-5.4"
                 echo -e "\t${CMSG}3${CEND}. Install php-5.5"
                 echo -e "\t${CMSG}4${CEND}. Install php-5.6"
-                echo -e "\t${CMSG}5${CEND}. Install php-7/phpng(beta)"
+                echo -e "\t${CMSG}5${CEND}. Install php-7/phpng(RC)"
                 read -p "Please input a number:(Default 1 press Enter) " PHP_version
                 [ -z "$PHP_version" ] && PHP_version=1
                 if [ $PHP_version != 1 -a $PHP_version != 2 -a $PHP_version != 3 -a $PHP_version != 4 -a $PHP_version != 5 ];then

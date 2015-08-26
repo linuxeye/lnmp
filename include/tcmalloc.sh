@@ -11,7 +11,7 @@
 Install_tcmalloc()
 {
 cd $oneinstack_dir/src
-src_url=https://googledrive.com/host/0B6NtGsLhIcf7MWxMMF9JdTN3UVk/gperftools-$tcmalloc_version.tar.gz && Download_src
+src_url=https://github.com/gperftools/gperftools/releases/download/gperftools-$tcmalloc_version/gperftools-$tcmalloc_version.tar.gz && Download_src
 
 tar xzf gperftools-$tcmalloc_version.tar.gz 
 cd gperftools-$tcmalloc_version

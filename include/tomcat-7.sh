@@ -45,8 +45,9 @@ if [ -e "$tomcat_install_dir/conf/server.xml" ];then
     ./configure --with-apr=/usr/bin/apr-1-config
     make && make install
     if [ -d "/usr/local/apr/lib" ];then
+        [ $Mem -le 768 ] && Xms_Mem=`expr $Mem / 3` || Xms_Mem=256
         cat > $tomcat_install_dir/bin/setenv.sh << EOF
-JAVA_OPTS='-server -Xms256m -Xmx`expr $Mem / 2`m'
+JAVA_OPTS='-server -Xms${Xms_Mem}m -Xmx`expr $Mem / 2`m'
 CATALINA_OPTS="-Djava.library.path=/usr/local/apr/lib"
 #  -Djava.rmi.server.hostname=$IPADDR
 #  -Dcom.sun.management.jmxremote.password.file=\$CATALINA_BASE/conf/jmxremote.password

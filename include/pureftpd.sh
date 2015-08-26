@@ -35,6 +35,7 @@ if [ -e "$pureftpd_install_dir/sbin/pure-ftpwho" ];then
     chmod +x /etc/init.d/pureftpd
     OS_CentOS='chkconfig --add pureftpd \n
 chkconfig pureftpd on'
+    [ "$Debian_version" == '7' ] && sed -i 's@/var/lock/subsys/@/var/lock/@g' /etc/init.d/pureftpd 
     OS_Debian_Ubuntu="sed -i 's@^. /etc/rc.d/init.d/functions@. /lib/lsb/init-functions@' /etc/init.d/pureftpd \n
 update-rc.d pureftpd defaults"
     OS_command

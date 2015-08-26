@@ -64,6 +64,7 @@ OS_command
 cd ..
 
 # my.cf
+[ -d "/etc/mysql" ] && /bin/mv /etc/mysql{,_bk}
 cat > /etc/my.cnf << EOF
 [client]
 port = 3306

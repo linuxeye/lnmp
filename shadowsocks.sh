@@ -47,7 +47,6 @@ elif [ $OS == 'Debian' -o $OS == 'Ubuntu' ];then
 fi
 
 src_url=http://mirrors.linuxeye.com/oneinstack/src/ez_setup.py && Download_src
-src_url=http://mirrors.linuxeye.com/lnmp/init/Shadowsocks-init && Download_src
 
 which pip > /dev/null 2>&1
 if [ $? -ne 0 ]; then
@@ -62,7 +61,7 @@ if [ -f /usr/bin/pip ]; then
     pip install gevent
     pip install shadowsocks
     if [ -f /usr/bin/ssserver -o -f /usr/local/bin/ssserver ]; then
-        /bin/cp Shadowsocks-init /etc/init.d/shadowsocks
+        /bin/cp ../init.d/Shadowsocks-init /etc/init.d/shadowsocks
         chmod +x /etc/init.d/shadowsocks
         OS_CentOS='chkconfig --add shadowsocks \n
 chkconfig shadowsocks on'
@@ -135,7 +134,7 @@ do
     echo
     read -p "Please input Shadowsocks port(Default: $Shadowsocks_Default_port): " Shadowsocks_port
     [ -z "$Shadowsocks_port" ] && Shadowsocks_port=$Shadowsocks_Default_port
-    if [ $Shadowsocks_port -ge 9001 >/dev/null 2>&1 -a $Shadowsocks_port -le 9099 >/dev/null 2>&1 ];then
+    if [ $Shadowsocks_port -ge 9000 >/dev/null 2>&1 -a $Shadowsocks_port -le 9100 >/dev/null 2>&1 ];then
         break
     else
         echo "${CWARNING}input error! Input range: 9001~9099${CEND}"

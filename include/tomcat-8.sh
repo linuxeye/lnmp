@@ -13,9 +13,8 @@ Install_tomcat-8()
 cd $oneinstack_dir/src
 . /etc/profile
 
-[ "$IPADDR_STATE"x == "CN"x ] && DOWN_ADDR=http://mirrors.aliyun.com/apache || DOWN_ADDR=http://www.apache.org/dist
-src_url=$DOWN_ADDR/tomcat/tomcat-8/v$tomcat_8_version/bin/apache-tomcat-$tomcat_8_version.tar.gz && Download_src
-src_url=$DOWN_ADDR/tomcat/tomcat-8/v$tomcat_8_version/bin/extras/catalina-jmx-remote.jar && Download_src
+src_url=http://mirrors.linuxeye.com/apache/tomcat/v$tomcat_8_version/apache-tomcat-$tomcat_8_version.tar.gz && Download_src
+src_url=http://mirrors.linuxeye.com/apache/tomcat/v$tomcat_8_version/catalina-jmx-remote.jar && Download_src
 
 id -u $run_user >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /bin/bash $run_user || { [ -z "`grep ^$run_user /etc/passwd | grep '/bin/bash'`" ] && usermod -s /bin/bash $run_user; }

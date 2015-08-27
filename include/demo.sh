@@ -25,7 +25,7 @@ fi
 
 echo '<?php phpinfo() ?>' > $wwwroot_dir/default/phpinfo.php
 
-src_url=https://gist.githubusercontent.com/ck-on/4959032/raw/0b871b345fd6cfcd6d2be030c1f33d1ad6a475cb/ocp.php && Download_src
+src_url=http://mirrors.linuxeye.com/oneinstack/src/ocp.php && Download_src
 [ "$PHP_cache" == '1' ] && /bin/cp ocp.php $wwwroot_dir/default && sed -i 's@<a href="/xcache" target="_blank" class="links">xcache</a>@<a href="/ocp.php" target="_blank" class="links">Opcache</a>@' $wwwroot_dir/default/index.html
 [ "$PHP_cache" == '3' ] && sed -i 's@<a href="/xcache" target="_blank" class="links">xcache</a>@<a href="/apc.php" target="_blank" class="links">APC</a>@' $wwwroot_dir/default/index.html
 [ "$PHP_cache" == '4' ] && /bin/cp eaccelerator-*/control.php $wwwroot_dir/default && sed -i 's@<a href="/xcache" target="_blank" class="links">xcache</a>@<a href="/control.php" target="_blank" class="links">eAccelerator</a>@' $wwwroot_dir/default/index.html

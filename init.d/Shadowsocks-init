@@ -1,0 +1,90 @@
+#!/bin/bash
+# Author:  yeho <lj2007331 AT gmail.com>
+# BLOG:  https://blog.linuxeye.com
+#
+# chkconfig: - 90 10
+# description: Shadowsocks start/stop/status/restart script
+
+Shadowsocks_bin=/usr/bin/ssserver
+Shadowsocks_conf=/etc/shadowsocks.json
+
+#Shadowsocks_USAGE is the message if this script is called without any options
+Shadowsocks_USAGE="Usage: $0 {\e[00;32mstart\e[00m|\e[00;31mstop\e[00m|\e[00;32mstatus\e[00m|\e[00;31mrestart\e[00m}"
+
+#SHUTDOWN_WAIT is wait time in seconds for shadowsocks proccess to stop
+SHUTDOWN_WAIT=20
+
+Shadowsocks_pid(){
+	echo `ps -ef | grep $Shadowsocks_bin | grep -v grep | tr -s " "|cut -d" " -f2`
+}
+
+start() {
+  pid=$(Shadowsocks_pid)
+  if [ -n "$pid" ];then
+    echo -e "\e[00;31mShadowsocks is already running (pid: $pid)\e[00m"
+  else
+    $Shadowsocks_bin -c $Shadowsocks_conf -d start
+    RETVAL=$?
+    if [ "$RETVAL" = "0" ]; then
+    	echo -e "\e[00;32mStarting Shadowsocks\e[00m"
+    else
+    	echo -e "\e[00;32mShadowsocks start Failed\e[00m"
+    fi
+    status
+  fi
+  return 0
+}
+
+status(){
+  pid=$(Shadowsocks_pid)
+  if [ -n "$pid" ];then
+    echo -e "\e[00;32mShadowsocks is running with pid: $pid\e[00m"
+  else
+    echo -e "\e[00;31mShadowsocks is not running\e[00m"
+  fi
+}
+
+stop(){
+  pid=$(Shadowsocks_pid)
+  if [ -n "$pid" ];then
+    echo -e "\e[00;31mStoping Shadowsocks\e[00m"
+    $Shadowsocks_bin -c $Shadowsocks_conf -d stop
+    let kwait=$SHUTDOWN_WAIT
+    count=0;
+    until [ `ps -p $pid | grep -c $pid` = '0' ] || [ $count -gt $kwait ]
+    do
+      echo -n -e "\e[00;31mwaiting for processes to exit\e[00m\n";
+      sleep 1
+      let count=$count+1;
+    done
+
+    if [ $count -gt $kwait ];then
+      echo -n -e "\n\e[00;31mkilling processes which didn't stop after $SHUTDOWN_WAIT seconds\e[00m"
+      kill -9 $pid
+    fi
+  else
+    echo -e "\e[00;31mShadowsocks is not running\e[00m"
+  fi
+
+  return 0
+}
+
+case $1 in
+	start)
+          start
+        ;;
+        stop)  
+          stop
+        ;;
+        restart)
+          stop
+          start
+        ;;
+        status)
+	  status
+        ;;
+        *)
+	  echo -e $Shadowsocks_USAGE
+        ;;
+esac    
+exit 0

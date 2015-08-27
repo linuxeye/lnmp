@@ -127,7 +127,7 @@ fi
 if [ "$NGX_FLAG" == 'php' ];then
     NGX_CONF=$(echo -e "location ~ .*\.(php|php5)?$ {\n    #fastcgi_pass remote_php_ip:9000;\n    fastcgi_pass unix:/dev/shm/php-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi.conf;\n    }")
 elif [ "$NGX_FLAG" == 'java' ];then
-    NGX_CONF=$(echo -e "location ~ {\n    proxy_set_header Host \$host;\n    proxy_set_header X-Real-IP \$remote_addr;\n    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;\n    proxy_pass http://127.0.0.1:8080;\n    }")
+    NGX_CONF=$(echo -e "location ~ {\n    proxy_pass http://127.0.0.1:8080;\n    include proxy.conf;\n    }")
 elif [ "$NGX_FLAG" == 'hhvm' ];then
     NGX_CONF=$(echo -e "location ~ .*\.(php|php5)?$ {\n    fastcgi_pass unix:/var/log/hhvm/sock;\n    fastcgi_index index.php;\n    fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;\n    include fastcgi_params;\n    }")
 fi
@@ -459,11 +459,12 @@ location / {
     try_files \$uri @apache;
     }
 location @apache {
-    internal;
-    proxy_pass http://127.0.0.1:9090;
+    proxy_pass http://127.0.0.1:88;
+    include proxy.conf;
     }
 location ~ .*\.(php|php5)?$ {
-    proxy_pass http://127.0.0.1:9090;
+    proxy_pass http://127.0.0.1:88;
+    include proxy.conf;
     }
 location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|ico)$ {
     expires 30d;
@@ -490,7 +491,7 @@ fi
 [ "`$apache_install_dir/bin/apachectl -v | awk -F'.' /version/'{print $2}'`" == '4' ] && R_TMP='Require all granted' || R_TMP=
 [ ! -d $apache_install_dir/conf/vhost ] && mkdir $apache_install_dir/conf/vhost
 cat > $apache_install_dir/conf/vhost/$domain.conf << EOF
-<VirtualHost *:9090>
+<VirtualHost *:88>
     ServerAdmin admin@linuxeye.com
     DocumentRoot "$vhostdir"
     ServerName $domain

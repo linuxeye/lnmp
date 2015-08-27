@@ -14,7 +14,7 @@ cd $oneinstack_dir/src
 src_url=http://downloads.sourceforge.net/project/pcre/pcre/$pcre_version/pcre-$pcre_version.tar.gz && Download_src
 src_url=http://archive.apache.org/dist/apr/apr-$apr_version.tar.gz && Download_src 
 src_url=http://archive.apache.org/dist/apr/apr-util-$apr_util_version.tar.gz && Download_src 
-src_url=http://www.apache.org/dist/httpd/httpd-$apache_4_version.tar.gz && Download_src 
+src_url=http://mirrors.linuxeye.com/apache/httpd/httpd-$apache_4_version.tar.gz && Download_src 
 
 tar xzf pcre-$pcre_version.tar.gz
 cd pcre-$pcre_version
@@ -59,14 +59,14 @@ OS_command
 
 sed -i "s@^User daemon@User $run_user@" $apache_install_dir/conf/httpd.conf
 sed -i "s@^Group daemon@Group $run_user@" $apache_install_dir/conf/httpd.conf
-if [ "$Nginx_version" == '3' ];then
+if [ "$Nginx_version" == '3' -a ! -e "$web_install_dir/sbin/nginx" ];then
     sed -i 's/^#ServerName www.example.com:80/ServerName 0.0.0.0:80/' $apache_install_dir/conf/httpd.conf
     TMP_PORT=80
     TMP_IP=$IPADDR
 elif [ "$Nginx_version" == '1' -o "$Nginx_version" == '2' -o -e "$web_install_dir/sbin/nginx" ];then
-    sed -i 's/^#ServerName www.example.com:80/ServerName 127.0.0.1:9090/' $apache_install_dir/conf/httpd.conf
-    sed -i 's@^Listen.*@Listen 127.0.0.1:9090@' $apache_install_dir/conf/httpd.conf
-    TMP_PORT=9090
+    sed -i 's/^#ServerName www.example.com:80/ServerName 127.0.0.1:88/' $apache_install_dir/conf/httpd.conf
+    sed -i 's@^Listen.*@Listen 127.0.0.1:88@' $apache_install_dir/conf/httpd.conf
+    TMP_PORT=88
     TMP_IP=127.0.0.1
 fi
 sed -i "s@AddType\(.*\)Z@AddType\1Z\n    AddType application/x-httpd-php .php .phtml\n    AddType application/x-httpd-php-source .phps@" $apache_install_dir/conf/httpd.conf
@@ -122,7 +122,7 @@ SetOutputFilter DEFLATE
 Include conf/vhost/*.conf
 EOF
 
-if [ "$Nginx_version" != '3' ];then
+if [ "$Nginx_version" != '3' -o -e "$web_install_dir/sbin/nginx" ];then
     cat > $apache_install_dir/conf/extra/httpd-remoteip.conf << EOF
 LoadModule remoteip_module modules/mod_remoteip.so
 RemoteIPHeader X-Forwarded-For

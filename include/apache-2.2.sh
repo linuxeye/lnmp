@@ -11,7 +11,7 @@
 Install_Apache-2-2()
 {
 cd $oneinstack_dir/src
-src_url=http://www.apache.org/dist/httpd/httpd-$apache_2_version.tar.gz && Download_src 
+src_url=http://mirrors.linuxeye.com/apache/httpd/httpd-$apache_2_version.tar.gz && Download_src 
 
 id -u $run_user >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 
@@ -46,14 +46,14 @@ OS_command
 
 sed -i "s@^User daemon@User $run_user@" $apache_install_dir/conf/httpd.conf
 sed -i "s@^Group daemon@Group $run_user@" $apache_install_dir/conf/httpd.conf
-if [ "$Nginx_version" == '3' ];then
+if [ "$Nginx_version" == '3' -a ! -e "$web_install_dir/sbin/nginx" ];then
     sed -i 's/^#ServerName www.example.com:80/ServerName 0.0.0.0:80/' $apache_install_dir/conf/httpd.conf
     TMP_PORT=80
     TMP_IP=$IPADDR
 elif [ "$Nginx_version" == '1' -o "$Nginx_version" == '2' -o -e "$web_install_dir/sbin/nginx" ];then
-    sed -i 's/^#ServerName www.example.com:80/ServerName 127.0.0.1:9090/' $apache_install_dir/conf/httpd.conf
-    sed -i 's@^Listen.*@Listen 127.0.0.1:9090@' $apache_install_dir/conf/httpd.conf
-    TMP_PORT=9090
+    sed -i 's/^#ServerName www.example.com:80/ServerName 127.0.0.1:88/' $apache_install_dir/conf/httpd.conf
+    sed -i 's@^Listen.*@Listen 127.0.0.1:88@' $apache_install_dir/conf/httpd.conf
+    TMP_PORT=88
     TMP_IP=127.0.0.1
 fi
 sed -i "s@AddType\(.*\)Z@AddType\1Z\n    AddType application/x-httpd-php .php .phtml\n    AddType application/x-httpd-php-source .phps@" $apache_install_dir/conf/httpd.conf
@@ -109,8 +109,8 @@ SetOutputFilter DEFLATE
 Include conf/vhost/*.conf
 EOF
 
-if [ "$Nginx_version" != '3' ];then
-    src_url=https://raw.githubusercontent.com/ttkzw/mod_remoteip-httpd22/master/mod_remoteip.c && Download_src
+if [ "$Nginx_version" != '3' -o -e "$web_install_dir/sbin/nginx" ];then
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/mod_remoteip.c && Download_src
     $apache_install_dir/bin/apxs -i -c -n mod_remoteip.so mod_remoteip.c
     cat > $apache_install_dir/conf/extra/httpd-remoteip.conf << EOF
 LoadModule remoteip_module modules/mod_remoteip.so

@@ -46,7 +46,7 @@ fi
 #[ "$sendmail_yn" == 'y' ] && yum -y install sendmail && service sendmail restart
 
 # closed Unnecessary services and remove obsolete rpm package
-for Service in `chkconfig --list | grep 3:on | awk '{print $1}'`;do chkconfig --level 3 $Service off;done
+for Service in `chkconfig --list | grep 3:on | awk '{print $1}' | grep -vE 'nginx|httpd|tomcat|mysqld|php-fpm|pureftpd|redis-server|memcached|supervisord'`;do chkconfig --level 3 $Service off;done
 for Service in sshd network crond iptables messagebus irqbalance syslog rsyslog sendmail;do chkconfig --level 3 $Service on;done
 
 # Close SELINUX

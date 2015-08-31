@@ -58,6 +58,27 @@ EOF
         /bin/mv $tomcat_install_dir/conf/server.xml{,_bk} 
         cd $oneinstack_dir/src
         /bin/cp ../config/server.xml $tomcat_install_dir/conf
+        sed -i "s@/usr/local/tomcat@$tomcat_install_dir@" $tomcat_install_dir/conf
+        [ ! -d "$tomcat_install_dir/conf/vhost" ] && mkdir $tomcat_install_dir/conf/vhost
+        cat > $tomcat_install_dir/conf/vhost/localhost.xml << EOF
+<Host name="localhost" appBase="webapps" unpackWARs="true" autoDeploy="true">
+  <Context path="" docBase="$wwwroot_dir/default" debug="0" reloadable="true" crossContext="true"/>
+  <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+         prefix="localhost_access_log." suffix=".txt" pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+</Host>
+EOF
+        # logrotate tomcat catalina.out 
+        cat > /etc/logrotate.d/tomcat << EOF
+$tomcat_install_dir/logs/catalina.out {
+daily
+rotate 5
+missingok
+dateext
+compress
+notifempty
+copytruncate
+}
+EOF
         cat > $tomcat_install_dir/conf/jmxremote.access << EOF
 monitorRole   readonly
 controlRole   readwrite \

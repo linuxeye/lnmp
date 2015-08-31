@@ -192,7 +192,7 @@ $mariadb_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.proxies
 $mariadb_install_dir/bin/mysql -uroot -p$dbrootpwd -e "drop database test;"
 $mariadb_install_dir/bin/mysql -uroot -p$dbrootpwd -e "reset master;"
 rm -rf /etc/ld.so.conf.d/{mysql,mariadb,percona}*.conf
-echo "$mariadb_install_dir/lib" > mariadb.conf 
+echo "$mariadb_install_dir/lib" > /etc/ld.so.conf.d/mariadb.conf 
 ldconfig
 service mysqld stop
 }

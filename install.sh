@@ -229,8 +229,8 @@ do
                 echo -e "\t${CMSG}3${CEND}. Install php-5.5"
                 echo -e "\t${CMSG}4${CEND}. Install php-5.6"
                 echo -e "\t${CMSG}5${CEND}. Install php-7/phpng(RC)"
-                read -p "Please input a number:(Default 1 press Enter) " PHP_version
-                [ -z "$PHP_version" ] && PHP_version=1
+                read -p "Please input a number:(Default 3 press Enter) " PHP_version
+                [ -z "$PHP_version" ] && PHP_version=3
                 if [ $PHP_version != 1 -a $PHP_version != 2 -a $PHP_version != 3 -a $PHP_version != 4 -a $PHP_version != 5 ];then
                     echo "${CWARNING}input error! Please only input number 1,2,3,4,5${CEND}"
                 else
@@ -709,9 +709,9 @@ do
         echo "${CMSG}Please restart the server and see if the services start up fine.${CEND}"
         read -p "Do you want to restart OS ? [y/n]: " restart_yn
         if [ "$restart_yn" != 'y' -a "$restart_yn" != 'n' ];then
-		echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
+            echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
         else
-                break
+            break
         fi
 done
 [ "$restart_yn" == 'y' ] && reboot

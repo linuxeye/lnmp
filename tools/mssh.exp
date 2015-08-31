@@ -107,7 +107,7 @@ if { $yesnoflag == 2 } {
 }
 
 expect {
-	"#" {send "$commands \r"}
+	"@" {send "$commands \r"}
 	"assword:" {
 		send "$passwd\r"
 		puts "\nPASSWORDERROR: $ip Password error!!!\n"
@@ -116,11 +116,11 @@ expect {
 }
 
 expect {
-	"#" {send "sleep 1 \r"}
+	"@" {send "sleep 1\r"}
 }
 
 expect {
-	"#" {send "exit\r"}
+	"@" {send "exit\r"}
 }
 
 expect eof {

@@ -34,8 +34,7 @@ ${CMSG}del${CEND}    --->Delete Virtualhost
 "
 }
 
-Choose_env()
-{
+Choose_env() {
 if [ -e "$php_install_dir/bin/phpize" -a -e "$tomcat_install_dir/conf/server.xml" -a -e "/usr/bin/hhvm" ];then
     Number=111
     while :
@@ -133,8 +132,7 @@ elif [ "$NGX_FLAG" == 'hhvm' ];then
 fi
 }
 
-Input_Add_domain()
-{
+Input_Add_domain() {
 while :
 do
     echo
@@ -146,9 +144,10 @@ do
     fi
 done
 
-if [ -e "$web_install_dir/conf/vhost/$domain.conf" -o -e "$apache_install_dir/conf/vhost/$domain.conf" ]; then
-    [ -e "$web_install_dir/conf/vhost/$domain.conf" ] && echo -e "$domain in the Nginx/Tengine already exist! \nYou can delete \033[32m$web_install_dir/conf/vhost/$domain.conf\033[0m and re-create"
-    [ -e "$apache_install_dir/conf/vhost/$domain.conf" ] && echo -e "$domain in the Apache already exist! \nYou can delete \033[32m$apache_install_dir/conf/vhost/$domain.conf\033[0m and re-create"
+if [ -e "$web_install_dir/conf/vhost/$domain.conf" -o -e "$apache_install_dir/conf/vhost/$domain.conf" -o -e "$tomcat_install_dir/conf/vhost/$domain.xml" ]; then
+    [ -e "$web_install_dir/conf/vhost/$domain.conf" ] && echo -e "$domain in the Nginx/Tengine already exist! \nYou can delete ${CMSG}$web_install_dir/conf/vhost/$domain.conf${CEND} and re-create"
+    [ -e "$apache_install_dir/conf/vhost/$domain.conf" ] && echo -e "$domain in the Apache already exist! \nYou can delete ${CMSG}$apache_install_dir/conf/vhost/$domain.conf${CEND} and re-create"
+    [ -e "$tomcat_install_dir/conf/vhost/$domain.xml" ] && echo -e "$domain in the Tomcat already exist! \nYou can delete ${CMSG}$tomcat_install_dir/conf/vhost/$domain.xml${CEND} and re-create"
     exit
 else
     echo "domain=$domain"
@@ -179,7 +178,8 @@ if [ "$moredomainame_yn" == 'y' ]; then
             break
         fi
     done
-    Domain_alias=ServerAlias$moredomainame
+    Apache_Domain_alias=ServerAlias$moredomainame
+    Tomcat_Domain_alias=$(for D in `echo $moredomainame`; do echo "<Alias>$D</Alias>"; done)
 fi
 
 echo
@@ -196,8 +196,7 @@ echo "set permissions of Virtual Host directory......"
 chown -R ${run_user}.$run_user $vhostdir
 }
 
-Nginx_anti_hotlinking()
-{
+Nginx_anti_hotlinking() {
 while :
 do
     echo
@@ -227,8 +226,7 @@ else
 fi
 }
 
-Nginx_rewrite()
-{
+Nginx_rewrite() {
 while :
 do
     echo
@@ -259,8 +257,7 @@ else
 fi
 }
 
-Nginx_log()
-{
+Nginx_log() {
 while :
 do
     echo
@@ -279,17 +276,14 @@ else
 fi
 }
 
-Create_nginx_tomcat_conf()
-{
-[ -n "`grep $vhostdir $tomcat_install_dir/conf/server.xml`" ] && { echo -e "\n$vhostdir in the tomcat already exist! \nYou must manually modify the file=${MSG}$tomcat_install_dir/conf/server.xml${CEND}"; exit; }
-
+Create_nginx_tomcat_conf() {
 [ ! -d $web_install_dir/conf/vhost ] && mkdir $web_install_dir/conf/vhost
 cat > $web_install_dir/conf/vhost/$domain.conf << EOF
 server {
 listen 80;
 server_name $domain$moredomainame;
 $N_log
-index index.html index.htm index.jsp index.php;
+index index.html index.htm index.jsp;
 root $vhostdir;
 $anti_hotlinking
 location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|ico)$ {
@@ -304,13 +298,22 @@ $NGX_CONF
 }
 EOF
 
-sed -i "s@autoDeploy=\"true\">@autoDeploy=\"true\">\n\t<Context path=\"\" docBase=\"$vhostdir\" debug=\"0\" reloadable=\"true\" crossContext=\"true\"/>@" $tomcat_install_dir/conf/server.xml
+cat > $tomcat_install_dir/conf/vhost/$domain.xml << EOF
+<Host name="$domain" appBase="webapps" unpackWARs="true" autoDeploy="true"> $Tomcat_Domain_alias
+  <Context path="" docBase="$vhostdir" debug="0" reloadable="true" crossContext="true"/>
+  <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+         prefix="${domain}_access_log." suffix=".txt" pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+</Host>
+EOF
+[ -z "`grep -o "${domain}-vhost SYSTEM" $tomcat_install_dir/conf/server.xml`" ] && sed -i "/localhost-vhost SYSTEM/a<\!ENTITY ${domain}-vhost SYSTEM \"file://$tomcat_install_dir/conf/vhost/$domain.xml\">" $tomcat_install_dir/conf/server.xml
+[ -z "`grep -o "${domain}-vhost;" $tomcat_install_dir/conf/server.xml`" ] && sed -i "s@localhost-vhost;@&\n      \&${domain}-vhost;@" $tomcat_install_dir/conf/server.xml
 
 echo
 $web_install_dir/sbin/nginx -t
 if [ $? == 0 ];then
-    echo "Restart Nginx......"
+    echo "Reload Nginx......"
     $web_install_dir/sbin/nginx -s reload
+    /etc/init.d/tomcat restart
 else
     rm -rf $web_install_dir/conf/vhost/$domain.conf
     echo "Create virtualhost ... [${CFAILURE}FAILED${CEND}]"
@@ -323,21 +326,21 @@ printf "
 #       For more information please visit http://oneinstack.com       #
 #######################################################################
 "
-echo "`printf "%-32s" "Your domain:"`${CMSG}$domain${CEND}"
-echo "`printf "%-32s" "Virtualhost conf:"`${CMSG}$web_install_dir/conf/vhost/$domain.conf${CEND}"
-echo "`printf "%-32s" "Directory of:"`${CMSG}$vhostdir${CEND}"
+echo "`printf "%-28s" "Your domain:"`${CMSG}$domain${CEND}"
+echo "`printf "%-28s" "Nginx Virtualhost conf:"`${CMSG}$web_install_dir/conf/vhost/$domain.conf${CEND}"
+echo "`printf "%-28s" "Tomcat Virtualhost conf:"`${CMSG}$tomcat_install_dir/conf/vhost/$domain.xml${CEND}"
+echo "`printf "%-28s" "Directory of:"`${CMSG}$vhostdir${CEND}"
 
 }
 
-Create_nginx_php-fpm_hhvm_conf()
-{
+Create_nginx_php-fpm_hhvm_conf() {
 [ ! -d $web_install_dir/conf/vhost ] && mkdir $web_install_dir/conf/vhost
 cat > $web_install_dir/conf/vhost/$domain.conf << EOF
 server {
 listen 80;
 server_name $domain$moredomainame;
 $N_log
-index index.html index.htm index.jsp index.php;
+index index.html index.htm index.php;
 include $rewrite.conf;
 root $vhostdir;
 $anti_hotlinking
@@ -356,7 +359,7 @@ EOF
 echo
 $web_install_dir/sbin/nginx -t
 if [ $? == 0 ];then
-    echo "Restart Nginx......"
+    echo "Reload Nginx......"
     $web_install_dir/sbin/nginx -s reload
 else
     rm -rf $web_install_dir/conf/vhost/$domain.conf
@@ -370,14 +373,13 @@ printf "
 #       For more information please visit http://oneinstack.com       #
 #######################################################################
 "
-echo "`printf "%-32s" "Your domain:"`${CMSG}$domain${CEND}"
-echo "`printf "%-32s" "Virtualhost conf:"`${CMSG}$web_install_dir/conf/vhost/$domain.conf${CEND}"
-echo "`printf "%-32s" "Directory of:"`${CMSG}$vhostdir${CEND}"
-[ "$rewrite_yn" == 'y' ] && echo "`printf "%-32s" "Rewrite rule:"`${CMSG}$rewrite${CEND}" 
+echo "`printf "%-20s" "Your domain:"`${CMSG}$domain${CEND}"
+echo "`printf "%-20s" "Virtualhost conf:"`${CMSG}$web_install_dir/conf/vhost/$domain.conf${CEND}"
+echo "`printf "%-20s" "Directory of:"`${CMSG}$vhostdir${CEND}"
+[ "$rewrite_yn" == 'y' ] && echo "`printf "%-20s" "Rewrite rule:"`${CMSG}$rewrite${CEND}" 
 }
 
-Apache_log()
-{
+Apache_log() {
 while :
 do
     echo
@@ -397,8 +399,7 @@ else
 fi
 }
 
-Create_apache_conf()
-{
+Create_apache_conf() {
 [ "`$apache_install_dir/bin/apachectl -v | awk -F'.' /version/'{print $2}'`" == '4' ] && R_TMP='Require all granted' || R_TMP=
 [ ! -d $apache_install_dir/conf/vhost ] && mkdir $apache_install_dir/conf/vhost
 cat > $apache_install_dir/conf/vhost/$domain.conf << EOF
@@ -406,7 +407,7 @@ cat > $apache_install_dir/conf/vhost/$domain.conf << EOF
     ServerAdmin admin@linuxeye.com 
     DocumentRoot "$vhostdir"
     ServerName $domain
-    $Domain_alias
+    $Apache_Domain_alias
     ErrorLog "$wwwlogs_dir/${domain}_error_apache.log"
     $A_log
 <Directory "$vhostdir">
@@ -438,13 +439,12 @@ printf "
 #       For more information please visit http://oneinstack.com       #
 #######################################################################
 "
-echo "`printf "%-32s" "Your domain:"`${CMSG}$domain${CEND}"
-echo "`printf "%-32s" "Virtualhost conf:"`${CMSG}$apache_install_dir/conf/vhost/$domain.conf${CEND}"
-echo "`printf "%-32s" "Directory of $domain:"`${CMSG}$vhostdir${CEND}"
+echo "`printf "%-20s" "Your domain:"`${CMSG}$domain${CEND}"
+echo "`printf "%-20s" "Virtualhost conf:"`${CMSG}$apache_install_dir/conf/vhost/$domain.conf${CEND}"
+echo "`printf "%-20s" "Directory of:"`${CMSG}$vhostdir${CEND}"
 }
 
-Create_nginx_apache_mod-php_conf()
-{
+Create_nginx_apache_mod-php_conf() {
 # Nginx/Tengine
 [ ! -d $web_install_dir/conf/vhost ] && mkdir $web_install_dir/conf/vhost
 cat > $web_install_dir/conf/vhost/$domain.conf << EOF
@@ -452,7 +452,7 @@ server {
 listen 80;
 server_name $domain$moredomainame;
 $N_log
-index index.html index.htm index.jsp index.php;
+index index.html index.htm index.php;
 root $vhostdir;
 $anti_hotlinking
 location / {
@@ -480,7 +480,7 @@ EOF
 echo
 $web_install_dir/sbin/nginx -t
 if [ $? == 0 ];then
-    echo "Restart Nginx......"
+    echo "Reload Nginx......"
     $web_install_dir/sbin/nginx -s reload
 else
     rm -rf $web_install_dir/conf/vhost/$domain.conf
@@ -495,7 +495,7 @@ cat > $apache_install_dir/conf/vhost/$domain.conf << EOF
     ServerAdmin admin@linuxeye.com
     DocumentRoot "$vhostdir"
     ServerName $domain
-    $Domain_alias
+    $Apache_Domain_alias
     ErrorLog "$wwwlogs_dir/${domain}_error_apache.log"
     $A_log
 <Directory "$vhostdir">
@@ -526,11 +526,11 @@ printf "
 #       For more information please visit http://oneinstack.com       #
 #######################################################################
 "
-echo "`printf "%-32s" "Your domain:"`${CMSG}$domain${CEND}"
-echo "`printf "%-32s" "Nginx Virtualhost conf:"`${CMSG}$web_install_dir/conf/vhost/$domain.conf${CEND}"
-echo "`printf "%-32s" "Apache Virtualhost conf:"`${CMSG}$apache_install_dir/conf/vhost/$domain.conf${CEND}"
-echo "`printf "%-32s" "Directory of:"`${CMSG}$vhostdir${CEND}"
-[ "$rewrite_yn" == 'y' ] && echo "`printf "%-32s" "Rewrite rule:"`${CMSG}$rewrite${CEND}" 
+echo "`printf "%-28s" "Your domain:"`${CMSG}$domain${CEND}"
+echo "`printf "%-28s" "Nginx Virtualhost conf:"`${CMSG}$web_install_dir/conf/vhost/$domain.conf${CEND}"
+echo "`printf "%-28s" "Apache Virtualhost conf:"`${CMSG}$apache_install_dir/conf/vhost/$domain.conf${CEND}"
+echo "`printf "%-28s" "Directory of:"`${CMSG}$vhostdir${CEND}"
+[ "$rewrite_yn" == 'y' ] && echo "`printf "%-28s" "Rewrite rule:"`${CMSG}$rewrite${CEND}" 
 }
 
 Add_Vhost() {
@@ -672,9 +672,10 @@ Del_Apache_Vhost() {
 }
 
 Del_Tomcat_Vhost() {
-    if [ -e "$tomcat_install_dir/conf/server.xml" ];then
-        Num=`grep -n "docBase=\"$Directory\"" $tomcat_install_dir/conf/server.xml | awk -F: '{print $1}'`
-        [ -n "$Num" ] && { sed -i ${Num}d $tomcat_install_dir/conf/server.xml; /etc/init.d/tomcat restart; }
+    if [ -n "`grep ${domain}-vhost $tomcat_install_dir/conf/server.xml`" ];then
+        sed -i /${domain}-vhost/d $tomcat_install_dir/conf/server.xml 
+        rm -rf $tomcat_install_dir/conf/vhost/${domain}.xml
+        /etc/init.d/tomcat restart
     fi
 }
 

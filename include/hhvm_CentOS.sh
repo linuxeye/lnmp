@@ -31,13 +31,12 @@ EOF
     fi
     cat > /etc/yum.repos.d/hhvm.repo << EOF
 [hhvm]
-name=Copr repo for hhvm-repo owned by no1youknowz
-baseurl=https://copr-be.cloud.fedoraproject.org/results/no1youknowz/hhvm-repo/epel-7-\$basearch/
-skip_if_unavailable=True
+name=gleez hhvm-repo
+baseurl=http://mirrors.linuxeye.com/hhvm-repo/7/\$basearch/
+enabled=1
 gpgcheck=0
-enabled=0
 EOF
-    yum --enablerepo=hhvm -y install hhvm
+    yum -y install hhvm
     [ ! -e "/usr/bin/hhvm" -a "/usr/local/bin/hhvm" ] && ln -s /usr/local/bin/hhvm /usr/bin/hhvm
 fi
 
@@ -56,39 +55,22 @@ gpgcheck=0
 EOF
     fi
 
-    for Package in libmcrypt-devel glog-devel jemalloc-devel tbb-devel libdwarf-devel mysql-devel libxml2-devel libicu-devel pcre-devel gd-devel boost-devel sqlite-devel pam-devel bzip2-devel oniguruma-devel openldap-devel readline-devel libc-client-devel libcap-devel libevent-devel libcurl-devel libmemcached-devel lcms2 inotify-tools
+    for Package in libmcrypt-devel glog-devel jemalloc-devel tbb-devel libdwarf-devel libxml2-devel libicu-devel pcre-devel gd-devel boost-devel sqlite-devel pam-devel bzip2-devel oniguruma-devel openldap-devel readline-devel libc-client-devel libcap-devel libevent-devel libcurl-devel libmemcached-devel lcms2 inotify-tools
     do
         yum -y install $Package
     done
 
-    [ "$IPADDR_STATE"x == "CN"x ] && REMI_ADDR=http://mirrors.swu.edu.cn || REMI_ADDR=http://mirrors.mediatemple.net
+    yum -y remove libwebp boost-system boost-filesystem
 
-    cat > /etc/yum.repos.d/remi.repo << EOF
-[remi]
-name=Les RPM de remi pour Enterprise Linux 6 - \$basearch
-baseurl=$REMI_ADDR/remi/enterprise/6/remi/\$basearch/
-#mirrorlist=http://rpms.famillecollet.com/enterprise/6/remi/mirror
-enabled=0
+    cat > /etc/yum.repos.d/hhvm.repo << EOF
+[hhvm]
+name=gleez hhvm-repo
+baseurl=http://mirrors.linuxeye.com/hhvm-repo/6/\$basearch/
+enabled=1
 gpgcheck=0
 EOF
-
-    yum -y remove libwebp
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/libwebp-0.3.1-2.el6.remi.x86_64.rpm && Download_src
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/hhvm-3.5.0-4.el6.x86_64.rpm && Download_src
-    rpm -ivh libwebp-0.3.1-2.el6.remi.x86_64.rpm
-    yum --enablerepo=remi --disablerepo=epel -y install mysql mysql-devel mysql-libs
-
-    yum -y remove boost-system boost-filesystem
-
-    cat > /etc/yum.repos.d/gleez.repo << EOF
-[gleez]
-name=Gleez repo
-baseurl=http://yum.gleez.com/6/\$basearch/
-enabled=0
-gpgcheck=0
-EOF
-    ping yum.gleez.com -c 4 >/dev/null 2>&1
-    yum --enablerepo=gleez --disablerepo=epel -y install -R 2 ./hhvm-3.5.0-4.el6.x86_64.rpm
+    yum --disablerepo=epel -y install mysql mysql-devel mysql-libs
+    yum --disablerepo=epel -y install hhvm 
 fi
 
 userdel -r nginx;userdel -r saslauth
@@ -155,7 +137,7 @@ memory_limit = 400000000
 post_max_size = 50000000
 EOF
 
-if [ -e "/usr/bin/hhvm" -a ! -e "$php_install_dir" ];then
+if [ -e "$web_install_dir/sbin/nginx" -a -e "/usr/bin/hhvm" -a ! -e "$php_install_dir" ];then
     sed -i 's@/dev/shm/php-cgi.sock@/var/log/hhvm/sock@' $web_install_dir/conf/nginx.conf 
     [ -z "`grep 'fastcgi_param SCRIPT_FILENAME' $web_install_dir/conf/nginx.conf`" ] && sed -i "s@fastcgi_index index.php;@&\n\t\tfastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;@" $web_install_dir/conf/nginx.conf 
     sed -i 's@include fastcgi.conf;@include fastcgi_params;@' $web_install_dir/conf/nginx.conf 
@@ -179,8 +161,7 @@ autostart=true ; start at supervisord start (default: true)
 autorestart=unexpected ; whether/when to restart (default: unexpected)
 stopwaitsecs=10 ; max num secs to wait b4 SIGKILL (default 10)
 EOF
-src_url=https://github.com/Supervisor/initscripts/raw/master/redhat-init-mingalevme && Download_src
-/bin/mv redhat-init-mingalevme /etc/init.d/supervisord
+/bin/cp ../init.d/Supervisor-init-CentOS /etc/init.d/supervisord
 chmod +x /etc/init.d/supervisord
 chkconfig supervisord on
 service supervisord start

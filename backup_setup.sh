@@ -71,7 +71,7 @@ do
 done
 sed -i "s@^expired_days=.*@expired_days=$expired_days@" ./options.conf
 
-databases=`$db_install_dir/bin/mysql -uroot -p$dbrootpwd -e "show databases\G" | grep Database | awk '{print $2}' | grep -Evw "(performance_schema|information_schema|mysql)"`
+databases=`$db_install_dir/bin/mysql -uroot -p$dbrootpwd -e "show databases\G" | grep Database | awk '{print $2}' | grep -Evw "(performance_schema|information_schema|mysql|sys)"`
 while :
 do
     echo
@@ -80,7 +80,6 @@ do
     db_name=`echo $db_name | tr -d ' '`
     [ -z "$db_name" ] && db_name="`echo $databases | tr ' ' ','`"
     D_tmp=0
-    echo $db_name
     for D in `echo $db_name | tr ',' ' '`
     do
         [ -z "`echo $databases | grep -w $D`" ] && { echo "${CWARNING}$D was not exist! ${CEND}" ; D_tmp=1; }
@@ -98,15 +97,18 @@ do
     website_name=`echo $website_name | tr -d ' '`
     [ -z "$website_name" ] && website_name="`echo $websites | tr ' ' ','`"
     W_tmp=0
-    echo $db_name
     for W in `echo $website_name | tr ',' ' '`
     do
-        [ ! -e "$wwwroot_dir/$W" ] && { echo -e "\033[31m$wwwroot_dir/$W not exist! \033[0m" ; W_tmp=1; }
+        [ ! -e "$wwwroot_dir/$W" ] && { echo "${CWARNING}$wwwroot_dir/$W not exist! ${CEND}" ; W_tmp=1; }
     done
     [ "$W_tmp" != '1' ] && break
 done
-echo $website_name
 sed -i "s@^website_name=.*@website_name=$website_name@" ./options.conf
+
+echo
+echo "You have to backup the content:"
+echo "Database: ${CMSG}$db_name${CEND}"
+echo "Website: ${CMSG}$website_name${CEND}"
 
 if [ "$remote_bankup_yn" == 'y' ];then
     > tools/iplist.txt

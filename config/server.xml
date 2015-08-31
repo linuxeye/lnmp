@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE server-xml [
+<!ENTITY localhost-vhost SYSTEM "file:///usr/local/tomcat/conf/vhost/localhost.xml">
+]>
 <Server port="8006" shutdown="SHUTDOWN">
   <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener"/>
   <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener"/>
@@ -29,16 +32,7 @@
               enableLookups="false"
               URIEncoding="UTF-8" />
     <Engine name="Catalina" defaultHost="localhost">
-      <Realm className="org.apache.catalina.realm.LockOutRealm">
-        <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
-               resourceName="UserDatabase"/>
-      </Realm>
-       <Host name="localhost"  appBase="webapps"
-             unpackWARs="true" autoDeploy="true">
-	<Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
-               prefix="localhost_access_log." suffix=".txt"
-               pattern="%h %l %u %t &quot;%r&quot; %s %b" />
-      </Host>
+      &localhost-vhost;
     </Engine>
   </Service>
 </Server>

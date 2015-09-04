@@ -79,6 +79,7 @@ notifempty
 copytruncate
 }
 EOF
+        [ -z "`grep '<user username="admin" password=' $tomcat_install_dir/conf/tomcat-users.xml`" ] && sed -i "s@^</tomcat-users>@<role rolename=\"admin-gui\"/>\n<role rolename=\"admin-script\"/>\n<role rolename=\"manager-gui\"/>\n<role rolename=\"manager-script\"/>\n<user username=\"admin\" password=\"`cat /dev/urandom | head -1 | md5sum | head -c 10`\" roles=\"admin-gui,admin-script,manager-gui,manager-script\"/>\n</tomcat-users>@" $tomcat_install_dir/conf/tomcat-users.xml
         cat > $tomcat_install_dir/conf/jmxremote.access << EOF
 monitorRole   readonly
 controlRole   readwrite \

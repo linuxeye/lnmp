@@ -32,6 +32,10 @@
               enableLookups="false"
               URIEncoding="UTF-8" />
     <Engine name="Catalina" defaultHost="localhost">
+      <Realm className="org.apache.catalina.realm.LockOutRealm">
+        <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+               resourceName="UserDatabase"/>
+      </Realm>
       &localhost-vhost;
     </Engine>
   </Service>

@@ -43,19 +43,19 @@ WEB_Remote_BK() {
     done
 }
 
-if [ "$local_bankup_yn" == 'y' -a "$remote_bankup_yn" == 'n' ];then
-    WEB_Local_BK
-    DB_Local_BK
-elif [ "$local_bankup_yn" == 'n' -a "$remote_bankup_yn" == 'y' ];then
+if [ "$backup_destination" == 'local' ];then
+    [ -n "`echo $backup_content | grep -ow db`" ] && DB_Local_BK
+    [ -n "`echo $backup_content| grep -ow web`" ] && WEB_Local_BK
+elif [ "$backup_destination" == 'remote' ];then
     echo "com:::[ ! -e "$backup_dir" ] && mkdir -p $backup_dir" > config_bakcup.txt
-    DB_Remote_BK
-    WEB_Remote_BK
+    [ -n "`echo $backup_content | grep -ow db`" ] && DB_Remote_BK
+    [ -n "`echo $backup_content | grep -ow web`" ] && WEB_Remote_BK
     ./mabs.sh -c config_bakcup.txt -T -1 | tee mabs.log
-elif [ "$local_bankup_yn" == 'y' -a "$remote_bankup_yn" == 'y' ];then
+elif [ "$backup_destination" == 'local,remote' ];then
     echo "com:::[ ! -e "$backup_dir" ] && mkdir -p $backup_dir" > config_bakcup.txt
-    WEB_Local_BK
-    WEB_Remote_BK
-    DB_Local_BK
-    DB_Remote_BK
+    [ -n "`echo $backup_content | grep -ow db`" ] && DB_Local_BK
+    [ -n "`echo $backup_content | grep -ow web`" ] && WEB_Local_BK
+    [ -n "`echo $backup_content | grep -ow db`" ] && DB_Remote_BK
+    [ -n "`echo $backup_content | grep -ow web`" ] && WEB_Remote_BK
     ./mabs.sh -c config_bakcup.txt -T -1 | tee mabs.log	
 fi

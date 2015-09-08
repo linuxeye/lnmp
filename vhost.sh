@@ -300,7 +300,7 @@ EOF
 
 cat > $tomcat_install_dir/conf/vhost/$domain.xml << EOF
 <Host name="$domain" appBase="webapps" unpackWARs="true" autoDeploy="true"> $Tomcat_Domain_alias
-  <Context path="" docBase="$vhostdir" debug="0" reloadable="true" crossContext="true"/>
+  <Context path="" docBase="$vhostdir" debug="0" reloadable="false" crossContext="true"/>
   <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
          prefix="${domain}_access_log." suffix=".txt" pattern="%h %l %u %t &quot;%r&quot; %s %b" />
 </Host>

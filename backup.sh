@@ -45,7 +45,7 @@ WEB_Remote_BK() {
 
 if [ "$backup_destination" == 'local' ];then
     [ -n "`echo $backup_content | grep -ow db`" ] && DB_Local_BK
-    [ -n "`echo $backup_content| grep -ow web`" ] && WEB_Local_BK
+    [ -n "`echo $backup_content | grep -ow web`" ] && WEB_Local_BK
 elif [ "$backup_destination" == 'remote' ];then
     echo "com:::[ ! -e "$backup_dir" ] && mkdir -p $backup_dir" > config_bakcup.txt
     [ -n "`echo $backup_content | grep -ow db`" ] && DB_Remote_BK

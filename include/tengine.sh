@@ -77,15 +77,16 @@ proxy_connect_timeout 300s;
 proxy_send_timeout 900;
 proxy_read_timeout 900;
 proxy_buffer_size 32k;
-proxy_buffers 4 32k;
-proxy_busy_buffers_size 64k;
+proxy_buffers 4 64k;
+proxy_busy_buffers_size 128k;
 proxy_redirect off;
 proxy_hide_header Vary;
 proxy_set_header Accept-Encoding '';
-proxy_set_header Host \$host;
 proxy_set_header Referer \$http_referer;
 proxy_set_header Cookie \$http_cookie;
+proxy_set_header Host \$host;
 proxy_set_header X-Real-IP \$remote_addr;
+proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
 EOF
 sed -i "s@/home/wwwroot/default@$wwwroot_dir/default@" $tengine_install_dir/conf/nginx.conf
 sed -i "s@/home/wwwlogs@$wwwlogs_dir@g" $tengine_install_dir/conf/nginx.conf

@@ -53,7 +53,7 @@ do
     echo -e "\t${CMSG}3${CEND}. Database and Website"
     read -p "Please input a number:(Default 1 press Enter) " CONTENT_BK
     [ -z "$CONTENT_BK" ] && CONTENT_BK=1
-    if [ $DESC_BK != 1 -a $DESC_BK != 2 -a $DESC_BK != 3 ];then
+    if [ $CONTENT_BK != 1 -a $CONTENT_BK != 2 -a $CONTENT_BK != 3 ];then
         echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
     else
         break

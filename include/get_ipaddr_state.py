@@ -2,13 +2,13 @@
 #coding:utf-8
 try:
     import sys,urllib2
-    apiurl = "http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=json&ip=%s" % sys.argv[1]
+    apiurl = "http://ip.taobao.com/service/getIpInfo.php?ip=%s" % sys.argv[1] 
     content = urllib2.urlopen(apiurl).read()
-    content=eval(content)
-    ret = content['ret']
-    country = content['country']
-    if ret == 1:
-        #print country.decode('unicode_escape')
-        print country
+    data = eval(content)['data']
+    code = eval(content)['code']
+    if code == 0:
+        print data['country']
+    else:
+        print data
 except:
     print "Usage:%s IP" % sys.argv[0]

@@ -19,6 +19,7 @@ tar xzf phpMyAdmin-${phpMyAdmin_version}-all-languages.tar.gz
 mkdir $wwwroot_dir/default/phpMyAdmin/{upload,save}
 sed -i "s@UploadDir.*@UploadDir'\] = 'upload';@" $wwwroot_dir/default/phpMyAdmin/config.inc.php
 sed -i "s@SaveDir.*@SaveDir'\] = 'save';@" $wwwroot_dir/default/phpMyAdmin/config.inc.php
+sed -i "s@blowfish_secret.*;@blowfish_secret\'\] = \'`cat /dev/urandom | head -1 | md5sum | head -c 10`\';@" $wwwroot_dir/default/phpMyAdmin/config.inc.php
 chown -R ${run_user}.$run_user $wwwroot_dir/default/phpMyAdmin
 cd ..
 }

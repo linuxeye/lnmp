@@ -43,6 +43,7 @@ if [ -e "phpMyAdmin-${NEW_phpMyAdmin_version}-all-languages.tar.gz" ];then
     mkdir $wwwroot_dir/default/phpMyAdmin/{upload,save}
     sed -i "s@UploadDir.*@UploadDir'\] = 'upload';@" $wwwroot_dir/default/phpMyAdmin/config.inc.php
     sed -i "s@SaveDir.*@SaveDir'\] = 'save';@" $wwwroot_dir/default/phpMyAdmin/config.inc.php
+    sed -i "s@blowfish_secret.*;@blowfish_secret\'\] = \'`cat /dev/urandom | head -1 | md5sum | head -c 10`\';@" $wwwroot_dir/default/phpMyAdmin/config.inc.php
     chown -R ${run_user}.$run_user $wwwroot_dir/default/phpMyAdmin
     echo "You have ${CMSG}successfully${CEND} upgrade from ${CWARNING}$OLD_phpMyAdmin_version${CEND} to ${CWARNING}$NEW_phpMyAdmin_version${CEND}"
 fi

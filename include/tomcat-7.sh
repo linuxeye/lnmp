@@ -58,7 +58,7 @@ EOF
         /bin/mv $tomcat_install_dir/conf/server.xml{,_bk} 
         cd $oneinstack_dir/src
         /bin/cp ../config/server.xml $tomcat_install_dir/conf
-        sed -i "s@/usr/local/tomcat@$tomcat_install_dir@" $tomcat_install_dir/conf
+        sed -i "s@/usr/local/tomcat@$tomcat_install_dir@g" $tomcat_install_dir/conf/server.xml
         [ ! -d "$tomcat_install_dir/conf/vhost" ] && mkdir $tomcat_install_dir/conf/vhost
         cat > $tomcat_install_dir/conf/vhost/localhost.xml << EOF
 <Host name="localhost" appBase="webapps" unpackWARs="true" autoDeploy="true">

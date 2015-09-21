@@ -11,8 +11,7 @@
 Install_Percona-5-5()
 {
 cd $oneinstack_dir/src
-
-src_url=http://www.percona.com/redir/downloads/Percona-Server-5.5/LATEST/source/tarball/percona-server-$percona_5_version.tar.gz && Download_src
+src_url=https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-$percona_5_version/source/tarball/percona-server-$percona_5_version.tar.gz && Download_src
 
 id -u mysql >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin mysql

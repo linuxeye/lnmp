@@ -673,7 +673,7 @@ Del_Apache_Vhost() {
 }
 
 Del_Tomcat_Vhost() {
-    if [ -n "`grep ${domain}-vhost $tomcat_install_dir/conf/server.xml`" ];then
+    if [ -e "$tomcat_install_dir/conf/server.xml" ] && [ -n "`grep ${domain}-vhost $tomcat_install_dir/conf/server.xml`" ];then
         sed -i /${domain}-vhost/d $tomcat_install_dir/conf/server.xml 
         rm -rf $tomcat_install_dir/conf/vhost/${domain}.xml
         /etc/init.d/tomcat restart

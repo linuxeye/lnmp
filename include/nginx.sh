@@ -42,7 +42,7 @@ elif [ "$je_tc_malloc" == '2' ];then
 fi
 
 [ ! -d "$nginx_install_dir" ] && mkdir -p $nginx_install_dir
-./configure --prefix=$nginx_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_spdy_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module $malloc_module
+./configure --prefix=$nginx_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module $malloc_module
 make && make install
 if [ -e "$nginx_install_dir/conf/nginx.conf" ];then
     cd ..

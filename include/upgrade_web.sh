@@ -19,7 +19,7 @@ echo "Current Nginx Version: ${CMSG}$OLD_Nginx_version${CEND}"
 while :
 do
     echo
-    read -p "Please input upgrade Nginx Version(example: 1.9.5): " NEW_Nginx_version
+    read -p "Please input upgrade Nginx Version(example: 1.9.15): " NEW_Nginx_version
     if [ "$NEW_Nginx_version" != "$OLD_Nginx_version" ];then
         [ ! -e "nginx-$NEW_Nginx_version.tar.gz" ] && wget --no-check-certificate -c http://nginx.org/download/nginx-$NEW_Nginx_version.tar.gz > /dev/null 2>&1
         if [ -e "nginx-$NEW_Nginx_version.tar.gz" ];then

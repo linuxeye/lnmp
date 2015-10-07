@@ -57,6 +57,7 @@ elif [ "$Nginx_version" == '1' -o "$Nginx_version" == '2' -o -e "$web_install_di
     TMP_IP=127.0.0.1
 fi
 sed -i "s@AddType\(.*\)Z@AddType\1Z\n    AddType application/x-httpd-php .php .phtml\n    AddType application/x-httpd-php-source .phps@" $apache_install_dir/conf/httpd.conf
+sed -i "s@#AddHandler cgi-script .cgi@AddHandler cgi-script .cgi .pl@" $apache_install_dir/conf/httpd.conf
 sed -i 's@^#LoadModule rewrite_module@LoadModule rewrite_module@' $apache_install_dir/conf/httpd.conf
 sed -i 's@^#LoadModule\(.*\)mod_deflate.so@LoadModule\1mod_deflate.so@' $apache_install_dir/conf/httpd.conf
 sed -i 's@DirectoryIndex index.html@DirectoryIndex index.html index.php@' $apache_install_dir/conf/httpd.conf
@@ -91,7 +92,7 @@ NameVirtualHost *:$TMP_PORT
     CustomLog "$wwwlogs_dir/access_apache.log" common
 <Directory "$wwwroot_dir/default">
     SetOutputFilter DEFLATE
-    Options FollowSymLinks
+    Options FollowSymLinks ExecCGI
     AllowOverride All
     Order allow,deny
     Allow from all

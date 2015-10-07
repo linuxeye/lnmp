@@ -413,7 +413,7 @@ cat > $apache_install_dir/conf/vhost/$domain.conf << EOF
     $A_log
 <Directory "$vhostdir">
     SetOutputFilter DEFLATE
-    Options FollowSymLinks
+    Options FollowSymLinks ExecCGI
     $R_TMP
     AllowOverride All
     Order allow,deny
@@ -463,7 +463,7 @@ location @apache {
     proxy_pass http://127.0.0.1:88;
     include proxy.conf;
     }
-location ~ .*\.(php|php5)?$ {
+location ~ .*\.(php|php5|cgi|pl)?$ {
     proxy_pass http://127.0.0.1:88;
     include proxy.conf;
     }
@@ -501,7 +501,7 @@ cat > $apache_install_dir/conf/vhost/$domain.conf << EOF
     $A_log
 <Directory "$vhostdir">
     SetOutputFilter DEFLATE
-    Options FollowSymLinks
+    Options FollowSymLinks ExecCGI
     $R_TMP
     AllowOverride All
     Order allow,deny

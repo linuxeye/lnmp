@@ -170,15 +170,15 @@ service sshd restart
 if [ ! -e "`which tmux`" ];then
     cd src
     src_url=http://downloads.sourceforge.net/project/levent/libevent/libevent-2.0/libevent-2.0.22-stable.tar.gz && Download_src 
-    src_url=http://downloads.sourceforge.net/project/tmux/tmux/tmux-2.0/tmux-2.0.tar.gz && Download_src 
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/tmux-2.1.tar.gz && Download_src 
     tar xzf libevent-2.0.22-stable.tar.gz
     cd libevent-2.0.22-stable
     ./configure
     make && make install
     cd ..
 
-    tar xzf tmux-2.0.tar.gz
-    cd tmux-2.0
+    tar xzf tmux-2.1.tar.gz
+    cd tmux-2.1
     CFLAGS="-I/usr/local/include" LDFLAGS="-L//usr/local/lib" ./configure
     make && make install
     cd ../../

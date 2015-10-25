@@ -39,19 +39,6 @@ PUBLIC_IPADDR=`./include/get_public_ipaddr.py`
 
 mkdir -p $wwwroot_dir/default $wwwlogs_dir
 
-# choice upgrade OS
-#while :
-#do
-#    echo
-#    read -p "Do you want to upgrade operating system? [y/n]: " upgrade_yn
-#    if [ "$upgrade_yn" != 'y' -a "$upgrade_yn" != 'n' ];then
-#        echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
-#    else
-#        #[ "$upgrade_status" == '0' ] && { echo "${CWARNING}Your system is already upgraded! ${CEND}" ; upgrade_yn=Other ; }
-#        break
-#    fi
-#done
-
 # Use default SSH port 22. If you use another SSH port on your server
 if [ -e "/etc/ssh/sshd_config" ];then
     [ -z "`grep ^Port /etc/ssh/sshd_config`" ] && ssh_port=22 || ssh_port=`grep ^Port /etc/ssh/sshd_config | awk '{print $2}'`
@@ -187,16 +174,17 @@ do
             do
                 echo
                 echo 'Please select a version of the Database:'
-                echo -e "\t${CMSG}1${CEND}. Install MySQL-5.6"
-                echo -e "\t${CMSG}2${CEND}. Install MySQL-5.5"
-                echo -e "\t${CMSG}3${CEND}. Install MariaDB-10.0"
-                echo -e "\t${CMSG}4${CEND}. Install MariaDB-5.5"
-                echo -e "\t${CMSG}5${CEND}. Install Percona-5.6"
-                echo -e "\t${CMSG}6${CEND}. Install Percona-5.5"
-                read -p "Please input a number:(Default 1 press Enter) " DB_version
-                [ -z "$DB_version" ] && DB_version=1
-                if [ $DB_version != 1 -a $DB_version != 2 -a $DB_version != 3 -a $DB_version != 4 -a $DB_version != 5 -a $DB_version != 6 ];then
-                    echo "${CWARNING}input error! Please only input number 1,2,3,4,5,6 ${CEND}"
+                echo -e "\t${CMSG}1${CEND}. Install MySQL-5.7"
+                echo -e "\t${CMSG}2${CEND}. Install MySQL-5.6"
+                echo -e "\t${CMSG}3${CEND}. Install MySQL-5.5"
+                echo -e "\t${CMSG}4${CEND}. Install MariaDB-10.0"
+                echo -e "\t${CMSG}5${CEND}. Install MariaDB-5.5"
+                echo -e "\t${CMSG}6${CEND}. Install Percona-5.6"
+                echo -e "\t${CMSG}7${CEND}. Install Percona-5.5"
+                read -p "Please input a number:(Default 2 press Enter) " DB_version
+                [ -z "$DB_version" ] && DB_version=2
+                if [ $DB_version != 1 -a $DB_version != 2 -a $DB_version != 3 -a $DB_version != 4 -a $DB_version != 5 -a $DB_version != 6 -a $DB_version != 7 ];then
+                    echo "${CWARNING}input error! Please only input number 1,2,3,4,5,6,7${CEND}"
                 else
                     while :
                     do
@@ -523,21 +511,24 @@ fi
 
 # Database
 if [ "$DB_version" == '1' ];then
+    . include/mysql-5.7.sh 
+    Install_MySQL-5-7 2>&1 | tee -a $oneinstack_dir/install.log 
+elif [ "$DB_version" == '2' ];then
     . include/mysql-5.6.sh 
     Install_MySQL-5-6 2>&1 | tee -a $oneinstack_dir/install.log 
-elif [ "$DB_version" == '2' ];then
+elif [ "$DB_version" == '3' ];then
     . include/mysql-5.5.sh
     Install_MySQL-5-5 2>&1 | tee -a $oneinstack_dir/install.log
-elif [ "$DB_version" == '3' ];then
+elif [ "$DB_version" == '4' ];then
     . include/mariadb-10.0.sh
     Install_MariaDB-10-0 2>&1 | tee -a $oneinstack_dir/install.log 
-elif [ "$DB_version" == '4' ];then
+elif [ "$DB_version" == '5' ];then
     . include/mariadb-5.5.sh
     Install_MariaDB-5-5 2>&1 | tee -a $oneinstack_dir/install.log 
-elif [ "$DB_version" == '5' ];then
+elif [ "$DB_version" == '6' ];then
     . include/percona-5.6.sh
     Install_Percona-5-6 2>&1 | tee -a $oneinstack_dir/install.log
-elif [ "$DB_version" == '6' ];then
+elif [ "$DB_version" == '7' ];then
     . include/percona-5.5.sh 
     Install_Percona-5-5 2>&1 | tee -a $oneinstack_dir/install.log 
 fi

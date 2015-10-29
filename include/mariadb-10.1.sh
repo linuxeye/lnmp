@@ -8,59 +8,42 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_MySQL-5-7()
+Install_MariaDB-10-1()
 {
 cd $oneinstack_dir/src
 
-[ "$IPADDR_STATE"x == "CN"x ] && { DOWN_ADDR_MYSQL=http://mirrors.linuxeye.com/oneinstack/src; DOWN_ADDR_BOOST=$DOWN_ADDR_MYSQL; } || { DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.7; DOWN_ADDR_BOOST=http://downloads.sourceforge.net/project/boost/boost/1.59.0; }
+[ "$IPADDR_STATE"x == "CN"x ] && DOWN_ADDR=http://mirrors.aliyun.com/mariadb || DOWN_ADDR=https://downloads.mariadb.org/f
 
-src_url=$DOWN_ADDR_BOOST/boost_1_59_0.tar.gz && Download_src
-src_url=$DOWN_ADDR_MYSQL/mysql-$mysql_5_7_version.tar.gz && Download_src
+LIBC_VERSION=`getconf -a | grep GNU_LIBC_VERSION | awk '{print $NF}'`
+LIBC_YN=`echo "$LIBC_VERSION < 2.14" | bc`
+[ $LIBC_YN == '1' ] && GLIBC_FLAG=linux || GLIBC_FLAG=linux-glibc_214 
+
+src_url=$DOWN_ADDR/mariadb-${mariadb_10_1_version}/bintar-${GLIBC_FLAG}-$SYS_BIT_a/mariadb-${mariadb_10_1_version}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz && Download_src
 
 id -u mysql >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin mysql
 
-mkdir -p $mysql_data_dir;chown mysql.mysql -R $mysql_data_dir
-tar xzf boost_1_59_0.tar.gz
-tar zxf mysql-$mysql_5_7_version.tar.gz
-cd mysql-$mysql_5_7_version
+mkdir -p $mariadb_data_dir;chown mysql.mysql -R $mariadb_data_dir
+tar zxf mariadb-${mariadb_10_1_version}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz 
+[ ! -d "$mariadb_install_dir" ] && mkdir -p $mariadb_install_dir
+mv mariadb-${mariadb_10_1_version}-linux-${SYS_BIT_b}/* $mariadb_install_dir 
 if [ "$je_tc_malloc" == '1' ];then
-    EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
+    sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' $mariadb_install_dir/bin/mysqld_safe
 elif [ "$je_tc_malloc" == '2' ];then
-    EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"
+    sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libtcmalloc.so@' $mariadb_install_dir/bin/mysqld_safe
 fi
-make clean
-[ ! -d "$mysql_install_dir" ] && mkdir -p $mysql_install_dir 
-cmake . -DCMAKE_INSTALL_PREFIX=$mysql_install_dir \
--DMYSQL_DATADIR=$mysql_data_dir \
--DDOWNLOAD_BOOST=1 \
--DWITH_BOOST=../boost_1_59_0 \
--DSYSCONFDIR=/etc \
--DWITH_INNOBASE_STORAGE_ENGINE=1 \
--DWITH_PARTITION_STORAGE_ENGINE=1 \
--DWITH_FEDERATED_STORAGE_ENGINE=1 \
--DWITH_BLACKHOLE_STORAGE_ENGINE=1 \
--DWITH_MYISAM_STORAGE_ENGINE=1 \
--DENABLED_LOCAL_INFILE=1 \
--DENABLE_DTRACE=0 \
--DDEFAULT_CHARSET=utf8mb4 \
--DDEFAULT_COLLATION=utf8mb4_general_ci \
--DWITH_EMBEDDED_SERVER=1 \
-$EXE_LINKER
-make -j `grep processor /proc/cpuinfo | wc -l` 
-make install
 
-if [ -d "$mysql_install_dir/support-files" ];then
-    echo "${CSUCCESS}MySQL install successfully! ${CEND}"
-    cd ..
-    rm -rf mysql-$mysql_5_7_version
+if [ -d "$mariadb_install_dir/support-files" ];then
+    echo "${CSUCCESS}MariaDB install successfully! ${CEND}"
 else
-    rm -rf $mysql_install_dir
-    echo "${CFAILURE}MySQL install failed, Please contact the author! ${CEND}"
+    rm -rf $mariadb_install_dir
+    echo "${CFAILURE}MariaDB install failed, Please contact the author! ${CEND}" 
     kill -9 $$
 fi
 
-/bin/cp $mysql_install_dir/support-files/mysql.server /etc/init.d/mysqld
+/bin/cp $mariadb_install_dir/support-files/mysql.server /etc/init.d/mysqld
+sed -i "s@^basedir=.*@basedir=$mariadb_install_dir@" /etc/init.d/mysqld
+sed -i "s@^datadir=.*@datadir=$mariadb_data_dir@" /etc/init.d/mysqld
 chmod +x /etc/init.d/mysqld
 OS_CentOS='chkconfig --add mysqld \n
 chkconfig mysqld on'
@@ -80,9 +63,9 @@ default-character-set = utf8mb4
 port = 3306
 socket = /tmp/mysql.sock
 
-basedir = $mysql_install_dir 
-datadir = $mysql_data_dir
-pid-file = $mysql_data_dir/mysql.pid
+basedir = $mariadb_install_dir
+datadir = $mariadb_data_dir
+pid-file = $mariadb_data_dir/mysql.pid
 user = mysql
 bind-address = 0.0.0.0
 server-id = 1
@@ -121,13 +104,12 @@ log_bin = mysql-bin
 binlog_format = mixed
 expire_logs_days = 30
 
-log_error = $mysql_data_dir/mysql-error.log
+log_error = $mariadb_data_dir/mysql-error.log
 slow_query_log = 1
 long_query_time = 1
-slow_query_log_file = $mysql_data_dir/mysql-slow.log
+slow_query_log_file = $mariadb_data_dir/mysql-slow.log
 
 performance_schema = 0
-explicit_defaults_for_timestamp
 
 #lower_case_table_names = 1
 
@@ -194,19 +176,23 @@ elif [ $Mem -gt 3500 ];then
     sed -i 's@^table_open_cache.*@table_open_cache = 1024@' /etc/my.cnf
 fi
 
-$mysql_install_dir/bin/mysqld --initialize-insecure --user=mysql --basedir=$mysql_install_dir --datadir=$mysql_data_dir
+$mariadb_install_dir/scripts/mysql_install_db --user=mysql --basedir=$mariadb_install_dir --datadir=$mariadb_data_dir
 
-chown mysql.mysql -R $mysql_data_dir
+chown mysql.mysql -R $mariadb_data_dir
 service mysqld start
-[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$mysql_install_dir/bin:\$PATH" >> /etc/profile 
-[ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep $mysql_install_dir /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$mysql_install_dir/bin:\1@" /etc/profile
+[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$mariadb_install_dir/bin:\$PATH" >> /etc/profile 
+[ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep $mariadb_install_dir /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$mariadb_install_dir/bin:\1@" /etc/profile
 . /etc/profile
 
-$mysql_install_dir/bin/mysql -e "grant all privileges on *.* to root@'127.0.0.1' identified by \"$dbrootpwd\" with grant option;"
-$mysql_install_dir/bin/mysql -e "grant all privileges on *.* to root@'localhost' identified by \"$dbrootpwd\" with grant option;"
-$mysql_install_dir/bin/mysql -uroot -p$dbrootpwd -e "reset master;"
+$mariadb_install_dir/bin/mysql -e "grant all privileges on *.* to root@'127.0.0.1' identified by \"$dbrootpwd\" with grant option;"
+$mariadb_install_dir/bin/mysql -e "grant all privileges on *.* to root@'localhost' identified by \"$dbrootpwd\" with grant option;"
+$mariadb_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.user where Password='';"
+$mariadb_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.db where User='';"
+$mariadb_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.proxies_priv where Host!='localhost';"
+$mariadb_install_dir/bin/mysql -uroot -p$dbrootpwd -e "drop database test;"
+$mariadb_install_dir/bin/mysql -uroot -p$dbrootpwd -e "reset master;"
 rm -rf /etc/ld.so.conf.d/{mysql,mariadb,percona}*.conf
-echo "$mysql_install_dir/lib" > /etc/ld.so.conf.d/mysql.conf 
+echo "$mariadb_install_dir/lib" > /etc/ld.so.conf.d/mariadb.conf 
 ldconfig
 service mysqld stop
 }

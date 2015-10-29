@@ -177,14 +177,15 @@ do
                 echo -e "\t${CMSG}1${CEND}. Install MySQL-5.7"
                 echo -e "\t${CMSG}2${CEND}. Install MySQL-5.6"
                 echo -e "\t${CMSG}3${CEND}. Install MySQL-5.5"
-                echo -e "\t${CMSG}4${CEND}. Install MariaDB-10.0"
-                echo -e "\t${CMSG}5${CEND}. Install MariaDB-5.5"
-                echo -e "\t${CMSG}6${CEND}. Install Percona-5.6"
-                echo -e "\t${CMSG}7${CEND}. Install Percona-5.5"
+                echo -e "\t${CMSG}4${CEND}. Install MariaDB-10.1"
+                echo -e "\t${CMSG}5${CEND}. Install MariaDB-10.0"
+                echo -e "\t${CMSG}6${CEND}. Install MariaDB-5.5"
+                echo -e "\t${CMSG}7${CEND}. Install Percona-5.6"
+                echo -e "\t${CMSG}8${CEND}. Install Percona-5.5"
                 read -p "Please input a number:(Default 2 press Enter) " DB_version
                 [ -z "$DB_version" ] && DB_version=2
-                if [ $DB_version != 1 -a $DB_version != 2 -a $DB_version != 3 -a $DB_version != 4 -a $DB_version != 5 -a $DB_version != 6 -a $DB_version != 7 ];then
-                    echo "${CWARNING}input error! Please only input number 1,2,3,4,5,6,7${CEND}"
+                if [ $DB_version != 1 -a $DB_version != 2 -a $DB_version != 3 -a $DB_version != 4 -a $DB_version != 5 -a $DB_version != 6 -a $DB_version != 7 -a $DB_version != 8 ];then
+                    echo "${CWARNING}input error! Please only input number 1,2,3,4,5,6,7,8${CEND}"
                 else
                     while :
                     do
@@ -504,6 +505,9 @@ fi
 if [ "$je_tc_malloc_yn" == 'y' -a "$je_tc_malloc" == '1' -a ! -e "/usr/local/lib/libjemalloc.so" ];then
     . include/jemalloc.sh
     Install_jemalloc | tee -a $oneinstack_dir/install.log
+elif [ "$DB_version" == '4' -a ! -e "/usr/local/lib/libjemalloc.so" ];then
+    . include/jemalloc.sh
+    Install_jemalloc | tee -a $oneinstack_dir/install.log
 elif [ "$je_tc_malloc_yn" == 'y' -a "$je_tc_malloc" == '2' -a ! -e "/usr/local/lib/libtcmalloc.so" ];then
     . include/tcmalloc.sh
     Install_tcmalloc | tee -a $oneinstack_dir/install.log
@@ -520,15 +524,18 @@ elif [ "$DB_version" == '3' ];then
     . include/mysql-5.5.sh
     Install_MySQL-5-5 2>&1 | tee -a $oneinstack_dir/install.log
 elif [ "$DB_version" == '4' ];then
+    . include/mariadb-10.1.sh
+    Install_MariaDB-10-1 2>&1 | tee -a $oneinstack_dir/install.log 
+elif [ "$DB_version" == '5' ];then
     . include/mariadb-10.0.sh
     Install_MariaDB-10-0 2>&1 | tee -a $oneinstack_dir/install.log 
-elif [ "$DB_version" == '5' ];then
+elif [ "$DB_version" == '6' ];then
     . include/mariadb-5.5.sh
     Install_MariaDB-5-5 2>&1 | tee -a $oneinstack_dir/install.log 
-elif [ "$DB_version" == '6' ];then
+elif [ "$DB_version" == '7' ];then
     . include/percona-5.6.sh
     Install_Percona-5-6 2>&1 | tee -a $oneinstack_dir/install.log
-elif [ "$DB_version" == '7' ];then
+elif [ "$DB_version" == '8' ];then
     . include/percona-5.5.sh 
     Install_Percona-5-5 2>&1 | tee -a $oneinstack_dir/install.log 
 fi

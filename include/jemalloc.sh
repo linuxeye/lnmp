@@ -18,6 +18,11 @@ cd jemalloc-$jemalloc_version
 ./configure
 make && make install
 if [ -f "/usr/local/lib/libjemalloc.so" ];then
+    if [ "$OS_BIT" == '64' ];then
+        ln -s /usr/local/lib/libjemalloc.so.2 /usr/lib64/libjemalloc.so.1
+    else
+        ln -s /usr/local/lib/libjemalloc.so.2 /usr/lib/libjemalloc.so.1
+    fi
     echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
     ldconfig
     echo "${CSUCCESS}jemalloc module install successfully! ${CEND}"

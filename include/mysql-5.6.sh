@@ -11,14 +11,14 @@
 Install_MySQL-5-6()
 {
 cd $oneinstack_dir/src
-src_url=http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-$mysql_6_version.tar.gz && Download_src
+src_url=http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-$mysql_5_6_version.tar.gz && Download_src
 
 id -u mysql >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin mysql
 
 mkdir -p $mysql_data_dir;chown mysql.mysql -R $mysql_data_dir
-tar zxf mysql-$mysql_6_version.tar.gz
-cd mysql-$mysql_6_version
+tar zxf mysql-$mysql_5_6_version.tar.gz
+cd mysql-$mysql_5_6_version
 if [ "$je_tc_malloc" == '1' ];then
     EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
 elif [ "$je_tc_malloc" == '2' ];then
@@ -46,7 +46,7 @@ make install
 if [ -d "$mysql_install_dir/support-files" ];then
     echo "${CSUCCESS}MySQL install successfully! ${CEND}"
     cd ..
-    rm -rf mysql-$mysql_6_version
+    rm -rf mysql-$mysql_5_6_version
 else
     rm -rf $mysql_install_dir
     echo "${CFAILURE}MySQL install failed, Please contact the author! ${CEND}"

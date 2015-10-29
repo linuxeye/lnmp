@@ -11,14 +11,14 @@
 Install_Percona-5-5()
 {
 cd $oneinstack_dir/src
-src_url=https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-$percona_5_version/source/tarball/percona-server-$percona_5_version.tar.gz && Download_src
+src_url=https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-$percona_5_5_version/source/tarball/percona-server-$percona_5_5_version.tar.gz && Download_src
 
 id -u mysql >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin mysql
 
 mkdir -p $percona_data_dir;chown mysql.mysql -R $percona_data_dir
-tar zxf percona-server-$percona_5_version.tar.gz 
-cd percona-server-$percona_5_version 
+tar zxf percona-server-$percona_5_5_version.tar.gz 
+cd percona-server-$percona_5_5_version 
 if [ "$je_tc_malloc" == '1' ];then
     EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
 elif [ "$je_tc_malloc" == '2' ];then
@@ -47,7 +47,7 @@ make install
 if [ -d "$percona_install_dir/support-files" ];then
     echo "${CSUCCESS}Percona install successfully! ${CEND}"
     cd ..
-    rm -rf percona-server-$percona_5_version
+    rm -rf percona-server-$percona_5_5_version
 else
     rm -rf $percona_install_dir
     echo "${CFAILURE}Percona install failed, Please contact the author! ${CEND}"

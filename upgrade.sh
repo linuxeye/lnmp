@@ -17,6 +17,8 @@ printf "
 #       For more information please visit http://oneinstack.com       #
 #######################################################################
 "
+# get pwd
+sed -i "s@^oneinstack_dir.*@oneinstack_dir=`pwd`@" ./options.conf
 
 . ./options.conf
 . ./include/color.sh

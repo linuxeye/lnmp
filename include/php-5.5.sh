@@ -193,6 +193,7 @@ pm.process_idle_timeout = 10s
 request_terminate_timeout = 120
 request_slowlog_timeout = 0
 
+pm.status_path = /php-fpm_status
 slowlog = log/slow.log
 rlimit_files = 51200
 rlimit_core = 0

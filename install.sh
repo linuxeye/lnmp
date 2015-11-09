@@ -38,6 +38,7 @@ PUBLIC_IPADDR=`./include/get_public_ipaddr.py`
 [ "`./include/get_ipaddr_state.py $PUBLIC_IPADDR`" == '\u4e2d\u56fd' ] && IPADDR_STATE=CN
 
 mkdir -p $wwwroot_dir/default $wwwlogs_dir
+[ -d /data ] && chmod 755 /data
 
 # Use default SSH port 22. If you use another SSH port on your server
 if [ -e "/etc/ssh/sshd_config" ];then
@@ -219,7 +220,7 @@ do
                 echo -e "\t${CMSG}2${CEND}. Install php-5.4"
                 echo -e "\t${CMSG}3${CEND}. Install php-5.5"
                 echo -e "\t${CMSG}4${CEND}. Install php-5.6"
-                echo -e "\t${CMSG}5${CEND}. Install php-7/phpng(RC)"
+                echo -e "\t${CMSG}5${CEND}. Install php-7(RC)"
                 read -p "Please input a number:(Default 3 press Enter) " PHP_version
                 [ -z "$PHP_version" ] && PHP_version=3
                 if [ $PHP_version != 1 -a $PHP_version != 2 -a $PHP_version != 3 -a $PHP_version != 4 -a $PHP_version != 5 ];then

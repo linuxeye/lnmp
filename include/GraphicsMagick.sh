@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_GraphicsMagick()
-{
+Install_GraphicsMagick() {
 cd $oneinstack_dir/src
 src_url=http://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/$GraphicsMagick_version/GraphicsMagick-$GraphicsMagick_version.tar.gz && Download_src
 
@@ -19,7 +18,11 @@ cd GraphicsMagick-$GraphicsMagick_version
 make && make install
 cd ..
 rm -rf GraphicsMagick-$GraphicsMagick_version
+cd ..
+}
 
+Install_php-gmagick() {
+cd $oneinstack_dir/src
 if [ -e "$php_install_dir/bin/phpize" ];then
     src_url=http://pecl.php.net/get/gmagick-$gmagick_version.tgz && Download_src
     tar xzf gmagick-$gmagick_version.tgz 

@@ -90,7 +90,7 @@ What Are You Doing?
 \t${CMSG}q${CEND}. Exit
 "
     read -p "Please input the correct option: " Number 
-    if [ "$Number" != '1' -a "$Number" != '2' -a "$Number" != '3' -a "$Number" != '4' -a "$Number" != '5' -a "$Number" != '6' -a "$Number" != 'q' ];then
+    if [[ ! $Number =~ ^[1-6,q]$ ]];then
     	echo "${CFAILURE}input error! Please only input 1 ~ 6 and q${CEND}"
     else
         case "$Number" in

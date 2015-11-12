@@ -33,7 +33,7 @@ do
     echo -e "\t${CMSG}3${CEND}. Localhost and Remote host"
     read -p "Please input a number:(Default 1 press Enter) " DESC_BK 
     [ -z "$DESC_BK" ] && DESC_BK=1
-    if [ $DESC_BK != 1 -a $DESC_BK != 2 -a $DESC_BK != 3 ];then
+    if [[ ! $DESC_BK =~ ^[1-3]$ ]];then
         echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
     else
         break
@@ -53,7 +53,7 @@ do
     echo -e "\t${CMSG}3${CEND}. Database and Website"
     read -p "Please input a number:(Default 1 press Enter) " CONTENT_BK
     [ -z "$CONTENT_BK" ] && CONTENT_BK=1
-    if [ $CONTENT_BK != 1 -a $CONTENT_BK != 2 -a $CONTENT_BK != 3 ];then
+    if [[ ! $CONTENT_BK =~ ^[1-3]$ ]];then
         echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
     else
         break
@@ -159,7 +159,7 @@ if [ "$DESC_BK" == '2' -o "$DESC_BK" == '3' ];then
             while :
             do
                 read -p "Do you want to add more host ? [y/n]: " more_host_yn 
-                if [ "$more_host_yn" != 'y' -a "$more_host_yn" != 'n' ];then
+                if [[ ! "$more_host_yn" =~ ^[y,n]$ ]];then
                     echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
                 else
                     break

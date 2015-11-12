@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_ImageMagick()
-{
+Install_ImageMagick() {
 cd $oneinstack_dir/src
 src_url=http://downloads.sourceforge.net/project/imagemagick/old-sources/6.x/6.8/ImageMagick-$ImageMagick_version.tar.gz && Download_src
 
@@ -19,7 +18,11 @@ cd ImageMagick-$ImageMagick_version
 make && make install
 cd ..
 rm -rf ImageMagick-$ImageMagick_version
+cd ..
+}
 
+Install_php-imagick() {
+cd $oneinstack_dir/src
 if [ -e "$php_install_dir/bin/phpize" ];then
     src_url=http://pecl.php.net/get/imagick-$imagick_version.tgz && Download_src
     tar xzf imagick-$imagick_version.tgz

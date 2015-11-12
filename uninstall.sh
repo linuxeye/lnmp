@@ -45,8 +45,8 @@ Uninstall()
 id -u $run_user >/dev/null 2>&1 ; [ $? -eq 0 ] && userdel $run_user
 id -u mysql >/dev/null 2>&1 ; [ $? -eq 0 ] && userdel mysql 
 
-/bin/mv ${wwwroot_dir}{,_$(date +%F)}
-/bin/mv ${db_data_dir}{,_$(date +%F)}
+[ -e "$wwwroot_dir" ] && /bin/mv ${wwwroot_dir}{,$(date +%Y%m%d%H)}
+[ -e "$db_data_dir" ] && /bin/mv ${db_data_dir}{,$(date +%Y%m%d%H)}
 for D in `cat ./options.conf | grep dir= | grep -v oneinstack | grep -v backup_dir | awk -F'=' '{print $2}' | sort | uniq`
 do
     [ -e "$D" ] && rm -rf $D
@@ -89,7 +89,7 @@ while :
 do
     echo
     read -p "Do you want to uninstall OneinStack? [y/n]: " uninstall_yn
-    if [ "$uninstall_yn" != 'y' -a "$uninstall_yn" != 'n' ];then
+    if [[ ! $uninstall_yn =~ ^[y,n]$ ]];then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
         break

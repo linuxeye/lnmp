@@ -59,6 +59,22 @@ EOF
         cd $oneinstack_dir/src
         /bin/cp ../config/server.xml $tomcat_install_dir/conf
         sed -i "s@/usr/local/tomcat@$tomcat_install_dir@g" $tomcat_install_dir/conf/server.xml
+
+        if [ ! -e "$nginx_install_dir/sbin/nginx" -a ! -e "$tengine_install_dir/sbin/nginx" -a ! -e "$apache_install_dir/conf/httpd.conf" ];then
+            if [ "$OS" == 'CentOS' ];then
+                if [ -z "`grep -w '8080' /etc/sysconfig/iptables`" ];then
+                    iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
+                fi
+            elif [ $OS == 'Debian' -o $OS == 'Ubuntu' ];then
+                if [ -z "`grep -w '8080' /etc/iptables.up.rules`" ];then
+                    iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
+                fi
+            fi
+            OS_CentOS='service iptables save'
+            OS_Debian_Ubuntu='iptables-save > /etc/iptables.up.rules'
+            OS_command
+        fi
+
         [ ! -d "$tomcat_install_dir/conf/vhost" ] && mkdir $tomcat_install_dir/conf/vhost
         cat > $tomcat_install_dir/conf/vhost/localhost.xml << EOF
 <Host name="localhost" appBase="webapps" unpackWARs="true" autoDeploy="true">
@@ -106,5 +122,6 @@ else
     echo "${CFAILURE}Tomcat install failed, Please contact the author! ${CEND}" 
     kill -9 $$
 fi
+service tomcat start
 cd ..
 }

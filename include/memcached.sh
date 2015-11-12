@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_memcached()
-{
+Install_memcached() {
 cd $oneinstack_dir/src
 src_url=http://www.memcached.org/files/memcached-$memcached_version.tar.gz && Download_src
 
@@ -35,17 +34,19 @@ update-rc.d memcached defaults'
     OS_command
     sed -i "s@/usr/local/memcached@$memcached_install_dir@g" /etc/init.d/memcached
     [ -n "`grep 'CACHESIZE=' /etc/init.d/memcached`" ] && sed -i "s@^CACHESIZE=.*@CACHESIZE=`expr $Mem / 8`@" /etc/init.d/memcached 
-    [ -n "`grep 'start_instance default 256;' /etc/init.d/memcached`" ] && sed -i "s@start_instance default 256;@start_instance default `expr $Mem / 8`;@" /etc/init.d/memcached 
+    [ -n "`grep 'start_instance default 256;' /etc/init.d/memcached`" ] && sed -i "s@start_instance default 256;@start_instance default `expr $Mem / 8`;@" /etc/init.d/memcached
     service memcached start
 else
     rm -rf $memcached_install_dir
     echo "${CFAILURE}memcached install failed, Please contact the author! ${CEND}"
     kill -9 $$
 fi
+cd ..
+}
 
+Install_php-memcache() {
+cd $oneinstack_dir/src
 if [ -e "$php_install_dir/bin/phpize" ];then
-    src_url=https://launchpad.net/libmemcached/1.0/$libmemcached_version/+download/libmemcached-$libmemcached_version.tar.gz && Download_src
-    src_url=http://pecl.php.net/get/memcached-$memcached_pecl_version.tgz && Download_src
     src_url=http://pecl.php.net/get/memcache-$memcache_pecl_version.tgz && Download_src
     # php memcache extension
     tar xzf memcache-$memcache_pecl_version.tgz 
@@ -64,7 +65,15 @@ if [ -e "$php_install_dir/bin/phpize" ];then
     else
         echo "${CFAILURE}PHP memcache module install failed, Please contact the author! ${CEND}" 
     fi
+fi
+cd ..
+}
 
+Install_php-memcached() {
+cd $oneinstack_dir/src
+if [ -e "$php_install_dir/bin/phpize" ];then
+    src_url=https://launchpad.net/libmemcached/1.0/$libmemcached_version/+download/libmemcached-$libmemcached_version.tar.gz && Download_src
+    src_url=http://pecl.php.net/get/memcached-$memcached_pecl_version.tgz && Download_src
     # php memcached extension
     tar xzf libmemcached-$libmemcached_version.tar.gz
     cd libmemcached-$libmemcached_version

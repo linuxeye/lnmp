@@ -72,7 +72,7 @@ cd php-$php_6_version
 make clean
 [ ! -d "$php_install_dir" ] && mkdir -p $php_install_dir
 [ "$PHP_cache" == '1' ] && PHP_cache_tmp='--enable-opcache' || PHP_cache_tmp='--disable-opcache'
-if [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
+if [[ $Apache_version =~ ^[1-2]$ ]];then
     ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
 --with-apxs2=$apache_install_dir/bin/apxs $PHP_cache_tmp --disable-fileinfo \
 --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
@@ -142,7 +142,7 @@ if [ "$PHP_cache" == '1' ];then
     sed -i 's@^;opcache.optimization_level.*@;opcache.optimization_level=0@' $php_install_dir/etc/php.ini
 fi
 
-if [ "$Apache_version" != '1' -a "$Apache_version" != '2' ];then
+if [[ ! $Apache_version =~ ^[1-2]$ ]];then
     # php-fpm Init Script
     /bin/cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
     chmod +x /etc/init.d/php-fpm
@@ -239,7 +239,7 @@ EOF
     #[ "$Web_yn" == 'n' ] && sed -i "s@^listen =.*@listen = $IPADDR:9000@" $php_install_dir/etc/php-fpm.conf 
     service php-fpm start
 
-elif [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
+elif [[ $Apache_version =~ ^[1-2]$ ]];then
     service httpd restart
 fi
 cd ..

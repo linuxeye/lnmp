@@ -67,7 +67,7 @@ while :
 do
     echo
     read -p "Do you want to install Web server? [y/n]: " Web_yn
-    if [ "$Web_yn" != 'y' -a "$Web_yn" != 'n' ];then
+    if [[ ! $Web_yn =~ ^[y,n]$ ]];then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
         if [ "$Web_yn" == 'y' ];then
@@ -81,7 +81,7 @@ do
                 echo -e "\t${CMSG}3${CEND}. Do not install"
                 read -p "Please input a number:(Default 1 press Enter) " Nginx_version
                 [ -z "$Nginx_version" ] && Nginx_version=1
-                if [ $Nginx_version != 1 -a $Nginx_version != 2 -a $Nginx_version != 3 ];then
+                if [[ ! $Nginx_version =~ ^[1-3]$ ]];then
                     echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
                 else
                     [ "$Nginx_version" != '3' -a -e "$nginx_install_dir/sbin/nginx" ] && { echo "${CWARNING}Nginx already installed! ${CEND}"; Nginx_version=Other; }
@@ -99,7 +99,7 @@ do
                 echo -e "\t${CMSG}3${CEND}. Do not install"
                 read -p "Please input a number:(Default 3 press Enter) " Apache_version
                 [ -z "$Apache_version" ] && Apache_version=3
-                if [ $Apache_version != 1 -a $Apache_version != 2 -a $Apache_version != 3 ];then
+                if [[ ! $Apache_version =~ ^[1-3]$ ]];then
                     echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
                 else
                     [ "$Apache_version" != '3' -a -e "$apache_install_dir/conf/httpd.conf" ] && { echo "${CWARNING}Aapche already installed! ${CEND}"; Apache_version=Other; }  
@@ -116,7 +116,7 @@ do
             #    echo -e "\t${CMSG}3${CEND}. Do not install"
             #    read -p "Please input a number:(Default 3 press Enter) " Tomcat_version
             #    [ -z "$Tomcat_version" ] && Tomcat_version=3
-            #    if [ $Tomcat_version != 1 -a $Tomcat_version != 2 -a $Tomcat_version != 3 ];then
+            #    if [[ ! $Tomcat_version =~ ^[1-3]$ ]];then
             #        echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
             #    else
             #        [ "$Tomcat_version" != '3' -a -e "$tomcat_install_dir/conf/server.xml" ] && { echo "${CWARNING}Tomcat already installed! ${CEND}" ; Tomcat_version=Other; }  
@@ -129,7 +129,7 @@ do
             #                echo -e "\t${CMSG}2${CEND}. Install JDK-1.7"
             #                read -p "Please input a number:(Default 2 press Enter) " JDK_version
             #                [ -z "$JDK_version" ] && JDK_version=2
-            #                if [ $JDK_version != 1 -a $JDK_version != 2 ];then
+            #                if [[ ! $JDK_version =~ ^[1-2]$ ]];then
             #                    echo "${CWARNING}input error! Please only input number 1,2${CEND}"
             #                else
             #                    break
@@ -146,7 +146,7 @@ do
             #                echo -e "\t${CMSG}3${CEND}. Install JDK-1.6"
             #                read -p "Please input a number:(Default 2 press Enter) " JDK_version
             #                [ -z "$JDK_version" ] && JDK_version=2
-            #                if [ $JDK_version != 1 -a $JDK_version != 2 -a $JDK_version != 3 ];then
+            #                if [[ ! $JDK_version =~ ^[1-3]$ ]];then
             #                    echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
             #                else
             #                    break
@@ -166,7 +166,7 @@ while :
 do
     echo
     read -p "Do you want to install Database? [y/n]: " DB_yn
-    if [ "$DB_yn" != 'y' -a "$DB_yn" != 'n' ];then
+    if [[ ! $DB_yn =~ ^[y,n]$ ]];then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
         if [ "$DB_yn" == 'y' ];then
@@ -185,7 +185,7 @@ do
                 echo -e "\t${CMSG}8${CEND}. Install Percona-5.5"
                 read -p "Please input a number:(Default 2 press Enter) " DB_version
                 [ -z "$DB_version" ] && DB_version=2
-                if [ $DB_version != 1 -a $DB_version != 2 -a $DB_version != 3 -a $DB_version != 4 -a $DB_version != 5 -a $DB_version != 6 -a $DB_version != 7 -a $DB_version != 8 ];then
+                if [[ ! $DB_version =~ ^[1-8]$ ]];then
                     echo "${CWARNING}input error! Please only input number 1,2,3,4,5,6,7,8${CEND}"
                 else
                     while :
@@ -207,7 +207,7 @@ while :
 do
     echo
     read -p "Do you want to install PHP? [y/n]: " PHP_yn
-    if [ "$PHP_yn" != 'y' -a "$PHP_yn" != 'n' ];then
+    if [[ ! $PHP_yn =~ ^[y,n]$ ]];then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
         if [ "$PHP_yn" == 'y' ];then
@@ -220,17 +220,17 @@ do
                 echo -e "\t${CMSG}2${CEND}. Install php-5.4"
                 echo -e "\t${CMSG}3${CEND}. Install php-5.5"
                 echo -e "\t${CMSG}4${CEND}. Install php-5.6"
-                echo -e "\t${CMSG}5${CEND}. Install php-7(RC)"
+                echo -e "\t${CMSG}5${CEND}. Install php-7"
                 read -p "Please input a number:(Default 3 press Enter) " PHP_version
                 [ -z "$PHP_version" ] && PHP_version=3
-                if [ $PHP_version != 1 -a $PHP_version != 2 -a $PHP_version != 3 -a $PHP_version != 4 -a $PHP_version != 5 ];then
+                if [[ ! $PHP_version =~ ^[1-5]$ ]];then
                     echo "${CWARNING}input error! Please only input number 1,2,3,4,5${CEND}"
                 else
                     while :
                     do
                         echo
                         read -p "Do you want to install opcode cache of the PHP? [y/n]: " PHP_cache_yn 
-                        if [ "$PHP_cache_yn" != 'y' -a "$PHP_cache_yn" != 'n' ];then
+                        if [[ ! $PHP_cache_yn =~ ^[y,n]$ ]];then
                         	echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
                         else
                             if [ "$PHP_cache_yn" == 'y' ];then	
@@ -244,7 +244,7 @@ do
                                         echo -e "\t${CMSG}4${CEND}. Install eAccelerator-0.9"
                                         read -p "Please input a number:(Default 1 press Enter) " PHP_cache
                                         [ -z "$PHP_cache" ] && PHP_cache=1
-                                        if [ $PHP_cache != 1 -a $PHP_cache != 2 -a $PHP_cache != 3 -a $PHP_cache != 4 ];then
+                                        if [[ ! $PHP_cache =~ ^[1-4]$ ]];then
                                             echo "${CWARNING}input error! Please only input number 1,2,3,4${CEND}"
                                         else
                                             break
@@ -261,7 +261,7 @@ do
                                         echo -e "\t${CMSG}4${CEND}. Install eAccelerator-1.0-dev"
                                         read -p "Please input a number:(Default 1 press Enter) " PHP_cache
                                         [ -z "$PHP_cache" ] && PHP_cache=1
-                                        if [ $PHP_cache != 1 -a $PHP_cache != 2 -a $PHP_cache != 3 -a $PHP_cache != 4 ];then
+                                        if [[ ! $PHP_cache =~ ^[1-4]$ ]];then
                                             echo "${CWARNING}input error! Please only input number 1,2,3,4${CEND}"
                                         else
                                             break
@@ -277,7 +277,7 @@ do
                                         echo -e "\t${CMSG}3${CEND}. Install APCU"
                                         read -p "Please input a number:(Default 1 press Enter) " PHP_cache
                                         [ -z "$PHP_cache" ] && PHP_cache=1
-                                        if [ $PHP_cache != 1 -a $PHP_cache != 2 -a $PHP_cache != 3 ];then
+                                        if [[ ! $PHP_cache =~ ^[1-3]$ ]];then
                                             echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
                                         else
                                             break
@@ -292,7 +292,7 @@ do
                                         echo -e "\t${CMSG}2${CEND}. Install XCache"
                                         read -p "Please input a number:(Default 1 press Enter) " PHP_cache
                                         [ -z "$PHP_cache" ] && PHP_cache=1
-                                        if [ $PHP_cache != 1 -a $PHP_cache != 2 ];then
+                                        if [[ ! $PHP_cache =~ ^[1-2]$ ]];then
                                             echo "${CWARNING}input error! Please only input number 1,2${CEND}"
                                         else
                                             break
@@ -329,7 +329,7 @@ do
                         do
                             echo
                             read -p "Do you want to install ZendGuardLoader? [y/n]: " ZendGuardLoader_yn
-                            if [ "$ZendGuardLoader_yn" != 'y' -a "$ZendGuardLoader_yn" != 'n' ];then
+                            if [[ ! $ZendGuardLoader_yn =~ ^[y,n]$ ]];then
                                 echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
                             else
                                 break
@@ -342,7 +342,7 @@ do
                         do
                             echo
                             read -p "Do you want to install ionCube? [y/n]: " ionCube_yn
-                            if [ "$ionCube_yn" != 'y' -a "$ionCube_yn" != 'n' ];then
+                            if [[ ! $ionCube_yn =~ ^[y,n]$ ]];then
                                 echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
                             else
                                 break
@@ -355,7 +355,7 @@ do
                     do
                         echo
                         read -p "Do you want to install ImageMagick or GraphicsMagick? [y/n]: " Magick_yn
-                        if [ "$Magick_yn" != 'y' -a "$Magick_yn" != 'n' ];then
+                        if [[ ! $Magick_yn =~ ^[y,n]$ ]];then
                             echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
                         else
                             break
@@ -370,7 +370,7 @@ do
                             echo -e "\t${CMSG}2${CEND}. Install GraphicsMagick"
                             read -p "Please input a number:(Default 1 press Enter) " Magick
                             [ -z "$Magick" ] && Magick=1
-                            if [ $Magick != 1 -a $Magick != 2 ];then
+                            if [[ ! $Magick =~ ^[1-2]$ ]];then
                                 echo "${CWARNING}input error! Please only input number 1,2${CEND}"
                             else
                                 break
@@ -390,7 +390,7 @@ while :
 do
     echo
     read -p "Do you want to install Pure-FTPd? [y/n]: " FTP_yn
-    if [ "$FTP_yn" != 'y' -a "$FTP_yn" != 'n' ];then
+    if [[ ! $FTP_yn =~ ^[y,n]$ ]];then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
         [ "$FTP_yn" == 'y' -a -e "$pureftpd_install_dir/sbin/pure-ftpwho" ] && { echo "${CWARNING}Pure-FTPd already installed! ${CEND}"; FTP_yn=Other; }
@@ -403,7 +403,7 @@ while :
 do
     echo
     read -p "Do you want to install phpMyAdmin? [y/n]: " phpMyAdmin_yn
-    if [ "$phpMyAdmin_yn" != 'y' -a "$phpMyAdmin_yn" != 'n' ];then
+    if [[ ! $phpMyAdmin_yn =~ ^[y,n]$ ]];then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
         [ "$phpMyAdmin_yn" == 'y' -a -d "$wwwroot_dir/default/phpMyAdmin" ] && { echo "${CWARNING}phpMyAdmin already installed! ${CEND}"; phpMyAdmin_yn=Other; } 
@@ -417,7 +417,7 @@ if [ "$PHP_version" != '5' ];then
     do
         echo
         read -p "Do you want to install redis? [y/n]: " redis_yn
-        if [ "$redis_yn" != 'y' -a "$redis_yn" != 'n' ];then
+        if [[ ! $redis_yn =~ ^[y,n]$ ]];then
             echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
         else
             [ "$redis_yn" == 'y' -a -e "$redis_install_dir/bin/redis-server" ] && { echo "${CWARNING}Redis already installed! ${CEND}"; redis_yn=Other; }
@@ -430,7 +430,7 @@ if [ "$PHP_version" != '5' ];then
     do
         echo
         read -p "Do you want to install memcached? [y/n]: " memcached_yn
-        if [ "$memcached_yn" != 'y' -a "$memcached_yn" != 'n' ];then
+        if [[ ! $memcached_yn =~ ^[y,n]$ ]];then
             echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
         else
             [ "$memcached_yn" == 'y' -a -d "$memcached_install_dir/include/memcached" ] && { echo "${CWARNING}Memcached already installed! ${CEND}"; memcached_yn=Other; }
@@ -445,7 +445,7 @@ if [ "$Nginx_version" == '1' -o "$Nginx_version" == '2' -o "$DB_yn" == 'y' ];the
     do
         echo
         read -p "Do you want to use jemalloc or tcmalloc optimize Database and Web server? [y/n]: " je_tc_malloc_yn
-        if [ "$je_tc_malloc_yn" != 'y' -a "$je_tc_malloc_yn" != 'n' ];then
+        if [[ ! $je_tc_malloc_yn =~ ^[y,n]$ ]];then
         	echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
         else
             if [ "$je_tc_malloc_yn" == 'y' ];then
@@ -456,7 +456,7 @@ if [ "$Nginx_version" == '1' -o "$Nginx_version" == '2' -o "$DB_yn" == 'y' ];the
                 do
                     read -p "Please input a number:(Default 1 press Enter) " je_tc_malloc
                     [ -z "$je_tc_malloc" ] && je_tc_malloc=1
-                    if [ $je_tc_malloc != 1 -a $je_tc_malloc != 2 ];then
+                    if [[ ! $je_tc_malloc =~ ^[1-2]$ ]];then
                         echo "${CWARNING}input error! Please only input number 1,2${CEND}"
                     else
                         break
@@ -472,7 +472,7 @@ while :
 do
     echo
     read -p "Do you want to install HHVM? [y/n]: " HHVM_yn
-    if [ "$HHVM_yn" != 'y' -a "$HHVM_yn" != 'n' ];then
+    if [[ ! $HHVM_yn =~ ^[y,n]$ ]];then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
         if [ "$HHVM_yn" == 'y' ];then
@@ -571,10 +571,12 @@ fi
 # ImageMagick or GraphicsMagick
 if [ "$Magick" == '1' ];then
     . include/ImageMagick.sh
-    Install_ImageMagick 2>&1 | tee -a $oneinstack_dir/install.log
+    [ ! -d "/usr/local/imagemagick" ] && Install_ImageMagick 2>&1 | tee -a $oneinstack_dir/install.log
+    [ ! -e "`$php_install_dir/bin/php-config --extension-dir`/imagick.so" ] && Install_php-imagick 2>&1 | tee -a $oneinstack_dir/install.log
 elif [ "$Magick" == '2' ];then
     . include/GraphicsMagick.sh
-    Install_GraphicsMagick 2>&1 | tee -a $oneinstack_dir/install.log
+    [ ! -d "/usr/local/graphicsmagick" ] && Install_GraphicsMagick 2>&1 | tee -a $oneinstack_dir/install.log
+    [ ! -e "`$php_install_dir/bin/php-config --extension-dir`/gmagick.so" ] && Install_php-gmagick 2>&1 | tee -a $oneinstack_dir/install.log
 fi
 
 # ionCube
@@ -651,13 +653,16 @@ fi
 # redis
 if [ "$redis_yn" == 'y' ];then
     . include/redis.sh
-    Install_redis 2>&1 | tee -a $oneinstack_dir/install.log
+    [ ! -d "$redis_install_dir" ] && Install_redis-server 2>&1 | tee -a $oneinstack_dir/install.log
+    [ ! -e "`$php_install_dir/bin/php-config --extension-dir`/redis.so" ] && Install_php-redis 2>&1 | tee -a $oneinstack_dir/install.log
 fi
 
 # memcached
 if [ "$memcached_yn" == 'y' ];then
     . include/memcached.sh
-    Install_memcached 2>&1 | tee -a $oneinstack_dir/install.log
+    [ ! -d "$memcached_install_dir/include/memcached" ] && Install_memcached 2>&1 | tee -a $oneinstack_dir/install.log
+    [ ! -e "`$php_install_dir/bin/php-config --extension-dir`/memcache.so" ] && Install_php-memcache 2>&1 | tee -a $oneinstack_dir/install.log
+    [ ! -e "`$php_install_dir/bin/php-config --extension-dir`/memcached.so" ] && Install_php-memcached 2>&1 | tee -a $oneinstack_dir/install.log
 fi
 
 # index example
@@ -709,7 +714,7 @@ do
         echo
         echo "${CMSG}Please restart the server and see if the services start up fine.${CEND}"
         read -p "Do you want to restart OS ? [y/n]: " restart_yn
-        if [ "$restart_yn" != 'y' -a "$restart_yn" != 'n' ];then
+        if [[ ! $restart_yn =~ ^[y,n]$ ]];then
             echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
         else
             break

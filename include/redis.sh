@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_redis()
-{
+Install_redis-server() {
 cd $oneinstack_dir/src
 src_url=http://download.redis.io/releases/redis-$redis_version.tar.gz && Download_src
 
@@ -53,7 +52,11 @@ else
     echo "${CFAILURE}Redis-server install failed, Please contact the author! ${CEND}"
     kill -9 $$
 fi
+cd ..
+}
 
+Install_php-redis() {
+cd $oneinstack_dir/src
 if [ -e "$php_install_dir/bin/phpize" ];then
     src_url=http://pecl.php.net/get/redis-$redis_pecl_version.tgz && Download_src
     tar xzf redis-$redis_pecl_version.tgz
@@ -70,7 +73,7 @@ if [ -e "$php_install_dir/bin/phpize" ];then
         rm -rf redis-$redis_pecl_version
         [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
     else
-        echo "${CFAILURE}PHP Redis install failed, Please contact the author! ${CEND}"
+        echo "${CFAILURE}PHP Redis module install failed, Please contact the author! ${CEND}"
     fi
 fi
 cd ..

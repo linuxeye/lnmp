@@ -81,7 +81,7 @@ while :
 do
     echo
     read -p "Do you want to uninstall Shadowsocks? [y/n]: " Shadowsocks_yn 
-    if [ "$Shadowsocks_yn" != 'y' -a "$Shadowsocks_yn" != 'n' ];then
+    if [[ ! $Shadowsocks_yn =~ ^[y,n]$ ]];then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
         break

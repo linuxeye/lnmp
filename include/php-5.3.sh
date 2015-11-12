@@ -73,7 +73,7 @@ cd php-$php_3_version
 patch -p1 < ../php5.3patch 
 make clean
 [ ! -d "$php_install_dir" ] && mkdir -p $php_install_dir
-if [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
+if [[ $Apache_version =~ ^[1-2]$ ]];then
     ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
 --with-apxs2=$apache_install_dir/bin/apxs --disable-fileinfo \
 --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
@@ -130,7 +130,7 @@ sed -i 's@^session.cookie_httponly.*@session.cookie_httponly = 1@' $php_install_
 sed -i 's@^mysqlnd.collect_memory_statistics.*@mysqlnd.collect_memory_statistics = On@' $php_install_dir/etc/php.ini
 [ -e /usr/sbin/sendmail ] && sed -i 's@^;sendmail_path.*@sendmail_path = /usr/sbin/sendmail -t -i@' $php_install_dir/etc/php.ini
 
-if [ "$Apache_version" != '1' -a "$Apache_version" != '2' ];then
+if [[ ! $Apache_version =~ ^[1-2]$ ]];then
     # php-fpm Init Script
     /bin/cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
     chmod +x /etc/init.d/php-fpm
@@ -226,7 +226,7 @@ EOF
     #[ "$Web_yn" == 'n' ] && sed -i "s@^listen =.*@listen = $IPADDR:9000@" $php_install_dir/etc/php-fpm.conf 
     service php-fpm start
 
-elif [ "$Apache_version" == '1' -o "$Apache_version" == '2' ];then
+elif [[ $Apache_version =~ ^[1-2]$ ]];then
     service httpd restart
 fi
 cd ..

@@ -57,7 +57,7 @@ if [ -e "$php_install_dir/bin/phpize" ];then
     make && make install
     if [ -f "`$php_install_dir/bin/php-config --extension-dir`/memcache.so" ];then
         [ -z "`grep '^extension_dir' $php_install_dir/etc/php.ini`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"`$php_install_dir/bin/php-config --extension-dir`\"@" $php_install_dir/etc/php.ini
-        sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "memcache.so"@' $php_install_dir/etc/php.ini
+        [ -z "`grep 'memcache.so' $php_install_dir/etc/php.ini`" ] && sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "memcache.so"@' $php_install_dir/etc/php.ini
         [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
         echo "${CSUCCESS}PHP memcache module install successfully! ${CEND}"
         cd ..
@@ -93,7 +93,7 @@ if [ -e "$php_install_dir/bin/phpize" ];then
     make && make install
     if [ -f "`$php_install_dir/bin/php-config --extension-dir`/memcached.so" ];then
         [ -z "`grep '^extension_dir' $php_install_dir/etc/php.ini`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"`$php_install_dir/bin/php-config --extension-dir`\"@" $php_install_dir/etc/php.ini
-        sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "memcached.so"\nmemcached.use_sasl = 1@' $php_install_dir/etc/php.ini
+        [ -z "`grep 'memcached.so' $php_install_dir/etc/php.ini`" ] && sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "memcached.so"\nmemcached.use_sasl = 1@' $php_install_dir/etc/php.ini
         echo "${CSUCCESS}PHP memcached module install successfully! ${CEND}"
         cd ..
         rm -rf memcached-$memcached_pecl_version

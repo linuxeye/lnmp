@@ -399,17 +399,19 @@ do
 done
 
 # check phpMyAdmin
-while :
-do
-    echo
-    read -p "Do you want to install phpMyAdmin? [y/n]: " phpMyAdmin_yn
-    if [[ ! $phpMyAdmin_yn =~ ^[y,n]$ ]];then
-        echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
-    else
-        [ "$phpMyAdmin_yn" == 'y' -a -d "$wwwroot_dir/default/phpMyAdmin" ] && { echo "${CWARNING}phpMyAdmin already installed! ${CEND}"; phpMyAdmin_yn=Other; } 
-        break
-    fi
-done
+if [[ $PHP_version =~ ^[1-5]$ ]] || [ -e "$php_install_dir/bin/phpize" ];then
+    while :
+    do
+        echo
+        read -p "Do you want to install phpMyAdmin? [y/n]: " phpMyAdmin_yn
+        if [[ ! $phpMyAdmin_yn =~ ^[y,n]$ ]];then
+            echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
+        else
+            [ "$phpMyAdmin_yn" == 'y' -a -d "$wwwroot_dir/default/phpMyAdmin" ] && { echo "${CWARNING}phpMyAdmin already installed! ${CEND}"; phpMyAdmin_yn=Other; } 
+            break
+        fi
+    done
+fi
 
 if [ "$PHP_version" != '5' ];then
     # check redis
@@ -420,7 +422,6 @@ if [ "$PHP_version" != '5' ];then
         if [[ ! $redis_yn =~ ^[y,n]$ ]];then
             echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
         else
-            [ "$redis_yn" == 'y' -a -e "$redis_install_dir/bin/redis-server" ] && { echo "${CWARNING}Redis already installed! ${CEND}"; redis_yn=Other; }
             break
         fi
     done
@@ -433,7 +434,6 @@ if [ "$PHP_version" != '5' ];then
         if [[ ! $memcached_yn =~ ^[y,n]$ ]];then
             echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
         else
-            [ "$memcached_yn" == 'y' -a -d "$memcached_install_dir/include/memcached" ] && { echo "${CWARNING}Memcached already installed! ${CEND}"; memcached_yn=Other; }
             break
         fi
     done
@@ -654,15 +654,15 @@ fi
 if [ "$redis_yn" == 'y' ];then
     . include/redis.sh
     [ ! -d "$redis_install_dir" ] && Install_redis-server 2>&1 | tee -a $oneinstack_dir/install.log
-    [ ! -e "`$php_install_dir/bin/php-config --extension-dir`/redis.so" ] && Install_php-redis 2>&1 | tee -a $oneinstack_dir/install.log
+    [ -e "$php_install_dir/bin/phpize" ] && [ ! -e "`$php_install_dir/bin/php-config --extension-dir`/redis.so" ] && Install_php-redis 2>&1 | tee -a $oneinstack_dir/install.log
 fi
 
 # memcached
 if [ "$memcached_yn" == 'y' ];then
     . include/memcached.sh
     [ ! -d "$memcached_install_dir/include/memcached" ] && Install_memcached 2>&1 | tee -a $oneinstack_dir/install.log
-    [ ! -e "`$php_install_dir/bin/php-config --extension-dir`/memcache.so" ] && Install_php-memcache 2>&1 | tee -a $oneinstack_dir/install.log
-    [ ! -e "`$php_install_dir/bin/php-config --extension-dir`/memcached.so" ] && Install_php-memcached 2>&1 | tee -a $oneinstack_dir/install.log
+    [ -e "$php_install_dir/bin/phpize" ] && [ ! -e "`$php_install_dir/bin/php-config --extension-dir`/memcache.so" ] && Install_php-memcache 2>&1 | tee -a $oneinstack_dir/install.log
+    [ -e "$php_install_dir/bin/phpize" ] && [ ! -e "`$php_install_dir/bin/php-config --extension-dir`/memcached.so" ] && Install_php-memcached 2>&1 | tee -a $oneinstack_dir/install.log
 fi
 
 # index example

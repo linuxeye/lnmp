@@ -26,7 +26,7 @@ id -u mysql >/dev/null 2>&1
 mkdir -p $mariadb_data_dir;chown mysql.mysql -R $mariadb_data_dir
 tar zxf mariadb-${mariadb_10_1_version}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz 
 [ ! -d "$mariadb_install_dir" ] && mkdir -p $mariadb_install_dir
-mv mariadb-${mariadb_10_1_version}-linux-${SYS_BIT_b}/* $mariadb_install_dir 
+mv mariadb-${mariadb_10_1_version}-*-${SYS_BIT_b}/* $mariadb_install_dir 
 if [ "$je_tc_malloc" == '1' ];then
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' $mariadb_install_dir/bin/mysqld_safe
 elif [ "$je_tc_malloc" == '2' ];then

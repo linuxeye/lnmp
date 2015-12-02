@@ -15,7 +15,7 @@ src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-$libiconv_version.tar.gz &&
 src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/$libmcrypt_version/libmcrypt-$libmcrypt_version.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mhash/mhash/$mhash_version/mhash-$mhash_version.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/$mcrypt_version/mcrypt-$mcrypt_version.tar.gz && Download_src
-src_url=https://downloads.php.net/~ab/php-$php_7_version.tar.gz && Download_src
+src_url=http://www.php.net/distributions/php-$php_7_version.tar.gz && Download_src
 
 tar xzf libiconv-$libiconv_version.tar.gz
 cd libiconv-$libiconv_version

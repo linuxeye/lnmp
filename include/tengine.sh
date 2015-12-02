@@ -95,6 +95,7 @@ sed -i "s@/data/wwwroot/default@$wwwroot_dir/default@" $tengine_install_dir/conf
 sed -i "s@/data/wwwlogs@$wwwlogs_dir@g" $tengine_install_dir/conf/nginx.conf
 sed -i "s@^user www www@user $run_user $run_user@" $tengine_install_dir/conf/nginx.conf
 [ "$je_tc_malloc" == '2' ] && sed -i 's@^pid\(.*\)@pid\1\ngoogle_perftools_profiles /tmp/tcmalloc;@' $tengine_install_dir/conf/nginx.conf 
+[ -z "`grep 'reuse_port on;' $tengine_install_dir/conf/nginx.conf`" ] && sed -i "s@worker_connections 51200;@worker_connections 51200;\n    reuse_port on;@" $tengine_install_dir/conf/nginx.conf
 
 # worker_cpu_affinity
 sed -i "s@^worker_processes.*@worker_processes auto;\nworker_cpu_affinity auto;\ndso {\n\tload ngx_http_concat_module.so;\n\tload ngx_http_sysguard_module.so;\n}@" $tengine_install_dir/conf/nginx.conf

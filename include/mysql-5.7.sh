@@ -14,27 +14,34 @@ cd $oneinstack_dir/src
 
 [ "$IPADDR_STATE"x == "CN"x ] && { DOWN_ADDR_MYSQL=http://mirrors.linuxeye.com/oneinstack/src; DOWN_ADDR_BOOST=$DOWN_ADDR_MYSQL; } || { DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.7; DOWN_ADDR_BOOST=http://downloads.sourceforge.net/project/boost/boost/1.59.0; }
 
-src_url=$DOWN_ADDR_BOOST/boost_1_59_0.tar.gz && Download_src
-src_url=$DOWN_ADDR_MYSQL/mysql-$mysql_5_7_version.tar.gz && Download_src
+if [ ! -e "/usr/local/lib/libboost_system.so" ];then
+    src_url=$DOWN_ADDR_BOOST/boost_1_59_0.tar.gz && Download_src
+    tar xzf boost_1_59_0.tar.gz
+    cd boost_1_59_0
+    ./bootstrap.sh
+    ./bjam --prefix=/usr/local
+    ./b2 install
+    cd ..
+fi
+echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
+ldconfig
 
-id -u mysql >/dev/null 2>&1
-[ $? -ne 0 ] && useradd -M -s /sbin/nologin mysql
-
-mkdir -p $mysql_data_dir;chown mysql.mysql -R $mysql_data_dir
-tar xzf boost_1_59_0.tar.gz
-tar zxf mysql-$mysql_5_7_version.tar.gz
-cd mysql-$mysql_5_7_version
 if [ "$je_tc_malloc" == '1' ];then
     EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
 elif [ "$je_tc_malloc" == '2' ];then
     EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"
 fi
-make clean
+
+src_url=$DOWN_ADDR_MYSQL/mysql-$mysql_5_7_version.tar.gz && Download_src
+id -u mysql >/dev/null 2>&1
+[ $? -ne 0 ] && useradd -M -s /sbin/nologin mysql
 [ ! -d "$mysql_install_dir" ] && mkdir -p $mysql_install_dir 
+mkdir -p $mysql_data_dir;chown mysql.mysql -R $mysql_data_dir
+tar zxf mysql-$mysql_5_7_version.tar.gz
+cd mysql-$mysql_5_7_version
+make clean
 cmake . -DCMAKE_INSTALL_PREFIX=$mysql_install_dir \
 -DMYSQL_DATADIR=$mysql_data_dir \
--DDOWNLOAD_BOOST=1 \
--DWITH_BOOST=../boost_1_59_0 \
 -DSYSCONFDIR=/etc \
 -DWITH_INNOBASE_STORAGE_ENGINE=1 \
 -DWITH_PARTITION_STORAGE_ENGINE=1 \

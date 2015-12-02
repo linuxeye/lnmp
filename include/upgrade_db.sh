@@ -99,10 +99,10 @@ if [ -e "$DB_name.tar.gz" ];then
         mkdir -p $mariadb_data_dir;chown mysql.mysql -R $mariadb_data_dir
         tar xzf $DB_name.tar.gz
         [ ! -d "$mariadb_install_dir" ] && mkdir -p $mariadb_install_dir
-        mv mariadb-${NEW_DB_version}-linux-${SYS_BIT_b}/* $mariadb_install_dir
-        if [ "$je_tc_malloc" == '1' ];then
+        mv mariadb-${NEW_DB_version}-*-${SYS_BIT_b}/* $mariadb_install_dir
+        if [ "$je_tc_malloc" == '1' -a "`echo $OLD_DB_version_tmp | awk -F'.' '{print $1"."$2}'`" != '10.1' ];then
             sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' $mariadb_install_dir/bin/mysqld_safe
-        elif [ "$je_tc_malloc" == '2' ];then
+        elif [ "$je_tc_malloc" == '2' -a "`echo $OLD_DB_version_tmp | awk -F'.' '{print $1"."$2}'`" != '10.1' ];then
             sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libtcmalloc.so@' $mariadb_install_dir/bin/mysqld_safe
         fi
         $mariadb_install_dir/scripts/mysql_install_db --user=mysql --basedir=$mariadb_install_dir --datadir=$mariadb_data_dir

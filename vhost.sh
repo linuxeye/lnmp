@@ -124,7 +124,7 @@ else
 fi
 
 if [ "$NGX_FLAG" == 'php' ];then
-    NGX_CONF=$(echo -e "location ~ .*\.(php|php5)?$ {\n    #fastcgi_pass remote_php_ip:9000;\n    fastcgi_pass unix:/dev/shm/php-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi.conf;\n    }")
+    NGX_CONF=$(echo -e "location ~ [^/]\.php(/|$) {\n    #fastcgi_pass remote_php_ip:9000;\n    fastcgi_pass unix:/dev/shm/php-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi.conf;\n    }")
 elif [ "$NGX_FLAG" == 'java' ];then
     NGX_CONF=$(echo -e "location ~ {\n    proxy_pass http://127.0.0.1:8080;\n    include proxy.conf;\n    }")
 elif [ "$NGX_FLAG" == 'hhvm' ];then
@@ -658,7 +658,7 @@ echo "`printf "%-30s" "Directory of:"`${CMSG}$vhostdir${CEND}"
 }
 
 Add_Vhost() {
-    if [ -e "$web_install_dir/sbin/nginx" -a ! -e "$apache_install_dir/modules/libphp5.so" ];then
+    if [ -e "$web_install_dir/sbin/nginx" -a ! -e "`ls $apache_install_dir/modules/libphp?.so`" ];then
         Choose_env
         Input_Add_domain
         Nginx_anti_hotlinking
@@ -670,7 +670,7 @@ Add_Vhost() {
             Nginx_log
             Create_nginx_php-fpm_hhvm_conf
         fi
-    elif [ ! -e "$web_install_dir/sbin/nginx" -a -e "$apache_install_dir/modules/libphp5.so" ];then
+    elif [ ! -e "$web_install_dir/sbin/nginx" -a -e "`ls $apache_install_dir/modules/libphp?.so`" ];then
         Choose_env
         Input_Add_domain
         Apache_log
@@ -679,7 +679,7 @@ Add_Vhost() {
         Choose_env
         Input_Add_domain
         Create_tomcat_conf
-    elif [ -e "$web_install_dir/sbin/nginx" -a -e "$apache_install_dir/modules/libphp5.so" ];then
+    elif [ -e "$web_install_dir/sbin/nginx" -a -e "`ls $apache_install_dir/modules/libphp?.so`" ];then
         Choose_env
         Input_Add_domain
         Nginx_anti_hotlinking

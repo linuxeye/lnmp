@@ -218,6 +218,7 @@ fi
 if [ "$nginx_ssl_yn" == 'y' ]; then
     Nginx_ssl
     Nginx_conf=$(echo -e "listen $LISTENOPT;\nssl_certificate $web_install_dir/conf/$domain.crt;\nssl_certificate_key $web_install_dir/conf/$domain.key;\nssl_session_timeout 10m;\nssl_protocols TLSv1 TLSv1.1 TLSv1.2;\nssl_prefer_server_ciphers on;\nssl_ciphers "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-RC4-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:RC4-SHA:\!aNULL:\!eNULL:\!EXPORT:\!DES:\!3DES:\!MD5:\!DSS:\!PKS";\nssl_session_cache builtin:1000 shared:SSL:10m;\nresolver 8.8.8.8 8.8.4.4 valid=300s;\nresolver_timeout 5s;")
+    Nginx_http_to_https=$(echo -e "server {\nlisten 80;\nserver_name $domain;\nrewrite ^/(.*) https://\$server_name/\$1 permanent;\n}")
 else
     Nginx_conf='listen 80;'
 fi
@@ -390,6 +391,7 @@ location ~ .*\.(js|css)?$ {
     }
 $NGX_CONF
 }
+$Nginx_http_to_https
 EOF
 
 cat > $tomcat_install_dir/conf/vhost/$domain.xml << EOF
@@ -475,6 +477,7 @@ location ~ .*\.(js|css)?$ {
     access_log off;
     }
 }
+$Nginx_http_to_https
 EOF
 
 echo
@@ -598,6 +601,7 @@ location ~ .*\.(js|css)?$ {
     access_log off;
     }
 }
+$Nginx_http_to_https
 EOF
 
 echo
@@ -658,7 +662,7 @@ echo "`printf "%-30s" "Directory of:"`${CMSG}$vhostdir${CEND}"
 }
 
 Add_Vhost() {
-    if [ -e "$web_install_dir/sbin/nginx" -a ! -e "`ls $apache_install_dir/modules/libphp?.so`" ];then
+    if [ -e "$web_install_dir/sbin/nginx" -a ! -e "`ls $apache_install_dir/modules/libphp?.so 2>/dev/null`" ];then
         Choose_env
         Input_Add_domain
         Nginx_anti_hotlinking
@@ -670,7 +674,7 @@ Add_Vhost() {
             Nginx_log
             Create_nginx_php-fpm_hhvm_conf
         fi
-    elif [ ! -e "$web_install_dir/sbin/nginx" -a -e "`ls $apache_install_dir/modules/libphp?.so`" ];then
+    elif [ ! -e "$web_install_dir/sbin/nginx" -a -e "`ls $apache_install_dir/modules/libphp?.so 2>/dev/null`" ];then
         Choose_env
         Input_Add_domain
         Apache_log
@@ -679,7 +683,7 @@ Add_Vhost() {
         Choose_env
         Input_Add_domain
         Create_tomcat_conf
-    elif [ -e "$web_install_dir/sbin/nginx" -a -e "`ls $apache_install_dir/modules/libphp?.so`" ];then
+    elif [ -e "$web_install_dir/sbin/nginx" -a -e "`ls $apache_install_dir/modules/libphp?.so 2>/dev/null`" ];then
         Choose_env
         Input_Add_domain
         Nginx_anti_hotlinking

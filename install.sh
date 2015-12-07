@@ -350,7 +350,7 @@ do
                         done
                     fi
         
-                    if [ "$PHP_version" != '5' ];then
+                    # ImageMagick or GraphicsMagick
                     while :
                     do
                         echo
@@ -361,8 +361,8 @@ do
                             break
                         fi
                     done
-                    fi
-                    if [ "$Magick_yn" == 'y' ];then
+
+                    if [ "$Magick_yn" == 'y' ] && [ "$PHP_version" != '5' ];then
                         while :
                         do
                             echo 'Please select ImageMagick or GraphicsMagick:'
@@ -376,6 +376,8 @@ do
                                 break
                             fi
                         done
+                    elif [ "$Magick_yn" == 'y' ] && [ "$PHP_version" == '5' ];then
+                        Magick=1
                     fi
                     break
                 fi
@@ -413,31 +415,29 @@ if [[ $PHP_version =~ ^[1-5]$ ]] || [ -e "$php_install_dir/bin/phpize" ];then
     done
 fi
 
-if [ "$PHP_version" != '5' ];then
-    # check redis
-    while :
-    do
-        echo
-        read -p "Do you want to install redis? [y/n]: " redis_yn
-        if [[ ! $redis_yn =~ ^[y,n]$ ]];then
-            echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
-        else
-            break
-        fi
-    done
-    
-    # check memcached
-    while :
-    do
-        echo
-        read -p "Do you want to install memcached? [y/n]: " memcached_yn
-        if [[ ! $memcached_yn =~ ^[y,n]$ ]];then
-            echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
-        else
-            break
-        fi
-    done
-fi
+# check redis
+while :
+do
+    echo
+    read -p "Do you want to install redis? [y/n]: " redis_yn
+    if [[ ! $redis_yn =~ ^[y,n]$ ]];then
+        echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
+    else
+        break
+    fi
+done
+
+# check memcached
+while :
+do
+    echo
+    read -p "Do you want to install memcached? [y/n]: " memcached_yn
+    if [[ ! $memcached_yn =~ ^[y,n]$ ]];then
+        echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
+    else
+        break
+    fi
+done
 
 # check jemalloc or tcmalloc 
 if [ "$Nginx_version" == '1' -o "$Nginx_version" == '2' -o "$DB_yn" == 'y' ];then

@@ -58,9 +58,14 @@ cd ..
 Install_php-redis() {
 cd $oneinstack_dir/src
 if [ -e "$php_install_dir/bin/phpize" ];then
-    src_url=http://pecl.php.net/get/redis-$redis_pecl_version.tgz && Download_src
-    tar xzf redis-$redis_pecl_version.tgz
-    cd redis-$redis_pecl_version
+    if [ "`$php_install_dir/bin/php -r 'echo PHP_VERSION;' | awk -F. '{print $1}'`" == '7' ];then
+        git clone -b php7 https://github.com/phpredis/phpredis.git
+        cd phpredis
+    else
+        src_url=http://pecl.php.net/get/redis-$redis_pecl_version.tgz && Download_src
+        tar xzf redis-$redis_pecl_version.tgz
+        cd redis-$redis_pecl_version
+    fi
     make clean
     $php_install_dir/bin/phpize
     ./configure --with-php-config=$php_install_dir/bin/php-config

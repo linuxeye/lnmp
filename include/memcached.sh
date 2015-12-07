@@ -46,7 +46,7 @@ cd ..
 
 Install_php-memcache() {
 cd $oneinstack_dir/src
-if [ -e "$php_install_dir/bin/phpize" ];then
+if [ -e "$php_install_dir/bin/phpize" ] && [ "`$php_install_dir/bin/php -r 'echo PHP_VERSION;' | awk -F. '{print $1}'`" == '5' ];then
     src_url=http://pecl.php.net/get/memcache-$memcache_pecl_version.tgz && Download_src
     # php memcache extension
     tar xzf memcache-$memcache_pecl_version.tgz 
@@ -73,7 +73,6 @@ Install_php-memcached() {
 cd $oneinstack_dir/src
 if [ -e "$php_install_dir/bin/phpize" ];then
     src_url=https://launchpad.net/libmemcached/1.0/$libmemcached_version/+download/libmemcached-$libmemcached_version.tar.gz && Download_src
-    src_url=http://pecl.php.net/get/memcached-$memcached_pecl_version.tgz && Download_src
     # php memcached extension
     tar xzf libmemcached-$libmemcached_version.tar.gz
     cd libmemcached-$libmemcached_version
@@ -85,8 +84,14 @@ if [ -e "$php_install_dir/bin/phpize" ];then
     cd ..
     rm -rf libmemcached-$libmemcached_version
 
-    tar xzf memcached-$memcached_pecl_version.tgz
-    cd memcached-$memcached_pecl_version
+    if [ "`$php_install_dir/bin/php -r 'echo PHP_VERSION;' | awk -F. '{print $1}'`" == '7' ];then
+        git clone -b php7 https://github.com/php-memcached-dev/php-memcached.git 
+        cd php-memcached 
+    else
+        src_url=http://pecl.php.net/get/memcached-$memcached_pecl_version.tgz && Download_src
+        tar xzf memcached-$memcached_pecl_version.tgz
+        cd memcached-$memcached_pecl_version
+    fi
     make clean
     $php_install_dir/bin/phpize
     ./configure --with-php-config=$php_install_dir/bin/php-config

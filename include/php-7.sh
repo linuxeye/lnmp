@@ -74,7 +74,7 @@ make clean
 if [[ $Apache_version =~ ^[1-2]$ ]];then
     ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
 --with-apxs2=$apache_install_dir/bin/apxs $PHP_cache_tmp --disable-fileinfo \
---with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
+--enable-mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
 --enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex --enable-inline-optimization \
@@ -84,7 +84,7 @@ if [[ $Apache_version =~ ^[1-2]$ ]];then
 else
     ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
 --with-fpm-user=$run_user --with-fpm-group=$run_user --enable-fpm $PHP_cache_tmp --disable-fileinfo \
---with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
+--enable-mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
 --enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex --enable-inline-optimization \
@@ -128,6 +128,8 @@ sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,c
 sed -i 's@^session.cookie_httponly.*@session.cookie_httponly = 1@' $php_install_dir/etc/php.ini
 sed -i 's@^mysqlnd.collect_memory_statistics.*@mysqlnd.collect_memory_statistics = On@' $php_install_dir/etc/php.ini
 [ -e /usr/sbin/sendmail ] && sed -i 's@^;sendmail_path.*@sendmail_path = /usr/sbin/sendmail -t -i@' $php_install_dir/etc/php.ini
+[ ! -d '/tmp/session' ] && { mkdir /tmp/session; chown -R ${run_user}.${run_user} /tmp/session; }
+[ -z "`grep ^session.save_path $php_install_dir/etc/php.ini`" ] && sed -i "s@^;session.save_path.*@&\nsession.save_path = \"/tmp/session\"@" $php_install_dir/etc/php.ini 
 
 if [ "$PHP_cache" == '1' ];then
     sed -i 's@^\[opcache\]@[opcache]\nzend_extension=opcache.so@' $php_install_dir/etc/php.ini

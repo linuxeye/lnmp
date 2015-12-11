@@ -682,6 +682,7 @@ if [ "$HHVM_yn" == 'y' ];then
 fi
 
 # Starting DB 
+[ -d "/etc/mysql" ] && /bin/mv /etc/mysql{,_bk}
 [ -d "$db_install_dir/support-files" -a -z "`ps -ef | grep -v grep | grep mysql`" ] && /etc/init.d/mysqld start
 
 echo "####################Congratulations########################"

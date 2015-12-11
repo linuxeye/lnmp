@@ -8,7 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-if [ -f /etc/redhat-release -o -n "`grep 'Aliyun Linux release' /etc/issue`" ];then
+if [ -n "`grep 'Aliyun Linux release' /etc/issue`" -o -e /etc/redhat-release ];then
     OS=CentOS
     [ -n "`grep ' 7\.' /etc/redhat-release`" ] && CentOS_RHEL_version=7
     [ -n "`grep ' 6\.' /etc/redhat-release`" -o -n "`grep 'Aliyun Linux release6 15' /etc/issue`" ] && CentOS_RHEL_version=6

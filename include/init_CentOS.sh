@@ -89,9 +89,6 @@ ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 #nameserver 8.8.8.8 
 #EOF
 
-# Wrong password five times locked 180s
-[ -z "`cat /etc/pam.d/system-auth | grep 'pam_tally2.so'`" ] && sed -i '4a auth        required      pam_tally2.so deny=5 unlock_time=180' /etc/pam.d/system-auth
-
 # alias vi
 [ -z "`cat ~/.bashrc | grep 'alias vi='`" ] && sed -i "s@alias mv=\(.*\)@alias mv=\1\nalias vi=vim@" ~/.bashrc && echo 'syntax on' >> /etc/vimrc
 

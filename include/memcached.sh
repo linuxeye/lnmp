@@ -46,11 +46,16 @@ cd ..
 
 Install_php-memcache() {
 cd $oneinstack_dir/src
-if [ -e "$php_install_dir/bin/phpize" ] && [ "`$php_install_dir/bin/php -r 'echo PHP_VERSION;' | awk -F. '{print $1}'`" == '5' ];then
-    src_url=http://pecl.php.net/get/memcache-$memcache_pecl_version.tgz && Download_src
+if [ -e "$php_install_dir/bin/phpize" ];then
     # php memcache extension
-    tar xzf memcache-$memcache_pecl_version.tgz 
-    cd memcache-$memcache_pecl_version 
+    if [ "`$php_install_dir/bin/php -r 'echo PHP_VERSION;' | awk -F. '{print $1}'`" == '7' ];then
+        git clone https://github.com/websupport-sk/pecl-memcache.git
+        cd pecl-memcache
+    else
+        src_url=http://pecl.php.net/get/memcache-$memcache_pecl_version.tgz && Download_src
+        tar xzf memcache-$memcache_pecl_version.tgz 
+        cd memcache-$memcache_pecl_version 
+    fi
     make clean
     $php_install_dir/bin/phpize
     ./configure --with-php-config=$php_install_dir/bin/php-config

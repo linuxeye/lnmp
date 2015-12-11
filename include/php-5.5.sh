@@ -127,6 +127,8 @@ sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,c
 sed -i 's@^session.cookie_httponly.*@session.cookie_httponly = 1@' $php_install_dir/etc/php.ini
 sed -i 's@^mysqlnd.collect_memory_statistics.*@mysqlnd.collect_memory_statistics = On@' $php_install_dir/etc/php.ini
 [ -e /usr/sbin/sendmail ] && sed -i 's@^;sendmail_path.*@sendmail_path = /usr/sbin/sendmail -t -i@' $php_install_dir/etc/php.ini
+[ ! -d '/tmp/session' ] && { mkdir /tmp/session; chown -R ${run_user}.${run_user} /tmp/session; }
+[ -z "`grep ^session.save_path $php_install_dir/etc/php.ini`" ] && sed -i "s@^;session.save_path.*@&\nsession.save_path = \"/tmp/session\"@" $php_install_dir/etc/php.ini 
 
 if [ "$PHP_cache" == '1' ];then
     sed -i 's@^\[opcache\]@[opcache]\nzend_extension=opcache.so@' $php_install_dir/etc/php.ini

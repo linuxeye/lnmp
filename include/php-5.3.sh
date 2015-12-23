@@ -20,10 +20,9 @@ src_url=http://mirrors.linuxeye.com/oneinstack/src/fpm-race-condition.patch && D
 src_url=http://www.php.net/distributions/php-$php_3_version.tar.gz && Download_src
 
 tar xzf libiconv-$libiconv_version.tar.gz
+patch -d libiconv-$libiconv_version -p0 < libiconv-glibc-2.16.patch
 cd libiconv-$libiconv_version
 ./configure --prefix=/usr/local
-[ -n "`cat /etc/issue | grep 'Ubuntu 13'`" ] && sed -i 's@_GL_WARN_ON_USE (gets@//_GL_WARN_ON_USE (gets@' srclib/stdio.h 
-[ -n "`cat /etc/issue | grep 'Ubuntu 14'`" ] && sed -i 's@gets is a security@@' srclib/stdio.h 
 make && make install
 cd ..
 rm -rf libiconv-$libiconv_version
@@ -55,6 +54,8 @@ else \n
         ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1 \n
 fi'
 OS_command
+
+[ ! -e '/usr/include/freetype2/freetype' ] &&  ln -s /usr/include/freetype2 /usr/include/freetype2/freetype
 
 tar xzf mcrypt-$mcrypt_version.tar.gz
 cd mcrypt-$mcrypt_version
@@ -129,8 +130,6 @@ sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,c
 sed -i 's@^session.cookie_httponly.*@session.cookie_httponly = 1@' $php_install_dir/etc/php.ini
 sed -i 's@^mysqlnd.collect_memory_statistics.*@mysqlnd.collect_memory_statistics = On@' $php_install_dir/etc/php.ini
 [ -e /usr/sbin/sendmail ] && sed -i 's@^;sendmail_path.*@sendmail_path = /usr/sbin/sendmail -t -i@' $php_install_dir/etc/php.ini
-[ ! -d '/tmp/session' ] && { mkdir /tmp/session; chown -R ${run_user}.${run_user} /tmp/session; }
-[ -z "`grep ^session.save_path $php_install_dir/etc/php.ini`" ] && sed -i "s@^;session.save_path.*@&\nsession.save_path = \"/tmp/session\"@" $php_install_dir/etc/php.ini 
 
 if [[ ! $Apache_version =~ ^[1-2]$ ]];then
     # php-fpm Init Script

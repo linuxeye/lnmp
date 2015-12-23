@@ -19,10 +19,9 @@ src_url=http://mirrors.linuxeye.com/oneinstack/src/fpm-race-condition.patch && D
 src_url=http://www.php.net/distributions/php-$php_5_version.tar.gz && Download_src
 
 tar xzf libiconv-$libiconv_version.tar.gz
+patch -d libiconv-$libiconv_version -p0 < libiconv-glibc-2.16.patch
 cd libiconv-$libiconv_version
 ./configure --prefix=/usr/local
-[ "$Ubuntu_version" == '13' ] && sed -i 's@_GL_WARN_ON_USE (gets@//_GL_WARN_ON_USE (gets@' srclib/stdio.h 
-[ "$Ubuntu_version" == '14' ] && sed -i 's@gets is a security@@' srclib/stdio.h 
 make && make install
 cd ..
 rm -rf libiconv-$libiconv_version
@@ -127,8 +126,6 @@ sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,c
 sed -i 's@^session.cookie_httponly.*@session.cookie_httponly = 1@' $php_install_dir/etc/php.ini
 sed -i 's@^mysqlnd.collect_memory_statistics.*@mysqlnd.collect_memory_statistics = On@' $php_install_dir/etc/php.ini
 [ -e /usr/sbin/sendmail ] && sed -i 's@^;sendmail_path.*@sendmail_path = /usr/sbin/sendmail -t -i@' $php_install_dir/etc/php.ini
-[ ! -d '/tmp/session' ] && { mkdir /tmp/session; chown -R ${run_user}.${run_user} /tmp/session; }
-[ -z "`grep ^session.save_path $php_install_dir/etc/php.ini`" ] && sed -i "s@^;session.save_path.*@&\nsession.save_path = \"/tmp/session\"@" $php_install_dir/etc/php.ini 
 
 if [ "$PHP_cache" == '1' ];then
     sed -i 's@^\[opcache\]@[opcache]\nzend_extension=opcache.so@' $php_install_dir/etc/php.ini

@@ -63,6 +63,7 @@ cd ..
 
 # my.cf
 [ -d "/etc/mysql" ] && /bin/mv /etc/mysql{,_bk}
+[ -e "$mysql_install_dir/my.cnf" ] && rm -rf $mysql_install_dir/my.cnf
 cat > /etc/my.cnf << EOF
 [client]
 port = 3306

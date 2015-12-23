@@ -39,7 +39,15 @@ WEB_Local_BK() {
 WEB_Remote_BK() {
     for W in `echo $website_name | tr ',' ' '`
     do
-        echo "file:::$wwwroot_dir/$W $backup_dir push" >> config_bakcup.txt
+        if [ `du -sm "$wwwroot_dir/$WebSite" | awk '{print $1}'` -lt 1024 ];then
+            ./website_bk.sh $W
+            Web_GREP="Web_${W}_`date +%Y`"
+            Web_FILE=`ls -lrt $backup_dir | grep ${Web_GREP} | tail -1 | awk '{print $NF}'`
+            echo "file:::$backup_dir/$Web_FILE $backup_dir push" >> config_bakcup.txt
+            echo "com:::[ -e "$backup_dir/$Web_FILE" ] && rm -rf $backup_dir/Web_${W}_$(date +%Y%m%d --date="$expired_days days ago")_*.tgz" >> config_bakcup.txt
+        else
+            echo "file:::$wwwroot_dir/$W $backup_dir push" >> config_bakcup.txt
+        fi
     done
 }
 

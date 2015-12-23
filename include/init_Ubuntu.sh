@@ -25,7 +25,7 @@ do
     apt-get -y install $Package
 done
 
-if [ "$Ubuntu_version" == '14' ];then
+if [ "$Ubuntu_version" == '14' -o "$Ubuntu_version" == '15' ];then
     apt-get -y install libcloog-ppl1
     apt-get -y remove bison
     cd src

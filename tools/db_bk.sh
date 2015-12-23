@@ -22,7 +22,7 @@ OldFile=$backup_dir/DB_${DBname}_$(date +%Y%m%d --date="$expired_days days ago")
 DB_tmp=`$db_install_dir/bin/mysql -uroot -p$dbrootpwd -e "show databases\G" | grep $DBname`
 [ -z "$DB_tmp" ] && { echo "[$DBname] not exist" >> $LogFile ;  exit 1 ; }
 
-if [ -e "$OldFile" ];then
+if [ -n "`ls $OldFile 2>/dev/null`" ];then
     /bin/rm -f $OldFile
     echo "[$OldFile] Delete Old File Success" >> $LogFile
 else
@@ -30,7 +30,7 @@ else
 fi
 
 if [ -e "$NewFile" ];then
-    echo "[$NewFile] The Backup File is exists,Can't Backup" >> $LogFile
+    echo "[$NewFile] The Backup File is exists, Can't Backup" >> $LogFile
 else
     $db_install_dir/bin/mysqldump -uroot -p$dbrootpwd --opt --databases $DBname > $DumpFile 
     cd $backup_dir

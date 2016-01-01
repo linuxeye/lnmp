@@ -122,7 +122,7 @@ sed -i 's@^short_open_tag = Off@short_open_tag = On@' $php_install_dir/etc/php.i
 sed -i 's@^expose_php = On@expose_php = Off@' $php_install_dir/etc/php.ini
 sed -i 's@^request_order.*@request_order = "CGP"@' $php_install_dir/etc/php.ini
 sed -i 's@^;date.timezone.*@date.timezone = Asia/Shanghai@' $php_install_dir/etc/php.ini
-sed -i 's@^post_max_size.*@post_max_size = 50M@' $php_install_dir/etc/php.ini
+sed -i 's@^post_max_size.*@post_max_size = 100M@' $php_install_dir/etc/php.ini
 sed -i 's@^upload_max_filesize.*@upload_max_filesize = 50M@' $php_install_dir/etc/php.ini
 sed -i 's@^;upload_tmp_dir.*@upload_tmp_dir = /tmp@' $php_install_dir/etc/php.ini
 sed -i 's@^max_execution_time.*@max_execution_time = 5@' $php_install_dir/etc/php.ini

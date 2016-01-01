@@ -120,6 +120,7 @@ else
 fi
 
 if [ "$IPTABLES_STATUS" == 'no' ];then
+    [ -e '/etc/iptables.up.rules' ] && /bin/mv /etc/iptables.up.rules{,_bk} 
     cat > /etc/iptables.up.rules << EOF
 # Firewall configuration written by system-config-securitylevel
 # Manual customization of this file is not recommended.

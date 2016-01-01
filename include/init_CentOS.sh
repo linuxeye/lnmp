@@ -135,6 +135,7 @@ else
 fi 
 
 if [ "$IPTABLES_STATUS" == 'no' ];then
+    [ -e '/etc/sysconfig/iptables' ] && /bin/mv /etc/sysconfig/iptables{,_bk} 
     cat > /etc/sysconfig/iptables << EOF
 # Firewall configuration written by system-config-securitylevel
 # Manual customization of this file is not recommended.
@@ -166,7 +167,7 @@ service sshd restart
 # install tmux
 if [ ! -e "`which tmux`" ];then
     cd src
-    src_url=http://downloads.sourceforge.net/project/levent/libevent/libevent-2.0/libevent-2.0.22-stable.tar.gz && Download_src 
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/libevent-2.0.22-stable.tar.gz && Download_src 
     src_url=http://mirrors.linuxeye.com/oneinstack/src/tmux-2.1.tar.gz && Download_src 
     tar xzf libevent-2.0.22-stable.tar.gz
     cd libevent-2.0.22-stable
@@ -180,7 +181,7 @@ if [ ! -e "`which tmux`" ];then
     make && make install
     cd ../../
 
-    if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ];then
+    if [ "$OS_BIT" == '64' ];then
         ln -s /usr/local/lib/libevent-2.0.so.5 /usr/lib64/libevent-2.0.so.5
     else
         ln -s /usr/local/lib/libevent-2.0.so.5 /usr/lib/libevent-2.0.so.5

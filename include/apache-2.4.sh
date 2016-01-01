@@ -32,7 +32,8 @@ cd httpd-$apache_4_version
 [ ! -d "$apache_install_dir" ] && mkdir -p $apache_install_dir
 /bin/cp -R ../apr-$apr_version ./srclib/apr
 /bin/cp -R ../apr-util-$apr_util_version ./srclib/apr-util
-./configure --prefix=$apache_install_dir --enable-headers --enable-deflate --enable-mime-magic --enable-so --enable-rewrite --enable-ssl --with-ssl --enable-expires --enable-static-support --enable-suexec --disable-userdir --with-included-apr --with-mpm=prefork --disable-userdir
+[ "$ZendGuardLoader_yn" == 'y' -o "$ionCube_yn" == 'y' ] && MPM=prefork || MPM=worker
+./configure --prefix=$apache_install_dir --enable-headers --enable-deflate --enable-mime-magic --enable-so --enable-rewrite --enable-ssl --with-ssl --enable-expires --enable-static-support --enable-suexec --disable-userdir --with-included-apr --with-mpm=$MPM --disable-userdir
 make && make install
 if [ -e "$apache_install_dir/conf/httpd.conf" ];then
     echo "${CSUCCESS}Apache install successfully! ${CEND}"

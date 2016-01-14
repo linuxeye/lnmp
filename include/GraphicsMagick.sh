@@ -24,9 +24,15 @@ cd ..
 Install_php-gmagick() {
 cd $oneinstack_dir/src
 if [ -e "$php_install_dir/bin/phpize" ];then
-    src_url=http://pecl.php.net/get/gmagick-$gmagick_version.tgz && Download_src
-    tar xzf gmagick-$gmagick_version.tgz 
-    cd gmagick-$gmagick_version
+    if [ "`$php_install_dir/bin/php -r 'echo PHP_VERSION;' | awk -F. '{print $1}'`" == '7' ];then
+        src_url=https://pecl.php.net/get/gmagick-2.0.1RC1.tgz && Download_src
+        tar xzf gmagick-2.0.1RC1.tgz 
+        cd gmagick-2.0.1RC1 
+    else
+        src_url=http://pecl.php.net/get/gmagick-$gmagick_version.tgz && Download_src
+        tar xzf gmagick-$gmagick_version.tgz 
+        cd gmagick-$gmagick_version
+    fi
     make clean
     export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
     $php_install_dir/bin/phpize

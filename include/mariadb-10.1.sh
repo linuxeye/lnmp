@@ -45,10 +45,8 @@ fi
 sed -i "s@^basedir=.*@basedir=$mariadb_install_dir@" /etc/init.d/mysqld
 sed -i "s@^datadir=.*@datadir=$mariadb_data_dir@" /etc/init.d/mysqld
 chmod +x /etc/init.d/mysqld
-OS_CentOS='chkconfig --add mysqld \n
-chkconfig mysqld on'
-OS_Debian_Ubuntu='update-rc.d mysqld defaults'
-OS_command
+[ "$OS" == 'CentOS' ] && { chkconfig --add mysqld; chkconfig mysqld on; }
+[[ $OS =~ ^Ubuntu$|^Debian$ ]] && update-rc.d mysqld defaults
 cd ..
 
 # my.cf

@@ -99,7 +99,7 @@ What Are You Doing?
             [ -e "$Passwdfile" ] && [ -n "`grep ^${User}: $Passwdfile`" ] && { echo "${CQUESTION}[$User] is already existed! ${CEND}"; continue; } 
             PASSWORD;DIRECTORY
             $FTP_bin useradd $User -f $Passwdfile -u $run_user -g $run_user -d $Directory -m < $FTP_tmp_passfile
-            $FTP_bin -f $Passwdfile -F $Puredbfile > /dev/null 2>&1 
+            $FTP_bin mkdb $Puredbfile -f $Passwdfile > /dev/null 2>&1 
             echo "#####################################"
             echo
             echo "[$User] create successful! "
@@ -115,7 +115,7 @@ What Are You Doing?
             [ -e "$Passwdfile" ] && [ -z "`grep ^${User}: $Passwdfile`" ] && { echo "${CQUESTION}[$User] was not existed! ${CEND}"; continue; }
             DIRECTORY
             $FTP_bin usermod $User -f $Passwdfile -d $Directory -m 
-            $FTP_bin -f $Passwdfile -F $Puredbfile > /dev/null 2>&1 
+            $FTP_bin mkdb $Puredbfile -f $Passwdfile > /dev/null 2>&1 
             echo "#####################################"
             echo
             echo "[$User] modify a successful! "
@@ -130,7 +130,7 @@ What Are You Doing?
             [ -e "$Passwdfile" ] && [ -z "`grep ^${User}: $Passwdfile`" ] && { echo "${CQUESTION}[$User] was not existed! ${CEND}"; continue; }
             PASSWORD
             $FTP_bin passwd $User -f $Passwdfile -m < $FTP_tmp_passfile
-            $FTP_bin -f $Passwdfile -F $Puredbfile > /dev/null 2>&1 
+            $FTP_bin mkdb $Puredbfile -f $Passwdfile > /dev/null 2>&1 
             echo "#####################################"
             echo
             echo "[$User] Password changed successfully! "
@@ -150,7 +150,7 @@ What Are You Doing?
             USER
             [ -e "$Passwdfile" ] && [ -z "`grep ^${User}: $Passwdfile`" ] && { echo "${CQUESTION}[$User] was not existed! ${CEND}"; continue; } 
             $FTP_bin userdel $User -f $Passwdfile -m
-            $FTP_bin -f $Passwdfile -F $Puredbfile > /dev/null 2>&1
+            $FTP_bin mkdb $Puredbfile -f $Passwdfile > /dev/null 2>&1
             echo
             echo "[$User] have been deleted! "
             ;;

@@ -26,12 +26,8 @@ if [ -d "$memcached_install_dir/include/memcached" ];then
     cd ..
     rm -rf memcached-$memcached_version
     ln -s $memcached_install_dir/bin/memcached /usr/bin/memcached
-    OS_CentOS='/bin/cp ../init.d/Memcached-init-CentOS /etc/init.d/memcached \n
-chkconfig --add memcached \n
-chkconfig memcached on'
-    OS_Debian_Ubuntu='/bin/cp ../init.d/Memcached-init-Ubuntu /etc/init.d/memcached \n
-update-rc.d memcached defaults'
-    OS_command
+    [ "$OS" == 'CentOS' ] && { /bin/cp ../init.d/Memcached-init-CentOS /etc/init.d/memcached; chkconfig --add memcached; chkconfig memcached on; } 
+    [[ $OS =~ ^Ubuntu$|^Debian$ ]] && { /bin/cp ../init.d/Memcached-init-Ubuntu /etc/init.d/memcached; update-rc.d memcached defaults; } 
     sed -i "s@/usr/local/memcached@$memcached_install_dir@g" /etc/init.d/memcached
     [ -n "`grep 'CACHESIZE=' /etc/init.d/memcached`" ] && sed -i "s@^CACHESIZE=.*@CACHESIZE=`expr $Mem / 8`@" /etc/init.d/memcached 
     [ -n "`grep 'start_instance default 256;' /etc/init.d/memcached`" ] && sed -i "s@start_instance default 256;@start_instance default `expr $Mem / 8`;@" /etc/init.d/memcached
@@ -84,9 +80,8 @@ if [ -e "$php_install_dir/bin/phpize" ];then
     # php memcached extension
     tar xzf libmemcached-$libmemcached_version.tar.gz
     cd libmemcached-$libmemcached_version
-    OS_CentOS='yum -y install cyrus-sasl-devel'
-    OS_Debian_Ubuntu='sed -i "s@lthread -pthread -pthreads@lthread -lpthread -pthreads@" ./configure'
-    OS_command
+    [ "$OS" == 'CentOS' ] && yum -y install cyrus-sasl-devel 
+    [[ $OS =~ ^Ubuntu$|^Debian$ ]] && sed -i "s@lthread -pthread -pthreads@lthread -lpthread -pthreads@" ./configure 
     ./configure --with-memcached=$memcached_install_dir
     make && make install
     cd ..

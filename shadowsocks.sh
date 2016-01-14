@@ -38,7 +38,7 @@ if [ "$OS" == 'CentOS' ]; then
     do
         yum -y install $Package
     done
-elif [ $OS == 'Debian' -o $OS == 'Ubuntu' ];then
+elif [[ $OS =~ ^Ubuntu$|^Debian$ ]];then 
     apt-get -y update
     for Package in python-dev python-pip curl wget unzip gcc swig automake make perl cpio
     do
@@ -49,11 +49,7 @@ fi
 src_url=http://mirrors.linuxeye.com/oneinstack/src/ez_setup.py && Download_src
 
 which pip > /dev/null 2>&1
-if [ $? -ne 0 ]; then
-    OS_CentOS='python ez_setup.py install \n
-easy_install pip'
-    OS_command
-fi
+[ $? -ne 0 ] && [ "$OS" == 'CentOS' ] && { python ez_setup.py install; sleep 1; easy_install pip; }
 
 if [ -f /usr/bin/pip ]; then
     pip install M2Crypto
@@ -63,10 +59,8 @@ if [ -f /usr/bin/pip ]; then
     if [ -f /usr/bin/ssserver -o -f /usr/local/bin/ssserver ]; then
         /bin/cp ../init.d/Shadowsocks-init /etc/init.d/shadowsocks
         chmod +x /etc/init.d/shadowsocks
-        OS_CentOS='chkconfig --add shadowsocks \n
-chkconfig shadowsocks on'
-        OS_Debian_Ubuntu="update-rc.d shadowsocks defaults"
-        OS_command
+        [ "$OS" == 'CentOS' ] && { chkconfig --add shadowsocks; chkconfig shadowsocks on; }
+        [[ $OS =~ ^Ubuntu$|^Debian$ ]] && update-rc.d shadowsocks defaults
         [ ! -e /usr/bin/ssserver -a -e /usr/local/bin/ssserver ] && sed -i 's@Shadowsocks_bin=.*@Shadowsocks_bin=/usr/local/bin/ssserver@' /etc/init.d/shadowsocks
     else
         echo
@@ -90,9 +84,8 @@ done
 
 if [ "$Shadowsocks_yn" == 'y' ]; then
     [ -n "`ps -ef | grep -v grep | grep -i "ssserver"`" ] && /etc/init.d/shadowsocks stop
-    OS_CentOS='chkconfig --del shadowsocks'
-    OS_Debian_Ubuntu="update-rc.d -f shadowsocks remove"
-    OS_command
+    [ "$OS" == 'CentOS' ] && chkconfig --del shadowsocks 
+    [[ $OS =~ ^Ubuntu$|^Debian$ ]] && update-rc.d -f shadowsocks remove 
 
     rm -rf /etc/shadowsocks.json /var/run/shadowsocks.pid /etc/init.d/shadowsocks
     pip uninstall -y shadowsocks
@@ -144,18 +137,17 @@ done
 if [ "$OS" == 'CentOS' ];then
     if [ -z "`grep -E $Shadowsocks_port /etc/sysconfig/iptables`" ];then
         iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport $Shadowsocks_port -j ACCEPT
+        service iptables save 
     fi
-elif [ $OS == 'Debian' -o $OS == 'Ubuntu' ];then
+elif [[ $OS =~ ^Ubuntu$|^Debian$ ]];then 
     if [ -z "`grep -E $Shadowsocks_port /etc/iptables.up.rules`" ];then
         iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport $Shadowsocks_port -j ACCEPT
+        iptables-save > /etc/iptables.up.rules 
     fi
 else
     echo "${CWARNING}This port is already in iptables${CEND}"
 fi
 
-OS_CentOS='service iptables save'
-OS_Debian_Ubuntu='iptables-save > /etc/iptables.up.rules'
-OS_command
 }
 
 Config_shadowsocks(){

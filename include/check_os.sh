@@ -35,14 +35,3 @@ else
     SYS_BIG_FLAG=i586
     SYS_BIT_a=x86;SYS_BIT_b=i686;
 fi
-
-OS_command(){
-    if [ $OS == 'CentOS' ];then
-        echo -e $OS_CentOS | bash
-    elif [ $OS == 'Debian' -o $OS == 'Ubuntu' ];then
-        echo -e $OS_Debian_Ubuntu | bash
-    else
-        echo "${CFAILURE}Does not support this OS, Please contact the author! ${CEND}" 
-        kill -9 $$
-    fi
-}

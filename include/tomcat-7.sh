@@ -35,9 +35,8 @@ if [ -e "$tomcat_install_dir/conf/server.xml" ];then
     jar cf ../catalina.jar ./*
     cd ../../bin 
     rm -rf $tomcat_install_dir/lib/catalina 
-    OS_CentOS='yum -y install apr apr-devel'
-    OS_Debian_Ubuntu='apt-get -y install libapr1-dev libaprutil1-dev'
-    OS_command
+    [ "$OS" == 'CentOS' ] && yum -y install apr apr-devel 
+    [[ $OS =~ ^Ubuntu$|^Debian$ ]] && apt-get -y install libapr1-dev libaprutil1-dev
     tar xzf tomcat-native.tar.gz 
     cd tomcat-native-*-src/jni/native/
     rm -rf /usr/local/apr
@@ -64,15 +63,14 @@ EOF
             if [ "$OS" == 'CentOS' ];then
                 if [ -z "`grep -w '8080' /etc/sysconfig/iptables`" ];then
                     iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
+                    service iptables save
                 fi
-            elif [ $OS == 'Debian' -o $OS == 'Ubuntu' ];then
+            elif [[ $OS =~ ^Ubuntu$|^Debian$ ]];then 
                 if [ -z "`grep -w '8080' /etc/iptables.up.rules`" ];then
                     iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
+                    iptables-save > /etc/iptables.up.rules
                 fi
             fi
-            OS_CentOS='service iptables save'
-            OS_Debian_Ubuntu='iptables-save > /etc/iptables.up.rules'
-            OS_command
         fi
 
         [ ! -d "$tomcat_install_dir/conf/vhost" ] && mkdir $tomcat_install_dir/conf/vhost
@@ -111,10 +109,8 @@ EOF
         sed -i "s@JAVA_HOME=.*@JAVA_HOME=$JAVA_HOME@" /etc/init.d/tomcat
         sed -i "s@^CATALINA_HOME=.*@CATALINA_HOME=$tomcat_install_dir@" /etc/init.d/tomcat
         sed -i "s@^TOMCAT_USER=.*@TOMCAT_USER=$run_user@" /etc/init.d/tomcat
-        OS_CentOS='chkconfig --add tomcat \n
-        chkconfig tomcat on'
-        OS_Debian_Ubuntu='update-rc.d tomcat defaults'
-        OS_command
+        [ "$OS" == 'CentOS' ] && { chkconfig --add tomcat; chkconfig tomcat on; } 
+        [[ $OS =~ ^Ubuntu$|^Debian$ ]] && update-rc.d tomcat defaults 
         echo "${CSUCCESS}Tomcat install successfully! ${CEND}"
     fi
 else

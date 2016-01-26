@@ -111,9 +111,9 @@ done
 
 Iptables_set(){
 if [ -e '/etc/sysconfig/iptables' ];then
-    Shadowsocks_Already_port=`grep -oE '90[0-9][0-9]' /etc/sysconfig/iptables | head -n 1`
+    Shadowsocks_Already_port=`grep -oE '9[0-9][0-9][0-9]' /etc/sysconfig/iptables | head -n 1`
 elif [ -e '/etc/iptables.up.rules' ];then
-    Shadowsocks_Already_port=`grep -oE '90[0-9][0-9]' /etc/iptables.up.rules | head -n 1`
+    Shadowsocks_Already_port=`grep -oE '9[0-9][0-9][0-9]' /etc/iptables.up.rules | head -n 1`
 fi
 
 if [ -n "$Shadowsocks_Already_port" ];then
@@ -127,10 +127,10 @@ do
     echo
     read -p "Please input Shadowsocks port(Default: $Shadowsocks_Default_port): " Shadowsocks_port
     [ -z "$Shadowsocks_port" ] && Shadowsocks_port=$Shadowsocks_Default_port
-    if [ $Shadowsocks_port -ge 9000 >/dev/null 2>&1 -a $Shadowsocks_port -le 9100 >/dev/null 2>&1 ];then
+    if [ $Shadowsocks_port -ge 9000 >/dev/null 2>&1 -a $Shadowsocks_port -le 10000 >/dev/null 2>&1 ];then
         break
     else
-        echo "${CWARNING}input error! Input range: 9001~9099${CEND}"
+        echo "${CWARNING}input error! Input range: 9001~9999${CEND}"
     fi
 done
 

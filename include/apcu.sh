@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_APCU()
-{
+Install_APCU() {
 cd $oneinstack_dir/src
 src_url=http://pecl.php.net/get/apcu-$apcu_version.tgz && Download_src
 

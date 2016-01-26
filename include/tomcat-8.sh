@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_tomcat-8()
-{
+Install_tomcat-8() {
 cd $oneinstack_dir/src
 . /etc/profile
 

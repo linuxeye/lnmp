@@ -8,10 +8,8 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_PHP-5-3()
-{
+Install_PHP-5-3() {
 cd $oneinstack_dir/src
-
 src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-$libiconv_version.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/$libmcrypt_version/libmcrypt-$libmcrypt_version.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mhash/mhash/$mhash_version/mhash-$mhash_version.tar.gz && Download_src
@@ -188,31 +186,32 @@ EOF
     [ -d "/run/shm" -a ! -e "/dev/shm" ] && sed -i 's@/dev/shm@/run/shm@' $php_install_dir/etc/php-fpm.conf $oneinstack_dir/vhost.sh $oneinstack_dir/config/nginx.conf 
 
     if [ $Mem -le 3000 ];then
-        sed -i "s@^pm.max_children.*@pm.max_children = $(($Mem/2/20))@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.start_servers.*@pm.start_servers = $(($Mem/2/30))@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = $(($Mem/2/40))@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = $(($Mem/2/20))@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.max_children.*@pm.max_children = $(($Mem/3/20))@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.start_servers.*@pm.start_servers = $(($Mem/3/30))@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = $(($Mem/3/40))@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = $(($Mem/3/20))@" $php_install_dir/etc/php-fpm.conf
     elif [ $Mem -gt 3000 -a $Mem -le 4500 ];then
-        sed -i "s@^pm.max_children.*@pm.max_children = 80@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.max_children.*@pm.max_children = 50@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.start_servers.*@pm.start_servers = 30@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = 20@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 50@" $php_install_dir/etc/php-fpm.conf
+    elif [ $Mem -gt 4500 -a $Mem -le 6500 ];then
+        sed -i "s@^pm.max_children.*@pm.max_children = 60@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.start_servers.*@pm.start_servers = 40@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = 30@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 60@" $php_install_dir/etc/php-fpm.conf
+    elif [ $Mem -gt 6500 -a $Mem -le 8500 ];then
+        sed -i "s@^pm.max_children.*@pm.max_children = 70@" $php_install_dir/etc/php-fpm.conf
         sed -i "s@^pm.start_servers.*@pm.start_servers = 50@" $php_install_dir/etc/php-fpm.conf
         sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = 40@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 80@" $php_install_dir/etc/php-fpm.conf
-    elif [ $Mem -gt 4500 -a $Mem -le 6500 ];then
-        sed -i "s@^pm.max_children.*@pm.max_children = 90@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 70@" $php_install_dir/etc/php-fpm.conf
+    elif [ $Mem -gt 8500 ];then
+        sed -i "s@^pm.max_children.*@pm.max_children = 80@" $php_install_dir/etc/php-fpm.conf
         sed -i "s@^pm.start_servers.*@pm.start_servers = 60@" $php_install_dir/etc/php-fpm.conf
         sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = 50@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 90@" $php_install_dir/etc/php-fpm.conf
-    elif [ $Mem -gt 6500 -a $Mem -le 8500 ];then
-        sed -i "s@^pm.max_children.*@pm.max_children = 100@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.start_servers.*@pm.start_servers = 70@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = 60@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 100@" $php_install_dir/etc/php-fpm.conf
-    elif [ $Mem -gt 8500 ];then
-        sed -i "s@^pm.max_children.*@pm.max_children = 120@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.start_servers.*@pm.start_servers = 80@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = 70@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 120@" $php_install_dir/etc/php-fpm.conf
+        sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 80@" $php_install_dir/etc/php-fpm.conf
     fi
+
     #[ "$Web_yn" == 'n' ] && sed -i "s@^listen =.*@listen = $IPADDR:9000@" $php_install_dir/etc/php-fpm.conf 
     service php-fpm start
 

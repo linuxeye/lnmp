@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Upgrade_Redis()
-{
+Upgrade_Redis() {
 cd $oneinstack_dir/src
 [ ! -d "$redis_install_dir" ] && echo "${CWARNING}The Redis is not installed on your system! ${CEND}" && exit 1
 OLD_Redis_version=`$redis_install_dir/bin/redis-cli --version | awk '{print $2}'`

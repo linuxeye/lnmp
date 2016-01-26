@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Upgrade_phpMyAdmin()
-{
+Upgrade_phpMyAdmin() {
 cd $oneinstack_dir/src
 [ ! -e "$wwwroot_dir/default/phpMyAdmin" ] && echo "${CWARNING}The phpMyAdmin is not installed on your system! ${CEND}" && exit 1
 OLD_phpMyAdmin_version=`grep Version $wwwroot_dir/default/phpMyAdmin/README | awk '{print $2}'`

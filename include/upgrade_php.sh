@@ -8,7 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Upgrade_PHP(){
+Upgrade_PHP() {
 cd $oneinstack_dir/src
 [ ! -e "$php_install_dir" ] && echo "${CWARNING}The PHP is not installed on your system! ${CEND}" && exit 1
 echo

@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_hhvm_CentOS()
-{
+Install_hhvm_CentOS() {
 cd $oneinstack_dir/src
 
 id -u $run_user >/dev/null 2>&1

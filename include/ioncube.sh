@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_ionCube()
-{
+Install_ionCube() {
 cd $oneinstack_dir/src
 
 PHP_version=`$php_install_dir/bin/php -r 'echo PHP_VERSION;'`

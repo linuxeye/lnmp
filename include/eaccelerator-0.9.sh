@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_eAccelerator-0-9()
-{
+Install_eAccelerator-0-9() {
 cd $oneinstack_dir/src
 src_url=https://github.com/downloads/eaccelerator/eaccelerator/eaccelerator-0.9.6.1.tar.bz2 && Download_src
 

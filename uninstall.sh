@@ -150,6 +150,7 @@ Print_Redis() {
 
 Uninstall_Redis() {
 [ -e "$redis_install_dir" ] && { service redis-server stop > /dev/null 2>&1; rm -rf $redis_install_dir /etc/init.d/redis-server /usr/local/bin/redis-*; }
+[ -e "$php_install_dir/bin/phpize" ] && sed -i '/redis.so/d' $php_install_dir/etc/php.ini
 echo "${CMSG}Redis uninstall completed${CEND}"
 }
 
@@ -161,6 +162,8 @@ Print_Memcached() {
 
 Uninstall_Memcached() {
 [ -e "$memcached_install_dir" ] && { service memcached stop > /dev/null 2>&1; rm -rf $memcached_install_dir /etc/init.d/memcached /usr/bin/memcached; }
+[ -e "$php_install_dir/bin/phpize" ] && sed -i '/memcache.so/d' $php_install_dir/etc/php.ini
+[ -e "$php_install_dir/bin/phpize" ] && sed -i '/memcached.so/d' $php_install_dir/etc/php.ini
 echo "${CMSG}Memcached uninstall completed${CEND}"
 }
 

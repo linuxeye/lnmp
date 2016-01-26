@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_eAccelerator-1-0-dev()
-{
+Install_eAccelerator-1-0-dev() {
 cd $oneinstack_dir/src
 src_url=https://github.com/eaccelerator/eaccelerator/tarball/master && Download_src
 

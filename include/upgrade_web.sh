@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Upgrade_Nginx()
-{
+Upgrade_Nginx() {
 cd $oneinstack_dir/src
 [ ! -e "$nginx_install_dir/sbin/nginx" ] && echo "${CWARNING}The Nginx is not installed on your system! ${CEND}" && exit 1
 OLD_Nginx_version_tmp=`$nginx_install_dir/sbin/nginx -v 2>&1`
@@ -59,8 +58,7 @@ fi
 cd ..
 }
 
-Upgrade_Tengine()
-{
+Upgrade_Tengine() {
 cd $oneinstack_dir/src
 [ ! -e "$tengine_install_dir/sbin/nginx" ] && echo "${CWARNING}The Tengine is not installed on your system! ${CEND}" && exit 1
 OLD_Tengine_version_tmp=`$tengine_install_dir/sbin/nginx -v 2>&1`

@@ -134,7 +134,7 @@ echo "You have to backup the content:"
 [ "$CONTENT_BK" != '2' ] && echo "Database: ${CMSG}$db_name${CEND}"
 [ "$CONTENT_BK" != '1' ] && echo "Website: ${CMSG}$website_name${CEND}"
 
-if [[ "$DESC_BK" =~ ^[1,2]$ ]];then 
+if [[ "$DESC_BK" =~ ^[2,3]$ ]];then 
     > tools/iplist.txt
     while :
     do

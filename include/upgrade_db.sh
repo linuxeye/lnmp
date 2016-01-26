@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Upgrade_DB()
-{
+Upgrade_DB() {
 cd $oneinstack_dir/src
 [ ! -e "$db_install_dir/bin/mysql" ] && echo "${CWARNING}The MySQL/MariaDB/Percona is not installed on your system! ${CEND}" && exit 1
 OLD_DB_version_tmp=`$db_install_dir/bin/mysql -V | awk '{print $5}' | awk -F, '{print $1}'`

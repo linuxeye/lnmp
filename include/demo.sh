@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-DEMO()
-{
+DEMO() {
 cd $oneinstack_dir/src
 
 [ "$IPADDR_STATE"x == "CN"x ] && /bin/cp ../config/index_cn.html $wwwroot_dir/default/index.html || /bin/cp ../config/index.html $wwwroot_dir/default

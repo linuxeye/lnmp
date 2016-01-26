@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_Tengine()
-{
+Install_Tengine() {
 cd $oneinstack_dir/src
 src_url=http://mirrors.linuxeye.com/oneinstack/src/pcre-$pcre_version.tar.gz && Download_src
 src_url=http://tengine.taobao.org/download/tengine-$tengine_version.tar.gz && Download_src

@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_tcmalloc()
-{
+Install_tcmalloc() {
 cd $oneinstack_dir/src
 src_url=http://mirrors.linuxeye.com/oneinstack/src/gperftools-$tcmalloc_version.tar.gz && Download_src
 

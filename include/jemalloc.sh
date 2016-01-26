@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_jemalloc()
-{
+Install_jemalloc() {
 cd $oneinstack_dir/src
 src_url=http://mirrors.linuxeye.com/oneinstack/src/jemalloc-$jemalloc_version.tar.bz2 && Download_src
 

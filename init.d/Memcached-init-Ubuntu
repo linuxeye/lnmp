@@ -4,7 +4,7 @@
 PORT=11211
 USER=memcached
 MAXCONN=1024
-OPTIONS=""
+OPTIONS="-l 127.0.0.1"
 DAEMON=/usr/local/memcached/bin/memcached
  
 RETVAL=0

@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_Apache-2-4()
-{
+Install_Apache-2-4() {
 cd $oneinstack_dir/src
 src_url=http://mirrors.linuxeye.com/oneinstack/src/pcre-$pcre_version.tar.gz && Download_src
 src_url=http://archive.apache.org/dist/apr/apr-$apr_version.tar.gz && Download_src 
@@ -114,11 +113,18 @@ cat >> $apache_install_dir/conf/vhost/0.conf << EOF
 EOF
 
 cat >> $apache_install_dir/conf/httpd.conf <<EOF
+<IfModule mod_headers.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml text/javascript
+    <FilesMatch "\.(js|css|html|htm|png|jpg|swf|pdf|shtml|xml|flv|gif|ico|jpeg)\$">
+        RequestHeader edit "If-None-Match" "^(.*)-gzip(.*)\$" "\$1\$2"
+        Header edit "ETag" "^(.*)-gzip(.*)\$" "\$1\$2"
+    </FilesMatch>
+    DeflateCompressionLevel 6
+    SetOutputFilter DEFLATE
+</IfModule>
+
 ServerTokens ProductOnly
 ServerSignature Off
-AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml text/javascript
-DeflateCompressionLevel 6
-SetOutputFilter DEFLATE
 Include conf/vhost/*.conf
 EOF
 

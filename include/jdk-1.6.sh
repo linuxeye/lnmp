@@ -8,7 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install-JDK-1-6(){
+Install-JDK-1-6() {
 cd $oneinstack_dir/src
 
 JDK_FILE="jdk-`echo $jdk_6_version | awk -F. '{print $2}'`u`echo $jdk_6_version | awk -F_ '{print $NF}'`-linux-$SYS_BIG_FLAG.bin"

@@ -70,7 +70,7 @@ if [[ $Apache_version =~ ^[1-2]$ ]];then
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
 --enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex --enable-inline-optimization \
 --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl \
---with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp \
+--with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
 --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
 else
     ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
@@ -80,7 +80,7 @@ else
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
 --enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex --enable-inline-optimization \
 --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl \
---with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp \
+--with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
 --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
 fi
 make ZEND_EXTRA_LIBS='-liconv'

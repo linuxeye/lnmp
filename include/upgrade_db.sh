@@ -56,8 +56,8 @@ $db_install_dir/bin/mysqldump -uroot -p${dbrootpwd} --opt --all-databases > DB_a
 #upgrade
 echo
 echo "Current $DB Version: ${CMSG}$OLD_DB_version${CEND}"
-[ -e /usr/local/lib/libtcmalloc.so ] && { je_tc_malloc=2; EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"; }
 [ -e /usr/local/lib/libjemalloc.so ] && { je_tc_malloc=1; EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"; }
+[ -e /usr/local/lib/libtcmalloc.so ] && { je_tc_malloc=2; EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"; }
 
 while :
 do
@@ -209,7 +209,11 @@ $EXE_LINKER
         mkdir -p $mysql_data_dir;chown mysql.mysql -R $mysql_data_dir
         make install
         cd ..
-        $mysql_install_dir/scripts/mysql_install_db --user=mysql --basedir=$mysql_install_dir --datadir=$mysql_data_dir
+        if [ "`echo $NEW_DB_version | awk -F. '{print $1"."$2}'`" == '5.7' ];then
+            $mysql_install_dir/bin/mysqld --initialize-insecure --user=mysql --basedir=$mysql_install_dir --datadir=$mysql_data_dir
+        else
+            $mysql_install_dir/scripts/mysql_install_db --user=mysql --basedir=$mysql_install_dir --datadir=$mysql_data_dir
+        fi
         chown mysql.mysql -R $mysql_data_dir
         service mysqld start
         $mysql_install_dir/bin/mysql < DB_all_backup_$(date +"%Y%m%d").sql

@@ -191,9 +191,9 @@ fi
 # install htop
 if [ ! -e "`which htop`" ];then
     cd src
-    src_url=http://hisham.hm/htop/releases/1.0.3/htop-1.0.3.tar.gz && Download_src 
-    tar xzf htop-1.0.3.tar.gz
-    cd htop-1.0.3
+    src_url=http://hisham.hm/htop/releases/2.0.0/htop-2.0.0.tar.gz && Download_src 
+    tar xzf htop-2.0.0.tar.gz
+    cd htop-2.0.0
     ./configure
     make && make install
     cd ../../

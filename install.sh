@@ -163,12 +163,13 @@ while :; do echo
                 echo -e "\t${CMSG}4${CEND}. Install MariaDB-10.1"
                 echo -e "\t${CMSG}5${CEND}. Install MariaDB-10.0"
                 echo -e "\t${CMSG}6${CEND}. Install MariaDB-5.5"
-                echo -e "\t${CMSG}7${CEND}. Install Percona-5.6"
-                echo -e "\t${CMSG}8${CEND}. Install Percona-5.5"
+                echo -e "\t${CMSG}7${CEND}. Install Percona-5.7"
+                echo -e "\t${CMSG}8${CEND}. Install Percona-5.6"
+                echo -e "\t${CMSG}9${CEND}. Install Percona-5.5"
                 read -p "Please input a number:(Default 2 press Enter) " DB_version
                 [ -z "$DB_version" ] && DB_version=2
-                if [[ ! $DB_version =~ ^[1-8]$ ]];then
-                    echo "${CWARNING}input error! Please only input number 1,2,3,4,5,6,7,8${CEND}"
+                if [[ ! $DB_version =~ ^[1-9]$ ]];then
+                    echo "${CWARNING}input error! Please only input number 1,2,3,4,5,6,7,8,9${CEND}"
                 else
                     while :; do
                         read -p "Please input the root password of database: " dbrootpwd
@@ -481,9 +482,12 @@ elif [ "$DB_version" == '6' ];then
     . include/mariadb-5.5.sh
     Install_MariaDB-5-5 2>&1 | tee -a $oneinstack_dir/install.log 
 elif [ "$DB_version" == '7' ];then
+    . include/percona-5.7.sh
+    Install_Percona-5-7 2>&1 | tee -a $oneinstack_dir/install.log
+elif [ "$DB_version" == '8' ];then
     . include/percona-5.6.sh
     Install_Percona-5-6 2>&1 | tee -a $oneinstack_dir/install.log
-elif [ "$DB_version" == '8' ];then
+elif [ "$DB_version" == '9' ];then
     . include/percona-5.5.sh 
     Install_Percona-5-5 2>&1 | tee -a $oneinstack_dir/install.log 
 fi

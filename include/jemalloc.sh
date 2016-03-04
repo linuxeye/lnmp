@@ -14,7 +14,7 @@ src_url=http://mirrors.linuxeye.com/oneinstack/src/jemalloc-$jemalloc_version.ta
 
 tar xjf jemalloc-$jemalloc_version.tar.bz2
 cd jemalloc-$jemalloc_version
-./configure
+LDFLAGS="${LDFLAGS} -lrt" ./configure
 make && make install
 if [ -f "/usr/local/lib/libjemalloc.so" ];then
     if [ "$OS_BIT" == '64' -a "$OS" == 'CentOS' ];then

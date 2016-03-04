@@ -156,7 +156,11 @@ $EXE_LINKER
         mkdir -p $percona_data_dir;chown mysql.mysql -R $percona_data_dir
         make install
         cd ..
-        $percona_install_dir/scripts/mysql_install_db --user=mysql --basedir=$percona_install_dir --datadir=$percona_data_dir
+        if [ "`echo $NEW_DB_version | awk -F. '{print $1"."$2}'`" == '5.7' ];then
+            $percona_install_dir/bin/mysqld --initialize-insecure --user=mysql --basedir=$percona_install_dir --datadir=$percona_data_dir
+        else
+            $percona_install_dir/scripts/mysql_install_db --user=mysql --basedir=$percona_install_dir --datadir=$percona_data_dir
+        fi
         chown mysql.mysql -R $percona_data_dir
         service mysqld start
         $percona_install_dir/bin/mysql < DB_all_backup_$(date +"%Y%m%d").sql

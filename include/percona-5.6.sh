@@ -58,7 +58,7 @@ chmod +x /etc/init.d/mysqld
 [[ $OS =~ ^Ubuntu$|^Debian$ ]] && update-rc.d mysqld defaults
 cd ..
 
-# my.cf
+# my.cnf
 [ -d "/etc/mysql" ] && /bin/mv /etc/mysql{,_bk}
 cat > /etc/my.cnf << EOF
 [client]

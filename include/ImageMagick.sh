@@ -14,7 +14,7 @@ src_url=http://downloads.sourceforge.net/project/imagemagick/old-sources/6.x/6.8
 
 tar xzf ImageMagick-$ImageMagick_version.tar.gz
 cd ImageMagick-$ImageMagick_version
-./configure --prefix=/usr/local/imagemagick
+./configure --prefix=/usr/local/imagemagick --enable-shared --enable-static
 make && make install
 cd ..
 rm -rf ImageMagick-$ImageMagick_version

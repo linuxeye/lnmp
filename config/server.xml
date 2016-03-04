@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE server-xml [
-<!ENTITY localhost-vhost SYSTEM "file:///usr/local/tomcat/conf/vhost/localhost.xml">
+<!ENTITY vhost-localhost SYSTEM "file:///usr/local/tomcat/conf/vhost/localhost.xml">
 ]>
 <Server port="8006" shutdown="SHUTDOWN">
   <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener"/>
@@ -36,7 +36,7 @@
         <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
                resourceName="UserDatabase"/>
       </Realm>
-      &localhost-vhost;
+      &vhost-localhost;
     </Engine>
   </Service>
 </Server>

@@ -91,7 +91,7 @@ init q
 
 # Update time
 ntpdate pool.ntp.org 
-[ -z "`grep 'pool.ntp.org' /var/spool/crontabs/root`" ] && { echo "*/20 * * * * `which ntpdate` pool.ntp.org > /dev/null 2>&1" >> /var/spool/cron/crontabs/root;chmod 600 /var/spool/cron/crontabs/root; }
+[ -z "`grep 'ntpdate' /var/spool/crontabs/root`" ] && { echo "*/20 * * * * `which ntpdate` pool.ntp.org > /dev/null 2>&1" >> /var/spool/cron/crontabs/root;chmod 600 /var/spool/cron/crontabs/root; }
 service cron restart
 
 # iptables

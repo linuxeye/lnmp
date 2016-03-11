@@ -219,6 +219,7 @@ $EXE_LINKER
             $mysql_install_dir/scripts/mysql_install_db --user=mysql --basedir=$mysql_install_dir --datadir=$mysql_data_dir
         fi
         chown mysql.mysql -R $mysql_data_dir
+        [ -e "$mysql_install_dir/my.cnf" ] && rm -rf $mysql_install_dir/my.cnf
         service mysqld start
         $mysql_install_dir/bin/mysql < DB_all_backup_$(date +"%Y%m%d").sql
         service mysqld restart

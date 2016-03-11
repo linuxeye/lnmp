@@ -24,10 +24,19 @@ if [ -e "$php_install_dir/bin/php" ];then
     fi
 
     echo '<?php phpinfo() ?>' > $wwwroot_dir/default/phpinfo.php
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/ocp.php && Download_src
-    [ "$PHP_cache" == '1' ] && /bin/cp ocp.php $wwwroot_dir/default && sed -i 's@<a href="/xcache" target="_blank" class="links">xcache</a>@<a href="/ocp.php" target="_blank" class="links">Opcache</a>@' $wwwroot_dir/default/index.html
-    [ "$PHP_cache" == '3' ] && sed -i 's@<a href="/xcache" target="_blank" class="links">xcache</a>@<a href="/apc.php" target="_blank" class="links">APC</a>@' $wwwroot_dir/default/index.html
-    [ "$PHP_cache" == '4' ] && /bin/cp eaccelerator-*/control.php $wwwroot_dir/default && sed -i 's@<a href="/xcache" target="_blank" class="links">xcache</a>@<a href="/control.php" target="_blank" class="links">eAccelerator</a>@' $wwwroot_dir/default/index.html
+    if [ "$PHP_cache" == '1' ];then
+        src_url=http://mirrors.linuxeye.com/oneinstack/src/ocp.php && Download_src
+        /bin/cp ocp.php $wwwroot_dir/default
+    elif [ "$PHP_cache" == '2' ];then
+        sed -i 's@<a href="/ocp.php" target="_blank" class="links">Opcache</a>@<a href="/xcache" target="_blank" class="links">xcache</a>@' $wwwroot_dir/default/index.html
+    elif [ "$PHP_cache" == '3' ];then
+        sed -i 's@<a href="/ocp.php" target="_blank" class="links">Opcache</a>@<a href="/apc.php" target="_blank" class="links">APC</a>@' $wwwroot_dir/default/index.html
+    elif [ "$PHP_cache" == '4' ];then
+        /bin/cp eaccelerator-*/control.php $wwwroot_dir/default
+        sed -i 's@<a href="/ocp.php" target="_blank" class="links">Opcache</a>@<a href="/control.php" target="_blank" class="links">eAccelerator</a>@' $wwwroot_dir/default/index.html
+    else
+        sed -i 's@<a href="/ocp.php" target="_blank" class="links">Opcache</a>@@' $wwwroot_dir/default/index.html
+    fi
 fi
 chown -R ${run_user}.$run_user $wwwroot_dir/default
 cd ..

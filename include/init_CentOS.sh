@@ -119,12 +119,15 @@ if [ "$CentOS_RHEL_version" == '5' ];then
 elif [ "$CentOS_RHEL_version" == '6' ];then
     sed -i 's@^ACTIVE_CONSOLES.*@ACTIVE_CONSOLES=/dev/tty[1-2]@' /etc/sysconfig/init	
     sed -i 's@^start@#start@' /etc/init/control-alt-delete.conf
+    sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/sysconfig/i18n
+elif [ "$CentOS_RHEL_version" == '7' ];then
+    sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/locale.conf 
 fi
 init q
 
 # Update time
 ntpdate pool.ntp.org 
-[ -z "`grep 'pool.ntp.org' /var/spool/cron/root`" ] && { echo "*/20 * * * * `which ntpdate` pool.ntp.org > /dev/null 2>&1" >> /var/spool/cron/root;chmod 600 /var/spool/cron/root; }
+[ -z "`grep 'ntpdate' /var/spool/cron/root`" ] && { echo "*/20 * * * * `which ntpdate` pool.ntp.org > /dev/null 2>&1" >> /var/spool/cron/root;chmod 600 /var/spool/cron/root; }
 service crond restart
 
 # iptables

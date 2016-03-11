@@ -79,7 +79,7 @@ Uninstall_Web() {
 [ -d "$nginx_install_dir" ] && { killall nginx > /dev/null 2>&1; rm -rf $nginx_install_dir /etc/init.d/nginx /etc/logrotate.d/nginx; sed -i "s@$nginx_install_dir/sbin:@@" /etc/profile; }
 [ -d "$tengine_install_dir" ] && { killall nginx > /dev/null 2>&1; rm -rf $tengine_install_dir /etc/init.d/nginx /etc/logrotate.d/nginx; sed -i "s@$tengine_install_dir/sbin:@@" /etc/profile; }
 [ -d "$apache_install_dir" ] && { service httpd stop > /dev/null 2>&1; rm -rf $apache_install_dir /etc/init.d/httpd /etc/logrotate.d/apache; sed -i "s@$apache_install_dir/bin:@@" /etc/profile; }
-[ -d "$tomcat_install_dir" ] && { killall java > /dev/null 2>&1; rm -rf $tomcat_install_dir /etc/init.d/tomcat; }
+[ -d "$tomcat_install_dir" ] && { killall java > /dev/null 2>&1; rm -rf $tomcat_install_dir /etc/init.d/tomcat; /etc/logrotate.d/tomcat; }
 [ -d "/usr/java" ] && { rm -rf /usr/java; sed -i '/export JAVA_HOME=/d' /etc/profile; sed -i '/export CLASSPATH=/d' /etc/profile; sed -i 's@\$JAVA_HOME/bin:@@' /etc/profile; }
 [ -e "$wwwroot_dir" ] && /bin/mv ${wwwroot_dir}{,$(date +%Y%m%d%H)}
 sed -i 's@^website_name=.*@website_name=@' ./options.conf

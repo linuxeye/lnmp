@@ -39,6 +39,7 @@ if [ -e "nginx-$NEW_Nginx_version.tar.gz" ];then
     tar xzf nginx-$NEW_Nginx_version.tar.gz
     cd nginx-$NEW_Nginx_version
     make clean
+    sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc # close debug
     $nginx_install_dir/sbin/nginx -V &> $$
     nginx_configure_arguments=`cat $$ | grep 'configure arguments:' | awk -F: '{print $2}'`
     rm -rf $$
@@ -89,8 +90,7 @@ if [ -e "tengine-$NEW_Tengine_version.tar.gz" ];then
     tar xzf tengine-$NEW_Tengine_version.tar.gz
     cd tengine-$NEW_Tengine_version
     make clean
-    # close debug
-    sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc
+    sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc # close debug
     $tengine_install_dir/sbin/nginx -V &> $$
     tengine_configure_arguments=`cat $$ | grep 'configure arguments:' | awk -F: '{print $2}'`
     rm -rf $$

@@ -15,6 +15,7 @@ src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/$libmcrypt_ver
 src_url=http://downloads.sourceforge.net/project/mhash/mhash/$mhash_version/mhash-$mhash_version.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/$mcrypt_version/mcrypt-$mcrypt_version.tar.gz && Download_src
 src_url=http://mirrors.linuxeye.com/oneinstack/src/fpm-race-condition.patch && Download_src
+src_url=http://mirrors.linuxeye.com/oneinstack/src/debian_patches_disable_SSLv2_for_openssl_1_0_0.patch && Download_src
 src_url=http://www.php.net/distributions/php-$php_3_version.tar.gz && Download_src
 
 tar xzf libiconv-$libiconv_version.tar.gz
@@ -64,6 +65,7 @@ tar xzf php-$php_3_version.tar.gz
 patch -d php-$php_3_version -p0 < fpm-race-condition.patch
 cd php-$php_3_version
 patch -p1 < ../php5.3patch 
+patch -p1 < ../debian_patches_disable_SSLv2_for_openssl_1_0_0.patch
 make clean
 [ ! -d "$php_install_dir" ] && mkdir -p $php_install_dir
 if [[ $Apache_version =~ ^[1-2]$ ]];then

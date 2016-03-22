@@ -168,16 +168,17 @@ else
   LISTENOPT='443 ssl spdy'
 fi
 
-openssl req -new -newkey rsa:2048 -sha256 -nodes -out $web_install_dir/conf/${domain}.csr -keyout $web_install_dir/conf/${domain}.key -subj "/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${domain}" > /dev/null 2>&1
-/bin/cp $web_install_dir/conf/${domain}.csr{,_bk.`date +%Y-%m-%d_%H%M`}
-/bin/cp $web_install_dir/conf/${domain}.key{,_bk.`date +%Y-%m-%d_%H%M`}
-openssl x509 -req -days 36500 -sha256 -in $web_install_dir/conf/${domain}.csr -signkey $web_install_dir/conf/${domain}.key -out $web_install_dir/conf/${domain}.crt > /dev/null 2>&1
+[ ! -d "$web_install_dir/conf/ssl" ] && mkdir $web_install_dir/conf/ssl
+openssl req -new -newkey rsa:2048 -sha256 -nodes -out $web_install_dir/conf/ssl/${domain}.csr -keyout $web_install_dir/conf/ssl/${domain}.key -subj "/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${domain}" > /dev/null 2>&1
+/bin/cp $web_install_dir/conf/ssl/${domain}.csr{,_bk.`date +%Y-%m-%d_%H%M`}
+/bin/cp $web_install_dir/conf/ssl/${domain}.key{,_bk.`date +%Y-%m-%d_%H%M`}
+openssl x509 -req -days 36500 -sha256 -in $web_install_dir/conf/ssl/${domain}.csr -signkey $web_install_dir/conf/ssl/${domain}.key -out $web_install_dir/conf/ssl/${domain}.crt > /dev/null 2>&1
 }
 
 Print_ssl() {
-echo "`printf "%-30s" "Self-signed SSL Certificate:"`${CMSG}$web_install_dir/conf/${domain}.crt${CEND}"
-echo "`printf "%-30s" "SSL Private Key:"`${CMSG}$web_install_dir/conf/${domain}.key${CEND}"
-echo "`printf "%-30s" "SSL CSR File:"`${CMSG}$web_install_dir/conf/${domain}.csr${CEND}"
+echo "`printf "%-30s" "Self-signed SSL Certificate:"`${CMSG}$web_install_dir/conf/ssl/${domain}.crt${CEND}"
+echo "`printf "%-30s" "SSL Private Key:"`${CMSG}$web_install_dir/conf/ssl/${domain}.key${CEND}"
+echo "`printf "%-30s" "SSL CSR File:"`${CMSG}$web_install_dir/conf/ssl/${domain}.csr${CEND}"
 }
 
 
@@ -217,8 +218,8 @@ fi
 
 if [ "$nginx_ssl_yn" == 'y' ]; then
     Nginx_ssl
-    Nginx_conf=$(echo -e "listen $LISTENOPT;\nssl_certificate $web_install_dir/conf/$domain.crt;\nssl_certificate_key $web_install_dir/conf/$domain.key;\nssl_session_timeout 10m;\nssl_protocols TLSv1 TLSv1.1 TLSv1.2;\nssl_prefer_server_ciphers on;\nssl_ciphers "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-RC4-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:RC4-SHA:\!aNULL:\!eNULL:\!EXPORT:\!DES:\!3DES:\!MD5:\!DSS:\!PKS";\nssl_session_cache builtin:1000 shared:SSL:10m;\nresolver 8.8.8.8 8.8.4.4 valid=300s;\nresolver_timeout 5s;")
-    Nginx_http_to_https=$(echo -e "server {\nlisten 80;\nserver_name $domain;\nrewrite ^/(.*) https://\$server_name/\$1 permanent;\n}")
+    Nginx_conf=$(echo -e "listen $LISTENOPT;\nssl_certificate $web_install_dir/conf/ssl/$domain.crt;\nssl_certificate_key $web_install_dir/conf/ssl/$domain.key;\nssl_session_timeout 10m;\nssl_protocols TLSv1 TLSv1.1 TLSv1.2;\nssl_prefer_server_ciphers on;\nssl_ciphers "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-RC4-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:RC4-SHA:\!aNULL:\!eNULL:\!EXPORT:\!DES:\!3DES:\!MD5:\!DSS:\!PKS";\nssl_session_cache builtin:1000 shared:SSL:10m;\nresolver 8.8.8.8 8.8.4.4 valid=300s;\nresolver_timeout 5s;")
+    Nginx_http_to_https=$(echo -e "server {\nlisten 80;\nserver_name $domain;\nrewrite ^/(.*) https://$domain/\$1 permanent;\n}")
 else
     Nginx_conf='listen 80;'
 fi
@@ -320,6 +321,7 @@ fi
 }
 
 Nginx_rewrite() {
+[ ! -d "$web_install_dir/conf/rewrite" ] && mkdir $web_install_dir/conf/rewrite
 while :
 do
     echo
@@ -332,7 +334,7 @@ do
 done
 if [ "$rewrite_yn" == 'n' ];then
     rewrite="none"
-    touch "$web_install_dir/conf/$rewrite.conf"
+    touch "$web_install_dir/conf/rewrite/$rewrite.conf"
 else
     echo
     echo "Please input the rewrite of programme :"
@@ -344,9 +346,9 @@ else
     echo "You choose rewrite=${CMSG}$rewrite${CEND}"
     [ "$NGX_FLAG" == 'php' -a "$rewrite" == "thinkphp" ] && NGX_CONF=$(echo -e "location ~ \.php {\n    #fastcgi_pass remote_php_ip:9000;\n    fastcgi_pass unix:/dev/shm/php-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi_params;\n    set \$real_script_name \$fastcgi_script_name;\n        if (\$fastcgi_script_name ~ \"^(.+?\.php)(/.+)\$\") {\n        set \$real_script_name \$1;\n        }\n    fastcgi_param SCRIPT_FILENAME \$document_root\$real_script_name;\n    fastcgi_param SCRIPT_NAME \$real_script_name;\n    }")
     if [ -e "config/$rewrite.conf" ];then
-    	/bin/cp config/$rewrite.conf $web_install_dir/conf/$rewrite.conf
+    	/bin/cp config/$rewrite.conf $web_install_dir/conf/rewrite/$rewrite.conf
     else
-    	touch "$web_install_dir/conf/$rewrite.conf"
+    	touch "$web_install_dir/conf/rewrite/$rewrite.conf"
     fi
 fi
 }
@@ -463,7 +465,7 @@ $Nginx_conf
 server_name $domain$moredomainame;
 $N_log
 index index.html index.htm index.php;
-include $web_install_dir/conf/$rewrite.conf;
+include $web_install_dir/conf/rewrite/$rewrite.conf;
 root $vhostdir;
 $Nginx_redirect
 $anti_hotlinking
@@ -500,7 +502,7 @@ printf "
 echo "`printf "%-30s" "Your domain:"`${CMSG}$domain${CEND}"
 echo "`printf "%-30s" "Virtualhost conf:"`${CMSG}$web_install_dir/conf/vhost/$domain.conf${CEND}"
 echo "`printf "%-30s" "Directory of:"`${CMSG}$vhostdir${CEND}"
-[ "$rewrite_yn" == 'y' ] && echo "`printf "%-30s" "Rewrite rule:"`${CMSG}$web_install_dir/conf/$rewrite.conf${CEND}" 
+[ "$rewrite_yn" == 'y' ] && echo "`printf "%-30s" "Rewrite rule:"`${CMSG}$web_install_dir/conf/rewrite/$rewrite.conf${CEND}" 
 [ "$nginx_ssl_yn" == 'y' ] && Print_ssl
 }
 
@@ -657,7 +659,7 @@ echo "`printf "%-30s" "Your domain:"`${CMSG}$domain${CEND}"
 echo "`printf "%-30s" "Nginx Virtualhost conf:"`${CMSG}$web_install_dir/conf/vhost/$domain.conf${CEND}"
 echo "`printf "%-30s" "Apache Virtualhost conf:"`${CMSG}$apache_install_dir/conf/vhost/$domain.conf${CEND}"
 echo "`printf "%-30s" "Directory of:"`${CMSG}$vhostdir${CEND}"
-[ "$rewrite_yn" == 'y' ] && echo "`printf "%-28s" "Rewrite rule:"`${CMSG}$web_install_dir/conf/$rewrite.conf${CEND}" 
+[ "$rewrite_yn" == 'y' ] && echo "`printf "%-28s" "Rewrite rule:"`${CMSG}$web_install_dir/conf/rewrite/$rewrite.conf${CEND}" 
 [ "$nginx_ssl_yn" == 'y' ] && Print_ssl
 }
 

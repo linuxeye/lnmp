@@ -109,7 +109,7 @@ sed -i 's@^@#@g' /etc/init/control-alt-delete.conf
 
 # Update time
 ntpdate pool.ntp.org 
-[ -z "`grep 'ntpdate' /var/spool/crontabs/root`" ] && { echo "*/20 * * * * `which ntpdate` pool.ntp.org > /dev/null 2>&1" >> /var/spool/cron/crontabs/root;chmod 600 /var/spool/cron/crontabs/root; } 
+[ -z "`grep 'ntpdate' /var/spool/cron/crontabs/root`" ] && { echo "*/20 * * * * `which ntpdate` pool.ntp.org > /dev/null 2>&1" >> /var/spool/cron/crontabs/root;chmod 600 /var/spool/cron/crontabs/root; }
 service cron restart
 
 # iptables

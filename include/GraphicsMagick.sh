@@ -25,9 +25,9 @@ Install_php-gmagick() {
 cd $oneinstack_dir/src
 if [ -e "$php_install_dir/bin/phpize" ];then
     if [ "`$php_install_dir/bin/php -r 'echo PHP_VERSION;' | awk -F. '{print $1}'`" == '7' ];then
-        src_url=https://pecl.php.net/get/gmagick-2.0.2RC1.tgz && Download_src
-        tar xzf gmagick-2.0.2RC1.tgz 
-        cd gmagick-2.0.2RC1
+        src_url=https://pecl.php.net/get/gmagick-2.0.2RC2.tgz && Download_src
+        tar xzf gmagick-2.0.2RC2.tgz 
+        cd gmagick-2.0.2RC2
     else
         src_url=http://pecl.php.net/get/gmagick-$gmagick_version.tgz && Download_src
         tar xzf gmagick-$gmagick_version.tgz 
@@ -42,8 +42,10 @@ if [ -e "$php_install_dir/bin/phpize" ];then
     rm -rf gmagick-$gmagick_version
 
     if [ -f "`$php_install_dir/bin/php-config --extension-dir`/gmagick.so" ];then
-        [ -z "`grep '^extension_dir' $php_install_dir/etc/php.ini`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"`$php_install_dir/bin/php-config --extension-dir`\"@" $php_install_dir/etc/php.ini
-        sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "gmagick.so"@' $php_install_dir/etc/php.ini
+        cat > $php_install_dir/etc/php.d/ext-gmagick.ini << EOF
+[gmagick]
+extension=gmagick.so
+EOF
         [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
     else
         echo "${CFAILURE}PHP Gmagick module install failed, Please contact the author! ${CEND}"

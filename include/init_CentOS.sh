@@ -101,7 +101,7 @@ net.ipv4.tcp_tw_reuse = 1
 net.ipv4.tcp_tw_recycle = 1
 net.ipv4.ip_local_port_range = 1024 65000
 net.ipv4.tcp_max_syn_backlog = 65536 
-net.ipv4.tcp_max_tw_buckets = 20000
+net.ipv4.tcp_max_tw_buckets = 6000
 net.ipv4.route.gc_timeout = 100
 net.ipv4.tcp_syn_retries = 1
 net.ipv4.tcp_synack_retries = 1
@@ -120,8 +120,16 @@ elif [ "$CentOS_RHEL_version" == '6' ];then
     sed -i 's@^ACTIVE_CONSOLES.*@ACTIVE_CONSOLES=/dev/tty[1-2]@' /etc/sysconfig/init	
     sed -i 's@^start@#start@' /etc/init/control-alt-delete.conf
     sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/sysconfig/i18n
+    [ -z "`grep net.netfilter.nf_conntrack_max /etc/sysctl.conf`" ] && cat >> /etc/sysctl.conf << EOF
+net.netfilter.nf_conntrack_max = 1048576 
+net.netfilter.nf_conntrack_tcp_timeout_established = 1200
+EOF
 elif [ "$CentOS_RHEL_version" == '7' ];then
     sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/locale.conf 
+    [ -z "`grep net.netfilter.nf_conntrack_max /etc/sysctl.conf`" ] && cat >> /etc/sysctl.conf << EOF
+net.netfilter.nf_conntrack_max = 1048576 
+net.netfilter.nf_conntrack_tcp_timeout_established = 1200
+EOF
 fi
 init q
 

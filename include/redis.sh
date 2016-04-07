@@ -69,8 +69,10 @@ if [ -e "$php_install_dir/bin/phpize" ];then
     ./configure --with-php-config=$php_install_dir/bin/php-config
     make && make install
     if [ -f "`$php_install_dir/bin/php-config --extension-dir`/redis.so" ];then
-        [ -z "`grep '^extension_dir' $php_install_dir/etc/php.ini`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"`$php_install_dir/bin/php-config --extension-dir`\"@" $php_install_dir/etc/php.ini
-        [ -z "`grep 'redis.so' $php_install_dir/etc/php.ini`" ] && sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "redis.so"@' $php_install_dir/etc/php.ini
+        cat > $php_install_dir/etc/php.d/ext-redis.ini << EOF
+[redis]
+extension=redis.so
+EOF
         echo "${CSUCCESS}PHP Redis module install successfully! ${CEND}"
         cd ..
         rm -rf redis-$redis_pecl_version

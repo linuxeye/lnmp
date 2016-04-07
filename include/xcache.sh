@@ -24,34 +24,34 @@ if [ -f "`$php_install_dir/bin/php-config --extension-dir`/xcache.so" ];then
     chown -R ${run_user}.$run_user $wwwroot_dir/default/xcache
     touch /tmp/xcache;chown ${run_user}.$run_user /tmp/xcache
 
-    cat >> $php_install_dir/etc/php.ini << EOF
+    cat > $php_install_dir/etc/php.d/ext-xcache.ini << EOF
 [xcache-common]
-extension = "xcache.so"
+extension=xcache.so
 [xcache.admin]
-xcache.admin.enable_auth = On
-xcache.admin.user = "admin"
-xcache.admin.pass = "$xcache_admin_md5_pass"
+xcache.admin.enable_auth=On
+xcache.admin.user=admin
+xcache.admin.pass="$xcache_admin_md5_pass"
 
 [xcache]
-xcache.size = $(expr $Memory_limit / 2)M
-xcache.count = $(expr `cat /proc/cpuinfo | grep -c processor` + 1) 
-xcache.slots = 8K
-xcache.ttl = 3600
-xcache.gc_interval = 300
-xcache.var_size = 4M
-xcache.var_count = $(expr `cat /proc/cpuinfo | grep -c processor` + 1) 
-xcache.var_slots = 8K
-xcache.var_ttl = 0
-xcache.var_maxttl = 0
-xcache.var_gc_interval = 300
-xcache.test = Off
-xcache.readonly_protection = Off
-xcache.shm_scheme = "mmap"
-xcache.mmap_path = "/tmp/xcache"
-xcache.coredump_directory = ""
-xcache.cacher = On
-xcache.stat = On
-xcache.optimizer = Off
+xcache.size=$(expr $Memory_limit / 2)M
+xcache.count=$(expr `cat /proc/cpuinfo | grep -c processor` + 1) 
+xcache.slots=8K
+xcache.ttl=3600
+xcache.gc_interval=300
+xcache.var_size=4M
+xcache.var_count=$(expr `cat /proc/cpuinfo | grep -c processor` + 1) 
+xcache.var_slots=8K
+xcache.var_ttl=0
+xcache.var_maxttl=0
+xcache.var_gc_interval=300
+xcache.test=Off
+xcache.readonly_protection=Off
+xcache.shm_scheme=mmap
+xcache.mmap_path=/tmp/xcache
+xcache.coredump_directory=
+xcache.cacher=On
+xcache.stat=On
+xcache.optimizer=Off
 
 [xcache.coverager]
 ; enabling this feature will impact performance

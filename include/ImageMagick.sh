@@ -42,8 +42,10 @@ if [ -e "$php_install_dir/bin/phpize" ];then
     rm -rf imagick-$imagick_version
 
     if [ -f "`$php_install_dir/bin/php-config --extension-dir`/imagick.so" ];then
-        [ -z "`grep '^extension_dir' $php_install_dir/etc/php.ini`" ] && sed -i "s@extension_dir = \"ext\"@extension_dir = \"ext\"\nextension_dir = \"`$php_install_dir/bin/php-config --extension-dir`\"@" $php_install_dir/etc/php.ini
-        sed -i 's@^extension_dir\(.*\)@extension_dir\1\nextension = "imagick.so"@' $php_install_dir/etc/php.ini
+        cat > $php_install_dir/etc/php.d/ext-imagick.ini << EOF
+[imagick]
+extension=imagick.so
+EOF
         [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
     else
         echo "${CFAILURE}PHP imagick module install failed, Please contact the author! ${CEND}"

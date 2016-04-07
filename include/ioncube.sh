@@ -40,14 +40,10 @@ else
 fi
 
 rm -rf ioncube
-if [ -n "`grep '^\[opcache\]' $php_install_dir/etc/php.ini`" -a -z "`grep '^\[ionCube Loader\]' $php_install_dir/etc/php.ini`" ];then
-    sed -i "s@^\[opcache\]@[ionCube Loader]\nzend_extension=\"$zend_extension\"\n[opcache]@" $php_install_dir/etc/php.ini
-elif [ -z "`grep '^\[ionCube Loader\]' $php_install_dir/etc/php.ini`" ];then
-    cat >> $php_install_dir/etc/php.ini << EOF
+cat > $php_install_dir/etc/php.d/ext-ioncube.ini << EOF
 [ionCube Loader]
-zend_extension="$zend_extension"
+zend_extension=$zend_extension
 EOF
-fi
 [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
 cd ..
 }

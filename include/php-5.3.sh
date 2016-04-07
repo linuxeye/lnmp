@@ -68,8 +68,9 @@ patch -p1 < ../php5.3patch
 patch -p1 < ../debian_patches_disable_SSLv2_for_openssl_1_0_0.patch
 make clean
 [ ! -d "$php_install_dir" ] && mkdir -p $php_install_dir
-if [[ $Apache_version =~ ^[1-2]$ ]];then
+if [[ $Apache_version =~ ^[1-2]$ ]] || [ -e "$apache_install_dir/bin/apxs" ];then
     ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
+--with-config-file-scan-dir=$php_install_dir/etc/php.d \
 --with-apxs2=$apache_install_dir/bin/apxs --disable-fileinfo \
 --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
@@ -80,6 +81,7 @@ if [[ $Apache_version =~ ^[1-2]$ ]];then
 --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
 else
     ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
+--with-config-file-scan-dir=$php_install_dir/etc/php.d \
 --with-fpm-user=$run_user --with-fpm-group=$run_user --enable-fpm --disable-fileinfo \
 --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
@@ -108,6 +110,7 @@ fi
 # wget -c http://pear.php.net/go-pear.phar
 # $php_install_dir/bin/php go-pear.phar
 
+[ ! -e "$php_install_dir/etc/php.d" ] && mkdir -p $php_install_dir/etc/php.d
 /bin/cp php.ini-production $php_install_dir/etc/php.ini
 
 sed -i "s@^memory_limit.*@memory_limit = ${Memory_limit}M@" $php_install_dir/etc/php.ini
@@ -123,7 +126,7 @@ sed -i 's@^max_execution_time.*@max_execution_time = 5@' $php_install_dir/etc/ph
 sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,stream_socket_server,fsocket,popen@' $php_install_dir/etc/php.ini
 [ -e /usr/sbin/sendmail ] && sed -i 's@^;sendmail_path.*@sendmail_path = /usr/sbin/sendmail -t -i@' $php_install_dir/etc/php.ini
 
-if [[ ! $Apache_version =~ ^[1-2]$ ]];then
+if [[ ! $Apache_version =~ ^[1-2]$ ]] && [ ! -e "$apache_install_dir/bin/apxs" ];then
     # php-fpm Init Script
     /bin/cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
     chmod +x /etc/init.d/php-fpm
@@ -218,7 +221,7 @@ EOF
     #[ "$Web_yn" == 'n' ] && sed -i "s@^listen =.*@listen = $IPADDR:9000@" $php_install_dir/etc/php-fpm.conf 
     service php-fpm start
 
-elif [[ $Apache_version =~ ^[1-2]$ ]];then
+elif [[ $Apache_version =~ ^[1-2]$ ]] || [ -e "$apache_install_dir/bin/apxs" ];then
     service httpd restart
 fi
 cd ..

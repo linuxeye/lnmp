@@ -216,14 +216,6 @@ else
     echo "domain=$domain"
 fi
 
-if [ "$nginx_ssl_yn" == 'y' ]; then
-    Nginx_ssl
-    Nginx_conf=$(echo -e "listen $LISTENOPT;\nssl_certificate $web_install_dir/conf/ssl/$domain.crt;\nssl_certificate_key $web_install_dir/conf/ssl/$domain.key;\nssl_session_timeout 10m;\nssl_protocols TLSv1 TLSv1.1 TLSv1.2;\nssl_prefer_server_ciphers on;\nssl_ciphers "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-RC4-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:RC4-SHA:\!aNULL:\!eNULL:\!EXPORT:\!DES:\!3DES:\!MD5:\!DSS:\!PKS";\nssl_session_cache builtin:1000 shared:SSL:10m;\nresolver 8.8.8.8 8.8.4.4 valid=300s;\nresolver_timeout 5s;")
-    Nginx_http_to_https=$(echo -e "server {\nlisten 80;\nserver_name $domain;\nrewrite ^/(.*) https://$domain/\$1 permanent;\n}")
-else
-    Nginx_conf='listen 80;'
-fi
-
 while :
 do
     echo
@@ -266,6 +258,18 @@ if [ "$moredomainame_yn" == 'y' ]; then
         [ "$nginx_ssl_yn" == 'y' ] && HTTP_flag=https || HTTP_flag=http 
         [ "$redirect_yn" == 'y' ] && Nginx_redirect=$(echo -e "if (\$host != $domain) {\n\trewrite ^/(.*)\$ \$scheme://$domain/\$1 permanent;\n\t}")
     fi
+fi
+
+if [ "$nginx_ssl_yn" == 'y' ]; then
+    Nginx_ssl
+    Nginx_conf=$(echo -e "listen $LISTENOPT;\nssl_certificate $web_install_dir/conf/ssl/$domain.crt;\nssl_certificate_key $web_install_dir/conf/ssl/$domain.key;\nssl_session_timeout 10m;\nssl_protocols TLSv1 TLSv1.1 TLSv1.2;\nssl_prefer_server_ciphers on;\nssl_ciphers "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-RC4-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:RC4-SHA:\!aNULL:\!eNULL:\!EXPORT:\!DES:\!3DES:\!MD5:\!DSS:\!PKS";\nssl_session_cache builtin:1000 shared:SSL:10m;\nresolver 8.8.8.8 8.8.4.4 valid=300s;\nresolver_timeout 5s;")
+    if [ "$moredomainame_yn" == 'y' ]; then
+        Nginx_http_to_https=$(echo -e "server {\nlisten 80;\nserver_name $domain$moredomainame;\nrewrite ^/(.*) https://$domain/\$1 permanent;\n}")
+    else
+        Nginx_http_to_https=$(echo -e "server {\nlisten 80;\nserver_name $domain;\nrewrite ^/(.*) https://$domain/\$1 permanent;\n}")
+    fi
+else
+    Nginx_conf='listen 80;'
 fi
 
 while :
@@ -344,7 +348,7 @@ else
     	rewrite="other"
     fi
     echo "You choose rewrite=${CMSG}$rewrite${CEND}"
-    [ "$NGX_FLAG" == 'php' -a "$rewrite" == "thinkphp" ] && NGX_CONF=$(echo -e "location ~ \.php {\n    #fastcgi_pass remote_php_ip:9000;\n    fastcgi_pass unix:/dev/shm/php-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi_params;\n    set \$real_script_name \$fastcgi_script_name;\n        if (\$fastcgi_script_name ~ \"^(.+?\.php)(/.+)\$\") {\n        set \$real_script_name \$1;\n        }\n    fastcgi_param SCRIPT_FILENAME \$document_root\$real_script_name;\n    fastcgi_param SCRIPT_NAME \$real_script_name;\n    }")
+    [ "$NGX_FLAG" == 'php' -a "$rewrite" == "thinkphp" ] && NGX_CONF=$(echo -e "location ~ \.php {\n    #fastcgi_pass remote_php_ip:9000;\n    fastcgi_pass unix:/dev/shm/php-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi_params;\n    set \$real_script_name \$fastcgi_script_name;\n        if (\$fastcgi_script_name ~ \"^(.+?\.php)(/.+)\$\") {\n        set \$real_script_name \$1;\n        #set \$path_info \$2;\n        }\n    fastcgi_param SCRIPT_FILENAME \$document_root\$real_script_name;\n    fastcgi_param SCRIPT_NAME \$real_script_name;\n    #fastcgi_param PATH_INFO \$path_info;\n    }")
     if [ -e "config/$rewrite.conf" ];then
     	/bin/cp config/$rewrite.conf $web_install_dir/conf/rewrite/$rewrite.conf
     else

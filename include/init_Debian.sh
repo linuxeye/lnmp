@@ -72,7 +72,7 @@ net.ipv4.tcp_tw_reuse = 1
 net.ipv4.tcp_tw_recycle = 1
 net.ipv4.ip_local_port_range = 1024 65000
 net.ipv4.tcp_max_syn_backlog = 65536 
-net.ipv4.tcp_max_tw_buckets = 20000
+net.ipv4.tcp_max_tw_buckets = 6000
 net.ipv4.route.gc_timeout = 100
 net.ipv4.tcp_syn_retries = 1
 net.ipv4.tcp_synack_retries = 1
@@ -129,7 +129,11 @@ fi
 FW_PORT_FLAG=`grep -ow "dport $SSH_PORT" /etc/iptables.up.rules` 
 [ -z "$FW_PORT_FLAG" -a "$SSH_PORT" != '22' ] && sed -i "s@dport 22 -j ACCEPT@&\n-A INPUT -p tcp -m state --state NEW -m tcp --dport $SSH_PORT -j ACCEPT@" /etc/iptables.up.rules 
 iptables-restore < /etc/iptables.up.rules
-echo 'pre-up iptables-restore < /etc/iptables.up.rules' >> /etc/network/interfaces
+cat > /etc/network/if-pre-up.d/iptables << EOF
+#!/bin/bash
+/sbin/iptables-restore < /etc/iptables.up.rules
+EOF
+chmod +x /etc/network/if-pre-up.d/iptables
 service ssh restart
 
 . ~/.bashrc

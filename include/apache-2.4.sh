@@ -57,11 +57,11 @@ chmod +x /etc/init.d/httpd
 
 sed -i "s@^User daemon@User $run_user@" $apache_install_dir/conf/httpd.conf
 sed -i "s@^Group daemon@Group $run_user@" $apache_install_dir/conf/httpd.conf
-if [ "$Nginx_version" == '3' -a ! -e "$web_install_dir/sbin/nginx" ];then
+if [ "$Nginx_version" == '4' -a ! -e "$web_install_dir/sbin/nginx" ];then
     sed -i 's/^#ServerName www.example.com:80/ServerName 0.0.0.0:80/' $apache_install_dir/conf/httpd.conf
     TMP_PORT=80
     TMP_IP=$IPADDR
-elif [ "$Nginx_version" == '1' -o "$Nginx_version" == '2' -o -e "$web_install_dir/sbin/nginx" ];then
+elif [[ $Nginx_version =~ ^[1-3]$ ]] || [ -e "$web_install_dir/sbin/nginx" ];then 
     sed -i 's/^#ServerName www.example.com:80/ServerName 127.0.0.1:88/' $apache_install_dir/conf/httpd.conf
     sed -i 's@^Listen.*@Listen 127.0.0.1:88@' $apache_install_dir/conf/httpd.conf
     TMP_PORT=88
@@ -109,6 +109,12 @@ cat >> $apache_install_dir/conf/vhost/0.conf << EOF
     Allow from all
     DirectoryIndex index.html index.php
 </Directory>
+<Location /server-status>
+    SetHandler server-status
+    Order Deny,Allow
+    Deny from all
+    Allow from 127.0.0.1 
+</Location>
 </VirtualHost>
 EOF
 
@@ -128,7 +134,7 @@ ServerSignature Off
 Include conf/vhost/*.conf
 EOF
 
-if [ "$Nginx_version" != '3' -o -e "$web_install_dir/sbin/nginx" ];then
+if [ "$Nginx_version" != '4' -o -e "$web_install_dir/sbin/nginx" ];then
     cat > $apache_install_dir/conf/extra/httpd-remoteip.conf << EOF
 LoadModule remoteip_module modules/mod_remoteip.so
 RemoteIPHeader X-Forwarded-For

@@ -10,3 +10,4 @@
 
 [ -e "$nginx_install_dir/sbin/nginx" ] && web_install_dir=$nginx_install_dir
 [ -e "$tengine_install_dir/sbin/nginx" ] && web_install_dir=$tengine_install_dir
+[ -e "$openresty_install_dir/nginx/sbin/nginx" ] && web_install_dir=$openresty_install_dir/nginx

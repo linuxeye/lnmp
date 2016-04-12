@@ -62,6 +62,7 @@ echo "${CWARNING}You will uninstall OneinStack, Please backup your configure fil
 Print_web() {
 [ -d "$nginx_install_dir" ] && echo "$nginx_install_dir" 
 [ -d "$tengine_install_dir" ] && echo "$tengine_install_dir"
+[ -d "$openresty_install_dir" ] && echo "$openresty_install_dir"
 [ -e "/etc/init.d/nginx" ] && echo '/etc/init.d/nginx'
 [ -e "/etc/logrotate.d/nginx" ] && echo '/etc/logrotate.d/nginx'
 
@@ -78,6 +79,7 @@ Print_web() {
 Uninstall_Web() {
 [ -d "$nginx_install_dir" ] && { killall nginx > /dev/null 2>&1; rm -rf $nginx_install_dir /etc/init.d/nginx /etc/logrotate.d/nginx; sed -i "s@$nginx_install_dir/sbin:@@" /etc/profile; }
 [ -d "$tengine_install_dir" ] && { killall nginx > /dev/null 2>&1; rm -rf $tengine_install_dir /etc/init.d/nginx /etc/logrotate.d/nginx; sed -i "s@$tengine_install_dir/sbin:@@" /etc/profile; }
+[ -d "$openresty_install_dir" ] && { killall nginx > /dev/null 2>&1; rm -rf $openresty_install_dir /etc/init.d/nginx /etc/logrotate.d/nginx; sed -i "s@$openresty_install_dir/nginx/sbin:@@" /etc/profile; }
 [ -d "$apache_install_dir" ] && { service httpd stop > /dev/null 2>&1; rm -rf $apache_install_dir /etc/init.d/httpd /etc/logrotate.d/apache; sed -i "s@$apache_install_dir/bin:@@" /etc/profile; }
 [ -d "$tomcat_install_dir" ] && { killall java > /dev/null 2>&1; rm -rf $tomcat_install_dir /etc/init.d/tomcat; /etc/logrotate.d/tomcat; }
 [ -d "/usr/java" ] && { rm -rf /usr/java; sed -i '/export JAVA_HOME=/d' /etc/profile; sed -i '/export CLASSPATH=/d' /etc/profile; sed -i 's@\$JAVA_HOME/bin:@@' /etc/profile; }

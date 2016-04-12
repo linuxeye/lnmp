@@ -96,6 +96,7 @@ ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 sed -i 's/net.ipv4.tcp_syncookies.*$/net.ipv4.tcp_syncookies = 1/g' /etc/sysctl.conf
 [ -z "`cat /etc/sysctl.conf | grep 'fs.file-max'`" ] && cat >> /etc/sysctl.conf << EOF
 fs.file-max=65535
+fs.inotify.max_user_instances = 1024
 net.ipv4.tcp_fin_timeout = 30 
 net.ipv4.tcp_tw_reuse = 1
 net.ipv4.tcp_tw_recycle = 1
@@ -179,15 +180,15 @@ service sshd restart
 if [ ! -e "`which tmux`" ];then
     cd src
     src_url=http://mirrors.linuxeye.com/oneinstack/src/libevent-2.0.22-stable.tar.gz && Download_src 
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/tmux-2.1.tar.gz && Download_src 
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/tmux-2.2.tar.gz && Download_src 
     tar xzf libevent-2.0.22-stable.tar.gz
     cd libevent-2.0.22-stable
     ./configure
     make && make install
     cd ..
 
-    tar xzf tmux-2.1.tar.gz
-    cd tmux-2.1
+    tar xzf tmux-2.2.tar.gz
+    cd tmux-2.2
     CFLAGS="-I/usr/local/include" LDFLAGS="-L//usr/local/lib" ./configure
     make && make install
     cd ../../

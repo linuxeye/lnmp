@@ -22,7 +22,7 @@ make && make install
 if [ -f "`$php_install_dir/bin/php-config --extension-dir`/opcache.so" ];then
     cat > $php_install_dir/etc/php.d/ext-opcache.ini << EOF
 [opcache]
-zend_extension=opcache.so
+zend_extension=`$php_install_dir/bin/php-config --extension-dir`/opcache.so
 opcache.enable=1
 opcache.memory_consumption=$Memory_limit
 opcache.interned_strings_buffer=8

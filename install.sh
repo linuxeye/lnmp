@@ -67,19 +67,21 @@ while :; do echo
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
         if [ "$Web_yn" == 'y' ];then
-            # Nginx/Tegine
+            # Nginx/Tegine/OpenResty
             while :; do echo
                 echo 'Please select Nginx server:'
                 echo -e "\t${CMSG}1${CEND}. Install Nginx"
                 echo -e "\t${CMSG}2${CEND}. Install Tengine"
-                echo -e "\t${CMSG}3${CEND}. Do not install"
+                echo -e "\t${CMSG}3${CEND}. Install OpenResty"
+                echo -e "\t${CMSG}4${CEND}. Do not install"
                 read -p "Please input a number:(Default 1 press Enter) " Nginx_version
                 [ -z "$Nginx_version" ] && Nginx_version=1
-                if [[ ! $Nginx_version =~ ^[1-3]$ ]];then
-                    echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
+                if [[ ! $Nginx_version =~ ^[1-4]$ ]];then
+                    echo "${CWARNING}input error! Please only input number 1,2,3,4${CEND}"
                 else
-                    [ "$Nginx_version" != '3' -a -e "$nginx_install_dir/sbin/nginx" ] && { echo "${CWARNING}Nginx already installed! ${CEND}"; Nginx_version=Other; }
-                    [ "$Nginx_version" != '3' -a -e "$tengine_install_dir/sbin/nginx" ] && { echo "${CWARNING}Tengine already installed! ${CEND}"; Nginx_version=Other; }
+                    [ "$Nginx_version" != '4' -a -e "$nginx_install_dir/sbin/nginx" ] && { echo "${CWARNING}Nginx already installed! ${CEND}"; Nginx_version=Other; }
+                    [ "$Nginx_version" != '4' -a -e "$tengine_install_dir/sbin/nginx" ] && { echo "${CWARNING}Tengine already installed! ${CEND}"; Nginx_version=Other; }
+                    [ "$Nginx_version" != '4' -a -e "$openresty_install_dir/sbin/nginx" ] && { echo "${CWARNING}OpenResty already installed! ${CEND}"; Nginx_version=Other; }
                     break
                 fi
             done
@@ -393,7 +395,7 @@ while :; do echo
 done
 
 # check jemalloc or tcmalloc 
-if [ "$Nginx_version" == '1' -o "$Nginx_version" == '2' -o "$DB_yn" == 'y' ];then
+if [[ $Nginx_version =~ ^[1-3]$ ]] || [ "$DB_yn" == 'y' ];then
     while :; do echo
         read -p "Do you want to use jemalloc or tcmalloc optimize Database and Web server? [y/n]: " je_tc_malloc_yn
         if [[ ! $je_tc_malloc_yn =~ ^[y,n]$ ]];then
@@ -567,6 +569,9 @@ if [ "$Nginx_version" == '1' ];then
 elif [ "$Nginx_version" == '2' ];then
     . include/tengine.sh
     Install_Tengine 2>&1 | tee -a $oneinstack_dir/install.log
+elif [ "$Nginx_version" == '3' ];then
+    . include/openresty.sh
+    Install_OpenResty 2>&1 | tee -a $oneinstack_dir/install.log
 fi
 
 # JDK
@@ -637,9 +642,9 @@ fi
 [ -d "$db_install_dir/support-files" -a -z "`ps -ef | grep -v grep | grep mysql`" ] && /etc/init.d/mysqld start
 
 echo "####################Congratulations########################"
-[ "$Web_yn" == 'y' -a "$Nginx_version" != '3' -a "$Apache_version" == '3' ] && echo -e "\n`printf "%-32s" "Nginx/Tengine install dir":`${CMSG}$web_install_dir${CEND}"
-[ "$Web_yn" == 'y' -a "$Nginx_version" != '3' -a "$Apache_version" != '3' ] && echo -e "\n`printf "%-32s" "Nginx/Tengine install dir":`${CMSG}$web_install_dir${CEND}\n`printf "%-32s" "Apache install  dir":`${CMSG}$apache_install_dir${CEND}" 
-[ "$Web_yn" == 'y' -a "$Nginx_version" == '3' -a "$Apache_version" != '3' ] && echo -e "\n`printf "%-32s" "Apache install dir":`${CMSG}$apache_install_dir${CEND}"
+[ "$Web_yn" == 'y' -a "$Nginx_version" != '4' -a "$Apache_version" == '3' ] && echo -e "\n`printf "%-32s" "Nginx install dir":`${CMSG}$web_install_dir${CEND}"
+[ "$Web_yn" == 'y' -a "$Nginx_version" != '4' -a "$Apache_version" != '3' ] && echo -e "\n`printf "%-32s" "Nginx install dir":`${CMSG}$web_install_dir${CEND}\n`printf "%-32s" "Apache install  dir":`${CMSG}$apache_install_dir${CEND}" 
+[ "$Web_yn" == 'y' -a "$Nginx_version" == '4' -a "$Apache_version" != '3' ] && echo -e "\n`printf "%-32s" "Apache install dir":`${CMSG}$apache_install_dir${CEND}"
 [[ "$Tomcat_version" =~ ^[1,2]$ ]] && echo -e "\n`printf "%-32s" "Tomcat install dir":`${CMSG}$tomcat_install_dir${CEND}"
 [ "$DB_yn" == 'y' ] && echo -e "\n`printf "%-32s" "Database install dir:"`${CMSG}$db_install_dir${CEND}"
 [ "$DB_yn" == 'y' ] && echo "`printf "%-32s" "Database data dir:"`${CMSG}$db_data_dir${CEND}"

@@ -39,5 +39,6 @@ if [ -e "$php_install_dir/bin/php" ];then
     fi
 fi
 chown -R ${run_user}.$run_user $wwwroot_dir/default
+[ -e /usr/bin/systemctl ] && systemctl daemon-reload
 cd ..
 }

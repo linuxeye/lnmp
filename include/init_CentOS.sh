@@ -96,7 +96,7 @@ ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 sed -i 's/net.ipv4.tcp_syncookies.*$/net.ipv4.tcp_syncookies = 1/g' /etc/sysctl.conf
 [ -z "`cat /etc/sysctl.conf | grep 'fs.file-max'`" ] && cat >> /etc/sysctl.conf << EOF
 fs.file-max=65535
-fs.inotify.max_user_instances = 1024
+fs.inotify.max_user_instances = 8192 
 net.ipv4.tcp_fin_timeout = 30 
 net.ipv4.tcp_tw_reuse = 1
 net.ipv4.tcp_tw_recycle = 1

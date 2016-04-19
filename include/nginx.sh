@@ -13,15 +13,10 @@ cd $oneinstack_dir/src
 src_url=http://mirrors.linuxeye.com/oneinstack/src/pcre-$pcre_version.tar.gz && Download_src
 src_url=http://nginx.org/download/nginx-$nginx_version.tar.gz && Download_src
 
-tar xzf pcre-$pcre_version.tar.gz
-cd pcre-$pcre_version
-./configure
-make && make install
-cd ..
-
 id -u $run_user >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 
 
+tar xzf pcre-$pcre_version.tar.gz
 tar xzf nginx-$nginx_version.tar.gz
 cd nginx-$nginx_version
 # Modify Nginx version
@@ -41,7 +36,7 @@ elif [ "$je_tc_malloc" == '2' ];then
 fi
 
 [ ! -d "$nginx_install_dir" ] && mkdir -p $nginx_install_dir
-./configure --prefix=$nginx_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module $malloc_module
+./configure --prefix=$nginx_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-pcre=../pcre-$pcre_version --with-pcre-jit $malloc_module
 make && make install
 if [ -e "$nginx_install_dir/conf/nginx.conf" ];then
     cd ..

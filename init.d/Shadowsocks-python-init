@@ -6,7 +6,7 @@
 # description: Shadowsocks start/stop/status/restart script
 
 Shadowsocks_bin=/usr/bin/ssserver
-Shadowsocks_conf=/etc/shadowsocks.json
+Shadowsocks_conf=/etc/shadowsocks/config.json
 
 #Shadowsocks_USAGE is the message if this script is called without any options
 Shadowsocks_USAGE="Usage: $0 {\e[00;32mstart\e[00m|\e[00;31mstop\e[00m|\e[00;32mstatus\e[00m|\e[00;31mrestart\e[00m}"

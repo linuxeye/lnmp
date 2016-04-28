@@ -92,7 +92,7 @@ max_connections = 1000
 max_connect_errors = 6000
 open_files_limit = 65535
 table_open_cache = 128 
-max_allowed_packet = 4M
+max_allowed_packet = 500M
 binlog_cache_size = 1M
 max_heap_table_size = 8M
 tmp_table_size = 16M
@@ -152,7 +152,7 @@ wait_timeout = 28800
 
 [mysqldump]
 quick
-max_allowed_packet = 16M
+max_allowed_packet = 500M
 
 [myisamchk]
 key_buffer_size = 8M

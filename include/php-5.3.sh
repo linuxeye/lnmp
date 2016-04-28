@@ -61,6 +61,37 @@ rm -rf mcrypt-$mcrypt_version
 id -u $run_user >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 
 
+# Problem building php-5.3 with openssl
+if [ "$Debian_version" == '8' -o "$Ubuntu_version" == '16' ];then
+    if [ -e '/usr/local/openssl/lib/libcrypto.a' ];then 
+        OpenSSL_args='--with-openssl=/usr/local/openssl'
+    else
+        src_url=http://mirrors.linuxeye.com/oneinstack/src/openssl-1.0.0s.tar.gz && Download_src
+        tar xzf openssl-1.0.0s.tar.gz
+        cd openssl-1.0.0s
+        ./config --prefix=/usr/local/openssl -fPIC shared zlib
+        make && make install
+        cd ..
+        [ -e '/usr/local/openssl/lib/libcrypto.a' ] && { OpenSSL_args='--with-openssl=/usr/local/openssl'; rm -rf openssl-1.0.0s; } || OpenSSL_args='--with-openssl'
+    fi
+    if [ "$Ubuntu_version" == '16' ];then
+        if [ -e '/usr/local/curl/lib/libcurl.a' ];then
+            Curl_args='--with-curl=/usr/local/curl'
+        else
+            src_url=http://mirrors.linuxeye.com/oneinstack/src/curl-7.29.0.tar.gz && Download_src
+            tar xzf curl-7.29.0.tar.gz 
+            cd curl-7.29.0
+            LDFLAGS="-Wl,-rpath=/usr/local/openssl/lib" ./configure --prefix=/usr/local/curl --with-ssl=/usr/local/openssl
+            make && make install
+            cd ..
+            [ -e '/usr/local/curl/lib/libcurl.a' ] && { Curl_args='--with-curl=/usr/local/curl'; rm -rf curl-7.29.0; } || Curl_args='--with-curl'
+        fi
+    fi
+else
+    OpenSSL_args='--with-openssl'
+    Curl_args='--with-curl'
+fi
+
 tar xzf php-$php_3_version.tar.gz
 patch -d php-$php_3_version -p0 < fpm-race-condition.patch
 cd php-$php_3_version
@@ -75,8 +106,8 @@ if [[ $Apache_version =~ ^[1-2]$ ]] || [ -e "$apache_install_dir/bin/apxs" ];the
 --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
---enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex \
---enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl \
+--enable-sysvsem --enable-inline-optimization $Curl_args --enable-mbregex \
+--enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf $OpenSSL_args \
 --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
 --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
 else
@@ -86,8 +117,8 @@ else
 --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
---enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex \
---enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl \
+--enable-sysvsem --enable-inline-optimization $Curl_args --enable-mbregex \
+--enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf $OpenSSL_args \
 --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
 --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
 fi

@@ -10,37 +10,28 @@
 
 Install_MySQL-5-6() {
 cd $oneinstack_dir/src
-src_url=http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-$mysql_5_6_version.tar.gz && Download_src
+
+if [ "`../include/check_port.py aliyun-oss.linuxeye.com 80`" == 'True' ];then
+    DOWN_ADDR_MYSQL=http://aliyun-oss.linuxeye.com/mysql/MySQL-5.6
+else
+    [ "$IPADDR_STATE"x == "CN"x ] && DOWN_ADDR_MYSQL=http://mirrors.sohu.com/mysql/MySQL-5.6 || DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.6
+fi
+
+src_url=$DOWN_ADDR_MYSQL/mysql-${mysql_5_6_version}-linux-glibc2.5-${SYS_BIT_b}.tar.gz && Download_src
 
 id -u mysql >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin mysql
 
+[ ! -d "$mysql_install_dir" ] && mkdir -p $mysql_install_dir
 mkdir -p $mysql_data_dir;chown mysql.mysql -R $mysql_data_dir
-tar zxf mysql-$mysql_5_6_version.tar.gz
-cd mysql-$mysql_5_6_version
+
+tar zxf mysql-${mysql_5_6_version}-linux-glibc2.5-${SYS_BIT_b}.tar.gz
+mv mysql-${mysql_5_6_version}-linux-glibc2.5-${SYS_BIT_b}/* $mysql_install_dir
 if [ "$je_tc_malloc" == '1' ];then
-    EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
+    sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' $mysql_install_dir/bin/mysqld_safe
 elif [ "$je_tc_malloc" == '2' ];then
-    EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"
+    sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libtcmalloc.so@' $mysql_install_dir/bin/mysqld_safe
 fi
-make clean
-[ ! -d "$mysql_install_dir" ] && mkdir -p $mysql_install_dir 
-cmake . -DCMAKE_INSTALL_PREFIX=$mysql_install_dir \
--DMYSQL_DATADIR=$mysql_data_dir \
--DSYSCONFDIR=/etc \
--DWITH_INNOBASE_STORAGE_ENGINE=1 \
--DWITH_PARTITION_STORAGE_ENGINE=1 \
--DWITH_FEDERATED_STORAGE_ENGINE=1 \
--DWITH_BLACKHOLE_STORAGE_ENGINE=1 \
--DWITH_MYISAM_STORAGE_ENGINE=1 \
--DENABLED_LOCAL_INFILE=1 \
--DENABLE_DTRACE=0 \
--DDEFAULT_CHARSET=utf8mb4 \
--DDEFAULT_COLLATION=utf8mb4_general_ci \
--DWITH_EMBEDDED_SERVER=1 \
-$EXE_LINKER
-make -j `grep processor /proc/cpuinfo | wc -l` 
-make install
 
 if [ -d "$mysql_install_dir/support-files" ];then
     echo "${CSUCCESS}MySQL install successfully! ${CEND}"

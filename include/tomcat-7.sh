@@ -21,6 +21,7 @@ id -u $run_user >/dev/null 2>&1
 tar xzf apache-tomcat-$tomcat_7_version.tar.gz
 [ ! -d "$tomcat_install_dir" ] && mkdir -p $tomcat_install_dir
 /bin/cp -R apache-tomcat-$tomcat_7_version/* $tomcat_install_dir
+rm -rf $tomcat_install_dir/webapps/{docs,examples,host-manager,manager,ROOT/*}
 
 if [ -e "$tomcat_install_dir/conf/server.xml" ];then
     /bin/cp catalina-jmx-remote.jar $tomcat_install_dir/lib

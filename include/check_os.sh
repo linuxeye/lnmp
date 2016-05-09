@@ -17,6 +17,10 @@ elif [ -n "`grep bian /etc/issue`" -o "`lsb_release -is 2>/dev/null`" == 'Debian
     OS=Debian
     [ ! -e "`which lsb_release`" ] && { apt-get -y update; apt-get -y install lsb-release; } 
     Debian_version=`lsb_release -sr | awk -F. '{print $1}'`
+elif [ -n "`grep Deepin /etc/issue`" -o "`lsb_release -is 2>/dev/null`" == 'Deepin' ];then
+    OS=Debian
+    [ ! -e "`which lsb_release`" ] && { apt-get -y update; apt-get -y install lsb-release; } 
+    Debian_version=`lsb_release -sr | awk -F. '{print $1}'`    
 elif [ -n "`grep Ubuntu /etc/issue`" -o "`lsb_release -is 2>/dev/null`" == 'Ubuntu' ];then
     OS=Ubuntu
     [ ! -e "`which lsb_release`" ] && { apt-get -y update; apt-get -y install lsb-release; } 

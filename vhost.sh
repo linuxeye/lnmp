@@ -256,7 +256,7 @@ if [ "$moredomainame_yn" == 'y' ]; then
             fi
         done
         [ "$nginx_ssl_yn" == 'y' ] && HTTP_flag=https || HTTP_flag=http 
-        [ "$redirect_yn" == 'y' ] && Nginx_redirect=$(echo -e "if (\$host != $domain) {\n\trewrite ^/(.*)\$ \$scheme://$domain/\$1 permanent;\n\t}")
+        [ "$redirect_yn" == 'y' ] && Nginx_redirect=$(echo -e "if (\$host != $domain) {\n    rewrite ^/(.*)\$ \$scheme://$domain/\$1 permanent;\n    }")
     fi
 fi
 

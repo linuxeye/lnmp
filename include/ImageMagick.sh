@@ -10,7 +10,7 @@
 
 Install_ImageMagick() {
 cd $oneinstack_dir/src
-src_url=http://downloads.sourceforge.net/project/imagemagick/old-sources/6.x/6.8/ImageMagick-$ImageMagick_version.tar.gz && Download_src
+src_url=http://mirrors.linuxeye.com/oneinstack/src/ImageMagick-$ImageMagick_version.tar.gz && Download_src
 
 tar xzf ImageMagick-$ImageMagick_version.tar.gz
 cd ImageMagick-$ImageMagick_version

@@ -16,6 +16,8 @@ src_url=http://downloads.sourceforge.net/project/mhash/mhash/$mhash_version/mhas
 src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/$mcrypt_version/mcrypt-$mcrypt_version.tar.gz && Download_src
 src_url=http://mirrors.linuxeye.com/oneinstack/src/fpm-race-condition.patch && Download_src
 src_url=http://mirrors.linuxeye.com/oneinstack/src/debian_patches_disable_SSLv2_for_openssl_1_0_0.patch && Download_src
+src_url=http://mirrors.linuxeye.com/oneinstack/src/libiconv-glibc-2.16.patch && Download_src
+src_url=http://mirrors.linuxeye.com/oneinstack/src/php5.3patch && Download_src
 src_url=http://www.php.net/distributions/php-$php_3_version.tar.gz && Download_src
 
 tar xzf libiconv-$libiconv_version.tar.gz

@@ -23,7 +23,7 @@ make
 
 if [ -f "src/redis-server" ];then
     mkdir -p $redis_install_dir/{bin,etc,var}
-    /bin/cp src/{redis-benchmark,redis-check-aof,redis-check-dump,redis-cli,redis-sentinel,redis-server} $redis_install_dir/bin/
+    /bin/cp src/{redis-benchmark,redis-check-aof,redis-check-rdb,redis-cli,redis-sentinel,redis-server} $redis_install_dir/bin/
     /bin/cp redis.conf $redis_install_dir/etc/
     ln -s $redis_install_dir/bin/* /usr/local/bin/
     sed -i 's@pidfile.*@pidfile /var/run/redis.pid@' $redis_install_dir/etc/redis.conf

@@ -44,6 +44,8 @@ else
 fi
 
 /bin/cp $mysql_install_dir/support-files/mysql.server /etc/init.d/mysqld
+sed -i "s@^basedir=.*@basedir=$mysql_install_dir@" /etc/init.d/mysqld
+sed -i "s@^datadir=.*@datadir=$mysql_data_dir@" /etc/init.d/mysqld
 chmod +x /etc/init.d/mysqld
 [ "$OS" == 'CentOS' ] && { chkconfig --add mysqld; chkconfig mysqld on; }
 [[ $OS =~ ^Ubuntu$|^Debian$ ]] && update-rc.d mysqld defaults

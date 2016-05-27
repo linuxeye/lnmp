@@ -47,7 +47,7 @@ if [ -e "redis-$NEW_Redis_version.tar.gz" ];then
     if [ -f "src/redis-server" ];then
         echo "Restarting Redis..."
         service redis-server stop
-        /bin/cp src/{redis-benchmark,redis-check-aof,redis-check-dump,redis-cli,redis-sentinel,redis-server} $redis_install_dir/bin/
+        /bin/cp src/{redis-benchmark,redis-check-aof,redis-check-rdb,redis-cli,redis-sentinel,redis-server} $redis_install_dir/bin/
         service redis-server start
         echo "You have ${CMSG}successfully${CEND} upgrade from ${CWARNING}$OLD_Redis_version${CEND} to ${CWARNING}$NEW_Redis_version${CEND}"
     else

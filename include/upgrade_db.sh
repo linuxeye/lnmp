@@ -73,7 +73,7 @@ do
             DB_name=percona-server-$NEW_DB_version
             DB_URL=http://www.percona.com/redir/downloads/Percona-Server-`echo $NEW_DB_version | awk -F. '{print $1"."$2}'`/LATEST/source/tarball/$DB_name.tar.gz
         elif [ "$DB" == 'MySQL' ];then
-            [ `echo $NEW_DB_version | awk -F. '{print $1"."$2}'` != '5.5' ] && DB_name=mysql-${NEW_DB_version}-linux-glibc2.5-${SYS_BIT_b} || DB_name=mysql-$NEW_DB_version
+            [ `echo $NEW_DB_version | awk -F. '{print $1"."$2}'` != '5.5' ] && DB_name=mysql-${NEW_DB_version}-linux-glibc2.5-${SYS_BIT_b} || DB_name=mysql-${NEW_DB_version}-linux2.6-${SYS_BIT_b}
             DB_URL=$DOWN_ADDR/MySQL-`echo $NEW_DB_version | awk -F. '{print $1"."$2}'`/$DB_name.tar.gz
         fi
             [ ! -e "$DB_name.tar.gz" ] && wget --no-check-certificate -c $DB_URL > /dev/null 2>&1
@@ -171,49 +171,17 @@ $EXE_LINKER
         $percona_install_dir/bin/mysql -uroot -p${dbrootpwd} -e "reset master;" >/dev/null 2>&1
         [ $? -eq 0 ] &&  echo "You have ${CMSG}successfully${CEND} upgrade from ${CMSG}$OLD_DB_version${CEND} to ${CMSG}$NEW_DB_version${CEND}"
     elif [ "$DB" == 'MySQL' ];then
-        if [ "`echo $NEW_DB_version | awk -F. '{print $1"."$2}'`" == '5.5' ];then
-            tar zxf $DB_name.tar.gz
-            cd $DB_name
-            make clean
-            cmake . -DCMAKE_INSTALL_PREFIX=$mysql_install_dir \
--DMYSQL_DATADIR=$mysql_data_dir \
--DSYSCONFDIR=/etc \
--DWITH_INNOBASE_STORAGE_ENGINE=1 \
--DWITH_PARTITION_STORAGE_ENGINE=1 \
--DWITH_FEDERATED_STORAGE_ENGINE=1 \
--DWITH_BLACKHOLE_STORAGE_ENGINE=1 \
--DWITH_MYISAM_STORAGE_ENGINE=1 \
--DWITH_ARCHIVE_STORAGE_ENGINE=1 \
--DWITH_READLINE=1 \
--DENABLED_LOCAL_INFILE=1 \
--DENABLE_DTRACE=0 \
--DDEFAULT_CHARSET=utf8mb4 \
--DDEFAULT_COLLATION=utf8mb4_general_ci \
--DWITH_EMBEDDED_SERVER=1 \
-$EXE_LINKER
-
-            make -j `grep processor /proc/cpuinfo | wc -l`
-            service mysqld stop
-            mv ${mysql_install_dir}{,_old_`date +"%Y%m%d_%H%M%S"`}
-            mv ${mysql_data_dir}{,_old_`date +"%Y%m%d_%H%M%S"`}
-            [ ! -d "$mysql_install_dir" ] && mkdir -p $mysql_install_dir
-            mkdir -p $mysql_data_dir;chown mysql.mysql -R $mysql_data_dir
-            make install
-            cd ..
-            $mysql_install_dir/scripts/mysql_install_db --user=mysql --basedir=$mysql_install_dir --datadir=$mysql_data_dir
-        else
-            tar zxf $DB_name.tar.gz
-            service mysqld stop
-            mv ${mysql_install_dir}{,_old_`date +"%Y%m%d_%H%M%S"`}
-            mv ${mysql_data_dir}{,_old_`date +"%Y%m%d_%H%M%S"`}
-            [ ! -d "$mysql_install_dir" ] && mkdir -p $mysql_install_dir
-            mkdir -p $mysql_data_dir;chown mysql.mysql -R $mysql_data_dir
-            mv $DB_name/* $mysql_install_dir/
-            [ "$je_tc_malloc" == '1' ] && sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' $mysql_install_dir/bin/mysqld_safe
-            [ "$je_tc_malloc" == '2' ] && sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libtcmalloc.so@' $mysql_install_dir/bin/mysqld_safe
-            [ "`echo $NEW_DB_version | awk -F. '{print $1"."$2}'`" == '5.6' ] && $mysql_install_dir/scripts/mysql_install_db --user=mysql --basedir=$mysql_install_dir --datadir=$mysql_data_dir
-            [ "`echo $NEW_DB_version | awk -F. '{print $1"."$2}'`" == '5.7' ] && $mysql_install_dir/bin/mysqld --initialize-insecure --user=mysql --basedir=$mysql_install_dir --datadir=$mysql_data_dir
-        fi
+        tar zxf $DB_name.tar.gz
+        service mysqld stop
+        mv ${mysql_install_dir}{,_old_`date +"%Y%m%d_%H%M%S"`}
+        mv ${mysql_data_dir}{,_old_`date +"%Y%m%d_%H%M%S"`}
+        [ ! -d "$mysql_install_dir" ] && mkdir -p $mysql_install_dir
+        mkdir -p $mysql_data_dir;chown mysql.mysql -R $mysql_data_dir
+        mv $DB_name/* $mysql_install_dir/
+        [ "$je_tc_malloc" == '1' ] && sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' $mysql_install_dir/bin/mysqld_safe
+        [ "$je_tc_malloc" == '2' ] && sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libtcmalloc.so@' $mysql_install_dir/bin/mysqld_safe
+        [ "`echo $NEW_DB_version | awk -F. '{print $1"."$2}'`" != '5.7' ] && $mysql_install_dir/scripts/mysql_install_db --user=mysql --basedir=$mysql_install_dir --datadir=$mysql_data_dir
+        [ "`echo $NEW_DB_version | awk -F. '{print $1"."$2}'`" == '5.7' ] && $mysql_install_dir/bin/mysqld --initialize-insecure --user=mysql --basedir=$mysql_install_dir --datadir=$mysql_data_dir
 
         chown mysql.mysql -R $mysql_data_dir
         [ -e "$mysql_install_dir/my.cnf" ] && rm -rf $mysql_install_dir/my.cnf

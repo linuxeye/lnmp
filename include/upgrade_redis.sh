@@ -51,7 +51,7 @@ if [ -e "redis-$NEW_Redis_version.tar.gz" ];then
         service redis-server start
         echo "You have ${CMSG}successfully${CEND} upgrade from ${CWARNING}$OLD_Redis_version${CEND} to ${CWARNING}$NEW_Redis_version${CEND}"
     else
-        echo "${CFAILURE}Upgrade Redis failed! ${CEND}" 
+        echo "${CFAILURE}Upgrade Redis failed! ${CEND}"
     fi
     cd ..
 fi

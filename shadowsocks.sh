@@ -3,7 +3,7 @@
 # BLOG:  https://blog.linuxeye.com
 #
 # Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
-#        Install Shadowsocks Server 
+#        Install Shadowsocks Server
 #
 # Project home page:
 #       http://oneinstack.com
@@ -26,7 +26,7 @@ cd src
 . ../include/download.sh
 
 # Check if user is root
-[ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; } 
+[ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
 
 PUBLIC_IPADDR=`../include/get_public_ipaddr.py`
 
@@ -34,7 +34,7 @@ PUBLIC_IPADDR=`../include/get_public_ipaddr.py`
 
 Check_shadowsocks() {
     [ -f /usr/local/bin/ss-server ] && SS_version=1
-    [ -f /usr/bin/ssserver -o -f /usr/local/bin/ssserver ] && SS_version=2 
+    [ -f /usr/bin/ssserver -o -f /usr/local/bin/ssserver ] && SS_version=2
 }
 
 AddUser_shadowsocks() {
@@ -76,13 +76,13 @@ if [ "$OS" == 'CentOS' ];then
     if [ -z "`grep -E $Shadowsocks_port /etc/sysconfig/iptables`" ];then
         iptables -I INPUT 4 -p udp -m state --state NEW -m udp --dport $Shadowsocks_port -j ACCEPT
         iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport $Shadowsocks_port -j ACCEPT
-        service iptables save 
+        service iptables save
     fi
-elif [[ $OS =~ ^Ubuntu$|^Debian$ ]];then 
+elif [[ $OS =~ ^Ubuntu$|^Debian$ ]];then
     if [ -z "`grep -E $Shadowsocks_port /etc/iptables.up.rules`" ];then
         iptables -I INPUT 4 -p udp -m state --state NEW -m udp --dport $Shadowsocks_port -j ACCEPT
         iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport $Shadowsocks_port -j ACCEPT
-        iptables-save > /etc/iptables.up.rules 
+        iptables-save > /etc/iptables.up.rules
     fi
 else
     echo "${CWARNING}This port is already in iptables${CEND}"
@@ -110,7 +110,7 @@ if [ "$OS" == 'CentOS' ]; then
     do
         yum -y install $Package
     done
-elif [[ $OS =~ ^Ubuntu$|^Debian$ ]];then 
+elif [[ $OS =~ ^Ubuntu$|^Debian$ ]];then
     SS_version=2
     AddUser_shadowsocks
     Iptables_set
@@ -122,7 +122,7 @@ elif [[ $OS =~ ^Ubuntu$|^Debian$ ]];then
 fi
 }
 
-Install_shadowsocks-python() { 
+Install_shadowsocks-python() {
 src_url=http://mirrors.linuxeye.com/oneinstack/src/ez_setup.py && Download_src
 
 which pip > /dev/null 2>&1
@@ -169,7 +169,7 @@ Uninstall_shadowsocks(){
 while :
 do
     echo
-    read -p "Do you want to uninstall Shadowsocks? [y/n]: " Shadowsocks_yn 
+    read -p "Do you want to uninstall Shadowsocks? [y/n]: " Shadowsocks_yn
     if [[ ! $Shadowsocks_yn =~ ^[y,n]$ ]];then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
@@ -179,8 +179,8 @@ done
 
 if [ "$Shadowsocks_yn" == 'y' ]; then
     [ -n "`ps -ef | grep -v grep | grep -iE "ssserver|ss-server"`" ] && /etc/init.d/shadowsocks stop
-    [ "$OS" == 'CentOS' ] && chkconfig --del shadowsocks 
-    [[ $OS =~ ^Ubuntu$|^Debian$ ]] && update-rc.d -f shadowsocks remove 
+    [ "$OS" == 'CentOS' ] && chkconfig --del shadowsocks
+    [[ $OS =~ ^Ubuntu$|^Debian$ ]] && update-rc.d -f shadowsocks remove
     rm -rf /etc/shadowsocks /var/run/shadowsocks.pid /etc/init.d/shadowsocks
     if [ "$SS_version" == '1' ];then
         rm -f /usr/local/bin/ss-local
@@ -236,7 +236,7 @@ EOF
     "local_address":"127.0.0.1",
     "local_port":1080,
     "port_password":{
-	"$Shadowsocks_port":"$Shadowsocks_password"
+    "$Shadowsocks_port":"$Shadowsocks_password"
     },
     "timeout":300,
     "method":"aes-256-cfb",
@@ -247,7 +247,7 @@ EOF
 
 AddUser_Config_shadowsocks(){
 [ ! -e /etc/shadowsocks/config.json ] && { echo "${CFAILURE}Shadowsocks is not installed! ${CEND}"; exit 1; }
-[ -z "`grep \"$Shadowsocks_port\" /etc/shadowsocks/config.json`" ] && sed -i "s@\"port_password\":{@\"port_password\":{\n\t\"$Shadowsocks_port\":\"$Shadowsocks_password\",@" /etc/shadowsocks/config.json || { echo "${CWARNING}This port is already in /etc/shadowsocks/config.json${CEND}"; exit 1; } 
+[ -z "`grep \"$Shadowsocks_port\" /etc/shadowsocks/config.json`" ] && sed -i "s@\"port_password\":{@\"port_password\":{\n\t\"$Shadowsocks_port\":\"$Shadowsocks_password\",@" /etc/shadowsocks/config.json || { echo "${CWARNING}This port is already in /etc/shadowsocks/config.json${CEND}"; exit 1; }
 }
 
 Print_User_shadowsocks(){
@@ -267,7 +267,7 @@ install)
     [ "$SS_version" == '1' ] && Install_shadowsocks-libev
     [ "$SS_version" == '2' ] && Install_shadowsocks-python
     Config_shadowsocks
-    service shadowsocks start 
+    service shadowsocks start
     Print_User_shadowsocks
     ;;
 adduser)

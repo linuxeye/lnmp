@@ -21,23 +21,23 @@ printf "
 . ./options.conf
 . ./include/color.sh
 . ./include/get_char.sh
-. ./include/check_db.sh
+. ./include/check_dir.sh
 
 # Check if user is root
-[ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; } 
+[ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
 
 
 Usage(){
 printf "
 Usage: $0 [  ${CMSG}all${CEND} | ${CMSG}web${CEND} | ${CMSG}db${CEND} | ${CMSG}php${CEND} | ${CMSG}hhvm${CEND} | ${CMSG}pureftpd${CEND} | ${CMSG}redis${CEND} | ${CMSG}memcached${CEND} ]
-${CMSG}all${CEND}            --->Uninstall All 
+${CMSG}all${CEND}            --->Uninstall All
 ${CMSG}web${CEND}            --->Uninstall Nginx/Tengine/Apache/Tomcat
 ${CMSG}db${CEND}             --->Uninstall MySQL/MariaDB/Percona
 ${CMSG}php${CEND}            --->Uninstall PHP
-${CMSG}hhvm${CEND}           --->Uninstall HHVM 
-${CMSG}pureftpd${CEND}       --->Uninstall PureFtpd 
+${CMSG}hhvm${CEND}           --->Uninstall HHVM
+${CMSG}pureftpd${CEND}       --->Uninstall PureFtpd
 ${CMSG}redis${CEND}          --->Uninstall Redis
-${CMSG}memcached${CEND}      --->Uninstall Memcached 
+${CMSG}memcached${CEND}      --->Uninstall Memcached
 
 "
 }
@@ -60,7 +60,7 @@ echo "${CWARNING}You will uninstall OneinStack, Please backup your configure fil
 }
 
 Print_web() {
-[ -d "$nginx_install_dir" ] && echo "$nginx_install_dir" 
+[ -d "$nginx_install_dir" ] && echo "$nginx_install_dir"
 [ -d "$tengine_install_dir" ] && echo "$tengine_install_dir"
 [ -d "$openresty_install_dir" ] && echo "$openresty_install_dir"
 [ -e "/etc/init.d/nginx" ] && echo '/etc/init.d/nginx'
@@ -115,8 +115,8 @@ Print_PHP() {
 Uninstall_PHP() {
 [ -e "$php_install_dir/bin/phpize" -a -e "$php_install_dir/etc/php-fpm.conf" ] && { service php-fpm stop > /dev/null 2>&1; rm -rf $php_install_dir /etc/init.d/php-fpm; }
 [ -e "$php_install_dir/bin/phpize" -a ! -e "$php_install_dir/etc/php-fpm.conf" ] && rm -rf $php_install_dir
-[ -e "/usr/local/imagemagick" ] && rm -rf /usr/local/imagemagick 
-[ -e "/usr/local/graphicsmagick" ] && rm -rf /usr/local/graphicsmagick 
+[ -e "/usr/local/imagemagick" ] && rm -rf /usr/local/imagemagick
+[ -e "/usr/local/graphicsmagick" ] && rm -rf /usr/local/graphicsmagick
 sed -i "s@$php_install_dir/bin:@@" /etc/profile
 echo "${CMSG}PHP uninstall completed${CEND}"
 }
@@ -137,7 +137,7 @@ echo "${CMSG}HHVM uninstall completed${CEND}"
 
 Print_PureFtpd() {
 [ -e "$pureftpd_install_dir" ] && echo "$pureftpd_install_dir"
-[ -e "/etc/init.d/pureftpd" ] && echo "/etc/init.d/pureftpd" 
+[ -e "/etc/init.d/pureftpd" ] && echo "/etc/init.d/pureftpd"
 }
 
 Uninstall_PureFtpd() {
@@ -174,14 +174,14 @@ while :
 do
     printf "
 What Are You Doing?
-\t${CMSG}0${CEND}. Uninstall All 
-\t${CMSG}1${CEND}. Uninstall Nginx/Tengine/Apache/Tomcat 
-\t${CMSG}2${CEND}. Uninstall MySQL/MariaDB/Percona 
-\t${CMSG}3${CEND}. Uninstall PHP 
-\t${CMSG}4${CEND}. Uninstall HHVM 
-\t${CMSG}5${CEND}. Uninstall PureFtpd 
-\t${CMSG}6${CEND}. Uninstall Redis 
-\t${CMSG}7${CEND}. Uninstall Memcached 
+\t${CMSG}0${CEND}. Uninstall All
+\t${CMSG}1${CEND}. Uninstall Nginx/Tengine/Apache/Tomcat
+\t${CMSG}2${CEND}. Uninstall MySQL/MariaDB/Percona
+\t${CMSG}3${CEND}. Uninstall PHP
+\t${CMSG}4${CEND}. Uninstall HHVM
+\t${CMSG}5${CEND}. Uninstall PureFtpd
+\t${CMSG}6${CEND}. Uninstall Redis
+\t${CMSG}7${CEND}. Uninstall Memcached
 \t${CMSG}q${CEND}. Exit
 "
     echo
@@ -305,22 +305,22 @@ elif [ $# == 1 ];then
     hhvm)
         Print_HHVM
         Uninstall_status
-        [ "$uninstall_yn" == 'y' ] && Uninstall_HHVM || exit 
+        [ "$uninstall_yn" == 'y' ] && Uninstall_HHVM || exit
         ;;
     pureftpd)
         Print_PureFtpd
         Uninstall_status
-        [ "$uninstall_yn" == 'y' ] && Uninstall_PureFtpd || exit 
+        [ "$uninstall_yn" == 'y' ] && Uninstall_PureFtpd || exit
         ;;
     redis)
         Print_Redis
         Uninstall_status
-        [ "$uninstall_yn" == 'y' ] && Uninstall_Redis || exit 
+        [ "$uninstall_yn" == 'y' ] && Uninstall_Redis || exit
         ;;
     memcached)
         Print_Memcached
         Uninstall_status
-        [ "$uninstall_yn" == 'y' ] && Uninstall_Memcached || exit 
+        [ "$uninstall_yn" == 'y' ] && Uninstall_Memcached || exit
         ;;
     *)
         Usage

@@ -14,7 +14,7 @@ src_url=http://mirrors.linuxeye.com/oneinstack/src/pcre-$pcre_version.tar.gz && 
 src_url=http://nginx.org/download/nginx-$nginx_version.tar.gz && Download_src
 
 id -u $run_user >/dev/null 2>&1
-[ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 
+[ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user
 
 tar xzf pcre-$pcre_version.tar.gz
 tar xzf nginx-$nginx_version.tar.gz
@@ -44,11 +44,11 @@ if [ -e "$nginx_install_dir/conf/nginx.conf" ];then
     echo "${CSUCCESS}Nginx install successfully! ${CEND}"
 else
     rm -rf $nginx_install_dir
-    echo "${CFAILURE}Nginx install failed, Please Contact the author! ${CEND}" 
+    echo "${CFAILURE}Nginx install failed, Please Contact the author! ${CEND}"
     kill -9 $$
 fi
 
-[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$nginx_install_dir/sbin:\$PATH" >> /etc/profile 
+[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$nginx_install_dir/sbin:\$PATH" >> /etc/profile
 [ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep $nginx_install_dir /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$nginx_install_dir/sbin:\1@" /etc/profile
 . /etc/profile
 
@@ -86,7 +86,7 @@ EOF
 sed -i "s@/data/wwwroot/default@$wwwroot_dir/default@" $nginx_install_dir/conf/nginx.conf
 sed -i "s@/data/wwwlogs@$wwwlogs_dir@g" $nginx_install_dir/conf/nginx.conf
 sed -i "s@^user www www@user $run_user $run_user@" $nginx_install_dir/conf/nginx.conf
-[ "$je_tc_malloc" == '2' ] && sed -i 's@^pid\(.*\)@pid\1\ngoogle_perftools_profiles /tmp/tcmalloc;@' $nginx_install_dir/conf/nginx.conf 
+[ "$je_tc_malloc" == '2' ] && sed -i 's@^pid\(.*\)@pid\1\ngoogle_perftools_profiles /tmp/tcmalloc;@' $nginx_install_dir/conf/nginx.conf
 
 # logrotate nginx log
 cat > /etc/logrotate.d/nginx << EOF

@@ -22,18 +22,18 @@ else
     tar xzf ioncube_loaders_lin_x86.tar.gz
 fi
 
-[ ! -d "`$php_install_dir/bin/php-config --extension-dir`" ] && mkdir -p `$php_install_dir/bin/php-config --extension-dir` 
+[ ! -d "`$php_install_dir/bin/php-config --extension-dir`" ] && mkdir -p `$php_install_dir/bin/php-config --extension-dir`
 if [ "$PHP_main_version" == '5.6' ];then
-    /bin/cp ioncube/ioncube_loader_lin_5.6.so `$php_install_dir/bin/php-config --extension-dir` 
+    /bin/cp ioncube/ioncube_loader_lin_5.6.so `$php_install_dir/bin/php-config --extension-dir`
     zend_extension="`$php_install_dir/bin/php-config --extension-dir`/ioncube_loader_lin_5.6.so"
 elif [ "$PHP_main_version" == '5.5' ];then
-    /bin/cp ioncube/ioncube_loader_lin_5.5.so `$php_install_dir/bin/php-config --extension-dir` 
+    /bin/cp ioncube/ioncube_loader_lin_5.5.so `$php_install_dir/bin/php-config --extension-dir`
     zend_extension="`$php_install_dir/bin/php-config --extension-dir`/ioncube_loader_lin_5.5.so"
 elif [ "$PHP_main_version" == '5.4' ];then
-    /bin/cp ioncube/ioncube_loader_lin_5.4.so `$php_install_dir/bin/php-config --extension-dir` 
+    /bin/cp ioncube/ioncube_loader_lin_5.4.so `$php_install_dir/bin/php-config --extension-dir`
     zend_extension="`$php_install_dir/bin/php-config --extension-dir`/ioncube_loader_lin_5.4.so"
 elif [ "$PHP_main_version" == '5.3' ];then
-    /bin/cp ioncube/ioncube_loader_lin_5.3.so `$php_install_dir/bin/php-config --extension-dir` 
+    /bin/cp ioncube/ioncube_loader_lin_5.3.so `$php_install_dir/bin/php-config --extension-dir`
     zend_extension="`$php_install_dir/bin/php-config --extension-dir`/ioncube_loader_lin_5.3.so"
 else
     exit 1

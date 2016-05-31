@@ -18,5 +18,5 @@ def Get_local_ip():
         return "127.0.0.1"
 
 if __name__ == "__main__":
-    IPADDR = Get_local_ip() 
+    IPADDR = Get_local_ip()
     print IPADDR

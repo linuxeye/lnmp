@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# chkconfig: - 95 15 
+# chkconfig: - 95 15
 # description: Tomcat start/stop/status script
 
 #Location of JAVA_HOME (bin files)
@@ -89,7 +89,7 @@ case $1 in
           start
         ;;
 
-        stop)  
+        stop)
           stop
         ;;
 
@@ -99,11 +99,11 @@ case $1 in
         ;;
 
         status)
-	  status
+    status
         ;;
 
         *)
-	  echo -e $TOMCAT_USAGE
+    echo -e $TOMCAT_USAGE
         ;;
-esac    
+esac
 exit 0

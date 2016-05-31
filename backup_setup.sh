@@ -18,20 +18,21 @@ printf "
 #######################################################################
 "
 
+. ./options.conf
 . ./include/color.sh
-. ./include/check_db.sh
+. ./include/check_dir.sh
 
 # Check if user is root
 [ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
 
-while : 
+while :
 do
     echo
     echo 'Please select your backup destination:'
     echo -e "\t${CMSG}1${CEND}. Only Localhost"
     echo -e "\t${CMSG}2${CEND}. Only Remote host"
     echo -e "\t${CMSG}3${CEND}. Localhost and Remote host"
-    read -p "Please input a number:(Default 1 press Enter) " DESC_BK 
+    read -p "Please input a number:(Default 1 press Enter) " DESC_BK
     [ -z "$DESC_BK" ] && DESC_BK=1
     if [[ ! $DESC_BK =~ ^[1-3]$ ]];then
         echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
@@ -64,14 +65,11 @@ done
 [ "$CONTENT_BK" == '2' ] && sed -i 's@^backup_content=.*@backup_content=web@' ./options.conf
 [ "$CONTENT_BK" == '3' ] && sed -i 's@^backup_content=.*@backup_content=db,web@' ./options.conf
 
-. ./options.conf
-. ./include/check_db.sh
-
 while :
 do
     echo
     echo "Please enter the directory for save the backup file: "
-    read -p "(Default directory: $backup_dir): " NEW_backup_dir 
+    read -p "(Default directory: $backup_dir): " NEW_backup_dir
     [ -z "$NEW_backup_dir" ] && NEW_backup_dir="$backup_dir"
     if [ -z "`echo $NEW_backup_dir| grep '^/'`" ]; then
         echo "${CWARNING}input error! ${CEND}"
@@ -85,7 +83,7 @@ while :
 do
     echo
     echo "Pleas enter a valid backup number of days: "
-    read -p "(Default days: 5): " expired_days 
+    read -p "(Default days: 5): " expired_days
     [ -z "$expired_days" ] && expired_days=5
     [ -n "`echo $expired_days | sed -n "/^[0-9]\+$/p"`" ] && break || echo "${CWARNING}input error! Please only enter numbers! ${CEND}"
 done
@@ -116,7 +114,7 @@ if [ "$CONTENT_BK" != '1' ];then
     do
         echo
         echo "Please enter one or more name for website, separate multiple website names with commas: "
-        read -p "(Default website: `echo $websites | tr ' ' ','`) " website_name 
+        read -p "(Default website: `echo $websites | tr ' ' ','`) " website_name
         website_name=`echo $website_name | tr -d ' '`
         [ -z "$website_name" ] && website_name="`echo $websites | tr ' ' ','`"
         W_tmp=0
@@ -134,7 +132,7 @@ echo "You have to backup the content:"
 [ "$CONTENT_BK" != '2' ] && echo "Database: ${CMSG}$db_name${CEND}"
 [ "$CONTENT_BK" != '1' ] && echo "Website: ${CMSG}$website_name${CEND}"
 
-if [[ "$DESC_BK" =~ ^[2,3]$ ]];then 
+if [[ "$DESC_BK" =~ ^[2,3]$ ]];then
     > tools/iplist.txt
     while :
     do
@@ -143,10 +141,10 @@ if [[ "$DESC_BK" =~ ^[2,3]$ ]];then
         [ -z "$remote_ip" -o "$remote_ip" == '127.0.0.1' ] && continue
         echo
         read -p "Please enter the remote host port(Default: 22) : " remote_port
-        [ -z "$remote_port" ] && remote_port=22 
+        [ -z "$remote_port" ] && remote_port=22
         echo
         read -p "Please enter the remote host user(Default: root) : " remote_user
-        [ -z "$remote_user" ] && remote_user=root 
+        [ -z "$remote_user" ] && remote_user=root
         echo
         read -p "Please enter the remote host password: " remote_password
         IPcode=$(echo "ibase=16;$(echo "$remote_ip" | xxd -ps -u)"|bc|tr -d '\\'|tr -d '\n')
@@ -158,7 +156,7 @@ if [[ "$DESC_BK" =~ ^[2,3]$ ]];then
             [ -z "`grep $remote_ip tools/iplist.txt`" ] && echo "$remote_ip $remote_port $remote_user $remote_password" >> tools/iplist.txt || echo "${CWARNING}$remote_ip has been added! ${CEND}"
             while :
             do
-                read -p "Do you want to add more host ? [y/n]: " more_host_yn 
+                read -p "Do you want to add more host ? [y/n]: " more_host_yn
                 if [[ ! "$more_host_yn" =~ ^[y,n]$ ]];then
                     echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
                 else

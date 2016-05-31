@@ -15,15 +15,15 @@ if [ -n "`grep 'Aliyun Linux release' /etc/issue`" -o -e /etc/redhat-release ];t
     [ -n "`grep ' 5\.' /etc/redhat-release`" -o -n "`grep 'Aliyun Linux release5' /etc/issue`" ] && CentOS_RHEL_version=5
 elif [ -n "`grep bian /etc/issue`" -o "`lsb_release -is 2>/dev/null`" == 'Debian' ];then
     OS=Debian
-    [ ! -e "`which lsb_release`" ] && { apt-get -y update; apt-get -y install lsb-release; } 
+    [ ! -e "`which lsb_release`" ] && { apt-get -y update; apt-get -y install lsb-release; }
     Debian_version=`lsb_release -sr | awk -F. '{print $1}'`
 elif [ -n "`grep Deepin /etc/issue`" -o "`lsb_release -is 2>/dev/null`" == 'Deepin' ];then
     OS=Debian
-    [ ! -e "`which lsb_release`" ] && { apt-get -y update; apt-get -y install lsb-release; } 
-    Debian_version=`lsb_release -sr | awk -F. '{print $1}'`    
+    [ ! -e "`which lsb_release`" ] && { apt-get -y update; apt-get -y install lsb-release; }
+    Debian_version=`lsb_release -sr | awk -F. '{print $1}'`
 elif [ -n "`grep Ubuntu /etc/issue`" -o "`lsb_release -is 2>/dev/null`" == 'Ubuntu' ];then
     OS=Ubuntu
-    [ ! -e "`which lsb_release`" ] && { apt-get -y update; apt-get -y install lsb-release; } 
+    [ ! -e "`which lsb_release`" ] && { apt-get -y update; apt-get -y install lsb-release; }
     Ubuntu_version=`lsb_release -sr | awk -F. '{print $1}'`
 else
     echo "${CFAILURE}Does not support this OS, Please contact the author! ${CEND}"

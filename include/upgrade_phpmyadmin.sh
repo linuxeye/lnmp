@@ -35,7 +35,7 @@ if [ -e "phpMyAdmin-${NEW_phpMyAdmin_version}-all-languages.tar.gz" ];then
     echo "[${CMSG}phpMyAdmin-${NEW_phpMyAdmin_version}-all-languages.tar.gz${CEND}] found"
     echo "Press Ctrl+c to cancel or Press any key to continue..."
     char=`get_char`
-    tar xzf phpMyAdmin-${NEW_phpMyAdmin_version}-all-languages.tar.gz 
+    tar xzf phpMyAdmin-${NEW_phpMyAdmin_version}-all-languages.tar.gz
     rm -rf $wwwroot_dir/default/phpMyAdmin
     /bin/mv phpMyAdmin-${NEW_phpMyAdmin_version}-all-languages $wwwroot_dir/default/phpMyAdmin
     /bin/cp $wwwroot_dir/default/phpMyAdmin/{config.sample.inc.php,config.inc.php}

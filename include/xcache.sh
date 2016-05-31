@@ -13,7 +13,7 @@ Install_XCache()
 cd $oneinstack_dir/src
 src_url=http://xcache.lighttpd.net/pub/Releases/$xcache_version/xcache-$xcache_version.tar.gz && Download_src
 
-tar xzf xcache-$xcache_version.tar.gz 
+tar xzf xcache-$xcache_version.tar.gz
 cd xcache-$xcache_version
 make clean
 $php_install_dir/bin/phpize
@@ -34,12 +34,12 @@ xcache.admin.pass="$xcache_admin_md5_pass"
 
 [xcache]
 xcache.size=$(expr $Memory_limit / 2)M
-xcache.count=$(expr `cat /proc/cpuinfo | grep -c processor` + 1) 
+xcache.count=$(expr `cat /proc/cpuinfo | grep -c processor` + 1)
 xcache.slots=8K
 xcache.ttl=3600
 xcache.gc_interval=300
 xcache.var_size=4M
-xcache.var_count=$(expr `cat /proc/cpuinfo | grep -c processor` + 1) 
+xcache.var_count=$(expr `cat /proc/cpuinfo | grep -c processor` + 1)
 xcache.var_slots=8K
 xcache.var_ttl=0
 xcache.var_maxttl=0

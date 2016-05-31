@@ -55,7 +55,7 @@ if [ -e "nginx-$NEW_Nginx_version.tar.gz" ];then
         kill -QUIT `cat /var/run/nginx.pid.oldbin`
         echo "You have ${CMSG}successfully${CEND} upgrade from ${CWARNING}$OLD_Nginx_version${CEND} to ${CWARNING}$NEW_Nginx_version${CEND}"
     else
-        echo "${CFAILURE}Upgrade Nginx failed! ${CEND}" 
+        echo "${CFAILURE}Upgrade Nginx failed! ${CEND}"
     fi
     cd ..
 fi
@@ -114,7 +114,7 @@ if [ -e "tengine-$NEW_Tengine_version.tar.gz" ];then
         kill -QUIT `cat /var/run/nginx.pid.oldbin`
         echo "You have ${CMSG}successfully${CEND} upgrade from ${CWARNING}$OLD_Tengine_version${CEND} to ${CWARNING}$NEW_Tengine_version${CEND}"
     else
-        echo "${CFAILURE}Upgrade Tengine failed! ${CEND}" 
+        echo "${CFAILURE}Upgrade Tengine failed! ${CEND}"
     fi
     cd ..
 fi
@@ -171,7 +171,7 @@ if [ -e "openresty-$NEW_OpenResty_version.tar.gz" ];then
         kill -QUIT `cat /var/run/nginx.pid.oldbin`
         echo "You have ${CMSG}successfully${CEND} upgrade from ${CWARNING}$OLD_OpenResty_version${CEND} to ${CWARNING}$NEW_OpenResty_version${CEND}"
     else
-        echo "${CFAILURE}Upgrade OpenResty failed! ${CEND}" 
+        echo "${CFAILURE}Upgrade OpenResty failed! ${CEND}"
     fi
     cd ..
 fi

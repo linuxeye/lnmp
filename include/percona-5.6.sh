@@ -16,8 +16,8 @@ id -u mysql >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin mysql
 
 mkdir -p $percona_data_dir;chown mysql.mysql -R $percona_data_dir
-tar zxf percona-server-$percona_5_6_version.tar.gz 
-cd percona-server-$percona_5_6_version 
+tar zxf percona-server-$percona_5_6_version.tar.gz
+cd percona-server-$percona_5_6_version
 if [ "$je_tc_malloc" == '1' ];then
     EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
 elif [ "$je_tc_malloc" == '2' ];then
@@ -39,13 +39,13 @@ cmake . -DCMAKE_INSTALL_PREFIX=$percona_install_dir \
 -DDEFAULT_CHARSET=utf8mb4 \
 -DDEFAULT_COLLATION=utf8mb4_general_ci \
 $EXE_LINKER
-make -j `grep processor /proc/cpuinfo | wc -l` 
+make -j `grep processor /proc/cpuinfo | wc -l`
 make install
 
 if [ -d "$percona_install_dir/support-files" ];then
     echo "${CSUCCESS}Percona install successfully! ${CEND}"
     cd ..
-    rm -rf percona-server-$percona_5_6_version 
+    rm -rf percona-server-$percona_5_6_version
 else
     rm -rf $percona_install_dir
     echo "${CFAILURE}Percona install failed, Please contact the author! ${CEND}"
@@ -91,7 +91,7 @@ back_log = 300
 max_connections = 1000
 max_connect_errors = 6000
 open_files_limit = 65535
-table_open_cache = 128 
+table_open_cache = 128
 max_allowed_packet = 500M
 binlog_cache_size = 1M
 max_heap_table_size = 8M
@@ -113,7 +113,7 @@ ft_min_word_len = 4
 
 log_bin = mysql-bin
 binlog_format = mixed
-expire_logs_days = 7 
+expire_logs_days = 7
 
 log_error = $percona_data_dir/mysql-error.log
 slow_query_log = 1
@@ -161,7 +161,7 @@ read_buffer = 4M
 write_buffer = 4M
 EOF
 
-sed -i "s@max_connections.*@max_connections = $(($Mem/2))@" /etc/my.cnf 
+sed -i "s@max_connections.*@max_connections = $(($Mem/2))@" /etc/my.cnf
 if [ $Mem -gt 1500 -a $Mem -le 2500 ];then
     sed -i 's@^thread_cache_size.*@thread_cache_size = 16@' /etc/my.cnf
     sed -i 's@^query_cache_size.*@query_cache_size = 16M@' /etc/my.cnf
@@ -193,7 +193,7 @@ $percona_install_dir/scripts/mysql_install_db --user=mysql --basedir=$percona_in
 chown mysql.mysql -R $percona_data_dir
 [ -d '/etc/mysql' ] && mv /etc/mysql{,_bk}
 service mysqld start
-[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$percona_install_dir/bin:\$PATH" >> /etc/profile 
+[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$percona_install_dir/bin:\$PATH" >> /etc/profile
 [ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep $percona_install_dir /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$percona_install_dir/bin:\1@" /etc/profile
 . /etc/profile
 

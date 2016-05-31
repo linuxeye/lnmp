@@ -69,26 +69,26 @@ running()
 
 start() {
         echo "Starting supervisord: "
-	
-        if [ -e $PIDFILE ]; then 
-		echo "ALREADY STARTED"
-		return 1
-	fi
 
-	# start supervisord with options from sysconfig (stuff like -c)
+        if [ -e $PIDFILE ]; then
+        echo "ALREADY STARTED"
+        return 1
+    fi
+
+    # start supervisord with options from sysconfig (stuff like -c)
         $SUPERVISORD $OPTIONS
-	
-	# show initial startup status
-	$SUPERVISORCTL $OPTIONS status
-	
-	# only create the subsyslock if we created the PIDFILE
+
+    # show initial startup status
+    $SUPERVISORCTL $OPTIONS status
+
+    # only create the subsyslock if we created the PIDFILE
         [ -e $PIDFILE ] && touch $LOCKFILE
 }
 
 stop() {
         echo -n "Stopping supervisord: "
         $SUPERVISORCTL $OPTIONS shutdown
-	if [ -n "$WAIT_FOR_SUBPROCESSES" ]; then 
+    if [ -n "$WAIT_FOR_SUBPROCESSES" ]; then
             echo "Waiting roughly 60 seconds for $PIDFILE to be removed after child processes exit"
             for sleep in  2 2 2 2 4 4 4 4 8 8 8 8 last; do
                 if [ ! -e $PIDFILE ] ; then

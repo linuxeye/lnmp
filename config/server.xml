@@ -28,7 +28,7 @@
               acceptCount="1000"
               debug="0"
               disableUploadTimeout="true"
-	      useBodyEncodingForURI="true"
+              useBodyEncodingForURI="true"
               enableLookups="false"
               URIEncoding="UTF-8" />
     <Engine name="Catalina" defaultHost="localhost">

@@ -19,11 +19,11 @@ printf "
 
 . ./options.conf
 . ./include/color.sh
-. ./include/check_web.sh
+. ./include/check_dir.sh
 . ./include/get_char.sh
 
 # Check if user is root
-[ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; } 
+[ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
 
 Usage() {
 printf "
@@ -255,7 +255,7 @@ if [ "$moredomainame_yn" == 'y' ]; then
                 break
             fi
         done
-        [ "$nginx_ssl_yn" == 'y' ] && HTTP_flag=https || HTTP_flag=http 
+        [ "$nginx_ssl_yn" == 'y' ] && HTTP_flag=https || HTTP_flag=http
         [ "$redirect_yn" == 'y' ] && Nginx_redirect=$(echo -e "if (\$host != $domain) {\n    rewrite ^/(.*)\$ \$scheme://$domain/\$1 permanent;\n    }")
     fi
 fi
@@ -298,7 +298,7 @@ Nginx_anti_hotlinking() {
 while :
 do
     echo
-    read -p "Do you want to add hotlink protection? [y/n]: " anti_hotlinking_yn 
+    read -p "Do you want to add hotlink protection? [y/n]: " anti_hotlinking_yn
     if [[ ! $anti_hotlinking_yn =~ ^[y,n]$ ]];then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
@@ -312,7 +312,7 @@ else
     domain_allow="*.$domain $domain"
 fi
 
-if [ "$anti_hotlinking_yn" == 'y' ];then 
+if [ "$anti_hotlinking_yn" == 'y' ];then
     if [ "$moredomainame_yn" == 'y' ]; then
         domain_allow_all=$domain_allow$moredomainame
     else
@@ -333,7 +333,7 @@ do
     if [[ ! $rewrite_yn =~ ^[y,n]$ ]];then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
-        break 
+        break
     fi
 done
 if [ "$rewrite_yn" == 'n' ];then
@@ -345,14 +345,14 @@ else
     echo "${CMSG}wordpress${CEND},${CMSG}discuz${CEND},${CMSG}opencart${CEND},${CMSG}thinkphp${CEND},${CMSG}laravel${CEND},${CMSG}typecho${CEND},${CMSG}ecshop${CEND},${CMSG}drupal${CEND},${CMSG}joomla${CEND} rewrite was exist."
     read -p "(Default rewrite: other):" rewrite
     if [ "$rewrite" == "" ]; then
-    	rewrite="other"
+        rewrite="other"
     fi
     echo "You choose rewrite=${CMSG}$rewrite${CEND}"
     [ "$NGX_FLAG" == 'php' -a "$rewrite" == "thinkphp" ] && NGX_CONF=$(echo -e "location ~ \.php {\n    #fastcgi_pass remote_php_ip:9000;\n    fastcgi_pass unix:/dev/shm/php-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi_params;\n    set \$real_script_name \$fastcgi_script_name;\n        if (\$fastcgi_script_name ~ \"^(.+?\.php)(/.+)\$\") {\n        set \$real_script_name \$1;\n        #set \$path_info \$2;\n        }\n    fastcgi_param SCRIPT_FILENAME \$document_root\$real_script_name;\n    fastcgi_param SCRIPT_NAME \$real_script_name;\n    #fastcgi_param PATH_INFO \$path_info;\n    }")
     if [ -e "config/$rewrite.conf" ];then
-    	/bin/cp config/$rewrite.conf $web_install_dir/conf/rewrite/$rewrite.conf
+        /bin/cp config/$rewrite.conf $web_install_dir/conf/rewrite/$rewrite.conf
     else
-    	touch "$web_install_dir/conf/rewrite/$rewrite.conf"
+        touch "$web_install_dir/conf/rewrite/$rewrite.conf"
     fi
 fi
 }
@@ -361,11 +361,11 @@ Nginx_log() {
 while :
 do
     echo
-    read -p "Allow Nginx/Tengine/OpenResty access_log? [y/n]: " access_yn 
+    read -p "Allow Nginx/Tengine/OpenResty access_log? [y/n]: " access_yn
     if [[ ! $access_yn =~ ^[y,n]$ ]];then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
-        break 
+        break
     fi
 done
 if [ "$access_yn" == 'n' ]; then
@@ -506,7 +506,7 @@ printf "
 echo "`printf "%-30s" "Your domain:"`${CMSG}$domain${CEND}"
 echo "`printf "%-30s" "Virtualhost conf:"`${CMSG}$web_install_dir/conf/vhost/$domain.conf${CEND}"
 echo "`printf "%-30s" "Directory of:"`${CMSG}$vhostdir${CEND}"
-[ "$rewrite_yn" == 'y' ] && echo "`printf "%-30s" "Rewrite rule:"`${CMSG}$web_install_dir/conf/rewrite/$rewrite.conf${CEND}" 
+[ "$rewrite_yn" == 'y' ] && echo "`printf "%-30s" "Rewrite rule:"`${CMSG}$web_install_dir/conf/rewrite/$rewrite.conf${CEND}"
 [ "$nginx_ssl_yn" == 'y' ] && Print_ssl
 }
 
@@ -535,7 +535,7 @@ Create_apache_conf() {
 [ ! -d $apache_install_dir/conf/vhost ] && mkdir $apache_install_dir/conf/vhost
 cat > $apache_install_dir/conf/vhost/$domain.conf << EOF
 <VirtualHost *:80>
-    ServerAdmin admin@linuxeye.com 
+    ServerAdmin admin@linuxeye.com
     DocumentRoot "$vhostdir"
     ServerName $domain
     $Apache_Domain_alias
@@ -663,7 +663,7 @@ echo "`printf "%-30s" "Your domain:"`${CMSG}$domain${CEND}"
 echo "`printf "%-30s" "Nginx Virtualhost conf:"`${CMSG}$web_install_dir/conf/vhost/$domain.conf${CEND}"
 echo "`printf "%-30s" "Apache Virtualhost conf:"`${CMSG}$apache_install_dir/conf/vhost/$domain.conf${CEND}"
 echo "`printf "%-30s" "Directory of:"`${CMSG}$vhostdir${CEND}"
-[ "$rewrite_yn" == 'y' ] && echo "`printf "%-28s" "Rewrite rule:"`${CMSG}$web_install_dir/conf/rewrite/$rewrite.conf${CEND}" 
+[ "$rewrite_yn" == 'y' ] && echo "`printf "%-28s" "Rewrite rule:"`${CMSG}$web_install_dir/conf/rewrite/$rewrite.conf${CEND}"
 [ "$nginx_ssl_yn" == 'y' ] && Print_ssl
 }
 
@@ -715,7 +715,7 @@ Del_NGX_Vhost() {
         if [ -n "$Domain_List" ];then
             echo
             echo "Virtualhost list:"
-	    echo ${CMSG}$Domain_List${CEND}
+        echo ${CMSG}$Domain_List${CEND}
             while :
             do
                 echo
@@ -730,7 +730,7 @@ Del_NGX_Vhost() {
                         while :
                         do
                             echo
-                            read -p "Do you want to delete Virtul Host directory? [y/n]: " Del_Vhost_wwwroot_yn 
+                            read -p "Do you want to delete Virtul Host directory? [y/n]: " Del_Vhost_wwwroot_yn
                             if [[ ! $Del_Vhost_wwwroot_yn =~ ^[y,n]$ ]];then
                                 echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
                             else
@@ -759,7 +759,7 @@ Del_NGX_Vhost() {
 Del_Apache_Vhost() {
     if [ -e "$apache_install_dir/conf/httpd.conf" ];then
         if [ -e "$web_install_dir/sbin/nginx" ];then
-            rm -rf $apache_install_dir/conf/vhost/${domain}.conf 
+            rm -rf $apache_install_dir/conf/vhost/${domain}.conf
             /etc/init.d/httpd restart
         else
             Domain_List=`ls $apache_install_dir/conf/vhost | grep -v '0.conf' | sed "s@.conf@@g"`
@@ -813,7 +813,7 @@ Del_Tomcat_Vhost() {
     if [ -e "$tomcat_install_dir/conf/server.xml" ];then
         if [ -e "$web_install_dir/sbin/nginx" ];then
             if [ -n "`grep vhost-${domain} $tomcat_install_dir/conf/server.xml`" ];then
-                sed -i /vhost-${domain}/d $tomcat_install_dir/conf/server.xml 
+                sed -i /vhost-${domain}/d $tomcat_install_dir/conf/server.xml
                 rm -rf $tomcat_install_dir/conf/vhost/${domain}.xml
                 /etc/init.d/tomcat restart
             fi
@@ -844,7 +844,7 @@ Del_Tomcat_Vhost() {
                                     break
                                 fi
                             done
-    
+
                             if [ "$Del_Vhost_wwwroot_yn" == 'y' ];then
                                 echo "Press Ctrl+c to cancel or Press any key to continue..."
                                 char=`get_char`
@@ -857,7 +857,7 @@ Del_Tomcat_Vhost() {
                         break
                     fi
                 done
-    
+
             else
                 echo "${CWARNING}Virtualhost was not exist! ${CEND}"
             fi
@@ -866,7 +866,7 @@ Del_Tomcat_Vhost() {
 }
 
 if [ $# == 0 ];then
-    Add_Vhost 
+    Add_Vhost
 elif [ $# == 1 ];then
     case $1 in
     add)

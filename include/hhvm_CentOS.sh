@@ -12,7 +12,7 @@ Install_hhvm_CentOS() {
 cd $oneinstack_dir/src
 
 id -u $run_user >/dev/null 2>&1
-[ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 
+[ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user
 
 if [ "$CentOS_RHEL_version" == '7' ];then
     if [ -e /etc/yum.repos.d/epel.repo_bk ];then
@@ -43,7 +43,7 @@ if [ "$CentOS_RHEL_version" == '6' ];then
     if [ -e /etc/yum.repos.d/epel.repo_bk ];then
         /bin/mv /etc/yum.repos.d/epel.repo{_bk,}
     elif [ ! -e /etc/yum.repos.d/epel.repo ];then
-        cat > /etc/yum.repos.d/epel.repo << EOF 
+        cat > /etc/yum.repos.d/epel.repo << EOF
 [epel]
 name=Extra Packages for Enterprise Linux 6 - \$basearch
 #baseurl=http://download.fedoraproject.org/pub/epel/6/\$basearch
@@ -69,7 +69,7 @@ enabled=1
 gpgcheck=0
 EOF
     yum --disablerepo=epel -y install mysql mysql-devel mysql-libs
-    yum --disablerepo=epel -y install hhvm 
+    yum --disablerepo=epel -y install hhvm
 fi
 
 userdel -r nginx;userdel -r saslauth
@@ -137,9 +137,9 @@ post_max_size = 50000000
 EOF
 
 if [ -e "$web_install_dir/sbin/nginx" -a -e "/usr/bin/hhvm" -a ! -e "$php_install_dir" ];then
-    sed -i 's@/dev/shm/php-cgi.sock@/var/log/hhvm/sock@' $web_install_dir/conf/nginx.conf 
-    [ -z "`grep 'fastcgi_param SCRIPT_FILENAME' $web_install_dir/conf/nginx.conf`" ] && sed -i "s@fastcgi_index index.php;@&\n\t\tfastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;@" $web_install_dir/conf/nginx.conf 
-    sed -i 's@include fastcgi.conf;@include fastcgi_params;@' $web_install_dir/conf/nginx.conf 
+    sed -i 's@/dev/shm/php-cgi.sock@/var/log/hhvm/sock@' $web_install_dir/conf/nginx.conf
+    [ -z "`grep 'fastcgi_param SCRIPT_FILENAME' $web_install_dir/conf/nginx.conf`" ] && sed -i "s@fastcgi_index index.php;@&\n\t\tfastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;@" $web_install_dir/conf/nginx.conf
+    sed -i 's@include fastcgi.conf;@include fastcgi_params;@' $web_install_dir/conf/nginx.conf
     service nginx reload
 fi
 

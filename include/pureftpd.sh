@@ -34,12 +34,12 @@ if [ -e "$pureftpd_install_dir/sbin/pure-ftpwho" ];then
     chmod +x /etc/init.d/pureftpd
     [ "$OS" == 'CentOS' ] && { chkconfig --add pureftpd; chkconfig pureftpd on; }
     [[ $OS =~ ^Ubuntu$|^Debian$ ]] && { sed -i 's@^. /etc/rc.d/init.d/functions@. /lib/lsb/init-functions@' /etc/init.d/pureftpd; [ -z "`grep ^'# Default-Start' /etc/init.d/pureftpd`" ] && sed -i "s@^# chkconfig.*@# chkconfig&\n# Default-Start: 2 3 4 5\n# Default-Stop: 0 1 6@" /etc/init.d/pureftpd; update-rc.d pureftpd defaults; }
-    [ "$Debian_version" == '7' ] && sed -i 's@/var/lock/subsys/@/var/lock/@g' /etc/init.d/pureftpd 
+    [ "$Debian_version" == '7' ] && sed -i 's@/var/lock/subsys/@/var/lock/@g' /etc/init.d/pureftpd
     cd ../../
 
     /bin/cp config/pure-ftpd.conf $pureftpd_install_dir/etc
-    sed -i "s@^PureDB.*@PureDB	$pureftpd_install_dir/etc/pureftpd.pdb@" $pureftpd_install_dir/etc/pure-ftpd.conf
-    sed -i "s@^LimitRecursion.*@LimitRecursion	65535 8@" $pureftpd_install_dir/etc/pure-ftpd.conf
+    sed -i "s@^PureDB.*@PureDB  $pureftpd_install_dir/etc/pureftpd.pdb@" $pureftpd_install_dir/etc/pure-ftpd.conf
+    sed -i "s@^LimitRecursion.*@LimitRecursion  65535 8@" $pureftpd_install_dir/etc/pure-ftpd.conf
     ulimit -s unlimited
     service pureftpd start
 
@@ -50,7 +50,7 @@ if [ -e "$pureftpd_install_dir/sbin/pure-ftpwho" ];then
             iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
             service iptables save
         fi
-    elif [[ $OS =~ ^Ubuntu$|^Debian$ ]];then 
+    elif [[ $OS =~ ^Ubuntu$|^Debian$ ]];then
         if [ -z "`grep '20000:30000' /etc/iptables.up.rules`" ];then
             iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
             iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT

@@ -12,7 +12,7 @@ Install_GraphicsMagick() {
 cd $oneinstack_dir/src
 src_url=http://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/$GraphicsMagick_version/GraphicsMagick-$GraphicsMagick_version.tar.gz && Download_src
 
-tar xzf GraphicsMagick-$GraphicsMagick_version.tar.gz 
+tar xzf GraphicsMagick-$GraphicsMagick_version.tar.gz
 cd GraphicsMagick-$GraphicsMagick_version
 ./configure --prefix=/usr/local/graphicsmagick --enable-shared --enable-static
 make && make install
@@ -26,11 +26,11 @@ cd $oneinstack_dir/src
 if [ -e "$php_install_dir/bin/phpize" ];then
     if [ "`$php_install_dir/bin/php -r 'echo PHP_VERSION;' | awk -F. '{print $1}'`" == '7' ];then
         src_url=https://pecl.php.net/get/gmagick-2.0.2RC2.tgz && Download_src
-        tar xzf gmagick-2.0.2RC2.tgz 
+        tar xzf gmagick-2.0.2RC2.tgz
         cd gmagick-2.0.2RC2
     else
         src_url=http://pecl.php.net/get/gmagick-$gmagick_version.tgz && Download_src
-        tar xzf gmagick-$gmagick_version.tgz 
+        tar xzf gmagick-$gmagick_version.tgz
         cd gmagick-$gmagick_version
     fi
     make clean

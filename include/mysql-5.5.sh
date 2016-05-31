@@ -84,7 +84,7 @@ back_log = 300
 max_connections = 1000
 max_connect_errors = 6000
 open_files_limit = 65535
-table_open_cache = 128 
+table_open_cache = 128
 max_allowed_packet = 500M
 binlog_cache_size = 1M
 max_heap_table_size = 8M
@@ -106,7 +106,7 @@ ft_min_word_len = 4
 
 log_bin = mysql-bin
 binlog_format = mixed
-expire_logs_days = 7 
+expire_logs_days = 7
 
 log_error = $mysql_data_dir/mysql-error.log
 slow_query_log = 1
@@ -153,7 +153,7 @@ read_buffer = 4M
 write_buffer = 4M
 EOF
 
-sed -i "s@max_connections.*@max_connections = $(($Mem/2))@" /etc/my.cnf 
+sed -i "s@max_connections.*@max_connections = $(($Mem/2))@" /etc/my.cnf
 if [ $Mem -gt 1500 -a $Mem -le 2500 ];then
     sed -i 's@^thread_cache_size.*@thread_cache_size = 16@' /etc/my.cnf
     sed -i 's@^query_cache_size.*@query_cache_size = 16M@' /etc/my.cnf
@@ -185,7 +185,7 @@ $mysql_install_dir/scripts/mysql_install_db --user=mysql --basedir=$mysql_instal
 chown mysql.mysql -R $mysql_data_dir
 [ -d '/etc/mysql' ] && mv /etc/mysql{,_bk}
 service mysqld start
-[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$mysql_install_dir/bin:\$PATH" >> /etc/profile 
+[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$mysql_install_dir/bin:\$PATH" >> /etc/profile
 [ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep $mysql_install_dir /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$mysql_install_dir/bin:\1@" /etc/profile
 . /etc/profile
 
@@ -198,7 +198,7 @@ $mysql_install_dir/bin/mysql -uroot -p$dbrootpwd -e "drop database test;"
 $mysql_install_dir/bin/mysql -uroot -p$dbrootpwd -e "reset master;"
 rm -rf /etc/ld.so.conf.d/{mysql,mariadb,percona}*.conf
 [ -e "$mysql_install_dir/my.cnf" ] && rm -rf $mysql_install_dir/my.cnf
-echo "$mysql_install_dir/lib" > /etc/ld.so.conf.d/mysql.conf 
+echo "$mysql_install_dir/lib" > /etc/ld.so.conf.d/mysql.conf
 ldconfig
 service mysqld stop
 }

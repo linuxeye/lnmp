@@ -65,5 +65,5 @@ elif [ "$backup_destination" == 'local,remote' ];then
     [ -n "`echo $backup_content | grep -ow web`" ] && WEB_Local_BK
     [ -n "`echo $backup_content | grep -ow db`" ] && DB_Remote_BK
     [ -n "`echo $backup_content | grep -ow web`" ] && WEB_Remote_BK
-    ./mabs.sh -c config_bakcup.txt -T -1 | tee mabs.log	
+    ./mabs.sh -c config_bakcup.txt -T -1 | tee mabs.log
 fi

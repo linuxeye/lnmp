@@ -44,7 +44,7 @@ cd mhash-$mhash_version
 ./configure
 make && make install
 cd ..
-rm -rf mhash-$mhash_version 
+rm -rf mhash-$mhash_version
 
 echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
 ldconfig
@@ -58,14 +58,14 @@ ldconfig
 ./configure
 make && make install
 cd ..
-rm -rf mcrypt-$mcrypt_version 
+rm -rf mcrypt-$mcrypt_version
 
 id -u $run_user >/dev/null 2>&1
-[ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 
+[ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user
 
 # Problem building php-5.3 with openssl
 if [ "$Debian_version" == '8' -o "$Ubuntu_version" == '16' ];then
-    if [ -e '/usr/local/openssl/lib/libcrypto.a' ];then 
+    if [ -e '/usr/local/openssl/lib/libcrypto.a' ];then
         OpenSSL_args='--with-openssl=/usr/local/openssl'
     else
         src_url=http://mirrors.linuxeye.com/oneinstack/src/openssl-1.0.0s.tar.gz && Download_src
@@ -81,7 +81,7 @@ if [ "$Debian_version" == '8' -o "$Ubuntu_version" == '16' ];then
             Curl_args='--with-curl=/usr/local/curl'
         else
             src_url=http://mirrors.linuxeye.com/oneinstack/src/curl-7.29.0.tar.gz && Download_src
-            tar xzf curl-7.29.0.tar.gz 
+            tar xzf curl-7.29.0.tar.gz
             cd curl-7.29.0
             LDFLAGS="-Wl,-rpath=/usr/local/openssl/lib" ./configure --prefix=/usr/local/curl --with-ssl=/usr/local/openssl
             make && make install
@@ -97,7 +97,7 @@ fi
 tar xzf php-$php_3_version.tar.gz
 patch -d php-$php_3_version -p0 < fpm-race-condition.patch
 cd php-$php_3_version
-patch -p1 < ../php5.3patch 
+patch -p1 < ../php5.3patch
 patch -p1 < ../debian_patches_disable_SSLv2_for_openssl_1_0_0.patch
 make clean
 [ ! -d "$php_install_dir" ] && mkdir -p $php_install_dir
@@ -136,7 +136,7 @@ else
     kill -9 $$
 fi
 
-[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$php_install_dir/bin:\$PATH" >> /etc/profile 
+[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$php_install_dir/bin:\$PATH" >> /etc/profile
 [ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep $php_install_dir /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$php_install_dir/bin:\1@" /etc/profile
 . /etc/profile
 
@@ -178,10 +178,10 @@ if [[ ! $Apache_version =~ ^[1-2]$ ]] && [ ! -e "$apache_install_dir/bin/apxs" ]
 [global]
 pid = run/php-fpm.pid
 error_log = log/php-fpm.log
-log_level = warning 
+log_level = warning
 
 emergency_restart_threshold = 30
-emergency_restart_interval = 60s 
+emergency_restart_interval = 60s
 process_control_timeout = 5s
 daemonize = yes
 
@@ -193,11 +193,11 @@ daemonize = yes
 listen = /dev/shm/php-cgi.sock
 listen.backlog = -1
 listen.allowed_clients = 127.0.0.1
-listen.owner = $run_user 
-listen.group = $run_user 
+listen.owner = $run_user
+listen.group = $run_user
 listen.mode = 0666
-user = $run_user 
-group = $run_user 
+user = $run_user
+group = $run_user
 
 pm = dynamic
 pm.max_children = 12
@@ -222,7 +222,7 @@ env[TMPDIR] = /tmp
 env[TEMP] = /tmp
 EOF
 
-    [ -d "/run/shm" -a ! -e "/dev/shm" ] && sed -i 's@/dev/shm@/run/shm@' $php_install_dir/etc/php-fpm.conf $oneinstack_dir/vhost.sh $oneinstack_dir/config/nginx.conf 
+    [ -d "/run/shm" -a ! -e "/dev/shm" ] && sed -i 's@/dev/shm@/run/shm@' $php_install_dir/etc/php-fpm.conf $oneinstack_dir/vhost.sh $oneinstack_dir/config/nginx.conf
 
     if [ $Mem -le 3000 ];then
         sed -i "s@^pm.max_children.*@pm.max_children = $(($Mem/3/20))@" $php_install_dir/etc/php-fpm.conf
@@ -251,7 +251,7 @@ EOF
         sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 80@" $php_install_dir/etc/php-fpm.conf
     fi
 
-    #[ "$Web_yn" == 'n' ] && sed -i "s@^listen =.*@listen = $IPADDR:9000@" $php_install_dir/etc/php-fpm.conf 
+    #[ "$Web_yn" == 'n' ] && sed -i "s@^listen =.*@listen = $IPADDR:9000@" $php_install_dir/etc/php-fpm.conf
     service php-fpm start
 
 elif [[ $Apache_version =~ ^[1-2]$ ]] || [ -e "$apache_install_dir/bin/apxs" ];then

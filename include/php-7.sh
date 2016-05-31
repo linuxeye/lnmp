@@ -56,9 +56,9 @@ cd ..
 rm -rf mcrypt-$mcrypt_version
 
 id -u $run_user >/dev/null 2>&1
-[ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 
+[ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user
 
-tar xzf php-$php_7_version.tar.gz 
+tar xzf php-$php_7_version.tar.gz
 cd php-$php_7_version
 make clean
 ./buildconf
@@ -98,7 +98,7 @@ else
     kill -9 $$
 fi
 
-[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$php_install_dir/bin:\$PATH" >> /etc/profile 
+[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$php_install_dir/bin:\$PATH" >> /etc/profile
 [ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep $php_install_dir /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$php_install_dir/bin:\1@" /etc/profile
 . /etc/profile
 
@@ -159,10 +159,10 @@ if [[ ! $Apache_version =~ ^[1-2]$ ]] && [ ! -e "$apache_install_dir/bin/apxs" ]
 [global]
 pid = run/php-fpm.pid
 error_log = log/php-fpm.log
-log_level = warning 
+log_level = warning
 
 emergency_restart_threshold = 30
-emergency_restart_interval = 60s 
+emergency_restart_interval = 60s
 process_control_timeout = 5s
 daemonize = yes
 
@@ -174,16 +174,16 @@ daemonize = yes
 listen = /dev/shm/php-cgi.sock
 listen.backlog = -1
 listen.allowed_clients = 127.0.0.1
-listen.owner = $run_user 
-listen.group = $run_user 
+listen.owner = $run_user
+listen.group = $run_user
 listen.mode = 0666
-user = $run_user 
-group = $run_user 
+user = $run_user
+group = $run_user
 
 pm = dynamic
-pm.max_children = 12 
-pm.start_servers = 8 
-pm.min_spare_servers = 6 
+pm.max_children = 12
+pm.start_servers = 8
+pm.min_spare_servers = 6
 pm.max_spare_servers = 12
 pm.max_requests = 2048
 pm.process_idle_timeout = 10s
@@ -203,7 +203,7 @@ env[TMPDIR] = /tmp
 env[TEMP] = /tmp
 EOF
 
-    [ -d "/run/shm" -a ! -e "/dev/shm" ] && sed -i 's@/dev/shm@/run/shm@' $php_install_dir/etc/php-fpm.conf $oneinstack_dir/vhost.sh $oneinstack_dir/config/nginx.conf 
+    [ -d "/run/shm" -a ! -e "/dev/shm" ] && sed -i 's@/dev/shm@/run/shm@' $php_install_dir/etc/php-fpm.conf $oneinstack_dir/vhost.sh $oneinstack_dir/config/nginx.conf
 
     if [ $Mem -le 3000 ];then
         sed -i "s@^pm.max_children.*@pm.max_children = $(($Mem/3/20))@" $php_install_dir/etc/php-fpm.conf
@@ -232,7 +232,7 @@ EOF
         sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 80@" $php_install_dir/etc/php-fpm.conf
     fi
 
-    #[ "$Web_yn" == 'n' ] && sed -i "s@^listen =.*@listen = $IPADDR:9000@" $php_install_dir/etc/php-fpm.conf 
+    #[ "$Web_yn" == 'n' ] && sed -i "s@^listen =.*@listen = $IPADDR:9000@" $php_install_dir/etc/php-fpm.conf
     service php-fpm start
 
 elif [[ $Apache_version =~ ^[1-2]$ ]] || [ -e "$apache_install_dir/bin/apxs" ];then

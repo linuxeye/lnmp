@@ -2,31 +2,31 @@
 #
 # nginx - this script starts and stops the nginx daemon
 #
-# chkconfig:   - 85 15 
+# chkconfig:   - 85 15
 # description:  Nginx is an HTTP(S) server, HTTP(S) reverse \
 #               proxy and IMAP/POP3 proxy server
 # processname: nginx
-# config:      /usr/local/nginx/conf/nginx.conf 
+# config:      /usr/local/nginx/conf/nginx.conf
 # pidfile:     /var/run/nginx.pid
- 
+
 # Source function library.
 . /etc/rc.d/init.d/functions
- 
+
 # Source networking configuration.
 . /etc/sysconfig/network
- 
+
 # Check that networking is up.
 [ "$NETWORKING" = "no" ] && exit 0
- 
+
 nginx="/usr/local/nginx/sbin/nginx"
 prog=$(basename $nginx)
- 
+
 NGINX_CONF_FILE="/usr/local/nginx/conf/nginx.conf"
- 
+
 [ -f /etc/sysconfig/nginx ] && . /etc/sysconfig/nginx
- 
+
 lockfile=/var/lock/subsys/nginx
- 
+
 make_dirs() {
    # make required directories
    user=`$nginx -V 2>&1 | grep "configure arguments:" | sed 's/[^*]*--user=\([^ ]*\).*/\1/g' -`
@@ -44,7 +44,7 @@ make_dirs() {
        fi
    done
 }
- 
+
 start() {
     [ -x $nginx ] || exit 5
     [ -f $NGINX_CONF_FILE ] || exit 6
@@ -56,7 +56,7 @@ start() {
     [ $retval -eq 0 ] && touch $lockfile
     return $retval
 }
- 
+
 stop() {
     echo -n $"Stopping $prog: "
     killproc $prog -QUIT
@@ -65,14 +65,14 @@ stop() {
     [ $retval -eq 0 ] && rm -f $lockfile
     return $retval
 }
- 
+
 restart() {
     configtest || return $?
     stop
-    sleep 3 
+    sleep 3
     start
 }
- 
+
 reload() {
     configtest || return $?
     echo -n $"Reloading $prog: "
@@ -80,23 +80,23 @@ reload() {
     RETVAL=$?
     echo
 }
- 
+
 force_reload() {
     restart
 }
- 
+
 configtest() {
   $nginx -t -c $NGINX_CONF_FILE
 }
- 
+
 rh_status() {
     status $prog
 }
- 
+
 rh_status_q() {
     rh_status >/dev/null 2>&1
 }
- 
+
 case "$1" in
     start)
         rh_status_q && exit 0

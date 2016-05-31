@@ -13,8 +13,8 @@ cd $oneinstack_dir/src
 src_url=https://github.com/eaccelerator/eaccelerator/tarball/master && Download_src
 
 /bin/mv master eaccelerator-eaccelerator-42067ac.tar.gz
-tar xzf eaccelerator-eaccelerator-42067ac.tar.gz 
-cd eaccelerator-eaccelerator-42067ac 
+tar xzf eaccelerator-eaccelerator-42067ac.tar.gz
+cd eaccelerator-eaccelerator-42067ac
 make clean
 $php_install_dir/bin/phpize
 ./configure --enable-eaccelerator=shared --with-php-config=$php_install_dir/bin/php-config

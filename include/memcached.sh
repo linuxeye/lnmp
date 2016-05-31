@@ -26,10 +26,10 @@ if [ -d "$memcached_install_dir/include/memcached" ];then
     cd ..
     rm -rf memcached-$memcached_version
     ln -s $memcached_install_dir/bin/memcached /usr/bin/memcached
-    [ "$OS" == 'CentOS' ] && { /bin/cp ../init.d/Memcached-init-CentOS /etc/init.d/memcached; chkconfig --add memcached; chkconfig memcached on; } 
-    [[ $OS =~ ^Ubuntu$|^Debian$ ]] && { /bin/cp ../init.d/Memcached-init-Ubuntu /etc/init.d/memcached; update-rc.d memcached defaults; } 
+    [ "$OS" == 'CentOS' ] && { /bin/cp ../init.d/Memcached-init-CentOS /etc/init.d/memcached; chkconfig --add memcached; chkconfig memcached on; }
+    [[ $OS =~ ^Ubuntu$|^Debian$ ]] && { /bin/cp ../init.d/Memcached-init-Ubuntu /etc/init.d/memcached; update-rc.d memcached defaults; }
     sed -i "s@/usr/local/memcached@$memcached_install_dir@g" /etc/init.d/memcached
-    [ -n "`grep 'CACHESIZE=' /etc/init.d/memcached`" ] && sed -i "s@^CACHESIZE=.*@CACHESIZE=`expr $Mem / 8`@" /etc/init.d/memcached 
+    [ -n "`grep 'CACHESIZE=' /etc/init.d/memcached`" ] && sed -i "s@^CACHESIZE=.*@CACHESIZE=`expr $Mem / 8`@" /etc/init.d/memcached
     [ -n "`grep 'start_instance default 256;' /etc/init.d/memcached`" ] && sed -i "s@start_instance default 256;@start_instance default `expr $Mem / 8`;@" /etc/init.d/memcached
     service memcached start
 else
@@ -52,8 +52,8 @@ if [ -e "$php_install_dir/bin/phpize" ];then
         cd pecl-memcache-php7
     else
         src_url=http://pecl.php.net/get/memcache-$memcache_pecl_version.tgz && Download_src
-        tar xzf memcache-$memcache_pecl_version.tgz 
-        cd memcache-$memcache_pecl_version 
+        tar xzf memcache-$memcache_pecl_version.tgz
+        cd memcache-$memcache_pecl_version
     fi
     make clean
     $php_install_dir/bin/phpize
@@ -68,7 +68,7 @@ EOF
         cd ..
         rm -rf memcache-$memcache_pecl_version
     else
-        echo "${CFAILURE}PHP memcache module install failed, Please contact the author! ${CEND}" 
+        echo "${CFAILURE}PHP memcache module install failed, Please contact the author! ${CEND}"
     fi
 fi
 cd ..
@@ -81,16 +81,16 @@ if [ -e "$php_install_dir/bin/phpize" ];then
     # php memcached extension
     tar xzf libmemcached-$libmemcached_version.tar.gz
     cd libmemcached-$libmemcached_version
-    [ "$OS" == 'CentOS' ] && yum -y install cyrus-sasl-devel 
-    [[ $OS =~ ^Ubuntu$|^Debian$ ]] && sed -i "s@lthread -pthread -pthreads@lthread -lpthread -pthreads@" ./configure 
+    [ "$OS" == 'CentOS' ] && yum -y install cyrus-sasl-devel
+    [[ $OS =~ ^Ubuntu$|^Debian$ ]] && sed -i "s@lthread -pthread -pthreads@lthread -lpthread -pthreads@" ./configure
     ./configure --with-memcached=$memcached_install_dir
     make && make install
     cd ..
     rm -rf libmemcached-$libmemcached_version
 
     if [ "`$php_install_dir/bin/php -r 'echo PHP_VERSION;' | awk -F. '{print $1}'`" == '7' ];then
-        #git clone -b php7 https://github.com/php-memcached-dev/php-memcached.git 
-        #cd php-memcached 
+        #git clone -b php7 https://github.com/php-memcached-dev/php-memcached.git
+        #cd php-memcached
         src_url=http://mirrors.linuxeye.com/oneinstack/src/php-memcached-php7.tgz && Download_src
         tar xzf php-memcached-php7.tgz
         cd php-memcached-php7
@@ -113,7 +113,7 @@ EOF
         rm -rf memcached-$memcached_pecl_version
         [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
     else
-        echo "${CFAILURE}PHP memcached module install failed, Please contact the author! ${CEND}" 
+        echo "${CFAILURE}PHP memcached module install failed, Please contact the author! ${CEND}"
     fi
 fi
 cd ..

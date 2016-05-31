@@ -15,7 +15,7 @@ cd $oneinstack_dir/src
 
 LIBC_VERSION=`getconf -a | grep GNU_LIBC_VERSION | awk '{print $NF}'`
 LIBC_YN=`echo "$LIBC_VERSION < 2.14" | bc`
-[ $LIBC_YN == '1' ] && GLIBC_FLAG=linux || GLIBC_FLAG=linux-glibc_214 
+[ $LIBC_YN == '1' ] && GLIBC_FLAG=linux || GLIBC_FLAG=linux-glibc_214
 
 src_url=$DOWN_ADDR/mariadb-${mariadb_5_5_version}/bintar-${GLIBC_FLAG}-$SYS_BIT_a/mariadb-${mariadb_5_5_version}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz && Download_src
 
@@ -23,9 +23,9 @@ id -u mysql >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin mysql
 
 mkdir -p $mariadb_data_dir;chown mysql.mysql -R $mariadb_data_dir
-tar zxf mariadb-${mariadb_5_5_version}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz 
+tar zxf mariadb-${mariadb_5_5_version}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
 [ ! -d "$mariadb_install_dir" ] && mkdir -p $mariadb_install_dir
-mv mariadb-${mariadb_5_5_version}-*-${SYS_BIT_b}/* $mariadb_install_dir 
+mv mariadb-${mariadb_5_5_version}-*-${SYS_BIT_b}/* $mariadb_install_dir
 if [ "$je_tc_malloc" == '1' ];then
      sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' $mariadb_install_dir/bin/mysqld_safe
 elif [ "$je_tc_malloc" == '2' ];then
@@ -77,7 +77,7 @@ back_log = 300
 max_connections = 1000
 max_connect_errors = 6000
 open_files_limit = 65535
-table_open_cache = 128 
+table_open_cache = 128
 max_allowed_packet = 500M
 binlog_cache_size = 1M
 max_heap_table_size = 8M
@@ -147,7 +147,7 @@ read_buffer = 4M
 write_buffer = 4M
 EOF
 
-sed -i "s@max_connections.*@max_connections = $(($Mem/2))@" /etc/my.cnf 
+sed -i "s@max_connections.*@max_connections = $(($Mem/2))@" /etc/my.cnf
 if [ $Mem -gt 1500 -a $Mem -le 2500 ];then
     sed -i 's@^thread_cache_size.*@thread_cache_size = 16@' /etc/my.cnf
     sed -i 's@^query_cache_size.*@query_cache_size = 16M@' /etc/my.cnf
@@ -179,7 +179,7 @@ $mariadb_install_dir/scripts/mysql_install_db --user=mysql --basedir=$mariadb_in
 chown mysql.mysql -R $mariadb_data_dir
 [ -d '/etc/mysql' ] && mv /etc/mysql{,_bk}
 service mysqld start
-[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$mariadb_install_dir/bin:\$PATH" >> /etc/profile 
+[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$mariadb_install_dir/bin:\$PATH" >> /etc/profile
 [ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep $mariadb_install_dir /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$mariadb_install_dir/bin:\1@" /etc/profile
 . /etc/profile
 
@@ -191,7 +191,7 @@ $mariadb_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.proxies
 $mariadb_install_dir/bin/mysql -uroot -p$dbrootpwd -e "drop database test;"
 $mariadb_install_dir/bin/mysql -uroot -p$dbrootpwd -e "reset master;"
 rm -rf /etc/ld.so.conf.d/{mysql,mariadb,percona}*.conf
-echo "$mariadb_install_dir/lib" > /etc/ld.so.conf.d/mariadb.conf 
+echo "$mariadb_install_dir/lib" > /etc/ld.so.conf.d/mariadb.conf
 ldconfig
 service mysqld stop
 }

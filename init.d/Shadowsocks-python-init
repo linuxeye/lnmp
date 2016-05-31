@@ -15,7 +15,7 @@ Shadowsocks_USAGE="Usage: $0 {\e[00;32mstart\e[00m|\e[00;31mstop\e[00m|\e[00;32m
 SHUTDOWN_WAIT=20
 
 Shadowsocks_pid(){
-	echo `ps -ef | grep $Shadowsocks_bin | grep -v grep | tr -s " "|cut -d" " -f2`
+  echo `ps -ef | grep $Shadowsocks_bin | grep -v grep | tr -s " "|cut -d" " -f2`
 }
 
 start() {
@@ -26,9 +26,9 @@ start() {
     $Shadowsocks_bin -c $Shadowsocks_conf -d start
     RETVAL=$?
     if [ "$RETVAL" = "0" ]; then
-    	echo -e "\e[00;32mStarting Shadowsocks\e[00m"
+      echo -e "\e[00;32mStarting Shadowsocks\e[00m"
     else
-    	echo -e "\e[00;32mShadowsocks start Failed\e[00m"
+      echo -e "\e[00;32mShadowsocks start Failed\e[00m"
     fi
     status
   fi
@@ -70,10 +70,10 @@ stop(){
 }
 
 case $1 in
-	start)
+  start)
           start
         ;;
-        stop)  
+        stop)
           stop
         ;;
         restart)
@@ -81,10 +81,10 @@ case $1 in
           start
         ;;
         status)
-	  status
+    status
         ;;
         *)
-	  echo -e $Shadowsocks_USAGE
+    echo -e $Shadowsocks_USAGE
         ;;
-esac    
+esac
 exit 0

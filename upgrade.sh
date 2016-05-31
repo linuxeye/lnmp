@@ -13,7 +13,7 @@ clear
 printf "
 #######################################################################
 #       OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+      #
-#       upgrade Web,Database,PHP,Redis,phpMyAdmin for OneinStack      # 
+#       upgrade Web,Database,PHP,Redis,phpMyAdmin for OneinStack      #
 #       For more information please visit http://oneinstack.com       #
 #######################################################################
 "
@@ -24,7 +24,7 @@ sed -i "s@^oneinstack_dir.*@oneinstack_dir=`pwd`@" ./options.conf
 . ./options.conf
 . ./include/color.sh
 . ./include/check_os.sh
-. ./include/check_db.sh
+. ./include/check_dir.sh
 . ./include/download.sh
 . ./include/get_char.sh
 . ./include/upgrade_web.sh
@@ -34,9 +34,9 @@ sed -i "s@^oneinstack_dir.*@oneinstack_dir=`pwd`@" ./options.conf
 . ./include/upgrade_phpmyadmin.sh
 
 # Check if user is root
-[ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; } 
+[ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
 
-# get the IP information 
+# get the IP information
 PUBLIC_IPADDR=`./include/get_public_ipaddr.py`
 [ "`./include/get_ipaddr_state.py $PUBLIC_IPADDR`" == '\u4e2d\u56fd' ] && IPADDR_STATE=CN
 
@@ -116,23 +116,23 @@ elif [ $# == 1 ];then
             Upgrade_OpenResty
         fi
         ;;
-    
+
     db)
         Upgrade_DB
         ;;
-    
+
     php)
         Upgrade_PHP
         ;;
-    
+
     redis)
         Upgrade_Redis
         ;;
-    
+
     phpmyadmin)
         Upgrade_phpMyAdmin
         ;;
-    
+
     *)
         Usage
         ;;

@@ -77,7 +77,7 @@ do
             DB_URL=$DOWN_ADDR/MySQL-`echo $NEW_DB_version | awk -F. '{print $1"."$2}'`/$DB_name.tar.gz
         fi
             [ ! -e "$DB_name.tar.gz" ] && wget --no-check-certificate -c $DB_URL > /dev/null 2>&1
-            
+
             if [ -e "$DB_name.tar.gz" ];then
                 echo "Download [${CMSG}$DB_name.tar.gz${CEND}] successfully! "
             else
@@ -93,7 +93,7 @@ if [ -e "$DB_name.tar.gz" ];then
     echo "[${CMSG}$DB_name.tar.gz${CEND}] found"
     echo "Press Ctrl+c to cancel or Press any key to continue..."
     char=`get_char`
-    if [ "$DB" == 'MariaDB' ];then 
+    if [ "$DB" == 'MariaDB' ];then
         service mysqld stop
         mv ${mariadb_install_dir}{,_old_`date +"%Y%m%d_%H%M%S"`}
         mv ${mariadb_data_dir}{,_old_`date +"%Y%m%d_%H%M%S"`}
@@ -109,16 +109,16 @@ if [ -e "$DB_name.tar.gz" ];then
         $mariadb_install_dir/scripts/mysql_install_db --user=mysql --basedir=$mariadb_install_dir --datadir=$mariadb_data_dir
         chown mysql.mysql -R $mariadb_data_dir
         service mysqld start
-        $mariadb_install_dir/bin/mysql < DB_all_backup_$(date +"%Y%m%d").sql 
+        $mariadb_install_dir/bin/mysql < DB_all_backup_$(date +"%Y%m%d").sql
         service mysqld restart
         $mariadb_install_dir/bin/mysql -uroot -p${dbrootpwd} -e "drop database test;" >/dev/null 2>&1
         $mariadb_install_dir/bin/mysql -uroot -p${dbrootpwd} -e "reset master;" >/dev/null 2>&1
         [ $? -eq 0 ] &&  echo "You have ${CMSG}successfully${CEND} upgrade from ${CMSG}$OLD_DB_version${CEND} to ${CMSG}$NEW_DB_version${CEND}"
     elif [ "$DB" == 'Percona' ];then
-        tar zxf $DB_name.tar.gz 
-    	cd $DB_name
-    	make clean
-    	if [ "`echo $NEW_DB_version | awk -F. '{print $1"."$2}'`" == '5.5' ];then
+        tar zxf $DB_name.tar.gz
+        cd $DB_name
+        make clean
+        if [ "`echo $NEW_DB_version | awk -F. '{print $1"."$2}'`" == '5.5' ];then
             cmake . -DCMAKE_INSTALL_PREFIX=$percona_install_dir \
 -DMYSQL_DATADIR=$percona_data_dir \
 -DSYSCONFDIR=/etc \
@@ -191,6 +191,6 @@ $EXE_LINKER
         $mysql_install_dir/bin/mysql -uroot -p${dbrootpwd} -e "drop database test;" >/dev/null 2>&1
         $mysql_install_dir/bin/mysql -uroot -p${dbrootpwd} -e "reset master;" >/dev/null 2>&1
         [ $? -eq 0 ] &&  echo "You have ${CMSG}successfully${CEND} upgrade from ${CMSG}$OLD_DB_version${CEND} to ${CMSG}$NEW_DB_version${CEND}"
-    fi 
+    fi
 fi
 }

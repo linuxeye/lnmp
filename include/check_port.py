@@ -5,7 +5,7 @@ def IsOpen(ip,port):
     try:
         s.connect((ip,int(port)))
         s.shutdown(2)
-        print True 
+        print True
     except:
         print False
 if __name__ == '__main__':

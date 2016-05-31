@@ -10,10 +10,10 @@
 
 Install_Apache-2-2() {
 cd $oneinstack_dir/src
-src_url=http://mirrors.linuxeye.com/apache/httpd/httpd-$apache_2_version.tar.gz && Download_src 
+src_url=http://mirrors.linuxeye.com/apache/httpd/httpd-$apache_2_version.tar.gz && Download_src
 
 id -u $run_user >/dev/null 2>&1
-[ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 
+[ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user
 
 tar xzf httpd-$apache_2_version.tar.gz
 cd httpd-$apache_2_version
@@ -31,7 +31,7 @@ else
     kill -9 $$
 fi
 
-[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$apache_install_dir/bin:\$PATH" >> /etc/profile 
+[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$apache_install_dir/bin:\$PATH" >> /etc/profile
 [ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep $apache_install_dir /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$apache_install_dir/bin:\1@" /etc/profile
 . /etc/profile
 
@@ -48,7 +48,7 @@ if [ "$Nginx_version" == '4' -a ! -e "$web_install_dir/sbin/nginx" ];then
     sed -i 's/^#ServerName www.example.com:80/ServerName 0.0.0.0:80/' $apache_install_dir/conf/httpd.conf
     TMP_PORT=80
     TMP_IP=$IPADDR
-elif [[ $Nginx_version =~ ^[1-3]$ ]] || [ -e "$web_install_dir/sbin/nginx" ];then 
+elif [[ $Nginx_version =~ ^[1-3]$ ]] || [ -e "$web_install_dir/sbin/nginx" ];then
     sed -i 's/^#ServerName www.example.com:80/ServerName 127.0.0.1:88/' $apache_install_dir/conf/httpd.conf
     sed -i 's@^Listen.*@Listen 127.0.0.1:88@' $apache_install_dir/conf/httpd.conf
     TMP_PORT=88
@@ -85,7 +85,7 @@ NameVirtualHost *:$TMP_PORT
 <VirtualHost *:$TMP_PORT>
     ServerAdmin admin@linuxeye.com
     DocumentRoot "$wwwroot_dir/default"
-    ServerName $TMP_IP 
+    ServerName $TMP_IP
     ErrorLog "$wwwlogs_dir/error_apache.log"
     CustomLog "$wwwlogs_dir/access_apache.log" common
 <Directory "$wwwroot_dir/default">
@@ -100,7 +100,7 @@ NameVirtualHost *:$TMP_PORT
     SetHandler server-status
     Order Deny,Allow
     Deny from all
-    Allow from 127.0.0.1 
+    Allow from 127.0.0.1
 </Location>
 </VirtualHost>
 EOF

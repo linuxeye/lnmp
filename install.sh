@@ -24,13 +24,12 @@ sed -i "s@^oneinstack_dir.*@oneinstack_dir=`pwd`@" ./options.conf
 . ./options.conf
 . ./include/color.sh
 . ./include/check_os.sh
-. ./include/check_db.sh
-. ./include/check_web.sh
+. ./include/check_dir.sh
 . ./include/download.sh
 . ./include/get_char.sh
 
 # Check if user is root
-[ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; } 
+[ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
 
 # get the IP information
 IPADDR=`./include/get_ipaddr.py`
@@ -44,7 +43,7 @@ mkdir -p $wwwroot_dir/default $wwwlogs_dir
 if [ -e "/etc/ssh/sshd_config" ];then
     [ -z "`grep ^Port /etc/ssh/sshd_config`" ] && ssh_port=22 || ssh_port=`grep ^Port /etc/ssh/sshd_config | awk '{print $2}'`
     while :; do echo
-        read -p "Please input SSH port(Default: $ssh_port): " SSH_PORT 
+        read -p "Please input SSH port(Default: $ssh_port): " SSH_PORT
         [ -z "$SSH_PORT" ] && SSH_PORT=$ssh_port
         if [ $SSH_PORT -eq 22 >/dev/null 2>&1 -o $SSH_PORT -gt 1024 >/dev/null 2>&1 -a $SSH_PORT -lt 65535 >/dev/null 2>&1 ];then
             break
@@ -52,11 +51,11 @@ if [ -e "/etc/ssh/sshd_config" ];then
             echo "${CWARNING}input error! Input range: 22,1025~65534${CEND}"
         fi
     done
-    
+
     if [ -z "`grep ^Port /etc/ssh/sshd_config`" -a "$SSH_PORT" != '22' ];then
         sed -i "s@^#Port.*@&\nPort $SSH_PORT@" /etc/ssh/sshd_config
     elif [ -n "`grep ^Port /etc/ssh/sshd_config`" ];then
-        sed -i "s@^Port.*@Port $SSH_PORT@" /etc/ssh/sshd_config 
+        sed -i "s@^Port.*@Port $SSH_PORT@" /etc/ssh/sshd_config
     fi
 fi
 
@@ -96,7 +95,7 @@ while :; do echo
                 if [[ ! $Apache_version =~ ^[1-3]$ ]];then
                     echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
                 else
-                    [ "$Apache_version" != '3' -a -e "$apache_install_dir/conf/httpd.conf" ] && { echo "${CWARNING}Aapche already installed! ${CEND}"; Apache_version=Other; }  
+                    [ "$Apache_version" != '3' -a -e "$apache_install_dir/conf/httpd.conf" ] && { echo "${CWARNING}Aapche already installed! ${CEND}"; Apache_version=Other; }
                     break
                 fi
             done
@@ -111,7 +110,7 @@ while :; do echo
             #    if [[ ! $Tomcat_version =~ ^[1-3]$ ]];then
             #        echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
             #    else
-            #        [ "$Tomcat_version" != '3' -a -e "$tomcat_install_dir/conf/server.xml" ] && { echo "${CWARNING}Tomcat already installed! ${CEND}" ; Tomcat_version=Other; }  
+            #        [ "$Tomcat_version" != '3' -a -e "$tomcat_install_dir/conf/server.xml" ] && { echo "${CWARNING}Tomcat already installed! ${CEND}" ; Tomcat_version=Other; }
             #        if [ "$Tomcat_version" == '1' ];then
             #            while :; do echo
             #                echo 'Please select JDK version:'
@@ -207,11 +206,11 @@ while :; do echo
                     echo "${CWARNING}input error! Please only input number 1,2,3,4,5${CEND}"
                 else
                     while :; do echo
-                        read -p "Do you want to install opcode cache of the PHP? [y/n]: " PHP_cache_yn 
+                        read -p "Do you want to install opcode cache of the PHP? [y/n]: " PHP_cache_yn
                         if [[ ! $PHP_cache_yn =~ ^[y,n]$ ]];then
                             echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
                         else
-                            if [ "$PHP_cache_yn" == 'y' ];then	
+                            if [ "$PHP_cache_yn" == 'y' ];then
                                 if [ $PHP_version == 1 ];then
                                     while :; do
                                         echo 'Please select a opcode cache of the PHP:'
@@ -306,7 +305,7 @@ while :; do echo
                             fi
                         done
                     fi
-        
+
                     if [ "$PHP_version" != '5' ];then
                         while :; do echo
                             read -p "Do you want to install ionCube? [y/n]: " ionCube_yn
@@ -317,7 +316,7 @@ while :; do echo
                             fi
                         done
                     fi
-        
+
                     # ImageMagick or GraphicsMagick
                     while :; do echo
                         read -p "Do you want to install ImageMagick or GraphicsMagick? [y/n]: " Magick_yn
@@ -368,7 +367,7 @@ if [[ $PHP_version =~ ^[1-5]$ ]] || [ -e "$php_install_dir/bin/phpize" ];then
         if [[ ! $phpMyAdmin_yn =~ ^[y,n]$ ]];then
             echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
         else
-            [ "$phpMyAdmin_yn" == 'y' -a -d "$wwwroot_dir/default/phpMyAdmin" ] && { echo "${CWARNING}phpMyAdmin already installed! ${CEND}"; phpMyAdmin_yn=Other; } 
+            [ "$phpMyAdmin_yn" == 'y' -a -d "$wwwroot_dir/default/phpMyAdmin" ] && { echo "${CWARNING}phpMyAdmin already installed! ${CEND}"; phpMyAdmin_yn=Other; }
             break
         fi
     done
@@ -394,7 +393,7 @@ while :; do echo
     fi
 done
 
-# check jemalloc or tcmalloc 
+# check jemalloc or tcmalloc
 if [[ $Nginx_version =~ ^[1-3]$ ]] || [ "$DB_yn" == 'y' ];then
     while :; do echo
         read -p "Do you want to use jemalloc or tcmalloc optimize Database and Web server? [y/n]: " je_tc_malloc_yn
@@ -466,23 +465,23 @@ fi
 
 # Database
 if [ "$DB_version" == '1' ];then
-    . include/mysql-5.7.sh 
-    Install_MySQL-5-7 2>&1 | tee -a $oneinstack_dir/install.log 
+    . include/mysql-5.7.sh
+    Install_MySQL-5-7 2>&1 | tee -a $oneinstack_dir/install.log
 elif [ "$DB_version" == '2' ];then
-    . include/mysql-5.6.sh 
-    Install_MySQL-5-6 2>&1 | tee -a $oneinstack_dir/install.log 
+    . include/mysql-5.6.sh
+    Install_MySQL-5-6 2>&1 | tee -a $oneinstack_dir/install.log
 elif [ "$DB_version" == '3' ];then
     . include/mysql-5.5.sh
     Install_MySQL-5-5 2>&1 | tee -a $oneinstack_dir/install.log
 elif [ "$DB_version" == '4' ];then
     . include/mariadb-10.1.sh
-    Install_MariaDB-10-1 2>&1 | tee -a $oneinstack_dir/install.log 
+    Install_MariaDB-10-1 2>&1 | tee -a $oneinstack_dir/install.log
 elif [ "$DB_version" == '5' ];then
     . include/mariadb-10.0.sh
-    Install_MariaDB-10-0 2>&1 | tee -a $oneinstack_dir/install.log 
+    Install_MariaDB-10-0 2>&1 | tee -a $oneinstack_dir/install.log
 elif [ "$DB_version" == '6' ];then
     . include/mariadb-5.5.sh
-    Install_MariaDB-5-5 2>&1 | tee -a $oneinstack_dir/install.log 
+    Install_MariaDB-5-5 2>&1 | tee -a $oneinstack_dir/install.log
 elif [ "$DB_version" == '7' ];then
     . include/percona-5.7.sh
     Install_Percona-5-7 2>&1 | tee -a $oneinstack_dir/install.log
@@ -490,16 +489,16 @@ elif [ "$DB_version" == '8' ];then
     . include/percona-5.6.sh
     Install_Percona-5-6 2>&1 | tee -a $oneinstack_dir/install.log
 elif [ "$DB_version" == '9' ];then
-    . include/percona-5.5.sh 
-    Install_Percona-5-5 2>&1 | tee -a $oneinstack_dir/install.log 
+    . include/percona-5.5.sh
+    Install_Percona-5-5 2>&1 | tee -a $oneinstack_dir/install.log
 fi
 
 # Apache
 if [ "$Apache_version" == '1' ];then
-    . include/apache-2.4.sh 
+    . include/apache-2.4.sh
     Install_Apache-2-4 2>&1 | tee -a $oneinstack_dir/install.log
 elif [ "$Apache_version" == '2' ];then
-    . include/apache-2.2.sh 
+    . include/apache-2.2.sh
     Install_Apache-2-2 2>&1 | tee -a $oneinstack_dir/install.log
 fi
 
@@ -543,7 +542,7 @@ if [ "$PHP_cache" == '1' ] && [[ "$PHP_version" =~ ^[1,2]$ ]];then
     . include/zendopcache.sh
     Install_ZendOPcache 2>&1 | tee -a $oneinstack_dir/install.log
 elif [ "$PHP_cache" == '2' ];then
-    . include/xcache.sh 
+    . include/xcache.sh
     Install_XCache 2>&1 | tee -a $oneinstack_dir/install.log
 elif [ "$PHP_cache" == '3' ];then
     . include/apcu.sh
@@ -597,7 +596,7 @@ fi
 # Pure-FTPd
 if [ "$FTP_yn" == 'y' ];then
     . include/pureftpd.sh
-    Install_PureFTPd 2>&1 | tee -a $oneinstack_dir/install.log 
+    Install_PureFTPd 2>&1 | tee -a $oneinstack_dir/install.log
 fi
 
 # phpMyAdmin
@@ -624,26 +623,25 @@ fi
 # index example
 if [ ! -e "$wwwroot_dir/default/index.html" -a "$Web_yn" == 'y' ];then
     . include/demo.sh
-    DEMO 2>&1 | tee -a $oneinstack_dir/install.log 
+    DEMO 2>&1 | tee -a $oneinstack_dir/install.log
 fi
 
 # get web_install_dir and db_install_dir
-. include/check_db.sh
-. include/check_web.sh
+. include/check_dir.sh
 
 # HHVM
 if [ "$HHVM_yn" == 'y' ];then
-    . include/hhvm_CentOS.sh 
-    Install_hhvm_CentOS 2>&1 | tee -a $oneinstack_dir/install.log 
+    . include/hhvm_CentOS.sh
+    Install_hhvm_CentOS 2>&1 | tee -a $oneinstack_dir/install.log
 fi
 
-# Starting DB 
+# Starting DB
 [ -d "/etc/mysql" ] && /bin/mv /etc/mysql{,_bk}
 [ -d "$db_install_dir/support-files" -a -z "`ps -ef | grep -v grep | grep mysql`" ] && /etc/init.d/mysqld start
 
 echo "####################Congratulations########################"
 [ "$Web_yn" == 'y' -a "$Nginx_version" != '4' -a "$Apache_version" == '3' ] && echo -e "\n`printf "%-32s" "Nginx install dir":`${CMSG}$web_install_dir${CEND}"
-[ "$Web_yn" == 'y' -a "$Nginx_version" != '4' -a "$Apache_version" != '3' ] && echo -e "\n`printf "%-32s" "Nginx install dir":`${CMSG}$web_install_dir${CEND}\n`printf "%-32s" "Apache install  dir":`${CMSG}$apache_install_dir${CEND}" 
+[ "$Web_yn" == 'y' -a "$Nginx_version" != '4' -a "$Apache_version" != '3' ] && echo -e "\n`printf "%-32s" "Nginx install dir":`${CMSG}$web_install_dir${CEND}\n`printf "%-32s" "Apache install  dir":`${CMSG}$apache_install_dir${CEND}"
 [ "$Web_yn" == 'y' -a "$Nginx_version" == '4' -a "$Apache_version" != '3' ] && echo -e "\n`printf "%-32s" "Apache install dir":`${CMSG}$apache_install_dir${CEND}"
 [[ "$Tomcat_version" =~ ^[1,2]$ ]] && echo -e "\n`printf "%-32s" "Tomcat install dir":`${CMSG}$tomcat_install_dir${CEND}"
 [ "$DB_yn" == 'y' ] && echo -e "\n`printf "%-32s" "Database install dir:"`${CMSG}$db_install_dir${CEND}"
@@ -651,11 +649,11 @@ echo "####################Congratulations########################"
 [ "$DB_yn" == 'y' ] && echo "`printf "%-32s" "Database user:"`${CMSG}root${CEND}"
 [ "$DB_yn" == 'y' ] && echo "`printf "%-32s" "Database password:"`${CMSG}${dbrootpwd}${CEND}"
 [ "$PHP_yn" == 'y' ] && echo -e "\n`printf "%-32s" "PHP install dir:"`${CMSG}$php_install_dir${CEND}"
-[ "$PHP_cache" == '1' ] && echo "`printf "%-32s" "Opcache Control Panel url:"`${CMSG}http://$IPADDR/ocp.php${CEND}" 
+[ "$PHP_cache" == '1' ] && echo "`printf "%-32s" "Opcache Control Panel url:"`${CMSG}http://$IPADDR/ocp.php${CEND}"
 [ "$PHP_cache" == '2' ] && echo "`printf "%-32s" "xcache Control Panel url:"`${CMSG}http://$IPADDR/xcache${CEND}"
 [ "$PHP_cache" == '2' ] && echo "`printf "%-32s" "xcache user:"`${CMSG}admin${CEND}"
 [ "$PHP_cache" == '2' ] && echo "`printf "%-32s" "xcache password:"`${CMSG}$xcache_admin_pass${CEND}"
-[ "$PHP_cache" == '3' ] && echo "`printf "%-32s" "APC Control Panel url:"`${CMSG}http://$IPADDR/apc.php${CEND}" 
+[ "$PHP_cache" == '3' ] && echo "`printf "%-32s" "APC Control Panel url:"`${CMSG}http://$IPADDR/apc.php${CEND}"
 [ "$PHP_cache" == '4' ] && echo "`printf "%-32s" "eAccelerator Control Panel url:"`${CMSG}http://$IPADDR/control.php${CEND}"
 [ "$PHP_cache" == '4' ] && echo "`printf "%-32s" "eAccelerator user:"`${CMSG}admin${CEND}"
 [ "$PHP_cache" == '4' ] && echo "`printf "%-32s" "eAccelerator password:"`${CMSG}eAccelerator${CEND}"

@@ -19,7 +19,7 @@ src_url=http://mirrors.linuxeye.com/jdk/$JDK_FILE && Download_src
 
 [ "$OS" == 'CentOS' ] && [ -n "`rpm -qa | grep jdk`" ] && rpm -e `rpm -qa | grep jdk`
 
-tar xzf $JDK_FILE 
+tar xzf $JDK_FILE
 
 if [ -d "$JDK_NAME" ];then
     rm -rf $JAVA_dir; mkdir -p $JAVA_dir

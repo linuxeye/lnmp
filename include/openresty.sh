@@ -14,7 +14,7 @@ src_url=http://mirrors.linuxeye.com/oneinstack/src/pcre-$pcre_version.tar.gz && 
 src_url=https://openresty.org/download/openresty-$openresty_version.tar.gz && Download_src
 
 id -u $run_user >/dev/null 2>&1
-[ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user 
+[ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user
 
 tar xzf pcre-$pcre_version.tar.gz
 tar xzf openresty-$openresty_version.tar.gz
@@ -41,11 +41,11 @@ if [ -e "$openresty_install_dir/nginx/conf/nginx.conf" ];then
     echo "${CSUCCESS}OpenResty install successfully! ${CEND}"
 else
     rm -rf $openresty_install_dir
-    echo "${CFAILURE}OpenResty install failed, Please Contact the author! ${CEND}" 
+    echo "${CFAILURE}OpenResty install failed, Please Contact the author! ${CEND}"
     kill -9 $$
 fi
 
-[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$openresty_install_dir/nginx/sbin:\$PATH" >> /etc/profile 
+[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$openresty_install_dir/nginx/sbin:\$PATH" >> /etc/profile
 [ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep $openresty_install_dir /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$openresty_install_dir/nginx/sbin:\1@" /etc/profile
 . /etc/profile
 
@@ -83,7 +83,7 @@ EOF
 sed -i "s@/data/wwwroot/default@$wwwroot_dir/default@" $openresty_install_dir/nginx/conf/nginx.conf
 sed -i "s@/data/wwwlogs@$wwwlogs_dir@g" $openresty_install_dir/nginx/conf/nginx.conf
 sed -i "s@^user www www@user $run_user $run_user@" $openresty_install_dir/nginx/conf/nginx.conf
-[ "$je_tc_malloc" == '2' ] && sed -i 's@^pid\(.*\)@pid\1\ngoogle_perftools_profiles /tmp/tcmalloc;@' $openresty_install_dir/nginx/conf/nginx.conf 
+[ "$je_tc_malloc" == '2' ] && sed -i 's@^pid\(.*\)@pid\1\ngoogle_perftools_profiles /tmp/tcmalloc;@' $openresty_install_dir/nginx/conf/nginx.conf
 
 # logrotate nginx log
 cat > /etc/logrotate.d/nginx << EOF

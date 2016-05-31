@@ -42,7 +42,7 @@ stop () {
     echo
     if [ $RETVAL -eq 0 ] ; then
         rm -f /var/lock/subsys/memcached
-        rm -f /var/run/memcached/memcached.pid 
+        rm -f /var/run/memcached/memcached.pid
     fi
 }
 

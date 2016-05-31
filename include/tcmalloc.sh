@@ -12,7 +12,7 @@ Install_tcmalloc() {
 cd $oneinstack_dir/src
 src_url=http://mirrors.linuxeye.com/oneinstack/src/gperftools-$tcmalloc_version.tar.gz && Download_src
 
-tar xzf gperftools-$tcmalloc_version.tar.gz 
+tar xzf gperftools-$tcmalloc_version.tar.gz
 cd gperftools-$tcmalloc_version
 ./configure --enable-frame-pointers
 make && make install

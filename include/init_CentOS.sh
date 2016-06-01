@@ -184,13 +184,13 @@ if [ ! -e "`which tmux`" ];then
     tar xzf libevent-2.0.22-stable.tar.gz
     cd libevent-2.0.22-stable
     ./configure
-    make && make install
+    make -j ${THREAD} && make install
     cd ..
 
     tar xzf tmux-2.2.tar.gz
     cd tmux-2.2
     CFLAGS="-I/usr/local/include" LDFLAGS="-L//usr/local/lib" ./configure
-    make && make install
+    make -j ${THREAD} && make install
     cd ../../
 
     if [ "$OS_BIT" == '64' ];then
@@ -207,7 +207,7 @@ if [ ! -e "`which htop`" ];then
     tar xzf htop-2.0.0.tar.gz
     cd htop-2.0.0
     ./configure
-    make && make install
+    make -j ${THREAD} && make install
     cd ../../
 fi
 . /etc/profile

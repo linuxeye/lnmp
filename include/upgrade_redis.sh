@@ -42,7 +42,7 @@ if [ -e "redis-$NEW_Redis_version.tar.gz" ];then
         sed -i 's@^OPT=.*@OPT=-O2 -march=i686@' src/.make-settings
     fi
 
-    make
+    make -j ${THREAD}
 
     if [ -f "src/redis-server" ];then
         echo "Restarting Redis..."

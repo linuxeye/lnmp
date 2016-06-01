@@ -15,7 +15,7 @@ src_url=http://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/$
 tar xzf GraphicsMagick-$GraphicsMagick_version.tar.gz
 cd GraphicsMagick-$GraphicsMagick_version
 ./configure --prefix=/usr/local/graphicsmagick --enable-shared --enable-static
-make && make install
+make -j ${THREAD} && make install
 cd ..
 rm -rf GraphicsMagick-$GraphicsMagick_version
 cd ..
@@ -37,7 +37,7 @@ if [ -e "$php_install_dir/bin/phpize" ];then
     export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
     $php_install_dir/bin/phpize
     ./configure --with-php-config=$php_install_dir/bin/php-config --with-gmagick=/usr/local/graphicsmagick
-    make && make install
+    make -j ${THREAD} && make install
     cd ..
     rm -rf gmagick-$gmagick_version
 

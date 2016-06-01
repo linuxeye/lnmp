@@ -46,7 +46,7 @@ if [ -e "nginx-$NEW_Nginx_version.tar.gz" ];then
     nginx_configure_arguments=`cat $$ | grep 'configure arguments:' | awk -F: '{print $2}'`
     rm -rf $$
     ./configure $nginx_configure_arguments
-    make
+    make -j ${THREAD}
     if [ -f "objs/nginx" ];then
         /bin/mv $nginx_install_dir/sbin/nginx $nginx_install_dir/sbin/nginx$(date +%m%d)
         /bin/cp objs/nginx $nginx_install_dir/sbin/nginx
@@ -100,7 +100,7 @@ if [ -e "tengine-$NEW_Tengine_version.tar.gz" ];then
     tengine_configure_arguments=`cat $$ | grep 'configure arguments:' | awk -F: '{print $2}'`
     rm -rf $$
     ./configure $tengine_configure_arguments
-    make
+    make -j ${THREAD}
     if [ -f "objs/nginx" ];then
         /bin/mv $tengine_install_dir/sbin/nginx $tengine_install_dir/sbin/nginx$(date +%m%d)
         /bin/mv $tengine_install_dir/sbin/dso_tool $tengine_install_dir/sbin/dso_tool$(date +%m%d)
@@ -162,7 +162,7 @@ if [ -e "openresty-$NEW_OpenResty_version.tar.gz" ];then
     [ -n "`echo $openresty_configure_arguments | grep jemalloc`"] && malloc_module="--with-ld-opt='-ljemalloc'"
     [ -n "`echo $openresty_configure_arguments | grep perftools`" ] && malloc_module='--with-google_perftools_module'
     ./configure --prefix=$openresty_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-pcre=../pcre-$pcre_version --with-pcre-jit $malloc_module
-    make
+    make -j ${THREAD}
     if [ -f "build/nginx-$openresty_version_tmp/objs/nginx" ];then
         /bin/mv $openresty_install_dir/nginx/sbin/nginx $openresty_install_dir/nginx/sbin/nginx$(date +%m%d)
         make install

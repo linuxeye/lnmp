@@ -15,7 +15,7 @@ src_url=http://mirrors.linuxeye.com/oneinstack/src/gperftools-$tcmalloc_version.
 tar xzf gperftools-$tcmalloc_version.tar.gz
 cd gperftools-$tcmalloc_version
 ./configure --enable-frame-pointers
-make && make install
+make -j ${THREAD} && make install
 
 if [ -f "/usr/local/lib/libtcmalloc.so" ];then
     echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf

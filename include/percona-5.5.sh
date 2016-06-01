@@ -40,7 +40,7 @@ cmake . -DCMAKE_INSTALL_PREFIX=$percona_install_dir \
 -DDEFAULT_CHARSET=utf8mb4 \
 -DDEFAULT_COLLATION=utf8mb4_general_ci \
 $EXE_LINKER
-make -j `grep processor /proc/cpuinfo | wc -l`
+make -j ${THREAD}
 make install
 
 if [ -d "$percona_install_dir/support-files" ];then

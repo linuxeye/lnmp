@@ -33,7 +33,7 @@ if [[ "$Ubuntu_version" =~ ^14$|^15$ ]];then
     tar xzf bison-2.7.1.tar.gz
     cd bison-2.7.1
     ./configure
-    make && make install
+    make -j ${THREAD} && make install
     cd ..
     rm -rf bison-2.7.1
     cd ..

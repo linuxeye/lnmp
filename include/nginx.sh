@@ -37,7 +37,7 @@ fi
 
 [ ! -d "$nginx_install_dir" ] && mkdir -p $nginx_install_dir
 ./configure --prefix=$nginx_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-pcre=../pcre-$pcre_version --with-pcre-jit $malloc_module
-make && make install
+make -j ${THREAD} && make install
 if [ -e "$nginx_install_dir/conf/nginx.conf" ];then
     cd ..
     rm -rf nginx-$nginx_version

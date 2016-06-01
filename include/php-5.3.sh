@@ -24,25 +24,25 @@ tar xzf libiconv-$libiconv_version.tar.gz
 patch -d libiconv-$libiconv_version -p0 < libiconv-glibc-2.16.patch
 cd libiconv-$libiconv_version
 ./configure --prefix=/usr/local
-make && make install
+make -j ${THREAD} && make install
 cd ..
 rm -rf libiconv-$libiconv_version
 
 tar xzf libmcrypt-$libmcrypt_version.tar.gz
 cd libmcrypt-$libmcrypt_version
 ./configure
-make && make install
+make -j ${THREAD} && make install
 ldconfig
 cd libltdl
 ./configure --enable-ltdl-install
-make && make install
+make -j ${THREAD} && make install
 cd ../../
 rm -rf libmcrypt-$libmcrypt_version
 
 tar xzf mhash-$mhash_version.tar.gz
 cd mhash-$mhash_version
 ./configure
-make && make install
+make -j ${THREAD} && make install
 cd ..
 rm -rf mhash-$mhash_version
 
@@ -56,7 +56,7 @@ tar xzf mcrypt-$mcrypt_version.tar.gz
 cd mcrypt-$mcrypt_version
 ldconfig
 ./configure
-make && make install
+make -j ${THREAD} && make install
 cd ..
 rm -rf mcrypt-$mcrypt_version
 
@@ -72,7 +72,7 @@ if [ "$Debian_version" == '8' -o "$Ubuntu_version" == '16' ];then
         tar xzf openssl-1.0.0s.tar.gz
         cd openssl-1.0.0s
         ./config --prefix=/usr/local/openssl -fPIC shared zlib
-        make && make install
+        make -j ${THREAD} && make install
         cd ..
         [ -e '/usr/local/openssl/lib/libcrypto.a' ] && { OpenSSL_args='--with-openssl=/usr/local/openssl'; rm -rf openssl-1.0.0s; } || OpenSSL_args='--with-openssl'
     fi
@@ -84,7 +84,7 @@ if [ "$Debian_version" == '8' -o "$Ubuntu_version" == '16' ];then
             tar xzf curl-7.29.0.tar.gz
             cd curl-7.29.0
             LDFLAGS="-Wl,-rpath=/usr/local/openssl/lib" ./configure --prefix=/usr/local/curl --with-ssl=/usr/local/openssl
-            make && make install
+            make -j ${THREAD} && make install
             cd ..
             [ -e '/usr/local/curl/lib/libcurl.a' ] && { Curl_args='--with-curl=/usr/local/curl'; rm -rf curl-7.29.0; } || Curl_args='--with-curl'
         fi

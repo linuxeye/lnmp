@@ -20,7 +20,7 @@ tar xzf memcached-$memcached_version.tar.gz
 cd memcached-$memcached_version
 [ ! -d "$memcached_install_dir" ] && mkdir -p $memcached_install_dir
 ./configure --prefix=$memcached_install_dir
-make && make install
+make -j ${THREAD} && make install
 if [ -d "$memcached_install_dir/include/memcached" ];then
     echo "${CSUCCESS}memcached install successfully! ${CEND}"
     cd ..
@@ -58,7 +58,7 @@ if [ -e "$php_install_dir/bin/phpize" ];then
     make clean
     $php_install_dir/bin/phpize
     ./configure --with-php-config=$php_install_dir/bin/php-config
-    make && make install
+    make -j ${THREAD} && make install
     if [ -f "`$php_install_dir/bin/php-config --extension-dir`/memcache.so" ];then
         cat > $php_install_dir/etc/php.d/ext-memcache.ini << EOF
 extension=memcache.so
@@ -84,7 +84,7 @@ if [ -e "$php_install_dir/bin/phpize" ];then
     [ "$OS" == 'CentOS' ] && yum -y install cyrus-sasl-devel
     [[ $OS =~ ^Ubuntu$|^Debian$ ]] && sed -i "s@lthread -pthread -pthreads@lthread -lpthread -pthreads@" ./configure
     ./configure --with-memcached=$memcached_install_dir
-    make && make install
+    make -j ${THREAD} && make install
     cd ..
     rm -rf libmemcached-$libmemcached_version
 
@@ -102,7 +102,7 @@ if [ -e "$php_install_dir/bin/phpize" ];then
     make clean
     $php_install_dir/bin/phpize
     ./configure --with-php-config=$php_install_dir/bin/php-config
-    make && make install
+    make -j ${THREAD} && make install
     if [ -f "`$php_install_dir/bin/php-config --extension-dir`/memcached.so" ];then
         cat > $php_install_dir/etc/php.d/ext-memcached.ini << EOF
 extension=memcached.so

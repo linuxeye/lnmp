@@ -41,7 +41,7 @@ if [ -e "$tomcat_install_dir/conf/server.xml" ];then
     cd tomcat-native-*-src/jni/native/
     rm -rf /usr/local/apr
     ./configure --with-apr=/usr/bin/apr-1-config
-    make && make install
+    make -j ${THREAD} && make install
     if [ -d "/usr/local/apr/lib" ];then
         [ $Mem -le 768 ] && Xms_Mem=`expr $Mem / 3` || Xms_Mem=256
         cat > $tomcat_install_dir/bin/setenv.sh << EOF

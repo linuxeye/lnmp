@@ -151,7 +151,7 @@ Install_shadowsocks-libev() {
 git clone https://github.com/shadowsocks/shadowsocks-libev.git
 cd shadowsocks-libev
 ./configure
-make && make install
+make -j ${THREAD} && make install
 cd ..
 if [ -f  /usr/local/bin/ss-server ];then
     /bin/cp ../init.d/Shadowsocks-libev-init /etc/init.d/shadowsocks

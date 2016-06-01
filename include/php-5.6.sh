@@ -21,25 +21,25 @@ tar xzf libiconv-$libiconv_version.tar.gz
 patch -d libiconv-$libiconv_version -p0 < libiconv-glibc-2.16.patch
 cd libiconv-$libiconv_version
 ./configure --prefix=/usr/local
-make && make install
+make -j ${THREAD} && make install
 cd ..
 rm -rf libiconv-$libiconv_version
 
 tar xzf libmcrypt-$libmcrypt_version.tar.gz
 cd libmcrypt-$libmcrypt_version
 ./configure
-make && make install
+make -j ${THREAD} && make install
 ldconfig
 cd libltdl
 ./configure --enable-ltdl-install
-make && make install
+make -j ${THREAD} && make install
 cd ../../
 rm -rf libmcrypt-$libmcrypt_version
 
 tar xzf mhash-$mhash_version.tar.gz
 cd mhash-$mhash_version
 ./configure
-make && make install
+make -j ${THREAD} && make install
 cd ..
 rm -rf mhash-$mhash_version
 
@@ -51,7 +51,7 @@ tar xzf mcrypt-$mcrypt_version.tar.gz
 cd mcrypt-$mcrypt_version
 ldconfig
 ./configure
-make && make install
+make -j ${THREAD} && make install
 cd ..
 rm -rf mcrypt-$mcrypt_version
 

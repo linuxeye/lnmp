@@ -35,7 +35,7 @@ fi
 
 [ ! -d "$tengine_install_dir" ] && mkdir -p $tengine_install_dir
 ./configure --prefix=$tengine_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_spdy_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_concat_module=shared --with-http_sysguard_module=shared --with-pcre=../pcre-$pcre_version --with-pcre-jit $malloc_module
-make && make install
+make -j ${THREAD} && make install
 if [ -e "$tengine_install_dir/conf/nginx.conf" ];then
     cd ..
     rm -rf tengine-$tengine_version

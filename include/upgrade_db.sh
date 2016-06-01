@@ -150,7 +150,7 @@ $EXE_LINKER
 -DDEFAULT_COLLATION=utf8mb4_general_ci \
 $EXE_LINKER
         fi
-        make -j `grep processor /proc/cpuinfo | wc -l`
+        make -j ${THREAD}
         service mysqld stop
         mv ${percona_install_dir}{,_old_`date +"%Y%m%d_%H%M%S"`}
         mv ${percona_data_dir}{,_old_`date +"%Y%m%d_%H%M%S"`}

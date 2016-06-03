@@ -30,8 +30,7 @@ else
 fi
 
 #backup
-while :
-do
+while :; do
     $db_install_dir/bin/mysql -uroot -p${dbrootpwd} -e "quit" >/dev/null 2>&1
     if [ $? -eq 0 ];then
         break
@@ -61,9 +60,7 @@ echo "Current $DB Version: ${CMSG}$OLD_DB_version${CEND}"
 [ -e /usr/local/lib/libtcmalloc.so ] && { je_tc_malloc=2; EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"; }
 [ -e /usr/local/lib/libjemalloc.so -a -e /usr/local/lib/libtcmalloc.so ] && { je_tc_malloc=1; EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"; }
 
-while :
-do
-    echo
+while :; do echo
     read -p "Please input upgrade $DB Version(example: $OLD_DB_version): " NEW_DB_version
     if [ `echo $NEW_DB_version | awk -F. '{print $1"."$2}'` == `echo $OLD_DB_version | awk -F. '{print $1"."$2}'` ]; then
         if [ "$DB" == 'MariaDB' ];then

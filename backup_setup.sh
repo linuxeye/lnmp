@@ -25,9 +25,7 @@ printf "
 # Check if user is root
 [ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
 
-while :
-do
-    echo
+while :; do echo
     echo 'Please select your backup destination:'
     echo -e "\t${CMSG}1${CEND}. Only Localhost"
     echo -e "\t${CMSG}2${CEND}. Only Remote host"
@@ -45,9 +43,7 @@ done
 [ "$DESC_BK" == '2' ] && sed -i 's@^backup_destination=.*@backup_destination=remote@' ./options.conf
 [ "$DESC_BK" == '3' ] && sed -i 's@^backup_destination=.*@backup_destination=local,remote@' ./options.conf
 
-while :
-do
-    echo
+while :; do echo
     echo 'Please select your backup content:'
     echo -e "\t${CMSG}1${CEND}. Only Database"
     echo -e "\t${CMSG}2${CEND}. Only Website"
@@ -65,9 +61,7 @@ done
 [ "$CONTENT_BK" == '2' ] && sed -i 's@^backup_content=.*@backup_content=web@' ./options.conf
 [ "$CONTENT_BK" == '3' ] && sed -i 's@^backup_content=.*@backup_content=db,web@' ./options.conf
 
-while :
-do
-    echo
+while :; do echo
     echo "Please enter the directory for save the backup file: "
     read -p "(Default directory: $backup_dir): " NEW_backup_dir
     [ -z "$NEW_backup_dir" ] && NEW_backup_dir="$backup_dir"
@@ -79,9 +73,7 @@ do
 done
 sed -i "s@^backup_dir=.*@backup_dir=$NEW_backup_dir@" ./options.conf
 
-while :
-do
-    echo
+while :; do echo
     echo "Pleas enter a valid backup number of days: "
     read -p "(Default days: 5): " expired_days
     [ -z "$expired_days" ] && expired_days=5
@@ -91,9 +83,7 @@ sed -i "s@^expired_days=.*@expired_days=$expired_days@" ./options.conf
 
 if [ "$CONTENT_BK" != '2' ];then
     databases=`$db_install_dir/bin/mysql -uroot -p$dbrootpwd -e "show databases\G" | grep Database | awk '{print $2}' | grep -Evw "(performance_schema|information_schema|mysql|sys)"`
-    while :
-    do
-        echo
+    while :; do echo
         echo "Please enter one or more name for database, separate multiple database names with commas: "
         read -p "(Default database: `echo $databases | tr ' ' ','`) " db_name
         db_name=`echo $db_name | tr -d ' '`
@@ -110,9 +100,7 @@ fi
 
 if [ "$CONTENT_BK" != '1' ];then
     websites=`ls $wwwroot_dir | grep -vw default`
-    while :
-    do
-        echo
+    while :; do echo
         echo "Please enter one or more name for website, separate multiple website names with commas: "
         read -p "(Default website: `echo $websites | tr ' ' ','`) " website_name
         website_name=`echo $website_name | tr -d ' '`
@@ -134,9 +122,7 @@ echo "You have to backup the content:"
 
 if [[ "$DESC_BK" =~ ^[2,3]$ ]];then
     > tools/iplist.txt
-    while :
-    do
-        echo
+    while :; do echo
         read -p "Please enter the remote host ip: " remote_ip
         [ -z "$remote_ip" -o "$remote_ip" == '127.0.0.1' ] && continue
         echo
@@ -154,8 +140,7 @@ if [[ "$DESC_BK" =~ ^[2,3]$ ]];then
         ./tools/mssh.exp ${IPcode}P $remote_user ${PWcode}P ${Portcode}P true 10
         if [ $? -eq 0 ];then
             [ -z "`grep $remote_ip tools/iplist.txt`" ] && echo "$remote_ip $remote_port $remote_user $remote_password" >> tools/iplist.txt || echo "${CWARNING}$remote_ip has been added! ${CEND}"
-            while :
-            do
+            while :; do
                 read -p "Do you want to add more host ? [y/n]: " more_host_yn
                 if [[ ! "$more_host_yn" =~ ^[y,n]$ ]];then
                     echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"

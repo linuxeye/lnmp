@@ -13,9 +13,7 @@ cd $oneinstack_dir/src
 [ ! -d "$redis_install_dir" ] && echo "${CWARNING}The Redis is not installed on your system! ${CEND}" && exit 1
 OLD_Redis_version=`$redis_install_dir/bin/redis-cli --version | awk '{print $2}'`
 echo "Current Redis Version: ${CMSG}$OLD_Redis_version${CEND}"
-while :
-do
-    echo
+while :; do echo
     read -p "Please input upgrade Redis Version(example: 3.0.5): " NEW_Redis_version
     if [ "$NEW_Redis_version" != "$OLD_Redis_version" ];then
         [ ! -e "redis-$NEW_Redis_version.tar.gz" ] && wget --no-check-certificate -c http://download.redis.io/releases/redis-$NEW_Redis_version.tar.gz > /dev/null 2>&1

@@ -14,9 +14,7 @@ cd $oneinstack_dir/src
 OLD_phpMyAdmin_version=`grep Version $wwwroot_dir/default/phpMyAdmin/README | awk '{print $2}'`
 echo "Current phpMyAdmin Version: ${CMSG}$OLD_phpMyAdmin_version${CEND}"
 
-while :
-do
-    echo
+while :; do echo
     read -p "Please input upgrade phpMyAdmin Version(example: 4.4.15): " NEW_phpMyAdmin_version
     if [ "$NEW_phpMyAdmin_version" != "$OLD_phpMyAdmin_version" ];then
         [ ! -e "phpMyAdmin-${NEW_phpMyAdmin_version}-all-languages.tar.gz" ] && wget --no-check-certificate -c https://files.phpmyadmin.net/phpMyAdmin/$NEW_phpMyAdmin_version/phpMyAdmin-${NEW_phpMyAdmin_version}-all-languages.tar.gz > /dev/null 2>&1

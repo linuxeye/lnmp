@@ -14,9 +14,7 @@ cd $oneinstack_dir/src
 echo
 OLD_PHP_version=`$php_install_dir/bin/php -r 'echo PHP_VERSION;'`
 echo "Current PHP Version: ${CMSG}$OLD_PHP_version${CEND}"
-while :
-do
-    echo
+while :; do echo
     read -p "Please input upgrade PHP Version: " NEW_PHP_version
     if [ "${NEW_PHP_version%.*}" == "${OLD_PHP_version%.*}" ]; then
         [ ! -e "php-$NEW_PHP_version.tar.gz" ] && wget --no-check-certificate -c http://www.php.net/distributions/php-$NEW_PHP_version.tar.gz > /dev/null 2>&1

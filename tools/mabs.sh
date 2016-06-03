@@ -59,8 +59,7 @@ TEMP=`getopt -o hvVl:c:t:T:L:n --long help,version,iplist:,config:,sshtimeout:,f
 
 eval set -- "$TEMP"
 
-while :
-do
+while :; do
     [ -z "$1" ] && break;
     case "$1" in
         -h|--help)

@@ -53,8 +53,7 @@ ${CMSG}phpmyadmin${CEND}     --->Upgrade phpMyAdmin
 }
 
 Menu(){
-while :
-do
+while :; do
     printf "
 What Are You Doing?
 \t${CMSG}1${CEND}. Upgrade Nginx/Tengine/OpenResty

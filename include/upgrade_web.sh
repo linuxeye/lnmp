@@ -15,9 +15,7 @@ OLD_Nginx_version_tmp=`$nginx_install_dir/sbin/nginx -v 2>&1`
 OLD_Nginx_version=${OLD_Nginx_version_tmp##*/}
 echo
 echo "Current Nginx Version: ${CMSG}$OLD_Nginx_version${CEND}"
-while :
-do
-    echo
+while :; do echo
     read -p "Please input upgrade Nginx Version(example: 1.9.15): " NEW_Nginx_version
     if [ "$NEW_Nginx_version" != "$OLD_Nginx_version" ];then
         [ ! -e "nginx-$NEW_Nginx_version.tar.gz" ] && wget --no-check-certificate -c http://nginx.org/download/nginx-$NEW_Nginx_version.tar.gz > /dev/null 2>&1
@@ -69,9 +67,7 @@ OLD_Tengine_version_tmp=`$tengine_install_dir/sbin/nginx -v 2>&1`
 OLD_Tengine_version="`echo ${OLD_Tengine_version_tmp#*/} | awk '{print $1}'`"
 echo
 echo "Current Tengine Version: ${CMSG}$OLD_Tengine_version${CEND}"
-while :
-do
-    echo
+while :; do echo
     read -p "Please input upgrade Tengine Version(example: 2.1.15): " NEW_Tengine_version
     if [ "$NEW_Tengine_version" != "$OLD_Tengine_version" ];then
         [ ! -e "tengine-$NEW_Tengine_version.tar.gz" ] && wget --no-check-certificate -c http://tengine.taobao.org/download/tengine-$NEW_Tengine_version.tar.gz > /dev/null 2>&1
@@ -128,9 +124,7 @@ OLD_OpenResty_version_tmp=`$openresty_install_dir/nginx/sbin/nginx -v 2>&1`
 OLD_OpenResty_version="`echo ${OLD_OpenResty_version_tmp#*/} | awk '{print $1}'`"
 echo
 echo "Current OpenResty Version: ${CMSG}$OLD_OpenResty_version${CEND}"
-while :
-do
-    echo
+while :; do echo
     read -p "Please input upgrade OpenResty Version(example: 1.9.7.19): " NEW_OpenResty_version
     if [ "$NEW_OpenResty_version" != "$OLD_OpenResty_version" ];then
         [ ! -e "openresty-$NEW_OpenResty_version.tar.gz" ] && wget --no-check-certificate -c https://openresty.org/download/openresty-$NEW_OpenResty_version.tar.gz > /dev/null 2>&1

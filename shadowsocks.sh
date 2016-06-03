@@ -38,9 +38,7 @@ Check_shadowsocks() {
 }
 
 AddUser_shadowsocks() {
-while :
-do
-    echo
+while :; do echo
     read -p "Please input password for shadowsocks: " Shadowsocks_password
     [ -n "`echo $Shadowsocks_password | grep '[+|&]'`" ] && { echo "${CWARNING}input error,not contain a plus sign (+) and & ${CEND}"; continue; }
     (( ${#Shadowsocks_password} >= 5 )) && break || echo "${CWARNING}Shadowsocks password least 5 characters! ${CEND}"
@@ -60,9 +58,7 @@ else
     Shadowsocks_Default_port=9001
 fi
 
-while :
-do
-    echo
+while :; do echo
     read -p "Please input Shadowsocks port(Default: $Shadowsocks_Default_port): " Shadowsocks_port
     [ -z "$Shadowsocks_port" ] && Shadowsocks_port=$Shadowsocks_Default_port
     if [ $Shadowsocks_port -ge 9000 >/dev/null 2>&1 -a $Shadowsocks_port -le 10000 >/dev/null 2>&1 ];then
@@ -166,9 +162,7 @@ fi
 }
 
 Uninstall_shadowsocks(){
-while :
-do
-    echo
+while :; do echo
     read -p "Do you want to uninstall Shadowsocks? [y/n]: " Shadowsocks_yn
     if [[ ! $Shadowsocks_yn =~ ^[y,n]$ ]];then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"

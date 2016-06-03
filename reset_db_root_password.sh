@@ -28,9 +28,7 @@ printf "
 Reset_db_root_password()
 {
 [ ! -d "$db_install_dir" ] && { echo "${CFAILURE}The Database is not installed on your system! ${CEND}"; exit 1; }
-while :
-do
-    echo
+while :; do echo
     read -p "Please input the root password of database: " New_dbrootpwd
     [ -n "`echo $New_dbrootpwd | grep '[+|&]'`" ] && { echo "${CWARNING}input error,not contain a plus sign (+) and &${CEND}"; continue; }
     (( ${#New_dbrootpwd} >= 5 )) && break || echo "${CWARNING}database root password least 5 characters! ${CEND}"

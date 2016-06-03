@@ -170,8 +170,7 @@ echo "${CMSG}Memcached uninstall completed${CEND}"
 }
 
 Menu(){
-while :
-do
+while :; do
     printf "
 What Are You Doing?
 \t${CMSG}0${CEND}. Uninstall All

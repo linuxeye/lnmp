@@ -34,9 +34,7 @@ FTP_bin=$pureftpd_install_dir/bin/pure-pw
 [ -z "`grep ^PureDB $FTP_conf`" ] && { echo "${CFAILURE}pure-ftpd is not own password database${CEND}" ; exit 1; }
 
 USER() {
-while :
-do
-    echo
+while :; do echo
     read -p "Please input a username: " User
     if [ -z "$User" ]; then
         echo "${CWARNING}username can't be NULL! ${CEND}"
@@ -47,9 +45,7 @@ done
 }
 
 PASSWORD() {
-while :
-do
-    echo
+while :; do echo
     read -p "Please input the password: " Password
     [ -n "`echo $Password | grep '[+|&]'`" ] && { echo "${CWARNING}input error,not contain a plus sign (+) and &${CEND}"; continue; }
     if (( ${#Password} >= 5 ));then
@@ -62,9 +58,7 @@ done
 }
 
 DIRECTORY() {
-while :
-do
-echo
+while :; do echo
     read -p "Please input the directory(Default directory: $wwwroot_dir): " Directory
     if [ -z "$Directory" ]; then
         Directory="$wwwroot_dir"
@@ -77,8 +71,7 @@ echo
 done
 }
 
-while :
-do
+while :; do
     printf "
 What Are You Doing?
 \t${CMSG}1${CEND}. UserAdd
@@ -109,7 +102,6 @@ What Are You Doing?
             echo "You directory is : ${CMSG}$Directory${CEND}"
             echo
             ;;
-
         2)
             USER
             [ -e "$Passwdfile" ] && [ -z "`grep ^${User}: $Passwdfile`" ] && { echo "${CQUESTION}[$User] was not existed! ${CEND}"; continue; }
@@ -124,7 +116,6 @@ What Are You Doing?
             echo "You new directory is : ${CMSG}$Directory${CEND}"
             echo
             ;;
-
         3)
             USER
             [ -e "$Passwdfile" ] && [ -z "`grep ^${User}: $Passwdfile`" ] && { echo "${CQUESTION}[$User] was not existed! ${CEND}"; continue; }
@@ -139,7 +130,6 @@ What Are You Doing?
             echo "You new password is : ${CMSG}$Password${CEND}"
             echo
             ;;
-
         4)
             if [ ! -e "$Passwdfile" ];then
                 echo "${CQUESTION}User was not existed! ${CEND}"
@@ -154,7 +144,6 @@ What Are You Doing?
             echo
             echo "[$User] have been deleted! "
             ;;
-
         5)
             if [ ! -e "$Passwdfile" ];then
                 echo "${CQUESTION}User was not existed! ${CEND}"
@@ -162,17 +151,14 @@ What Are You Doing?
                 $FTP_bin list
             fi
             ;;
-
         6)
             USER
             [ -e "$Passwdfile" ] && [ -z "`grep ^${User}: $Passwdfile`" ] && { echo "${CQUESTION}[$User] was not existed! ${CEND}"; continue; }
             $FTP_bin show $User
             ;;
-
         q)
             exit
             ;;
-
         esac
     fi
 done

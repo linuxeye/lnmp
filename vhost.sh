@@ -37,9 +37,7 @@ ${CMSG}del${CEND}    --->Delete Virtualhost
 Choose_env() {
 if [ -e "$php_install_dir/bin/phpize" -a -e "$tomcat_install_dir/conf/server.xml" -a -e "/usr/bin/hhvm" ];then
     Number=111
-    while :
-    do
-        echo
+    while :; do echo
         echo 'Please choose to use environment:'
         echo -e "\t${CMSG}1${CEND}. Use php"
         echo -e "\t${CMSG}2${CEND}. Use java"
@@ -57,9 +55,7 @@ if [ -e "$php_install_dir/bin/phpize" -a -e "$tomcat_install_dir/conf/server.xml
     [ "$Choose_number" == '3' ] && NGX_FLAG=hhvm
 elif [ -e "$php_install_dir/bin/phpize" -a -e "$tomcat_install_dir/conf/server.xml" -a ! -e "/usr/bin/hhvm" ];then
     Number=110
-    while :
-    do
-        echo
+    while :; do echo
         echo 'Please choose to use environment:'
         echo -e "\t${CMSG}1${CEND}. Use php"
         echo -e "\t${CMSG}2${CEND}. Use java"
@@ -78,9 +74,7 @@ elif [ -e "$php_install_dir/bin/phpize" -a ! -e "$tomcat_install_dir/conf/server
     NGX_FLAG=php
 elif [ -e "$php_install_dir/bin/phpize" -a ! -e "$tomcat_install_dir/conf/server.xml" -a -e "/usr/bin/hhvm" ];then
     Number=101
-    while :
-    do
-        echo
+    while :; do echo
         echo 'Please choose to use environment:'
         echo -e "\t${CMSG}1${CEND}. Use php"
         echo -e "\t${CMSG}2${CEND}. Use hhvm"
@@ -96,9 +90,7 @@ elif [ -e "$php_install_dir/bin/phpize" -a ! -e "$tomcat_install_dir/conf/server
     [ "$Choose_number" == '2' ] && NGX_FLAG=hhvm
 elif [ ! -e "$php_install_dir/bin/phpize" -a -e "$tomcat_install_dir/conf/server.xml" -a -e "/usr/bin/hhvm" ];then
     Number=011
-    while :
-    do
-        echo
+    while :; do echo
         echo 'Please choose to use environment:'
         echo -e "\t${CMSG}1${CEND}. Use java"
         echo -e "\t${CMSG}2${CEND}. Use hhvm"
@@ -184,9 +176,7 @@ echo "`printf "%-30s" "SSL CSR File:"`${CMSG}$web_install_dir/conf/ssl/${domain}
 
 Input_Add_domain() {
 if [ -e "$web_install_dir/sbin/nginx" ];then
-    while :
-    do
-        echo
+    while :; do echo
         read -p "Do you want to setup SSL under Nginx? [y/n]: " nginx_ssl_yn
         if [[ ! $nginx_ssl_yn =~ ^[y,n]$ ]];then
             echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
@@ -196,9 +186,7 @@ if [ -e "$web_install_dir/sbin/nginx" ];then
     done
 fi
 
-while :
-do
-    echo
+while :; do echo
     read -p "Please input domain(example: www.linuxeye.com): " domain
     if [ -z "`echo $domain | grep '.*\..*'`" ]; then
         echo "${CWARNING}input error! ${CEND}"
@@ -216,9 +204,7 @@ else
     echo "domain=$domain"
 fi
 
-while :
-do
-    echo
+while :; do echo
     read -p "Do you want to add more domain name? [y/n]: " moredomainame_yn
     if [[ ! $moredomainame_yn =~ ^[y,n]$ ]];then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
@@ -228,9 +214,7 @@ do
 done
 
 if [ "$moredomainame_yn" == 'y' ]; then
-    while :
-    do
-        echo
+    while :; do echo
         read -p "Type domainname or IP(example: linuxeye.com 121.43.8.8): " moredomain
         if [ -z "`echo $moredomain | grep '.*\..*'`" ]; then
             echo "${CWARNING}input error! ${CEND}"
@@ -245,9 +229,7 @@ if [ "$moredomainame_yn" == 'y' ]; then
     Tomcat_Domain_alias=$(for D in `echo $moredomainame`; do echo "<Alias>$D</Alias>"; done)
 
     if [ -e "$web_install_dir/sbin/nginx" ];then
-        while :
-        do
-            echo
+        while :; do echo
             read -p "Do you want to redirect from $moredomain to $domain? [y/n]: " redirect_yn
             if [[ ! $redirect_yn =~ ^[y,n]$ ]];then
                 echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
@@ -272,9 +254,7 @@ else
     Nginx_conf='listen 80;'
 fi
 
-while :
-do
-    echo
+while :; do echo
     echo "Please input the directory for the domain:$domain :"
     read -p "(Default directory: $wwwroot_dir/$domain): " vhostdir
     if [ -n "$vhostdir" -a -z "`echo $vhostdir | grep '^/'`" ];then
@@ -295,9 +275,7 @@ done
 }
 
 Nginx_anti_hotlinking() {
-while :
-do
-    echo
+while :; do echo
     read -p "Do you want to add hotlink protection? [y/n]: " anti_hotlinking_yn
     if [[ ! $anti_hotlinking_yn =~ ^[y,n]$ ]];then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
@@ -326,9 +304,7 @@ fi
 
 Nginx_rewrite() {
 [ ! -d "$web_install_dir/conf/rewrite" ] && mkdir $web_install_dir/conf/rewrite
-while :
-do
-    echo
+while :; do echo
     read -p "Allow Rewrite rule? [y/n]: " rewrite_yn
     if [[ ! $rewrite_yn =~ ^[y,n]$ ]];then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
@@ -358,9 +334,7 @@ fi
 }
 
 Nginx_log() {
-while :
-do
-    echo
+while :; do echo
     read -p "Allow Nginx/Tengine/OpenResty access_log? [y/n]: " access_yn
     if [[ ! $access_yn =~ ^[y,n]$ ]];then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
@@ -511,9 +485,7 @@ echo "`printf "%-30s" "Directory of:"`${CMSG}$vhostdir${CEND}"
 }
 
 Apache_log() {
-while :
-do
-    echo
+while :; do echo
     read -p "Allow Apache access_log? [y/n]: " access_yn
     if [[ ! $access_yn =~ ^[y,n]$ ]];then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
@@ -716,9 +688,7 @@ Del_NGX_Vhost() {
             echo
             echo "Virtualhost list:"
         echo ${CMSG}$Domain_List${CEND}
-            while :
-            do
-                echo
+            while :; do echo
                 read -p "Please input a domain you want to delete: " domain
                 if [ -z "`echo $domain | grep '.*\..*'`" ]; then
                     echo "${CWARNING}input error! ${CEND}"
@@ -727,9 +697,7 @@ Del_NGX_Vhost() {
                         Directory=`grep ^root $web_install_dir/conf/vhost/${domain}.conf | awk -F'[ ;]' '{print $2}'`
                         rm -rf $web_install_dir/conf/vhost/${domain}.conf
                         $web_install_dir/sbin/nginx -s reload
-                        while :
-                        do
-                            echo
+                        while :; do echo
                             read -p "Do you want to delete Virtul Host directory? [y/n]: " Del_Vhost_wwwroot_yn
                             if [[ ! $Del_Vhost_wwwroot_yn =~ ^[y,n]$ ]];then
                                 echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
@@ -767,9 +735,7 @@ Del_Apache_Vhost() {
                 echo
                 echo "Virtualhost list:"
                 echo ${CMSG}$Domain_List${CEND}
-                while :
-                do
-                    echo
+                while :; do echo
                     read -p "Please input a domain you want to delete: " domain
                     if [ -z "`echo $domain | grep '.*\..*'`" ]; then
                         echo "${CWARNING}input error! ${CEND}"
@@ -778,9 +744,7 @@ Del_Apache_Vhost() {
                             Directory=`grep '^<Directory' $apache_install_dir/conf/vhost/${domain}.conf | awk -F'"' '{print $2}'`
                             rm -rf $apache_install_dir/conf/vhost/${domain}.conf
                             /etc/init.d/httpd restart
-                            while :
-                            do
-                                echo
+                            while :; do echo
                                 read -p "Do you want to delete Virtul Host directory? [y/n]: " Del_Vhost_wwwroot_yn
                                 if [[ ! $Del_Vhost_wwwroot_yn =~ ^[y,n]$ ]];then
                                     echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
@@ -823,9 +787,7 @@ Del_Tomcat_Vhost() {
                 echo
                 echo "Virtualhost list:"
                 echo ${CMSG}$Domain_List${CEND}
-                while :
-                do
-                    echo
+                while :; do echo
                     read -p "Please input a domain you want to delete: " domain
                     if [ -z "`echo $domain | grep '.*\..*'`" ]; then
                         echo "${CWARNING}input error! ${CEND}"
@@ -834,9 +796,7 @@ Del_Tomcat_Vhost() {
                             sed -i /vhost-${domain}/d $tomcat_install_dir/conf/server.xml
                             rm -rf $tomcat_install_dir/conf/vhost/${domain}.xml
                             /etc/init.d/tomcat restart
-                            while :
-                            do
-                                echo
+                            while :; do echo
                                 read -p "Do you want to delete Virtul Host directory? [y/n]: " Del_Vhost_wwwroot_yn
                                 if [[ ! $Del_Vhost_wwwroot_yn =~ ^[y,n]$ ]];then
                                     echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"

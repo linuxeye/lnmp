@@ -10,7 +10,7 @@
 
 Upgrade_PHP() {
 cd $oneinstack_dir/src
-[ ! -e "$php_install_dir" ] && echo "${CWARNING}The PHP is not installed on your system! ${CEND}" && exit 1
+[ ! -e "$php_install_dir" ] && echo "${CWARNING}PHP is not installed on your system! ${CEND}" && exit 1
 echo
 OLD_PHP_version=`$php_install_dir/bin/php -r 'echo PHP_VERSION;'`
 echo "Current PHP Version: ${CMSG}$OLD_PHP_version${CEND}"

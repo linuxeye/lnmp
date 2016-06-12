@@ -24,7 +24,7 @@ printf "
 # Check if user is root
 [ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
 
-[ ! -d "$pureftpd_install_dir" ] && { echo "${CFAILURE}The ftp server does not exist! ${CEND}"; exit 1; }
+[ ! -d "$pureftpd_install_dir" ] && { echo "${CFAILURE}FTP server does not exist! ${CEND}"; exit 1; }
 
 FTP_conf=$pureftpd_install_dir/etc/pure-ftpd.conf
 FTP_tmp_passfile=$pureftpd_install_dir/etc/pureftpd_psss.tmp

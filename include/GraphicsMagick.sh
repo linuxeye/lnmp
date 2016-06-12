@@ -48,7 +48,7 @@ extension=gmagick.so
 EOF
         [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
     else
-        echo "${CFAILURE}PHP Gmagick module install failed, Please contact the author! ${CEND}"
+        echo "${CFAILURE}PHP gmagick module install failed, Please contact the author! ${CEND}"
     fi
 fi
 cd ..

@@ -10,7 +10,7 @@
 
 Upgrade_Nginx() {
 cd $oneinstack_dir/src
-[ ! -e "$nginx_install_dir/sbin/nginx" ] && echo "${CWARNING}The Nginx is not installed on your system! ${CEND}" && exit 1
+[ ! -e "$nginx_install_dir/sbin/nginx" ] && echo "${CWARNING}Nginx is not installed on your system! ${CEND}" && exit 1
 OLD_Nginx_version_tmp=`$nginx_install_dir/sbin/nginx -v 2>&1`
 OLD_Nginx_version=${OLD_Nginx_version_tmp##*/}
 echo
@@ -28,7 +28,7 @@ while :; do echo
             echo "${CWARNING}Nginx version does not exist! ${CEND}"
         fi
     else
-        echo "${CWARNING}input error! The upgrade Nginx version is the same as the old version${CEND}"
+        echo "${CWARNING}input error! Upgrade Nginx version is the same as the old version${CEND}"
     fi
 done
 
@@ -62,7 +62,7 @@ cd ..
 
 Upgrade_Tengine() {
 cd $oneinstack_dir/src
-[ ! -e "$tengine_install_dir/sbin/nginx" ] && echo "${CWARNING}The Tengine is not installed on your system! ${CEND}" && exit 1
+[ ! -e "$tengine_install_dir/sbin/nginx" ] && echo "${CWARNING}Tengine is not installed on your system! ${CEND}" && exit 1
 OLD_Tengine_version_tmp=`$tengine_install_dir/sbin/nginx -v 2>&1`
 OLD_Tengine_version="`echo ${OLD_Tengine_version_tmp#*/} | awk '{print $1}'`"
 echo
@@ -80,7 +80,7 @@ while :; do echo
             echo "${CWARNING}Tengine version does not exist! ${CEND}"
         fi
     else
-        echo "${CWARNING}input error! The upgrade Tengine version is the same as the old version${CEND}"
+        echo "${CWARNING}input error! Upgrade Tengine version is the same as the old version${CEND}"
     fi
 done
 
@@ -119,7 +119,7 @@ cd ..
 
 Upgrade_OpenResty() {
 cd $oneinstack_dir/src
-[ ! -e "$openresty_install_dir/nginx/sbin/nginx" ] && echo "${CWARNING}The OpenResty is not installed on your system! ${CEND}" && exit 1
+[ ! -e "$openresty_install_dir/nginx/sbin/nginx" ] && echo "${CWARNING}OpenResty is not installed on your system! ${CEND}" && exit 1
 OLD_OpenResty_version_tmp=`$openresty_install_dir/nginx/sbin/nginx -v 2>&1`
 OLD_OpenResty_version="`echo ${OLD_OpenResty_version_tmp#*/} | awk '{print $1}'`"
 echo
@@ -137,7 +137,7 @@ while :; do echo
             echo "${CWARNING}OpenResty version does not exist! ${CEND}"
         fi
     else
-        echo "${CWARNING}input error! The upgrade OpenResty version is the same as the old version${CEND}"
+        echo "${CWARNING}input error! Upgrade OpenResty version is the same as the old version${CEND}"
     fi
 done
 

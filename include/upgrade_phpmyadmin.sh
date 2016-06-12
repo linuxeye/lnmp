@@ -10,7 +10,7 @@
 
 Upgrade_phpMyAdmin() {
 cd $oneinstack_dir/src
-[ ! -e "$wwwroot_dir/default/phpMyAdmin" ] && echo "${CWARNING}The phpMyAdmin is not installed on your system! ${CEND}" && exit 1
+[ ! -e "$wwwroot_dir/default/phpMyAdmin" ] && echo "${CWARNING}phpMyAdmin is not installed on your system! ${CEND}" && exit 1
 OLD_phpMyAdmin_version=`grep Version $wwwroot_dir/default/phpMyAdmin/README | awk '{print $2}'`
 echo "Current phpMyAdmin Version: ${CMSG}$OLD_phpMyAdmin_version${CEND}"
 
@@ -25,7 +25,7 @@ while :; do echo
             echo "${CWARNING}phpMyAdmin version does not exist! ${CEND}"
         fi
     else
-        echo "${CWARNING}input error! The upgrade phpMyAdmin version is the same as the old version${CEND}"
+        echo "${CWARNING}input error! Upgrade phpMyAdmin version is the same as the old version${CEND}"
     fi
 done
 

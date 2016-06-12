@@ -10,7 +10,7 @@
 
 Upgrade_Redis() {
 cd $oneinstack_dir/src
-[ ! -d "$redis_install_dir" ] && echo "${CWARNING}The Redis is not installed on your system! ${CEND}" && exit 1
+[ ! -d "$redis_install_dir" ] && echo "${CWARNING}Redis is not installed on your system! ${CEND}" && exit 1
 OLD_Redis_version=`$redis_install_dir/bin/redis-cli --version | awk '{print $2}'`
 echo "Current Redis Version: ${CMSG}$OLD_Redis_version${CEND}"
 while :; do echo
@@ -24,7 +24,7 @@ while :; do echo
             echo "${CWARNING}Redis version does not exist! ${CEND}"
         fi
     else
-        echo "${CWARNING}input error! The upgrade Redis version is the same as the old version${CEND}"
+        echo "${CWARNING}input error! Upgrade Redis version is the same as the old version${CEND}"
     fi
 done
 

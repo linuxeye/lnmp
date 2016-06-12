@@ -27,7 +27,7 @@ printf "
 
 Reset_db_root_password()
 {
-[ ! -d "$db_install_dir" ] && { echo "${CFAILURE}The Database is not installed on your system! ${CEND}"; exit 1; }
+[ ! -d "$db_install_dir" ] && { echo "${CFAILURE}Database is not installed on your system! ${CEND}"; exit 1; }
 while :; do echo
     read -p "Please input the root password of database: " New_dbrootpwd
     [ -n "`echo $New_dbrootpwd | grep '[+|&]'`" ] && { echo "${CWARNING}input error,not contain a plus sign (+) and &${CEND}"; continue; }

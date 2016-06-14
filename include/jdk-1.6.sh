@@ -8,7 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install-JDK-1-6(){
+Install-JDK-1-6() {
 cd $oneinstack_dir/src
 
 JDK_FILE="jdk-`echo $jdk_6_version | awk -F. '{print $2}'`u`echo $jdk_6_version | awk -F_ '{print $NF}'`-linux-$SYS_BIG_FLAG.bin"
@@ -17,8 +17,7 @@ JDK_NAME="jdk$jdk_6_version"
 JDK_PATH=$JAVA_dir/$JDK_NAME
 src_url=http://mirrors.linuxeye.com/jdk/$JDK_FILE && Download_src
 
-OS_CentOS='[ -n "`rpm -qa | grep jdk`" ] && rpm -e `rpm -qa | grep jdk`'
-OS_command
+[ "$OS" == 'CentOS' ] && [ -n "`rpm -qa | grep jdk`" ] && rpm -e `rpm -qa | grep jdk`
 
 chmod +x $JDK_FILE
 ./$JDK_FILE

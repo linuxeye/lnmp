@@ -12,13 +12,9 @@ PORT=11211
 USER=memcached
 MAXCONN=1024
 CACHESIZE=256
-OPTIONS=""
+OPTIONS="-l 127.0.0.1"
+DAEMON=/usr/local/memcached/bin/memcached
 
-if [ -f /etc/sysconfig/memcached ];then
-    . /etc/sysconfig/memcached
-fi
-
-# Check that networking is up.
 if [ "$NETWORKING" = "no" ]
 then
     exit 0
@@ -34,7 +30,7 @@ start () {
     if [ "`stat -c %U /var/run/memcached`" != "$USER" ]; then
         chown $USER /var/run/memcached
     fi
-    daemon memcached -d -p $PORT -u $USER  -m $CACHESIZE -c $MAXCONN -P /var/run/memcached/memcached.pid $OPTIONS
+    $DAEMON -d -p $PORT -u $USER  -m $CACHESIZE -c $MAXCONN -P /var/run/memcached/memcached.pid $OPTIONS
     RETVAL=$?
     echo
     [ $RETVAL -eq 0 ] && touch /var/lock/subsys/memcached
@@ -46,7 +42,7 @@ stop () {
     echo
     if [ $RETVAL -eq 0 ] ; then
         rm -f /var/lock/subsys/memcached
-        rm -f /var/run/memcached/memcached.pid 
+        rm -f /var/run/memcached/memcached.pid
     fi
 }
 

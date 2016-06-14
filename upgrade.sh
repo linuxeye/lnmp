@@ -13,17 +13,18 @@ clear
 printf "
 #######################################################################
 #       OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+      #
-#       upgrade Web,Database,PHP,Redis,phpMyAdmin for OneinStack      # 
+#       upgrade Web,Database,PHP,Redis,phpMyAdmin for OneinStack      #
 #       For more information please visit http://oneinstack.com       #
 #######################################################################
 "
 # get pwd
 sed -i "s@^oneinstack_dir.*@oneinstack_dir=`pwd`@" ./options.conf
 
+. ./apps.conf
 . ./options.conf
 . ./include/color.sh
 . ./include/check_os.sh
-. ./include/check_db.sh
+. ./include/check_dir.sh
 . ./include/download.sh
 . ./include/get_char.sh
 . ./include/upgrade_web.sh
@@ -33,16 +34,16 @@ sed -i "s@^oneinstack_dir.*@oneinstack_dir=`pwd`@" ./options.conf
 . ./include/upgrade_phpmyadmin.sh
 
 # Check if user is root
-[ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; } 
+[ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
 
-# get the IP information 
+# get the IP information
 PUBLIC_IPADDR=`./include/get_public_ipaddr.py`
 [ "`./include/get_ipaddr_state.py $PUBLIC_IPADDR`" == '\u4e2d\u56fd' ] && IPADDR_STATE=CN
 
 Usage(){
 printf "
 Usage: $0 [ ${CMSG}web${CEND} | ${CMSG}db${CEND} | ${CMSG}php${CEND} | ${CMSG}redis${CEND} | ${CMSG}phpmyadmin${CEND} ]
-${CMSG}web${CEND}            --->Upgrade Nginx/Tengine
+${CMSG}web${CEND}            --->Upgrade Nginx/Tengine/OpenResty
 ${CMSG}db${CEND}             --->Upgrade MySQL/MariaDB/Percona
 ${CMSG}php${CEND}            --->Upgrade PHP
 ${CMSG}redis${CEND}          --->Upgrade Redis
@@ -52,11 +53,10 @@ ${CMSG}phpmyadmin${CEND}     --->Upgrade phpMyAdmin
 }
 
 Menu(){
-while :
-do
+while :; do
     printf "
 What Are You Doing?
-\t${CMSG}1${CEND}. Upgrade Nginx/Tengine
+\t${CMSG}1${CEND}. Upgrade Nginx/Tengine/OpenResty
 \t${CMSG}2${CEND}. Upgrade MySQL/MariaDB/Percona
 \t${CMSG}3${CEND}. Upgrade PHP
 \t${CMSG}4${CEND}. Upgrade Redis
@@ -65,8 +65,8 @@ What Are You Doing?
 "
     echo
     read -p "Please input the correct option: " Number
-    if [ "$Number" != '1' -a "$Number" != '2' -a "$Number" != '3' -a "$Number" != '4' -a "$Number" != '5' -a "$Number" != 'q' ];then
-        echo "${CWARNING}input error! Please only input 1 ~ 5 and q${CEND}"
+    if [[ ! $Number =~ ^[1-5,q]$ ]];then
+        echo "${CWARNING}input error! Please only input 1,2,3,4,5 and q${CEND}"
     else
         case "$Number" in
         1)
@@ -74,6 +74,8 @@ What Are You Doing?
                 Upgrade_Nginx
             elif [ -e "$tengine_install_dir/sbin/nginx" ];then
                 Upgrade_Tengine
+            elif [ -e "$openresty_install_dir/nginx/sbin/nginx" ];then
+                Upgrade_OpenResty
             fi
             ;;
 
@@ -109,25 +111,27 @@ elif [ $# == 1 ];then
             Upgrade_Nginx
         elif [ -e "$tengine_install_dir/sbin/nginx" ];then
             Upgrade_Tengine
+        elif [ -e "$openresty_install_dir/nginx/sbin/nginx" ];then
+            Upgrade_OpenResty
         fi
         ;;
-    
+
     db)
         Upgrade_DB
         ;;
-    
+
     php)
         Upgrade_PHP
         ;;
-    
+
     redis)
         Upgrade_Redis
         ;;
-    
+
     phpmyadmin)
         Upgrade_phpMyAdmin
         ;;
-    
+
     *)
         Usage
         ;;

@@ -1,12 +1,12 @@
-This script is written using the shell, in order to quickly deploy `LEMP`/`LAMP`/`LNMP`/`LNMPA`(Linux, Nginx/Tengine, MySQL in a production environment/MariaDB/Percona, PHP), applicable to CentOS 5~7(including RedHat), Debian 6~8, Ubuntu 12.04~15.04 of 32 and 64.
+This script is written using the shell, in order to quickly deploy `LEMP`/`LAMP`/`LNMP`/`LNMPA`(Linux, Nginx/Tengine/OpenResty, MySQL in a production environment/MariaDB/Percona, PHP), applicable to CentOS 5~7(including redhat), Debian 6~8, Ubuntu 12~15 of 32 and 64. 
 
 Script properties:
 - Continually updated
 - Source compiler installation, most stable source is the latest version, and download from the official site
 - Some security optimization
-- Providing a plurality of database versions (MySQL-5.7, MySQL-5.6, MySQL-5.5, MariaDB-10.1, MariaDB-10.0, MariaDB-5.5, Percona-5.6, Percona-5.5)
-- Providing multiple PHP versions (php-5.3, php-5.4, php-5.5, php-5.6, php-7/phpng(RC))
-- Provide Nginx, Tengine
+- Providing a plurality of database versions (MySQL-5.7, MySQL-5.6, MySQL-5.5, MariaDB-10.1, MariaDB-10.0, MariaDB-5.5,Percona-5.7, Percona-5.6, Percona-5.5)
+- Providing multiple PHP versions (php-7, php-5.6, php-5.5, php-5.4, php-5.3)
+- Provide Nginx, Tengine, OpenResty
 - Providing a plurality of Apache version (Apache-2.4, Apache-2.2)
 - According to their needs to install PHP Cache Accelerator provides ZendOPcache, xcache, apcu, eAccelerator. And php encryption and decryption tool ionCube, ZendGuardLoader
 - Installation Pureftpd, phpMyAdmin according to their needs

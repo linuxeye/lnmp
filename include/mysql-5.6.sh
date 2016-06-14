@@ -8,40 +8,30 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_MySQL-5-6()
-{
+Install_MySQL-5-6() {
 cd $oneinstack_dir/src
-src_url=http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-$mysql_5_6_version.tar.gz && Download_src
+
+if [ "`../include/check_port.py aliyun-oss.linuxeye.com 80`" == 'True' ];then
+    DOWN_ADDR_MYSQL=http://aliyun-oss.linuxeye.com/mysql/MySQL-5.6
+else
+    [ "$IPADDR_STATE"x == "CN"x ] && DOWN_ADDR_MYSQL=http://mirrors.sohu.com/mysql/MySQL-5.6 || DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.6
+fi
+
+src_url=$DOWN_ADDR_MYSQL/mysql-${mysql_5_6_version}-linux-glibc2.5-${SYS_BIT_b}.tar.gz && Download_src
 
 id -u mysql >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin mysql
 
+[ ! -d "$mysql_install_dir" ] && mkdir -p $mysql_install_dir
 mkdir -p $mysql_data_dir;chown mysql.mysql -R $mysql_data_dir
-tar zxf mysql-$mysql_5_6_version.tar.gz
-cd mysql-$mysql_5_6_version
+
+tar zxf mysql-${mysql_5_6_version}-linux-glibc2.5-${SYS_BIT_b}.tar.gz
+mv mysql-${mysql_5_6_version}-linux-glibc2.5-${SYS_BIT_b}/* $mysql_install_dir
 if [ "$je_tc_malloc" == '1' ];then
-    EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
+    sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' $mysql_install_dir/bin/mysqld_safe
 elif [ "$je_tc_malloc" == '2' ];then
-    EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"
+    sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libtcmalloc.so@' $mysql_install_dir/bin/mysqld_safe
 fi
-make clean
-[ ! -d "$mysql_install_dir" ] && mkdir -p $mysql_install_dir 
-cmake . -DCMAKE_INSTALL_PREFIX=$mysql_install_dir \
--DMYSQL_DATADIR=$mysql_data_dir \
--DSYSCONFDIR=/etc \
--DWITH_INNOBASE_STORAGE_ENGINE=1 \
--DWITH_PARTITION_STORAGE_ENGINE=1 \
--DWITH_FEDERATED_STORAGE_ENGINE=1 \
--DWITH_BLACKHOLE_STORAGE_ENGINE=1 \
--DWITH_MYISAM_STORAGE_ENGINE=1 \
--DENABLED_LOCAL_INFILE=1 \
--DENABLE_DTRACE=0 \
--DDEFAULT_CHARSET=utf8mb4 \
--DDEFAULT_COLLATION=utf8mb4_general_ci \
--DWITH_EMBEDDED_SERVER=1 \
-$EXE_LINKER
-make -j `grep processor /proc/cpuinfo | wc -l` 
-make install
 
 if [ -d "$mysql_install_dir/support-files" ];then
     echo "${CSUCCESS}MySQL install successfully! ${CEND}"
@@ -54,14 +44,14 @@ else
 fi
 
 /bin/cp $mysql_install_dir/support-files/mysql.server /etc/init.d/mysqld
+sed -i "s@^basedir=.*@basedir=$mysql_install_dir@" /etc/init.d/mysqld
+sed -i "s@^datadir=.*@datadir=$mysql_data_dir@" /etc/init.d/mysqld
 chmod +x /etc/init.d/mysqld
-OS_CentOS='chkconfig --add mysqld \n
-chkconfig mysqld on'
-OS_Debian_Ubuntu='update-rc.d mysqld defaults'
-OS_command
+[ "$OS" == 'CentOS' ] && { chkconfig --add mysqld; chkconfig mysqld on; }
+[[ $OS =~ ^Ubuntu$|^Debian$ ]] && update-rc.d mysqld defaults
 cd ..
 
-# my.cf
+# my.cnf
 [ -d "/etc/mysql" ] && /bin/mv /etc/mysql{,_bk}
 cat > /etc/my.cnf << EOF
 [client]
@@ -69,11 +59,15 @@ port = 3306
 socket = /tmp/mysql.sock
 default-character-set = utf8mb4
 
+[mysql]
+prompt="MySQL [\\d]> "
+no-auto-rehash
+
 [mysqld]
 port = 3306
 socket = /tmp/mysql.sock
 
-basedir = $mysql_install_dir 
+basedir = $mysql_install_dir
 datadir = $mysql_data_dir
 pid-file = $mysql_data_dir/mysql.pid
 user = mysql
@@ -90,8 +84,8 @@ back_log = 300
 max_connections = 1000
 max_connect_errors = 6000
 open_files_limit = 65535
-table_open_cache = 128 
-max_allowed_packet = 4M
+table_open_cache = 128
+max_allowed_packet = 500M
 binlog_cache_size = 1M
 max_heap_table_size = 8M
 tmp_table_size = 16M
@@ -112,7 +106,7 @@ ft_min_word_len = 4
 
 log_bin = mysql-bin
 binlog_format = mixed
-expire_logs_days = 30
+expire_logs_days = 7
 
 log_error = $mysql_data_dir/mysql-error.log
 slow_query_log = 1
@@ -127,7 +121,6 @@ explicit_defaults_for_timestamp
 skip-external-locking
 
 default_storage_engine = InnoDB
-#default-storage-engine = MyISAM
 innodb_file_per_table = 1
 innodb_open_files = 500
 innodb_buffer_pool_size = 64M
@@ -152,7 +145,7 @@ wait_timeout = 28800
 
 [mysqldump]
 quick
-max_allowed_packet = 16M
+max_allowed_packet = 500M
 
 [myisamchk]
 key_buffer_size = 8M
@@ -161,6 +154,7 @@ read_buffer = 4M
 write_buffer = 4M
 EOF
 
+sed -i "s@max_connections.*@max_connections = $(($Mem/2))@" /etc/my.cnf
 if [ $Mem -gt 1500 -a $Mem -le 2500 ];then
     sed -i 's@^thread_cache_size.*@thread_cache_size = 16@' /etc/my.cnf
     sed -i 's@^query_cache_size.*@query_cache_size = 16M@' /etc/my.cnf
@@ -190,8 +184,9 @@ fi
 $mysql_install_dir/scripts/mysql_install_db --user=mysql --basedir=$mysql_install_dir --datadir=$mysql_data_dir
 
 chown mysql.mysql -R $mysql_data_dir
+[ -d '/etc/mysql' ] && mv /etc/mysql{,_bk}
 service mysqld start
-[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$mysql_install_dir/bin:\$PATH" >> /etc/profile 
+[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$mysql_install_dir/bin:\$PATH" >> /etc/profile
 [ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep $mysql_install_dir /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$mysql_install_dir/bin:\1@" /etc/profile
 . /etc/profile
 
@@ -203,7 +198,8 @@ $mysql_install_dir/bin/mysql -uroot -p$dbrootpwd -e "delete from mysql.proxies_p
 $mysql_install_dir/bin/mysql -uroot -p$dbrootpwd -e "drop database test;"
 $mysql_install_dir/bin/mysql -uroot -p$dbrootpwd -e "reset master;"
 rm -rf /etc/ld.so.conf.d/{mysql,mariadb,percona}*.conf
-echo "$mysql_install_dir/lib" > /etc/ld.so.conf.d/mysql.conf 
+echo "$mysql_install_dir/lib" > /etc/ld.so.conf.d/mysql.conf
+[ -e "$mysql_install_dir/my.cnf" ] && rm -rf $mysql_install_dir/my.cnf
 ldconfig
 service mysqld stop
 }

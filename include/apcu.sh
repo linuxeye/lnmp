@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_APCU()
-{
+Install_APCU() {
 cd $oneinstack_dir/src
 src_url=http://pecl.php.net/get/apcu-$apcu_version.tgz && Download_src
 
@@ -18,10 +17,11 @@ cd apcu-$apcu_version
 make clean
 $php_install_dir/bin/phpize
 ./configure --with-php-config=$php_install_dir/bin/php-config
-make && make install
-if [ -f "$php_install_dir/lib/php/extensions/`ls $php_install_dir/lib/php/extensions | grep zts`/apcu.so" ];then
-    cat >> $php_install_dir/etc/php.ini << EOF
-extension = apcu.so
+make -j ${THREAD} && make install
+if [ -f "`$php_install_dir/bin/php-config --extension-dir`/apcu.so" ];then
+    cat > $php_install_dir/etc/php.d/ext-apcu.ini << EOF
+[apcu]
+extension=apcu.so
 apc.enabled=1
 apc.shm_size=32M
 apc.ttl=7200

@@ -1,15 +1,15 @@
 #! /bin/sh
 #
- 
+
 PORT=11211
 USER=memcached
 MAXCONN=1024
-OPTIONS=""
+OPTIONS="-l 127.0.0.1"
 DAEMON=/usr/local/memcached/bin/memcached
- 
+
 RETVAL=0
 prog="/usr/local/memcached/bin/memcached"
- 
+
 start_instance() {
         echo -n $"Starting $prog ($1): "
         start-stop-daemon --start --quiet --pidfile /var/run/memcached/memcached.$1.pid --exec $DAEMON -- -d -p $PORT -u $USER  -m $2 -c $MAXCONN -P /var/run/memcached/memcached.$1.pid $OPTIONS
@@ -18,7 +18,7 @@ start_instance() {
         [ $RETVAL -eq 0 ] && touch /var/lock/memcached.$1
         PORT=`expr $PORT + 1`
 }
- 
+
 stop_instance() {
         echo -n $"Stopping $prog ($1): "
         start-stop-daemon --stop --quiet --oknodo --pidfile /var/run/memcached/memcached.$1.pid --exec $DAEMON
@@ -35,7 +35,7 @@ start () {
         if [ "`stat -c %U /var/run/memcached`" != "$USER" ]; then
                 chown $USER /var/run/memcached
         fi
- 
+
         start_instance default 256;
         #start_instance block 16;
         #start_instance content 128;
@@ -57,12 +57,12 @@ stop () {
         #stop_instance update;
         #stop_instance views;
 }
- 
+
 restart () {
         stop
         start
 }
- 
+
 # See how we were called.
 case "$1" in
   start)
@@ -81,5 +81,5 @@ case "$1" in
         echo $"Usage: $0 {start|stop|status|restart|reload|force-reload}"
         exit 1
 esac
- 
+
 exit $?

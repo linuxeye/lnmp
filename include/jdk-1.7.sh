@@ -8,7 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install-JDK-1-7(){
+Install-JDK-1-7() {
 cd $oneinstack_dir/src
 
 JDK_FILE="jdk-`echo $jdk_7_version | awk -F. '{print $2}'`u`echo $jdk_7_version | awk -F_ '{print $NF}'`-linux-$SYS_BIG_FLAG.tar.gz"
@@ -17,10 +17,9 @@ JDK_NAME="jdk$jdk_7_version"
 JDK_PATH=$JAVA_dir/$JDK_NAME
 src_url=http://mirrors.linuxeye.com/jdk/$JDK_FILE && Download_src
 
-OS_CentOS='[ -n "`rpm -qa | grep jdk`" ] && rpm -e `rpm -qa | grep jdk`'
-OS_command
+[ "$OS" == 'CentOS' ] && [ -n "`rpm -qa | grep jdk`" ] && rpm -e `rpm -qa | grep jdk`
 
-tar xzf $JDK_FILE 
+tar xzf $JDK_FILE
 
 if [ -d "$JDK_NAME" ];then
     rm -rf $JAVA_dir; mkdir -p $JAVA_dir

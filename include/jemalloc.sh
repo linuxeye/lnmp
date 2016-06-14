@@ -8,17 +8,16 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_jemalloc()
-{
+Install_jemalloc() {
 cd $oneinstack_dir/src
 src_url=http://mirrors.linuxeye.com/oneinstack/src/jemalloc-$jemalloc_version.tar.bz2 && Download_src
 
 tar xjf jemalloc-$jemalloc_version.tar.bz2
 cd jemalloc-$jemalloc_version
-./configure
-make && make install
+LDFLAGS="${LDFLAGS} -lrt" ./configure
+make -j ${THREAD} && make install
 if [ -f "/usr/local/lib/libjemalloc.so" ];then
-    if [ "$OS_BIT" == '64' ];then
+    if [ "$OS_BIT" == '64' -a "$OS" == 'CentOS' ];then
         ln -s /usr/local/lib/libjemalloc.so.2 /usr/lib64/libjemalloc.so.1
     else
         ln -s /usr/local/lib/libjemalloc.so.2 /usr/lib/libjemalloc.so.1

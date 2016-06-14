@@ -8,16 +8,22 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-if [ -f /etc/redhat-release -o -n "`grep 'Aliyun Linux release' /etc/issue`" ];then
+if [ -n "`grep 'Aliyun Linux release' /etc/issue`" -o -e /etc/redhat-release ];then
     OS=CentOS
     [ -n "`grep ' 7\.' /etc/redhat-release`" ] && CentOS_RHEL_version=7
     [ -n "`grep ' 6\.' /etc/redhat-release`" -o -n "`grep 'Aliyun Linux release6 15' /etc/issue`" ] && CentOS_RHEL_version=6
     [ -n "`grep ' 5\.' /etc/redhat-release`" -o -n "`grep 'Aliyun Linux release5' /etc/issue`" ] && CentOS_RHEL_version=5
-elif [ -n "`grep bian /etc/issue`" ];then
+elif [ -n "`grep bian /etc/issue`" -o "`lsb_release -is 2>/dev/null`" == 'Debian' ];then
     OS=Debian
+    [ ! -e "`which lsb_release`" ] && { apt-get -y update; apt-get -y install lsb-release; }
     Debian_version=`lsb_release -sr | awk -F. '{print $1}'`
-elif [ -n "`grep Ubuntu /etc/issue`" ];then
+elif [ -n "`grep Deepin /etc/issue`" -o "`lsb_release -is 2>/dev/null`" == 'Deepin' ];then
+    OS=Debian
+    [ ! -e "`which lsb_release`" ] && { apt-get -y update; apt-get -y install lsb-release; }
+    Debian_version=`lsb_release -sr | awk -F. '{print $1}'`
+elif [ -n "`grep Ubuntu /etc/issue`" -o "`lsb_release -is 2>/dev/null`" == 'Ubuntu' ];then
     OS=Ubuntu
+    [ ! -e "`which lsb_release`" ] && { apt-get -y update; apt-get -y install lsb-release; }
     Ubuntu_version=`lsb_release -sr | awk -F. '{print $1}'`
 else
     echo "${CFAILURE}Does not support this OS, Please contact the author! ${CEND}"
@@ -34,13 +40,4 @@ else
     SYS_BIT_a=x86;SYS_BIT_b=i686;
 fi
 
-OS_command(){
-    if [ $OS == 'CentOS' ];then
-        echo -e $OS_CentOS | bash
-    elif [ $OS == 'Debian' -o $OS == 'Ubuntu' ];then
-        echo -e $OS_Debian_Ubuntu | bash
-    else
-        echo "${CFAILURE}Does not support this OS, Please contact the author! ${CEND}" 
-        kill -9 $$
-    fi
-}
+THREAD=$(grep 'processor' /proc/cpuinfo | sort -u | wc -l)

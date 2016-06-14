@@ -14,11 +14,11 @@ yum clean all
 yum makecache
 
 if [ "$CentOS_RHEL_version" == '7' ];then
-    yum -y install iptables-services 
+    yum -y install iptables-services
     systemctl mask firewalld.service
     systemctl enable iptables.service
 elif [ "$CentOS_RHEL_version" == '6' ];then
-    yum -y groupremove "FTP Server" "PostgreSQL Database client" "PostgreSQL Database server" "MySQL Database server" "MySQL Database client" "Web Server" "Office Suite and Productivity" "E-mail server" "Ruby Support" "Printing client" 
+    yum -y groupremove "FTP Server" "PostgreSQL Database client" "PostgreSQL Database server" "MySQL Database server" "MySQL Database client" "Web Server" "Office Suite and Productivity" "E-mail server" "Ruby Support" "Printing client"
 elif [ "$CentOS_RHEL_version" == '5' ];then
     yum -y groupremove "FTP Server" "Windows File Server" "PostgreSQL Database" "News Server" "MySQL Database" "DNS Name Server" "Web Server" "Dialup Networking Support" "Mail Server" "Ruby" "Office/Productivity" "Sound and Video" "Printing Support" "OpenFabrics Enterprise Distribution"
 fi
@@ -29,7 +29,7 @@ yum check-update
 [ "$upgrade_yn" == 'y' ] && yum -y upgrade
 
 # Install needed packages
-for Package in deltarpm gcc gcc-c++ make cmake autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel libaio readline-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel libxslt-devel libevent-devel libtool libtool-ltdl bison gd-devel vim-enhanced pcre-devel zip unzip ntpdate sysstat patch bc expect rsync git
+for Package in deltarpm gcc gcc-c++ make cmake autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel libaio readline-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel libxslt-devel libicu-devel libevent-devel libtool libtool-ltdl bison gd-devel vim-enhanced pcre-devel zip unzip ntpdate sysstat patch bc expect rsync git lsof lrzsz
 do
     yum -y install $Package
 done
@@ -58,9 +58,9 @@ sed -i 's/^id:.*$/id:3:initdefault:/' /etc/inittab
 init q
 
 # PS1
-[ -z "`cat ~/.bashrc | grep ^PS1`" ] && echo 'PS1="\[\e[37;40m\][\[\e[32;40m\]\u\[\e[37;40m\]@\h \[\e[35;40m\]\W\[\e[0m\]]\\$ "' >> ~/.bashrc 
+[ -z "`cat ~/.bashrc | grep ^PS1`" ] && echo 'PS1="\[\e[37;40m\][\[\e[32;40m\]\u\[\e[37;40m\]@\h \[\e[35;40m\]\W\[\e[0m\]]\\$ "' >> ~/.bashrc
 
-# history size 
+# history size
 sed -i 's/^HISTSIZE=.*$/HISTSIZE=100/' /etc/profile
 [ -z "`cat ~/.bashrc | grep history-timestamp`" ] && echo "export PROMPT_COMMAND='{ msg=\$(history 1 | { read x y; echo \$y; });user=\$(whoami); echo \$(date \"+%Y-%m-%d %H:%M:%S\"):\$user:\`pwd\`/:\$msg ---- \$(who am i); } >> /tmp/\`hostname\`.\`whoami\`.history-timestamp'" >> ~/.bashrc
 
@@ -85,12 +85,9 @@ ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 # Set DNS
 #cat > /etc/resolv.conf << EOF
-#nameserver 114.114.114.114 
-#nameserver 8.8.8.8 
+#nameserver 114.114.114.114
+#nameserver 8.8.8.8
 #EOF
-
-# Wrong password five times locked 180s
-[ -z "`cat /etc/pam.d/system-auth | grep 'pam_tally2.so'`" ] && sed -i '4a auth        required      pam_tally2.so deny=5 unlock_time=180' /etc/pam.d/system-auth
 
 # alias vi
 [ -z "`cat ~/.bashrc | grep 'alias vi='`" ] && sed -i "s@alias mv=\(.*\)@alias mv=\1\nalias vi=vim@" ~/.bashrc && echo 'syntax on' >> /etc/vimrc
@@ -99,16 +96,17 @@ ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 sed -i 's/net.ipv4.tcp_syncookies.*$/net.ipv4.tcp_syncookies = 1/g' /etc/sysctl.conf
 [ -z "`cat /etc/sysctl.conf | grep 'fs.file-max'`" ] && cat >> /etc/sysctl.conf << EOF
 fs.file-max=65535
-net.ipv4.tcp_fin_timeout = 30 
+fs.inotify.max_user_instances = 8192
+net.ipv4.tcp_fin_timeout = 30
 net.ipv4.tcp_tw_reuse = 1
 net.ipv4.tcp_tw_recycle = 1
 net.ipv4.ip_local_port_range = 1024 65000
-net.ipv4.tcp_max_syn_backlog = 65536 
-net.ipv4.tcp_max_tw_buckets = 20000
+net.ipv4.tcp_max_syn_backlog = 65536
+net.ipv4.tcp_max_tw_buckets = 6000
 net.ipv4.route.gc_timeout = 100
 net.ipv4.tcp_syn_retries = 1
 net.ipv4.tcp_synack_retries = 1
-net.core.somaxconn = 65535 
+net.core.somaxconn = 65535
 net.core.netdev_max_backlog = 262144
 net.ipv4.tcp_timestamps = 0
 net.ipv4.tcp_max_orphans = 262144
@@ -120,14 +118,25 @@ if [ "$CentOS_RHEL_version" == '5' ];then
     sed -i 's@^ca::ctrlaltdel@#&@' /etc/inittab
     sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/sysconfig/i18n
 elif [ "$CentOS_RHEL_version" == '6' ];then
-    sed -i 's@^ACTIVE_CONSOLES.*@ACTIVE_CONSOLES=/dev/tty[1-2]@' /etc/sysconfig/init	
+    sed -i 's@^ACTIVE_CONSOLES.*@ACTIVE_CONSOLES=/dev/tty[1-2]@' /etc/sysconfig/init
     sed -i 's@^start@#start@' /etc/init/control-alt-delete.conf
+    sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/sysconfig/i18n
+    [ -z "`grep net.netfilter.nf_conntrack_max /etc/sysctl.conf`" ] && cat >> /etc/sysctl.conf << EOF
+net.netfilter.nf_conntrack_max = 1048576
+net.netfilter.nf_conntrack_tcp_timeout_established = 1200
+EOF
+elif [ "$CentOS_RHEL_version" == '7' ];then
+    sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/locale.conf
+    [ -z "`grep net.netfilter.nf_conntrack_max /etc/sysctl.conf`" ] && cat >> /etc/sysctl.conf << EOF
+net.netfilter.nf_conntrack_max = 1048576
+net.netfilter.nf_conntrack_tcp_timeout_established = 1200
+EOF
 fi
 init q
 
 # Update time
-ntpdate pool.ntp.org 
-[ -z "`grep 'pool.ntp.org' /var/spool/cron/root`" ] && { echo "*/20 * * * * `which ntpdate` pool.ntp.org > /dev/null 2>&1" >> /var/spool/cron/root;chmod 600 /var/spool/cron/root; }
+ntpdate pool.ntp.org
+[ -z "`grep 'ntpdate' /var/spool/cron/root`" ] && { echo "*/20 * * * * `which ntpdate` pool.ntp.org > /dev/null 2>&1" >> /var/spool/cron/root;chmod 600 /var/spool/cron/root; }
 service crond restart
 
 # iptables
@@ -135,9 +144,10 @@ if [ -e '/etc/sysconfig/iptables' ] && [ -n "`grep ':INPUT DROP' /etc/sysconfig/
     IPTABLES_STATUS=yes
 else
     IPTABLES_STATUS=no
-fi 
+fi
 
 if [ "$IPTABLES_STATUS" == 'no' ];then
+    [ -e '/etc/sysconfig/iptables' ] && /bin/mv /etc/sysconfig/iptables{,_bk}
     cat > /etc/sysconfig/iptables << EOF
 # Firewall configuration written by system-config-securitylevel
 # Manual customization of this file is not recommended.
@@ -162,28 +172,28 @@ EOF
 fi
 
 FW_PORT_FLAG=`grep -ow "dport $SSH_PORT" /etc/sysconfig/iptables`
-[ -z "$FW_PORT_FLAG" -a "$SSH_PORT" != '22' ] && sed -i "s@dport 22 -j ACCEPT@&\n-A INPUT -p tcp -m state --state NEW -m tcp --dport $SSH_PORT -j ACCEPT@" /etc/sysconfig/iptables 
+[ -z "$FW_PORT_FLAG" -a "$SSH_PORT" != '22' ] && sed -i "s@dport 22 -j ACCEPT@&\n-A INPUT -p tcp -m state --state NEW -m tcp --dport $SSH_PORT -j ACCEPT@" /etc/sysconfig/iptables
 service iptables restart
 service sshd restart
 
 # install tmux
 if [ ! -e "`which tmux`" ];then
     cd src
-    src_url=http://downloads.sourceforge.net/project/levent/libevent/libevent-2.0/libevent-2.0.22-stable.tar.gz && Download_src 
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/tmux-2.1.tar.gz && Download_src 
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/libevent-2.0.22-stable.tar.gz && Download_src
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/tmux-2.2.tar.gz && Download_src
     tar xzf libevent-2.0.22-stable.tar.gz
     cd libevent-2.0.22-stable
     ./configure
-    make && make install
+    make -j ${THREAD} && make install
     cd ..
 
-    tar xzf tmux-2.1.tar.gz
-    cd tmux-2.1
+    tar xzf tmux-2.2.tar.gz
+    cd tmux-2.2
     CFLAGS="-I/usr/local/include" LDFLAGS="-L//usr/local/lib" ./configure
-    make && make install
+    make -j ${THREAD} && make install
     cd ../../
 
-    if [ `getconf WORD_BIT` == 32 ] && [ `getconf LONG_BIT` == 64 ];then
+    if [ "$OS_BIT" == '64' ];then
         ln -s /usr/local/lib/libevent-2.0.so.5 /usr/lib64/libevent-2.0.so.5
     else
         ln -s /usr/local/lib/libevent-2.0.so.5 /usr/lib/libevent-2.0.so.5
@@ -193,11 +203,11 @@ fi
 # install htop
 if [ ! -e "`which htop`" ];then
     cd src
-    src_url=http://hisham.hm/htop/releases/1.0.3/htop-1.0.3.tar.gz && Download_src 
-    tar xzf htop-1.0.3.tar.gz
-    cd htop-1.0.3
+    src_url=http://hisham.hm/htop/releases/2.0.0/htop-2.0.0.tar.gz && Download_src
+    tar xzf htop-2.0.0.tar.gz
+    cd htop-2.0.0
     ./configure
-    make && make install
+    make -j ${THREAD} && make install
     cd ../../
 fi
 . /etc/profile

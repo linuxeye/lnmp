@@ -8,16 +8,13 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Upgrade_phpMyAdmin()
-{
+Upgrade_phpMyAdmin() {
 cd $oneinstack_dir/src
-[ ! -e "$wwwroot_dir/default/phpMyAdmin" ] && echo "${CWARNING}The phpMyAdmin is not installed on your system! ${CEND}" && exit 1
+[ ! -e "$wwwroot_dir/default/phpMyAdmin" ] && echo "${CWARNING}phpMyAdmin is not installed on your system! ${CEND}" && exit 1
 OLD_phpMyAdmin_version=`grep Version $wwwroot_dir/default/phpMyAdmin/README | awk '{print $2}'`
 echo "Current phpMyAdmin Version: ${CMSG}$OLD_phpMyAdmin_version${CEND}"
 
-while :
-do
-    echo
+while :; do echo
     read -p "Please input upgrade phpMyAdmin Version(example: 4.4.15): " NEW_phpMyAdmin_version
     if [ "$NEW_phpMyAdmin_version" != "$OLD_phpMyAdmin_version" ];then
         [ ! -e "phpMyAdmin-${NEW_phpMyAdmin_version}-all-languages.tar.gz" ] && wget --no-check-certificate -c https://files.phpmyadmin.net/phpMyAdmin/$NEW_phpMyAdmin_version/phpMyAdmin-${NEW_phpMyAdmin_version}-all-languages.tar.gz > /dev/null 2>&1
@@ -28,7 +25,7 @@ do
             echo "${CWARNING}phpMyAdmin version does not exist! ${CEND}"
         fi
     else
-        echo "${CWARNING}input error! The upgrade phpMyAdmin version is the same as the old version${CEND}"
+        echo "${CWARNING}input error! Upgrade phpMyAdmin version is the same as the old version${CEND}"
     fi
 done
 
@@ -36,7 +33,7 @@ if [ -e "phpMyAdmin-${NEW_phpMyAdmin_version}-all-languages.tar.gz" ];then
     echo "[${CMSG}phpMyAdmin-${NEW_phpMyAdmin_version}-all-languages.tar.gz${CEND}] found"
     echo "Press Ctrl+c to cancel or Press any key to continue..."
     char=`get_char`
-    tar xzf phpMyAdmin-${NEW_phpMyAdmin_version}-all-languages.tar.gz 
+    tar xzf phpMyAdmin-${NEW_phpMyAdmin_version}-all-languages.tar.gz
     rm -rf $wwwroot_dir/default/phpMyAdmin
     /bin/mv phpMyAdmin-${NEW_phpMyAdmin_version}-all-languages $wwwroot_dir/default/phpMyAdmin
     /bin/cp $wwwroot_dir/default/phpMyAdmin/{config.sample.inc.php,config.inc.php}

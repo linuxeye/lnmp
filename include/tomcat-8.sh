@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_tomcat-8()
-{
+Install_tomcat-8() {
 cd $oneinstack_dir/src
 . /etc/profile
 
@@ -22,31 +21,31 @@ id -u $run_user >/dev/null 2>&1
 tar xzf apache-tomcat-$tomcat_8_version.tar.gz
 [ ! -d "$tomcat_install_dir" ] && mkdir -p $tomcat_install_dir
 /bin/cp -R apache-tomcat-$tomcat_8_version/* $tomcat_install_dir
+rm -rf $tomcat_install_dir/webapps/{docs,examples,host-manager,manager,ROOT/*}
 
 if [ -e "$tomcat_install_dir/conf/server.xml" ];then
     /bin/cp catalina-jmx-remote.jar $tomcat_install_dir/lib
     cd $tomcat_install_dir/lib
-    [ ! -d "$tomcat_install_dir/lib/catalina" ] &&  mkdir $tomcat_install_dir/lib/catalina 
+    [ ! -d "$tomcat_install_dir/lib/catalina" ] &&  mkdir $tomcat_install_dir/lib/catalina
     cd $tomcat_install_dir/lib/catalina
     jar xf ../catalina.jar
     sed -i 's@^server.info=.*@server.info=Tomcat@' org/apache/catalina/util/ServerInfo.properties
     sed -i 's@^server.number=.*@server.number=8@' org/apache/catalina/util/ServerInfo.properties
     sed -i "s@^server.built=.*@server.built=`date`@" org/apache/catalina/util/ServerInfo.properties
     jar cf ../catalina.jar ./*
-    cd ../../bin 
-    rm -rf $tomcat_install_dir/lib/catalina 
-    OS_CentOS='yum -y install apr apr-devel'
-    OS_Debian_Ubuntu='apt-get -y install libapr1-dev libaprutil1-dev'
-    OS_command
-    tar xzf tomcat-native.tar.gz 
+    cd ../../bin
+    rm -rf $tomcat_install_dir/lib/catalina
+    [ "$OS" == 'CentOS' ] && yum -y install apr apr-devel
+    [[ $OS =~ ^Ubuntu$|^Debian$ ]] && apt-get -y install libapr1-dev libaprutil1-dev
+    tar xzf tomcat-native.tar.gz
     cd tomcat-native-*-src/jni/native/
     rm -rf /usr/local/apr
     ./configure --with-apr=/usr/bin/apr-1-config
-    make && make install
+    make -j ${THREAD} && make install
     if [ -d "/usr/local/apr/lib" ];then
         [ $Mem -le 768 ] && Xms_Mem=`expr $Mem / 3` || Xms_Mem=256
         cat > $tomcat_install_dir/bin/setenv.sh << EOF
-JAVA_OPTS='-server -Xms${Xms_Mem}m -Xmx`expr $Mem / 2`m'
+JAVA_OPTS='-Djava.security.egd=file:/dev/./urandom -server -Xms${Xms_Mem}m -Xmx`expr $Mem / 2`m'
 CATALINA_OPTS="-Djava.library.path=/usr/local/apr/lib"
 # -Djava.rmi.server.hostname=$IPADDR
 # -Dcom.sun.management.jmxremote.password.file=\$CATALINA_BASE/conf/jmxremote.password
@@ -55,15 +54,30 @@ CATALINA_OPTS="-Djava.library.path=/usr/local/apr/lib"
 EOF
         cd ../../../;rm -rf tomcat-native-*
         chmod +x $tomcat_install_dir/bin/*.sh
-        /bin/mv $tomcat_install_dir/conf/server.xml{,_bk} 
+        /bin/mv $tomcat_install_dir/conf/server.xml{,_bk}
         cd $oneinstack_dir/src
         /bin/cp ../config/server.xml $tomcat_install_dir/conf
         sed -i "s@/usr/local/tomcat@$tomcat_install_dir@g" $tomcat_install_dir/conf/server.xml
+
+        if [ ! -e "$nginx_install_dir/sbin/nginx" -a ! -e "$tengine_install_dir/sbin/nginx" -a ! -e "$apache_install_dir/conf/httpd.conf" ];then
+            if [ "$OS" == 'CentOS' ];then
+                if [ -z "`grep -w '8080' /etc/sysconfig/iptables`" ];then
+                    iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
+                    service iptables save
+                fi
+            elif [[ $OS =~ ^Ubuntu$|^Debian$ ]];then
+                if [ -z "`grep -w '8080' /etc/iptables.up.rules`" ];then
+                    iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
+                    iptables-save > /etc/iptables.up.rules
+                fi
+            fi
+        fi
+
         [ ! -d "$tomcat_install_dir/conf/vhost" ] && mkdir $tomcat_install_dir/conf/vhost
         cat > $tomcat_install_dir/conf/vhost/localhost.xml << EOF
 <Host name="localhost" appBase="webapps" unpackWARs="true" autoDeploy="true">
   <Context path="" docBase="$wwwroot_dir/default" debug="0" reloadable="false" crossContext="true"/>
-  <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs" 
+  <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
          prefix="localhost_access_log." suffix=".txt" pattern="%h %l %u %t &quot;%r&quot; %s %b" />
 </Host>
 EOF
@@ -87,7 +101,7 @@ controlRole   readwrite \
               unregister
 EOF
         cat > $tomcat_install_dir/conf/jmxremote.password << EOF
-monitorRole  `cat /dev/urandom | head -1 | md5sum | head -c 8` 
+monitorRole  `cat /dev/urandom | head -1 | md5sum | head -c 8`
 # controlRole   R&D
 EOF
         chown -R $run_user.$run_user $tomcat_install_dir
@@ -95,16 +109,15 @@ EOF
         sed -i "s@JAVA_HOME=.*@JAVA_HOME=$JAVA_HOME@" /etc/init.d/tomcat
         sed -i "s@^CATALINA_HOME=.*@CATALINA_HOME=$tomcat_install_dir@" /etc/init.d/tomcat
         sed -i "s@^TOMCAT_USER=.*@TOMCAT_USER=$run_user@" /etc/init.d/tomcat
-        OS_CentOS='chkconfig --add tomcat \n
-        chkconfig tomcat on'
-        OS_Debian_Ubuntu='update-rc.d tomcat defaults'
-        OS_command
+        [ "$OS" == 'CentOS' ] && { chkconfig --add tomcat;chkconfig tomcat on; }
+        [[ $OS =~ ^Ubuntu$|^Debian$ ]] && update-rc.d tomcat defaults
         echo "${CSUCCESS}Tomcat install successfully! ${CEND}"
     fi
 else
     rm -rf $tomcat_install_dir
-    echo "${CFAILURE}Tomcat install failed, Please contact the author! ${CEND}" 
+    echo "${CFAILURE}Tomcat install failed, Please contact the author! ${CEND}"
     kill -9 $$
 fi
+service tomcat start
 cd ..
 }

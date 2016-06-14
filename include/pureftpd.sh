@@ -8,8 +8,7 @@
 #       http://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_PureFTPd()
-{
+Install_PureFTPd() {
 cd $oneinstack_dir/src
 src_url=http://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-$pureftpd_version.tar.gz && Download_src
 
@@ -21,7 +20,7 @@ id -u $run_user >/dev/null 2>&1
 cd pure-ftpd-$pureftpd_version
 [ ! -d "$pureftpd_install_dir" ] && mkdir -p $pureftpd_install_dir
 ./configure --prefix=$pureftpd_install_dir CFLAGS=-O2 --with-puredb --with-quotas --with-cookie --with-virtualhosts --with-virtualchroot --with-diraliases --with-sysquotas --with-ratios --with-altlog --with-paranoidmsg --with-shadow --with-welcomemsg  --with-throttling --with-uploadscript --with-language=english --with-rfc2640
-make && make install
+make -j ${THREAD} && make install
 if [ -e "$pureftpd_install_dir/sbin/pure-ftpwho" ];then
     echo "${CSUCCESS}Pure-Ftp install successfully! ${CEND}"
     [ ! -e "$pureftpd_install_dir/etc" ] && mkdir $pureftpd_install_dir/etc
@@ -33,17 +32,14 @@ if [ -e "$pureftpd_install_dir/sbin/pure-ftpwho" ];then
     sed -i "s@pureftpwho=.*@pureftpwho=$pureftpd_install_dir/sbin/pure-ftpwho@" /etc/init.d/pureftpd
     sed -i "s@/etc/pure-ftpd.conf@$pureftpd_install_dir/etc/pure-ftpd.conf@" /etc/init.d/pureftpd
     chmod +x /etc/init.d/pureftpd
-    OS_CentOS='chkconfig --add pureftpd \n
-chkconfig pureftpd on'
-    [ "$Debian_version" == '7' ] && sed -i 's@/var/lock/subsys/@/var/lock/@g' /etc/init.d/pureftpd 
-    OS_Debian_Ubuntu="sed -i 's@^. /etc/rc.d/init.d/functions@. /lib/lsb/init-functions@' /etc/init.d/pureftpd \n
-update-rc.d pureftpd defaults"
-    OS_command
+    [ "$OS" == 'CentOS' ] && { chkconfig --add pureftpd; chkconfig pureftpd on; }
+    [[ $OS =~ ^Ubuntu$|^Debian$ ]] && { sed -i 's@^. /etc/rc.d/init.d/functions@. /lib/lsb/init-functions@' /etc/init.d/pureftpd; [ -z "`grep ^'# Default-Start' /etc/init.d/pureftpd`" ] && sed -i "s@^# chkconfig.*@# chkconfig&\n# Default-Start: 2 3 4 5\n# Default-Stop: 0 1 6@" /etc/init.d/pureftpd; update-rc.d pureftpd defaults; }
+    [ "$Debian_version" == '7' ] && sed -i 's@/var/lock/subsys/@/var/lock/@g' /etc/init.d/pureftpd
     cd ../../
 
     /bin/cp config/pure-ftpd.conf $pureftpd_install_dir/etc
-    sed -i "s@^PureDB.*@PureDB	$pureftpd_install_dir/etc/pureftpd.pdb@" $pureftpd_install_dir/etc/pure-ftpd.conf
-    sed -i "s@^LimitRecursion.*@LimitRecursion	65535 8@" $pureftpd_install_dir/etc/pure-ftpd.conf
+    sed -i "s@^PureDB.*@PureDB  $pureftpd_install_dir/etc/pureftpd.pdb@" $pureftpd_install_dir/etc/pure-ftpd.conf
+    sed -i "s@^LimitRecursion.*@LimitRecursion  65535 8@" $pureftpd_install_dir/etc/pure-ftpd.conf
     ulimit -s unlimited
     service pureftpd start
 
@@ -52,16 +48,15 @@ update-rc.d pureftpd defaults"
         if [ -z "`grep '20000:30000' /etc/sysconfig/iptables`" ];then
             iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
             iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
+            service iptables save
         fi
-    elif [ $OS == 'Debian' -o $OS == 'Ubuntu' ];then
+    elif [[ $OS =~ ^Ubuntu$|^Debian$ ]];then
         if [ -z "`grep '20000:30000' /etc/iptables.up.rules`" ];then
             iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
             iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
+            iptables-save > /etc/iptables.up.rules
         fi
     fi
-    OS_CentOS='service iptables save'
-    OS_Debian_Ubuntu='iptables-save > /etc/iptables.up.rules'
-    OS_command
 else
     rm -rf $pureftpd_install_dir
     echo "${CFAILURE}Pure-Ftp install failed, Please contact the author! ${CEND}"

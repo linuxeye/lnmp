@@ -165,7 +165,7 @@ Print_Memcached() {
 Uninstall_Memcached() {
 [ -e "$memcached_install_dir" ] && { service memcached stop > /dev/null 2>&1; rm -rf $memcached_install_dir /etc/init.d/memcached /usr/bin/memcached; }
 [ -e "$php_install_dir/etc/php.d/ext-memcache.ini" ] && rm -rf $php_install_dir/etc/php.d/ext-memcache.ini
-[ -e "$php_install_dir/etc/php.d/ext-memcached.ini" ] && rm -rf $php_install_dir/etc/php.d/ext-memcached.ini 
+[ -e "$php_install_dir/etc/php.d/ext-memcached.ini" ] && rm -rf $php_install_dir/etc/php.d/ext-memcached.ini
 echo "${CMSG}Memcached uninstall completed${CEND}"
 }
 

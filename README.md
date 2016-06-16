@@ -37,6 +37,13 @@ screen -S lnmp    // if network interruption, you can execute the command `scree
 ./install.sh   // Do not sh install.sh or bash install.sh such execution
 ```
 
+## How to add PHP Extensions 
+```bash
+cd ~/oneinstack    // Must enter the directory execution under oneinstack
+./addons.sh    // Do not sh addons.sh or bash addons.sh such execution
+
+```
+
 ## How to add a virtual host
 
 ```bash

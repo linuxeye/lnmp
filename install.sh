@@ -20,7 +20,7 @@ printf "
 # get pwd
 sed -i "s@^oneinstack_dir.*@oneinstack_dir=`pwd`@" ./options.conf
 
-. ./apps.conf
+. ./versions.txt
 . ./options.conf
 . ./include/color.sh
 . ./include/check_os.sh
@@ -104,13 +104,14 @@ while :; do echo
             #    echo 'Please select tomcat server:'
             #    echo -e "\t${CMSG}1${CEND}. Install Tomcat-8"
             #    echo -e "\t${CMSG}2${CEND}. Install Tomcat-7"
-            #    echo -e "\t${CMSG}3${CEND}. Do not install"
-            #    read -p "Please input a number:(Default 3 press Enter) " Tomcat_version
-            #    [ -z "$Tomcat_version" ] && Tomcat_version=3
-            #    if [[ ! $Tomcat_version =~ ^[1-3]$ ]];then
-            #        echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
+            #    echo -e "\t${CMSG}3${CEND}. Install Tomcat-6"
+            #    echo -e "\t${CMSG}4${CEND}. Do not install"
+            #    read -p "Please input a number:(Default 4 press Enter) " Tomcat_version
+            #    [ -z "$Tomcat_version" ] && Tomcat_version=4
+            #    if [[ ! $Tomcat_version =~ ^[1-4]$ ]];then
+            #        echo "${CWARNING}input error! Please only input number 1,2,3,4${CEND}"
             #    else
-            #        [ "$Tomcat_version" != '3' -a -e "$tomcat_install_dir/conf/server.xml" ] && { echo "${CWARNING}Tomcat already installed! ${CEND}" ; Tomcat_version=Other; }
+            #        [ "$Tomcat_version" != '4' -a -e "$tomcat_install_dir/conf/server.xml" ] && { echo "${CWARNING}Tomcat already installed! ${CEND}" ; Tomcat_version=Other; }
             #        if [ "$Tomcat_version" == '1' ];then
             #            while :; do echo
             #                echo 'Please select JDK version:'
@@ -124,8 +125,7 @@ while :; do echo
             #                    break
             #                fi
             #            done
-            #        fi
-            #        if [ "$Tomcat_version" == '2' ];then
+            #        elif [ "$Tomcat_version" == '2' ];then
             #            while :; do echo
             #                echo 'Please select JDK version:'
             #                echo -e "\t${CMSG}1${CEND}. Install JDK-1.8"
@@ -135,6 +135,19 @@ while :; do echo
             #                [ -z "$JDK_version" ] && JDK_version=2
             #                if [[ ! $JDK_version =~ ^[1-3]$ ]];then
             #                    echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
+            #                else
+            #                    break
+            #                fi
+            #            done
+            #        elif [ "$Tomcat_version" == '3' ];then
+            #            while :; do echo
+            #                echo 'Please select JDK version:'
+            #                echo -e "\t${CMSG}2${CEND}. Install JDK-1.7"
+            #                echo -e "\t${CMSG}3${CEND}. Install JDK-1.6"
+            #                read -p "Please input a number:(Default 2 press Enter) " JDK_version
+            #                [ -z "$JDK_version" ] && JDK_version=2
+            #                if [[ ! $JDK_version =~ ^[2-3]$ ]];then
+            #                    echo "${CWARNING}input error! Please only input number 2,3${CEND}"
             #                else
             #                    break
             #                fi
@@ -591,6 +604,9 @@ if [ "$Tomcat_version" == '1' ];then
 elif [ "$Tomcat_version" == '2' ];then
     . include/tomcat-7.sh
     Install_tomcat-7 2>&1 | tee -a $oneinstack_dir/install.log
+elif [ "$Tomcat_version" == '3' ];then
+    . include/tomcat-6.sh
+    Install_tomcat-6 2>&1 | tee -a $oneinstack_dir/install.log
 fi
 
 # Pure-FTPd

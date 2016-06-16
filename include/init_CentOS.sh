@@ -14,6 +14,7 @@ yum clean all
 yum makecache
 
 if [ "$CentOS_RHEL_version" == '7' ];then
+    yum -y groupremove "Basic Web Server" "MySQL Database server" "MySQL Database client" "File and Print Server"
     yum -y install iptables-services
     systemctl mask firewalld.service
     systemctl enable iptables.service

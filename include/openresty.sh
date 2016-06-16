@@ -12,12 +12,14 @@ Install_OpenResty() {
 cd $oneinstack_dir/src
 src_url=http://mirrors.linuxeye.com/oneinstack/src/pcre-$pcre_version.tar.gz && Download_src
 src_url=https://openresty.org/download/openresty-$openresty_version.tar.gz && Download_src
+src_url=https://www.openssl.org/source/openssl-$openssl_version.tar.gz && Download_src
 
 id -u $run_user >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user
 
 tar xzf pcre-$pcre_version.tar.gz
 tar xzf openresty-$openresty_version.tar.gz
+tar xzf openssl-$openssl_version.tar.gz
 cd openresty-$openresty_version
 
 # close debug
@@ -33,7 +35,7 @@ elif [ "$je_tc_malloc" == '2' ];then
 fi
 
 [ ! -d "$openresty_install_dir" ] && mkdir -p $openresty_install_dir
-./configure --prefix=$openresty_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-pcre=../pcre-$pcre_version --with-pcre-jit $malloc_module
+./configure --prefix=$openresty_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-openssl=../openssl-$openssl_version --with-pcre=../pcre-$pcre_version --with-pcre-jit $malloc_module
 make -j ${THREAD} && make install
 if [ -e "$openresty_install_dir/nginx/conf/nginx.conf" ];then
     cd ..

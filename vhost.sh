@@ -124,7 +124,7 @@ elif [ "$NGX_FLAG" == 'hhvm' ];then
 fi
 }
 
-Nginx_ssl() {
+Create_SSL() {
 printf "
 You are about to be asked to enter information that will be incorporated
 into your certificate request.
@@ -160,17 +160,17 @@ else
   LISTENOPT='443 ssl spdy'
 fi
 
-[ ! -d "$web_install_dir/conf/ssl" ] && mkdir $web_install_dir/conf/ssl
-openssl req -new -newkey rsa:2048 -sha256 -nodes -out $web_install_dir/conf/ssl/${domain}.csr -keyout $web_install_dir/conf/ssl/${domain}.key -subj "/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${domain}" > /dev/null 2>&1
-/bin/cp $web_install_dir/conf/ssl/${domain}.csr{,_bk.`date +%Y-%m-%d_%H%M`}
-/bin/cp $web_install_dir/conf/ssl/${domain}.key{,_bk.`date +%Y-%m-%d_%H%M`}
-openssl x509 -req -days 36500 -sha256 -in $web_install_dir/conf/ssl/${domain}.csr -signkey $web_install_dir/conf/ssl/${domain}.key -out $web_install_dir/conf/ssl/${domain}.crt > /dev/null 2>&1
+[ ! -d "$PATH_SSL" ] && mkdir $PATH_SSL
+openssl req -new -newkey rsa:2048 -sha256 -nodes -out $PATH_SSL/${domain}.csr -keyout $PATH_SSL/${domain}.key -subj "/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${domain}" > /dev/null 2>&1
+/bin/cp $PATH_SSL/${domain}.csr{,_bk.`date +%Y-%m-%d_%H%M`}
+/bin/cp $PATH_SSL/${domain}.key{,_bk.`date +%Y-%m-%d_%H%M`}
+openssl x509 -req -days 36500 -sha256 -in $PATH_SSL/${domain}.csr -signkey $PATH_SSL/${domain}.key -out $PATH_SSL/${domain}.crt > /dev/null 2>&1
 }
 
 Print_ssl() {
-echo "`printf "%-30s" "Self-signed SSL Certificate:"`${CMSG}$web_install_dir/conf/ssl/${domain}.crt${CEND}"
-echo "`printf "%-30s" "SSL Private Key:"`${CMSG}$web_install_dir/conf/ssl/${domain}.key${CEND}"
-echo "`printf "%-30s" "SSL CSR File:"`${CMSG}$web_install_dir/conf/ssl/${domain}.csr${CEND}"
+echo "`printf "%-30s" "Self-signed SSL Certificate:"`${CMSG}$PATH_SSL/${domain}.crt${CEND}"
+echo "`printf "%-30s" "SSL Private Key:"`${CMSG}$PATH_SSL/${domain}.key${CEND}"
+echo "`printf "%-30s" "SSL CSR File:"`${CMSG}$PATH_SSL/${domain}.csr${CEND}"
 }
 
 
@@ -184,7 +184,19 @@ if [ -e "$web_install_dir/sbin/nginx" ];then
             break
         fi
     done
+elif [ ! -e "$web_install_dir/sbin/nginx" -a -e "$apache_install_dir/bin/apachectl" ];then
+    while :; do echo
+        read -p "Do you want to setup SSL under Apache? [y/n]: " apache_ssl_yn
+        if [[ ! $apache_ssl_yn =~ ^[y,n]$ ]];then
+            echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
+        else
+            break
+        fi
+    done
 fi
+
+[ "$apache_ssl_yn" == 'y' ] && PATH_SSL=$apache_install_dir/conf/ssl
+[ "$nginx_ssl_yn" == 'y' ] && PATH_SSL=$web_install_dir/conf/ssl
 
 while :; do echo
     read -p "Please input domain(example: www.linuxeye.com): " domain
@@ -243,13 +255,19 @@ if [ "$moredomainame_yn" == 'y' ]; then
 fi
 
 if [ "$nginx_ssl_yn" == 'y' ]; then
-    Nginx_ssl
-    Nginx_conf=$(echo -e "listen $LISTENOPT;\nssl_certificate $web_install_dir/conf/ssl/$domain.crt;\nssl_certificate_key $web_install_dir/conf/ssl/$domain.key;\nssl_session_timeout 10m;\nssl_protocols TLSv1 TLSv1.1 TLSv1.2;\nssl_prefer_server_ciphers on;\nssl_ciphers "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-RC4-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:RC4-SHA:\!aNULL:\!eNULL:\!EXPORT:\!DES:\!3DES:\!MD5:\!DSS:\!PKS";\nssl_session_cache builtin:1000 shared:SSL:10m;\nresolver 8.8.8.8 8.8.4.4 valid=300s;\nresolver_timeout 5s;")
+    Create_SSL
+    Nginx_conf=$(echo -e "listen $LISTENOPT;\nssl_certificate $PATH_SSL/$domain.crt;\nssl_certificate_key $PATH_SSL/$domain.key;\nssl_session_timeout 10m;\nssl_protocols TLSv1 TLSv1.1 TLSv1.2;\nssl_prefer_server_ciphers on;\nssl_ciphers "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-RC4-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:RC4-SHA:\!aNULL:\!eNULL:\!EXPORT:\!DES:\!3DES:\!MD5:\!DSS:\!PKS";\nssl_session_cache builtin:1000 shared:SSL:10m;\nresolver 8.8.8.8 8.8.4.4 valid=300s;\nresolver_timeout 5s;")
+    Apache_SSL=$(echo -e "SSLEngine on\n    SSLCertificateFile \"$PATH_SSL/$domain.crt\"\n    SSLCertificateKeyFile \"$PATH_SSL/$domain.key\"")
     if [ "$moredomainame_yn" == 'y' ]; then
         Nginx_http_to_https=$(echo -e "server {\nlisten 80;\nserver_name $domain$moredomainame;\nrewrite ^/(.*) https://$domain/\$1 permanent;\n}")
     else
         Nginx_http_to_https=$(echo -e "server {\nlisten 80;\nserver_name $domain;\nrewrite ^/(.*) https://$domain/\$1 permanent;\n}")
     fi
+elif [ "$apache_ssl_yn" == 'y' ]; then
+    Create_SSL
+    Apache_SSL=$(echo -e "SSLEngine on\n    SSLCertificateFile \"$PATH_SSL/$domain.crt\"\n    SSLCertificateKeyFile \"$PATH_SSL/$domain.key\"")
+    [ -z "`grep 'Listen 443' $apache_install_dir/conf/httpd.conf`" ] && sed -i "s@Listen 80@&\nListen 443@" $apache_install_dir/conf/httpd.conf
+    [ -z "`grep 'ServerName 0.0.0.0:443' $apache_install_dir/conf/httpd.conf`" ] && sed -i "s@ServerName 0.0.0.0:80@&\nServerName 0.0.0.0:443@" $apache_install_dir/conf/httpd.conf
 else
     Nginx_conf='listen 80;'
 fi
@@ -524,6 +542,26 @@ cat > $apache_install_dir/conf/vhost/$domain.conf << EOF
 </Directory>
 </VirtualHost>
 EOF
+[ "$apache_ssl_yn" == 'y' ] && cat >> $apache_install_dir/conf/vhost/$domain.conf << EOF
+<VirtualHost *:443>
+    ServerAdmin admin@linuxeye.com
+    DocumentRoot "$vhostdir"
+    ServerName $domain
+    $Apache_Domain_alias
+    $Apache_SSL
+    ErrorLog "$wwwlogs_dir/${domain}_error_apache.log"
+    $A_log
+<Directory "$vhostdir">
+    SetOutputFilter DEFLATE
+    Options FollowSymLinks ExecCGI
+    $R_TMP
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+    DirectoryIndex index.html index.php
+</Directory>
+</VirtualHost>
+EOF
 
 echo
 $apache_install_dir/bin/apachectl -t
@@ -601,6 +639,7 @@ cat > $apache_install_dir/conf/vhost/$domain.conf << EOF
     DocumentRoot "$vhostdir"
     ServerName $domain
     $Apache_Domain_alias
+    $Apache_SSL
     ErrorLog "$wwwlogs_dir/${domain}_error_apache.log"
     $A_log
 <Directory "$vhostdir">

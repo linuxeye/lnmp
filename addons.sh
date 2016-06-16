@@ -21,7 +21,7 @@ printf "
 # get pwd
 sed -i "s@^oneinstack_dir.*@oneinstack_dir=`pwd`@" ./options.conf
 
-. ./apps.conf
+. ./versions.txt
 . ./options.conf
 . ./include/color.sh
 . ./include/memory.sh

@@ -20,7 +20,9 @@ while :; do echo
     if [ "$NEW_Nginx_version" != "$OLD_Nginx_version" ];then
         [ ! -e "nginx-$NEW_Nginx_version.tar.gz" ] && wget --no-check-certificate -c http://nginx.org/download/nginx-$NEW_Nginx_version.tar.gz > /dev/null 2>&1
         if [ -e "nginx-$NEW_Nginx_version.tar.gz" ];then
+            src_url=https://www.openssl.org/source/openssl-$openssl_version.tar.gz && Download_src
             src_url=http://mirrors.linuxeye.com/oneinstack/src/pcre-$pcre_version.tar.gz && Download_src
+            tar xzf openssl-$openssl_version.tar.gz
             tar xzf pcre-$pcre_version.tar.gz
             echo "Download [${CMSG}nginx-$NEW_Nginx_version.tar.gz${CEND}] successfully! "
             break
@@ -72,7 +74,9 @@ while :; do echo
     if [ "$NEW_Tengine_version" != "$OLD_Tengine_version" ];then
         [ ! -e "tengine-$NEW_Tengine_version.tar.gz" ] && wget --no-check-certificate -c http://tengine.taobao.org/download/tengine-$NEW_Tengine_version.tar.gz > /dev/null 2>&1
         if [ -e "tengine-$NEW_Tengine_version.tar.gz" ];then
+            src_url=https://www.openssl.org/source/openssl-$openssl_version.tar.gz && Download_src
             src_url=http://mirrors.linuxeye.com/oneinstack/src/pcre-$pcre_version.tar.gz && Download_src
+            tar xzf openssl-$openssl_version.tar.gz
             tar xzf pcre-$pcre_version.tar.gz
             echo "Download [${CMSG}tengine-$NEW_Tengine_version.tar.gz${CEND}] successfully! "
             break
@@ -129,7 +133,9 @@ while :; do echo
     if [ "$NEW_OpenResty_version" != "$OLD_OpenResty_version" ];then
         [ ! -e "openresty-$NEW_OpenResty_version.tar.gz" ] && wget --no-check-certificate -c https://openresty.org/download/openresty-$NEW_OpenResty_version.tar.gz > /dev/null 2>&1
         if [ -e "openresty-$NEW_OpenResty_version.tar.gz" ];then
+            src_url=https://www.openssl.org/source/openssl-$openssl_version.tar.gz && Download_src
             src_url=http://mirrors.linuxeye.com/oneinstack/src/pcre-$pcre_version.tar.gz && Download_src
+            tar xzf openssl-$openssl_version.tar.gz
             tar xzf pcre-$pcre_version.tar.gz
             echo "Download [${CMSG}openresty-$NEW_OpenResty_version.tar.gz${CEND}] successfully! "
             break
@@ -155,7 +161,7 @@ if [ -e "openresty-$NEW_OpenResty_version.tar.gz" ];then
     rm -rf $$
     [ -n "`echo $openresty_configure_arguments | grep jemalloc`"] && malloc_module="--with-ld-opt='-ljemalloc'"
     [ -n "`echo $openresty_configure_arguments | grep perftools`" ] && malloc_module='--with-google_perftools_module'
-    ./configure --prefix=$openresty_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-pcre=../pcre-$pcre_version --with-pcre-jit $malloc_module
+    ./configure --prefix=$openresty_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-openssl=../openssl-$openssl_version --with-pcre=../pcre-$pcre_version --with-pcre-jit $malloc_module
     make -j ${THREAD}
     if [ -f "build/nginx-$openresty_version_tmp/objs/nginx" ];then
         /bin/mv $openresty_install_dir/nginx/sbin/nginx $openresty_install_dir/nginx/sbin/nginx$(date +%m%d)

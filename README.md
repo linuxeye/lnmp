@@ -12,7 +12,7 @@ Script properties:
 - Installation Pureftpd, phpMyAdmin according to their needs
 - Install memcached, redis according to their needs
 - Tcmalloc can use according to their needs or jemalloc optimize MySQL, Nginx
-- Providing add a virtual host script
+- Providing add a virtual host script, include Let's Encrypt SSL certificate
 - Provide Nginx/Tengine, MySQL/MariaDB/Percona, PHP, Redis, phpMyAdmin upgrade script
 - Provide local backup and remote backup (rsync between servers) script
 - Provided under HHVM install CentOS 6,7

@@ -5,7 +5,7 @@
 # Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
 #
 # Project home page:
-#       http://oneinstack.com
+#       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
 export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
@@ -13,13 +13,14 @@ clear
 printf "
 #######################################################################
 #       OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+      #
-#       For more information please visit http://oneinstack.com       #
+#       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
 
 . ./options.conf
 . ./include/color.sh
 . ./include/check_dir.sh
+. ./include/check_os.sh
 . ./include/get_char.sh
 
 # Check if user is root
@@ -124,7 +125,7 @@ elif [ "$NGX_FLAG" == 'hhvm' ];then
 fi
 }
 
-Create_SSL() {
+Create_self_SSL() {
 printf "
 You are about to be asked to enter information that will be incorporated
 into your certificate request.
@@ -154,23 +155,80 @@ echo
 read -p "Organizational Unit Name (eg, section) [IT Dept.]: " SELFSIGNEDSSL_OU
 [ -z "$SELFSIGNEDSSL_OU" ] && SELFSIGNEDSSL_OU='IT Dept.'
 
-if [[ "$($web_install_dir/sbin/nginx -V 2>&1 | grep -Eo 'with-http_v2_module')" = 'with-http_v2_module' ]]; then
-  LISTENOPT='443 ssl http2'
-else
-  LISTENOPT='443 ssl spdy'
-fi
-
-[ ! -d "$PATH_SSL" ] && mkdir $PATH_SSL
 openssl req -new -newkey rsa:2048 -sha256 -nodes -out $PATH_SSL/${domain}.csr -keyout $PATH_SSL/${domain}.key -subj "/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${domain}" > /dev/null 2>&1
 /bin/cp $PATH_SSL/${domain}.csr{,_bk.`date +%Y-%m-%d_%H%M`}
 /bin/cp $PATH_SSL/${domain}.key{,_bk.`date +%Y-%m-%d_%H%M`}
 openssl x509 -req -days 36500 -sha256 -in $PATH_SSL/${domain}.csr -signkey $PATH_SSL/${domain}.key -out $PATH_SSL/${domain}.crt > /dev/null 2>&1
 }
 
+Create_SSL() {
+if [ -e "/usr/local/bin/certbot-auto" ];then
+    while :; do echo
+        read -p "Do you want to use a Let's Encrypt certificate? [y/n]: " letsencrypt_yn 
+        if [[ ! $letsencrypt_yn =~ ^[y,n]$ ]];then
+            echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
+        else
+            break
+        fi
+    done
+    if [ "$letsencrypt_yn" == 'y' ];then
+        PUBLIC_IPADDR=`./include/get_public_ipaddr.py`
+        for D in $domain $moredomainame
+        do
+            Domain_IPADDR=`ping $D -c1 | sed '1{s/[^(]*(//;s/).*//;q}'`
+            [ "$PUBLIC_IPADDR" != "$Domain_IPADDR" ] && { echo; echo "${CFAILURE}DNS problem: NXDOMAIN looking up A for $D${CEND}"; echo; exit 1; }
+        done
+
+        #add Email
+        while :
+        do
+            echo
+            read -p "Please enter Administrator Email(example: admin@linuxeye.com): " Admin_Email
+            if [ -z "`echo $Admin_Email | grep '.*@.*\..*'`" ]; then
+                echo "${CWARNING}input error! ${CEND}"
+            else
+                break
+            fi
+        done
+        [ "$moredomainame_yn" == 'y' ] && moredomainame_D="`for D in $moredomainame; do echo -d $D; done`"
+        [ "$nginx_ssl_yn" == 'y' ] && S=nginx
+        [ "$apache_ssl_yn" == 'y' ] && S=httpd
+        [ ! -d "$wwwroot_dir/$domain/.well-known" ] && mkdir -p $wwwroot_dir/$domain/.well-known;chown -R $run_user.$run_user $wwwroot_dir/$domain/.well-known 
+        certbot-auto certonly --standalone --agree-tos --email $Admin_Email -d $domain $moredomainame_D --pre-hook "service $S stop" --post-hook "service $S start"
+        if [ -s "/etc/letsencrypt/live/$domain/cert.pem" ];then
+            [ -e "$PATH_SSL/$domain.crt" ] && rm -rf $PATH_SSL/$domain.{crt,key}
+            ln -s /etc/letsencrypt/live/$domain/fullchain.pem $PATH_SSL/$domain.crt
+            ln -s /etc/letsencrypt/live/$domain/privkey.pem $PATH_SSL/$domain.key
+            if [ -e "$web_install_dir/sbin/nginx" -a -e "$apache_install_dir/conf/httpd.conf" ];then 
+                Cron_Command='/etc/init.d/nginx reload;/etc/init.d/httpd graceful'
+            elif [ -e "$web_install_dir/sbin/nginx" -a ! -e "$apache_install_dir/conf/httpd.conf" ];then 
+                Cron_Command='/etc/init.d/nginx reload'
+            elif [ ! -e "$web_install_dir/sbin/nginx" -a -e "$apache_install_dir/conf/httpd.conf" ];then 
+                Cron_Command='/etc/init.d/httpd graceful'
+            fi
+            [ "$OS" == 'CentOS' ] && Cron_file=/var/spool/cron/root || Cron_file=/var/spool/cron/crontabs/root
+            [ -z "`grep "$domain $moredomainame_D" $Cron_file`" ] && echo "0 10 * * 1 /usr/local/bin/certbot-auto certonly -a webroot --agree-tos --renew-by-default --webroot-path=$wwwroot_dir/$domain -d $domain $moredomainame_D;$Cron_Command" >> $Cron_file
+        else
+            echo "${CFAILURE}Error: Let's Encrypt SSL certificate installation failed${CEND}"
+            exit 1
+        fi
+    else
+        Create_self_SSL
+    fi
+else
+    Create_self_SSL
+fi
+}
+
 Print_ssl() {
-echo "`printf "%-30s" "Self-signed SSL Certificate:"`${CMSG}$PATH_SSL/${domain}.crt${CEND}"
-echo "`printf "%-30s" "SSL Private Key:"`${CMSG}$PATH_SSL/${domain}.key${CEND}"
-echo "`printf "%-30s" "SSL CSR File:"`${CMSG}$PATH_SSL/${domain}.csr${CEND}"
+if [ "$letsencrypt_yn" == 'y' ];then
+    echo "`printf "%-30s" "Let's Encrypt SSL Certificate:"`${CMSG}/etc/letsencrypt/live/$domain/fullchain.pem${CEND}"
+    echo "`printf "%-30s" "SSL Private Key:"`${CMSG}/etc/letsencrypt/live/$domain/privkey.pem${CEND}"
+else
+    echo "`printf "%-30s" "Self-signed SSL Certificate:"`${CMSG}$PATH_SSL/${domain}.crt${CEND}"
+    echo "`printf "%-30s" "SSL Private Key:"`${CMSG}$PATH_SSL/${domain}.key${CEND}"
+    echo "`printf "%-30s" "SSL CSR File:"`${CMSG}$PATH_SSL/${domain}.csr${CEND}"
+fi
 }
 
 
@@ -195,8 +253,8 @@ elif [ ! -e "$web_install_dir/sbin/nginx" -a -e "$apache_install_dir/bin/apachec
     done
 fi
 
-[ "$apache_ssl_yn" == 'y' ] && PATH_SSL=$apache_install_dir/conf/ssl
-[ "$nginx_ssl_yn" == 'y' ] && PATH_SSL=$web_install_dir/conf/ssl
+[ "$apache_ssl_yn" == 'y' ] && { PATH_SSL=$apache_install_dir/conf/ssl; [ ! -d "$PATH_SSL" ] && mkdir $PATH_SSL; }
+[ "$nginx_ssl_yn" == 'y' ] && { PATH_SSL=$web_install_dir/conf/ssl; [ ! -d "$PATH_SSL" ] && mkdir $PATH_SSL; }
 
 while :; do echo
     read -p "Please input domain(example: www.linuxeye.com): " domain
@@ -249,12 +307,16 @@ if [ "$moredomainame_yn" == 'y' ]; then
                 break
             fi
         done
-        [ "$nginx_ssl_yn" == 'y' ] && HTTP_flag=https || HTTP_flag=http
         [ "$redirect_yn" == 'y' ] && Nginx_redirect=$(echo -e "if (\$host != $domain) {\n    rewrite ^/(.*)\$ \$scheme://$domain/\$1 permanent;\n    }")
     fi
 fi
 
 if [ "$nginx_ssl_yn" == 'y' ]; then
+    if [[ "$($web_install_dir/sbin/nginx -V 2>&1 | grep -Eo 'with-http_v2_module')" = 'with-http_v2_module' ]]; then
+      LISTENOPT='443 ssl http2'
+    else
+      LISTENOPT='443 ssl spdy'
+    fi
     Create_SSL
     Nginx_conf=$(echo -e "listen $LISTENOPT;\nssl_certificate $PATH_SSL/$domain.crt;\nssl_certificate_key $PATH_SSL/$domain.key;\nssl_session_timeout 10m;\nssl_protocols TLSv1 TLSv1.1 TLSv1.2;\nssl_prefer_server_ciphers on;\nssl_ciphers "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-RC4-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:RC4-SHA:\!aNULL:\!eNULL:\!EXPORT:\!DES:\!3DES:\!MD5:\!DSS:\!PKS";\nssl_session_cache builtin:1000 shared:SSL:10m;\nresolver 8.8.8.8 8.8.4.4 valid=300s;\nresolver_timeout 5s;")
     Apache_SSL=$(echo -e "SSLEngine on\n    SSLCertificateFile \"$PATH_SSL/$domain.crt\"\n    SSLCertificateKeyFile \"$PATH_SSL/$domain.key\"")
@@ -417,7 +479,7 @@ fi
 printf "
 #######################################################################
 #       OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+      #
-#       For more information please visit http://oneinstack.com       #
+#       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
 echo "`printf "%-30s" "Your domain:"`${CMSG}$domain${CEND}"
@@ -444,7 +506,7 @@ echo
 printf "
 #######################################################################
 #       OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+      #
-#       For more information please visit http://oneinstack.com       #
+#       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
 echo "`printf "%-30s" "Your domain:"`${CMSG}$domain${CEND}"
@@ -492,7 +554,7 @@ fi
 printf "
 #######################################################################
 #       OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+      #
-#       For more information please visit http://oneinstack.com       #
+#       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
 echo "`printf "%-30s" "Your domain:"`${CMSG}$domain${CEND}"
@@ -577,7 +639,7 @@ fi
 printf "
 #######################################################################
 #       OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+      #
-#       For more information please visit http://oneinstack.com       #
+#       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
 echo "`printf "%-30s" "Your domain:"`${CMSG}$domain${CEND}"
@@ -586,7 +648,7 @@ echo "`printf "%-30s" "Directory of:"`${CMSG}$vhostdir${CEND}"
 }
 
 Create_nginx_apache_mod-php_conf() {
-# Nginx/Tengine
+# Nginx/Tengine/OpenResty
 [ ! -d $web_install_dir/conf/vhost ] && mkdir $web_install_dir/conf/vhost
 cat > $web_install_dir/conf/vhost/$domain.conf << EOF
 server {
@@ -667,7 +729,7 @@ fi
 printf "
 #######################################################################
 #       OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+      #
-#       For more information please visit http://oneinstack.com       #
+#       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
 echo "`printf "%-30s" "Your domain:"`${CMSG}$domain${CEND}"
@@ -679,7 +741,7 @@ echo "`printf "%-30s" "Directory of:"`${CMSG}$vhostdir${CEND}"
 }
 
 Add_Vhost() {
-    if [ -e "$web_install_dir/sbin/nginx" -a ! -e "`ls $apache_install_dir/modules/libphp?.so 2>/dev/null`" ];then
+    if [ -e "$web_install_dir/sbin/nginx" -a ! -e "$apache_install_dir/conf/httpd.conf" ];then
         Choose_env
         Input_Add_domain
         Nginx_anti_hotlinking
@@ -691,7 +753,7 @@ Add_Vhost() {
             Nginx_log
             Create_nginx_php-fpm_hhvm_conf
         fi
-    elif [ ! -e "$web_install_dir/sbin/nginx" -a -e "`ls $apache_install_dir/modules/libphp?.so 2>/dev/null`" ];then
+    elif [ ! -e "$web_install_dir/sbin/nginx" -a -e "$apache_install_dir/conf/httpd.conf" ];then
         Choose_env
         Input_Add_domain
         Apache_log
@@ -871,13 +933,11 @@ elif [ $# == 1 ];then
     add)
         Add_Vhost
         ;;
-
     del)
         Del_NGX_Vhost
         Del_Apache_Vhost
         Del_Tomcat_Vhost
         ;;
-
     *)
         Usage
         ;;

@@ -5,7 +5,7 @@
 # Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
 #
 # Project home page:
-#       http://oneinstack.com
+#       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
 export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
@@ -14,7 +14,7 @@ printf "
 #######################################################################
 #       OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+      #
 #                  Install/Uninstall PHP Extensions                   #
-#       For more information please visit http://oneinstack.com       #
+#       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
 
@@ -50,9 +50,8 @@ sed -i "s@^oneinstack_dir.*@oneinstack_dir=`pwd`@" ./options.conf
 
 # Check PHP
 if [ -e "$php_install_dir/bin/phpize" ];then
-    PHP_version=`$php_install_dir/bin/php -r 'echo PHP_VERSION;' | awk -F. '{print $1"."$2}'`
-else
-    echo "${CWARNING}PHP is not installed on your system! You can use to uninstall and reinstall PHP Extensions${CEND}"; exit 1
+    PHP_version_detail=`$php_install_dir/bin/php -r 'echo PHP_VERSION;'`
+    PHP_version=`echo $PHP_version_detail | awk -F. '{print $1"."$2}'`
 fi
 
 # Check PHP Extensions
@@ -95,6 +94,44 @@ opcache.enable_cli=1
 EOF
 }
 
+Install_letsencrypt() {
+if [ "$CentOS_RHEL_version" == '7' ];then
+    [ ! -e /etc/yum.repos.d/epel.repo ] && cat > /etc/yum.repos.d/epel.repo << EOF
+[epel]
+name=Extra Packages for Enterprise Linux 7 - \$basearch
+#baseurl=http://download.fedoraproject.org/pub/epel/7/\$basearch
+mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=\$basearch
+failovermethod=priority
+enabled=1
+gpgcheck=0
+EOF
+elif [ "$CentOS_RHEL_version" == '6' ];then
+    [ ! -e /etc/yum.repos.d/epel.repo ] && cat > /etc/yum.repos.d/epel.repo << EOF
+[epel]
+name=Extra Packages for Enterprise Linux 6 - \$basearch
+#baseurl=http://download.fedoraproject.org/pub/epel/6/\$basearch
+mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-6&arch=\$basearch
+failovermethod=priority
+enabled=1
+gpgcheck=0
+EOF
+fi
+
+cd $oneinstack_dir/src
+src_url=https://dl.eff.org/certbot-auto && Download_src
+/bin/mv certbot-auto /usr/local/bin/
+chmod +x /usr/local/bin/certbot-auto
+certbot-auto --help all
+certbot-auto -h | grep '\-\-standalone' > /dev/null && echo; echo "${CSUCCESS}Let's Encrypt client install successfully! ${CEND}"
+}
+
+Uninstall_letsencrypt() {
+rm -rf /usr/local/bin/cerbot-auto /etc/letsencrypt /var/log/letsencrypt
+[ "$OS" == 'CentOS' ] && Cron_file=/var/spool/cron/root || Cron_file=/var/spool/cron/crontabs/root
+sed -i '/certbot-auto/d' $Cron_file 
+echo; echo "${CMSG}Let's Encrypt client uninstall completed${CEND}";
+}
+
 ACTION_FUN() {
 while :; do
     echo
@@ -117,13 +154,15 @@ What Are You Doing?
 \t${CMSG}1${CEND}. Install/Uninstall PHP opcode cache
 \t${CMSG}2${CEND}. Install/Uninstall ZendGuardLoader/ionCube PHP Extension
 \t${CMSG}3${CEND}. Install/Uninstall ImageMagick/GraphicsMagick PHP Extension
-\t${CMSG}4${CEND}. Install/Uninstall memcached/memcache
-\t${CMSG}5${CEND}. Install/Uninstall Redis
+\t${CMSG}4${CEND}. Install/Uninstall fileinfo PHP Extension 
+\t${CMSG}5${CEND}. Install/Uninstall memcached/memcache
+\t${CMSG}6${CEND}. Install/Uninstall Redis
+\t${CMSG}7${CEND}. Install/Uninstall Let's Encrypt client
 \t${CMSG}q${CEND}. Exit
 "
     read -p "Please input the correct option: " Number
-    if [[ ! $Number =~ ^[1-5,q]$ ]];then
-        echo "${CFAILURE}input error! Please only input 1 ~ 5 and q${CEND}"
+    if [[ ! $Number =~ ^[1-7,q]$ ]];then
+        echo "${CFAILURE}input error! Please only input 1 ~ 7 and q${CEND}"
     else
         case "$Number" in
         1)
@@ -278,6 +317,24 @@ What Are You Doing?
             ;;
         4)
             ACTION_FUN
+            PHP_extension=fileinfo
+            if [ $ACTION = 1 ];then
+                Check_PHP_Extension
+                cd $oneinstack_dir/src
+                src_url=http://www.php.net/distributions/php-$PHP_version_detail.tar.gz && Download_src
+                tar xzf php-$PHP_version_detail.tar.gz
+                cd php-$PHP_version_detail/ext/fileinfo
+                $php_install_dir/bin/phpize
+                ./configure --with-php-config=$php_install_dir/bin/php-config
+                make -j ${THREAD} && make install
+                echo 'extension=fileinfo.so' > $php_install_dir/etc/php.d/ext-fileinfo.ini
+                Check_succ
+            else
+                Uninstall_succ
+            fi
+            ;;
+        5)
+            ACTION_FUN
             while :; do echo
                 echo 'Please select memcache/memcached PHP Extension:'
                 echo -e "\t${CMSG}1${CEND}. memcache PHP Extension"
@@ -318,7 +375,7 @@ What Are You Doing?
                 [ -e "$memcached_install_dir" ] && { service memcached stop > /dev/null 2>&1; rm -rf $memcached_install_dir /etc/init.d/memcached /usr/bin/memcached; }
             fi
             ;;
-        5)
+        6)
             ACTION_FUN
             PHP_extension=redis
             if [ $ACTION = 1 ];then
@@ -328,6 +385,14 @@ What Are You Doing?
             else
                 Uninstall_succ
                 [ -e "$redis_install_dir" ] && { service redis-server stop > /dev/null 2>&1; rm -rf $redis_install_dir /etc/init.d/redis-server /usr/local/bin/redis-*; }
+            fi
+            ;;
+        7)
+            ACTION_FUN
+            if [ $ACTION = 1 ];then
+                Install_letsencrypt
+            else
+                Uninstall_letsencrypt
             fi
             ;;
         q)

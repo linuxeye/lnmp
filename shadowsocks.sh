@@ -6,7 +6,7 @@
 #        Install Shadowsocks Server
 #
 # Project home page:
-#       http://oneinstack.com
+#       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
 export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
@@ -15,7 +15,7 @@ printf "
 #######################################################################
 #       OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+      #
 #                   Install Shadowsocks Server                        #
-#       For more information please visit http://oneinstack.com       #
+#       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
 
@@ -137,7 +137,7 @@ if [ -f /usr/bin/pip ]; then
         [ ! -e /usr/bin/ssserver -a -e /usr/local/bin/ssserver ] && sed -i 's@Shadowsocks_bin=.*@Shadowsocks_bin=/usr/local/bin/ssserver@' /etc/init.d/shadowsocks
     else
         echo
-        echo "${CQUESTION}Shadowsocks-python install failed! Please visit http://oneinstack.com${CEND}"
+        echo "${CQUESTION}Shadowsocks-python install failed! Please visit https://oneinstack.com${CEND}"
         exit 1
     fi
 fi
@@ -155,7 +155,7 @@ if [ -f  /usr/local/bin/ss-server ];then
     [ "$OS" == 'CentOS' ] && { chkconfig --add shadowsocks; chkconfig shadowsocks on; }
 else
    echo
-   echo "${CQUESTION}Shadowsocks-libev install failed! Please visit http://oneinstack.com${CEND}"
+   echo "${CQUESTION}Shadowsocks-libev install failed! Please visit https://oneinstack.com${CEND}"
    exit 1
 fi
 

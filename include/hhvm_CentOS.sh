@@ -5,7 +5,7 @@
 # Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
 #
 # Project home page:
-#       http://oneinstack.com
+#       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
 Install_hhvm_CentOS() {
@@ -15,10 +15,7 @@ id -u $run_user >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user
 
 if [ "$CentOS_RHEL_version" == '7' ];then
-    if [ -e /etc/yum.repos.d/epel.repo_bk ];then
-        /bin/mv /etc/yum.repos.d/epel.repo{_bk,}
-    elif [ ! -e /etc/yum.repos.d/epel.repo ];then
-        cat > /etc/yum.repos.d/epel.repo << EOF
+    [ ! -e /etc/yum.repos.d/epel.repo ] && cat > /etc/yum.repos.d/epel.repo << EOF
 [epel]
 name=Extra Packages for Enterprise Linux 7 - \$basearch
 #baseurl=http://download.fedoraproject.org/pub/epel/7/\$basearch
@@ -27,7 +24,6 @@ failovermethod=priority
 enabled=1
 gpgcheck=0
 EOF
-    fi
     cat > /etc/yum.repos.d/hhvm.repo << EOF
 [hhvm]
 name=gleez hhvm-repo
@@ -40,10 +36,7 @@ EOF
 fi
 
 if [ "$CentOS_RHEL_version" == '6' ];then
-    if [ -e /etc/yum.repos.d/epel.repo_bk ];then
-        /bin/mv /etc/yum.repos.d/epel.repo{_bk,}
-    elif [ ! -e /etc/yum.repos.d/epel.repo ];then
-        cat > /etc/yum.repos.d/epel.repo << EOF
+    [ ! -e /etc/yum.repos.d/epel.repo ] && cat > /etc/yum.repos.d/epel.repo << EOF
 [epel]
 name=Extra Packages for Enterprise Linux 6 - \$basearch
 #baseurl=http://download.fedoraproject.org/pub/epel/6/\$basearch
@@ -52,7 +45,6 @@ failovermethod=priority
 enabled=1
 gpgcheck=0
 EOF
-    fi
 
     for Package in libmcrypt-devel glog-devel jemalloc-devel tbb-devel libdwarf-devel libxml2-devel libicu-devel pcre-devel gd-devel boost-devel sqlite-devel pam-devel bzip2-devel oniguruma-devel openldap-devel readline-devel libc-client-devel libcap-devel libevent-devel libcurl-devel libmemcached-devel lcms2 inotify-tools
     do

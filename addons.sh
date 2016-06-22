@@ -121,7 +121,7 @@ cd $oneinstack_dir/src
 src_url=https://dl.eff.org/certbot-auto && Download_src
 /bin/mv certbot-auto /usr/local/bin/
 chmod +x /usr/local/bin/certbot-auto
-certbot-auto --help all
+certbot-auto -n --help all
 certbot-auto -h | grep '\-\-standalone' > /dev/null && echo; echo "${CSUCCESS}Let's Encrypt client install successfully! ${CEND}"
 }
 

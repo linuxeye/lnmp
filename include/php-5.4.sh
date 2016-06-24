@@ -71,7 +71,7 @@ if [[ $Apache_version =~ ^[1-2]$ ]] || [ -e "$apache_install_dir/bin/apxs" ];the
 --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
---enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex --enable-inline-optimization \
+--enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex \
 --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl \
 --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
 --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
@@ -82,7 +82,7 @@ else
 --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
---enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex --enable-inline-optimization \
+--enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex \
 --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl \
 --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
 --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug

@@ -36,8 +36,18 @@ if [ -f "src/redis-server" ];then
     echo "${CSUCCESS}Redis-server install successfully! ${CEND}"
     cd ..
     rm -rf redis-$redis_version
-    [ "$OS" == 'CentOS' ] && { /bin/cp ../init.d/Redis-server-init-CentOS /etc/init.d/redis-server; chkconfig --add redis-server; chkconfig redis-server on; }
-    [[ $OS =~ ^Ubuntu$|^Debian$ ]] && { useradd -M -s /sbin/nologin redis; chown -R redis:redis $redis_install_dir/var/; /bin/cp ../init.d/Redis-server-init-Ubuntu /etc/init.d/redis-server; update-rc.d redis-server defaults; }
+    id -u redis >/dev/null 2>&1
+    [ $? -ne 0 ] && useradd -M -s /sbin/nologin redis 
+    chown -R redis:redis $redis_install_dir/var
+    /bin/cp ../init.d/Redis-server-init /etc/init.d/redis-server
+    if [ "$OS" == 'CentOS' ];then
+        src_url=http://mirrors.linuxeye.com/oneinstack/src/start-stop-daemon.c && Download_src
+        cc start-stop-daemon.c -o /sbin/start-stop-daemon
+        chkconfig --add redis-server
+        chkconfig redis-server on
+    elif [[ $OS =~ ^Ubuntu$|^Debian$ ]];then
+        update-rc.d redis-server defaults
+    fi
     sed -i "s@/usr/local/redis@$redis_install_dir@g" /etc/init.d/redis-server
     #[ -z "`grep 'vm.overcommit_memory' /etc/sysctl.conf`" ] && echo 'vm.overcommit_memory = 1' >> /etc/sysctl.conf
     #sysctl -p

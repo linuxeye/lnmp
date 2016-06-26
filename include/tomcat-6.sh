@@ -111,7 +111,7 @@ EOF
         sed -i "s@^TOMCAT_USER=.*@TOMCAT_USER=$run_user@" /etc/init.d/tomcat
         [ "$OS" == 'CentOS' ] && { chkconfig --add tomcat; chkconfig tomcat on; }
         [[ $OS =~ ^Ubuntu$|^Debian$ ]] && update-rc.d tomcat defaults
-        echo "${CSUCCESS}Tomcat install successfully! ${CEND}"
+        echo "${CSUCCESS}Tomcat installed successfully! ${CEND}"
     fi
 else
     rm -rf $tomcat_install_dir

@@ -41,7 +41,7 @@ make -j ${THREAD} && make install
 if [ -e "$tengine_install_dir/conf/nginx.conf" ];then
     cd ..
     rm -rf tengine-$tengine_version
-    echo "${CSUCCESS}Tengine install successfully! ${CEND}"
+    echo "${CSUCCESS}Tengine installed successfully! ${CEND}"
 else
     rm -rf $tengine_install_dir
     echo "${CFAILURE}Tengine install failed, Please Contact the author! ${CEND}"

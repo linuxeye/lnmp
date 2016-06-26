@@ -33,11 +33,11 @@ if [ -f "src/redis-server" ];then
     sed -i "s@^# bind 127.0.0.1@bind 127.0.0.1@" $redis_install_dir/etc/redis.conf
     redis_maxmemory=`expr $Mem / 8`000000
     [ -z "`grep ^maxmemory $redis_install_dir/etc/redis.conf`" ] && sed -i "s@maxmemory <bytes>@maxmemory <bytes>\nmaxmemory `expr $Mem / 8`000000@" $redis_install_dir/etc/redis.conf
-    echo "${CSUCCESS}Redis-server install successfully! ${CEND}"
+    echo "${CSUCCESS}Redis-server installed successfully! ${CEND}"
     cd ..
     rm -rf redis-$redis_version
     id -u redis >/dev/null 2>&1
-    [ $? -ne 0 ] && useradd -M -s /sbin/nologin redis 
+    [ $? -ne 0 ] && useradd -M -s /sbin/nologin redis
     chown -R redis:redis $redis_install_dir/var
     /bin/cp ../init.d/Redis-server-init /etc/init.d/redis-server
     if [ "$OS" == 'CentOS' ];then
@@ -81,7 +81,7 @@ if [ -e "$php_install_dir/bin/phpize" ];then
 [redis]
 extension=redis.so
 EOF
-        echo "${CSUCCESS}PHP Redis module install successfully! ${CEND}"
+        echo "${CSUCCESS}PHP Redis module installed successfully! ${CEND}"
         cd ..
         rm -rf redis-$redis_pecl_version
         [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart

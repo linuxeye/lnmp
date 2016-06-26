@@ -61,7 +61,7 @@ xcache.coverager = Off
 xcache.coverager_autostart = On
 xcache.coveragedump_directory = ""
 EOF
-    echo "${CSUCCESS}Xcache module install successfully! ${CEND}"
+    echo "${CSUCCESS}Xcache module installed successfully! ${CEND}"
     cd ..
     rm -rf xcache-$xcache_version
     [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart

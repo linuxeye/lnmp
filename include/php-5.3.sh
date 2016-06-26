@@ -129,7 +129,7 @@ make ZEND_EXTRA_LIBS='-liconv'
 make install
 
 if [ -e "$php_install_dir/bin/phpize" ];then
-    echo "${CSUCCESS}PHP install successfully! ${CEND}"
+    echo "${CSUCCESS}PHP installed successfully! ${CEND}"
 else
     rm -rf $php_install_dir
     echo "${CFAILURE}PHP install failed, Please Contact the author! ${CEND}"

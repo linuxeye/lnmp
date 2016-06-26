@@ -33,7 +33,7 @@ opcache.fast_shutdown=1
 opcache.enable_cli=1
 ;opcache.optimization_level=0
 EOF
-    echo "${CSUCCESS}PHP OPcache module install successfully! ${CEND}"
+    echo "${CSUCCESS}PHP OPcache module installed successfully! ${CEND}"
     cd ..
     rm -rf zendopcache-$zendopcache_version
     [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart

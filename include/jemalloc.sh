@@ -24,7 +24,7 @@ if [ -f "/usr/local/lib/libjemalloc.so" ];then
     fi
     echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
     ldconfig
-    echo "${CSUCCESS}jemalloc module install successfully! ${CEND}"
+    echo "${CSUCCESS}jemalloc module installed successfully! ${CEND}"
     cd ..
     rm -rf jemalloc-$jemalloc_version
 else

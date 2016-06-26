@@ -82,7 +82,7 @@ zend_loader.enable=1
 zend_loader.disable_licensing=0
 zend_loader.obfuscation_level_support=3
 EOF
-    echo "${CSUCCESS}PHP ZendGuardLoader module install successfully! ${CEND}"
+    echo "${CSUCCESS}PHP ZendGuardLoader module installed successfully! ${CEND}"
     [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
 else
     echo "${CFAILURE}PHP ZendGuardLoader module install failed, Please contact the author! ${CEND}"

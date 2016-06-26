@@ -29,7 +29,7 @@ apc.enable_cli=1
 EOF
     [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
     /bin/cp apc.php $wwwroot_dir/default
-    echo "${CSUCCESS}APCU module install successfully! ${CEND}"
+    echo "${CSUCCESS}APCU module installed successfully! ${CEND}"
     cd ..
     rm -rf apcu-$apcu_version
 else

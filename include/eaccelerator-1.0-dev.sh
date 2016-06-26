@@ -41,7 +41,7 @@ eaccelerator.keys=disk_only
 eaccelerator.sessions=disk_only
 eaccelerator.content=disk_only
 EOF
-    echo "${CSUCCESS}Accelerator module install successfully! ${CEND}"
+    echo "${CSUCCESS}Accelerator module installed successfully! ${CEND}"
     cd ..
     [ -z "`grep 'kernel.shmmax = 67108864' /etc/sysctl.conf`" ] && echo 'kernel.shmmax = 67108864' >> /etc/sysctl.conf
     sysctl -p

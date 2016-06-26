@@ -66,7 +66,7 @@ Restart_PHP() {
 
 # Check succ
 Check_succ() {
-[ -f "`$php_install_dir/bin/php-config --extension-dir`/${PHP_extension}.so" ] && { Restart_PHP; echo;echo "${CSUCCESS}PHP $PHP_extension module install successfully! ${CEND}"; }
+[ -f "`$php_install_dir/bin/php-config --extension-dir`/${PHP_extension}.so" ] && { Restart_PHP; echo;echo "${CSUCCESS}PHP $PHP_extension module installed successfully! ${CEND}"; }
 }
 
 # Uninstall succ
@@ -121,14 +121,14 @@ cd $oneinstack_dir/src
 src_url=https://dl.eff.org/certbot-auto && Download_src
 /bin/mv certbot-auto /usr/local/bin/
 chmod +x /usr/local/bin/certbot-auto
-certbot-auto -n --help all
-certbot-auto -h | grep '\-\-standalone' > /dev/null && echo; echo "${CSUCCESS}Let's Encrypt client install successfully! ${CEND}"
+certbot-auto -n
+certbot-auto -h | grep '\-\-standalone' > /dev/null && echo; echo "${CSUCCESS}Let's Encrypt client installed successfully! ${CEND}"
 }
 
 Uninstall_letsencrypt() {
 rm -rf /usr/local/bin/cerbot-auto /etc/letsencrypt /var/log/letsencrypt
 [ "$OS" == 'CentOS' ] && Cron_file=/var/spool/cron/root || Cron_file=/var/spool/cron/crontabs/root
-sed -i '/certbot-auto/d' $Cron_file 
+sed -i '/certbot-auto/d' $Cron_file
 echo; echo "${CMSG}Let's Encrypt client uninstall completed${CEND}";
 }
 
@@ -154,7 +154,7 @@ What Are You Doing?
 \t${CMSG}1${CEND}. Install/Uninstall PHP opcode cache
 \t${CMSG}2${CEND}. Install/Uninstall ZendGuardLoader/ionCube PHP Extension
 \t${CMSG}3${CEND}. Install/Uninstall ImageMagick/GraphicsMagick PHP Extension
-\t${CMSG}4${CEND}. Install/Uninstall fileinfo PHP Extension 
+\t${CMSG}4${CEND}. Install/Uninstall fileinfo PHP Extension
 \t${CMSG}5${CEND}. Install/Uninstall memcached/memcache
 \t${CMSG}6${CEND}. Install/Uninstall Redis
 \t${CMSG}7${CEND}. Install/Uninstall Let's Encrypt client
@@ -194,7 +194,7 @@ What Are You Doing?
                         cd $oneinstack_dir/src
                         if [[ $PHP_version =~ ^5.[3-4]$ ]];then
                             Install_ZendOPcache
-                        elif [ "$PHP_version" == '5.5' ];then 
+                        elif [ "$PHP_version" == '5.5' ];then
                             src_url=http://www.php.net/distributions/php-$php_5_version.tar.gz && Download_src
                             tar xzf php-$php_5_version.tar.gz
                             cd php-$php_5_version/ext/opcache
@@ -273,7 +273,7 @@ What Are You Doing?
                         fi
                     elif [ $Loader = 2 ];then
                         Install_ionCube
-                        Restart_PHP; echo "${CSUCCESS}PHP $PHP_extension module install successfully! ${CEND}";
+                        Restart_PHP; echo "${CSUCCESS}PHP $PHP_extension module installed successfully! ${CEND}";
                     fi
                 else
                     echo; echo "${CWARNING}Your php does not support $PHP_extension! ${CEND}";
@@ -367,7 +367,7 @@ What Are You Doing?
                     Install_php-memcache
                     PHP_extension=memcached && Check_PHP_Extension
                     Install_php-memcached
-                    [ -f "`$php_install_dir/bin/php-config --extension-dir`/memcache.so" -a "`$php_install_dir/bin/php-config --extension-dir`/memcached.so" ] && { Restart_PHP; echo;echo "${CSUCCESS}PHP memcache/memcached module install successfully! ${CEND}"; }
+                    [ -f "`$php_install_dir/bin/php-config --extension-dir`/memcache.so" -a "`$php_install_dir/bin/php-config --extension-dir`/memcached.so" ] && { Restart_PHP; echo;echo "${CSUCCESS}PHP memcache/memcached module installed successfully! ${CEND}"; }
                 fi
             else
                 PHP_extension=memcache && Uninstall_succ

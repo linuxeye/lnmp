@@ -20,7 +20,7 @@ make -j ${THREAD} && make install
 if [ -f "/usr/local/lib/libtcmalloc.so" ];then
     echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
     ldconfig
-    echo "${CSUCCESS}tcmalloc module install successfully! ${CEND}"
+    echo "${CSUCCESS}tcmalloc module installed successfully! ${CEND}"
     cd ..
     rm -rf gperftools-$tcmalloc_version
 else

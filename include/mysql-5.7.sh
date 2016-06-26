@@ -34,7 +34,7 @@ elif [ "$je_tc_malloc" == '2' ];then
 fi
 
 if [ -d "$mysql_install_dir/support-files" ];then
-    echo "${CSUCCESS}MySQL install successfully! ${CEND}"
+    echo "${CSUCCESS}MySQL installed successfully! ${CEND}"
     cd ..
     rm -rf mysql-$mysql_5_7_version
 else

@@ -33,7 +33,7 @@ elif [ "$je_tc_malloc" == '2' ];then
 fi
 
 if [ -d "$mariadb_install_dir/support-files" ];then
-    echo "${CSUCCESS}MariaDB install successfully! ${CEND}"
+    echo "${CSUCCESS}MariaDB installed successfully! ${CEND}"
 else
     rm -rf $mariadb_install_dir
     echo "${CFAILURE}MariaDB install failed, Please contact the author! ${CEND}"

@@ -162,7 +162,7 @@ openssl x509 -req -days 36500 -sha256 -in $PATH_SSL/${domain}.csr -signkey $PATH
 }
 
 Create_SSL() {
-if [ -e "/usr/local/bin/certbot-auto" -a -e "~/.local/share/letsencrypt/bin/letsencrypt" ];then
+if [ -e "/usr/local/bin/certbot-auto" -a -e "/root/.local/share/letsencrypt/bin/letsencrypt" ];then
     while :; do echo
         read -p "Do you want to use a Let's Encrypt certificate? [y/n]: " letsencrypt_yn 
         if [[ ! $letsencrypt_yn =~ ^[y,n]$ ]];then

@@ -22,7 +22,7 @@ cd memcached-$memcached_version
 ./configure --prefix=$memcached_install_dir
 make -j ${THREAD} && make install
 if [ -d "$memcached_install_dir/include/memcached" ];then
-    echo "${CSUCCESS}memcached install successfully! ${CEND}"
+    echo "${CSUCCESS}memcached installed successfully! ${CEND}"
     cd ..
     rm -rf memcached-$memcached_version
     ln -s $memcached_install_dir/bin/memcached /usr/bin/memcached
@@ -64,7 +64,7 @@ if [ -e "$php_install_dir/bin/phpize" ];then
 extension=memcache.so
 EOF
         [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
-        echo "${CSUCCESS}PHP memcache module install successfully! ${CEND}"
+        echo "${CSUCCESS}PHP memcache module installed successfully! ${CEND}"
         cd ..
         rm -rf memcache-$memcache_pecl_version
     else
@@ -108,7 +108,7 @@ if [ -e "$php_install_dir/bin/phpize" ];then
 extension=memcached.so
 memcached.use_sasl=1
 EOF
-        echo "${CSUCCESS}PHP memcached module install successfully! ${CEND}"
+        echo "${CSUCCESS}PHP memcached module installed successfully! ${CEND}"
         cd ..
         rm -rf memcached-$memcached_pecl_version
         [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart

@@ -43,7 +43,7 @@ make -j ${THREAD} && make install
 if [ -e "$nginx_install_dir/conf/nginx.conf" ];then
     cd ..
     rm -rf nginx-$nginx_version
-    echo "${CSUCCESS}Nginx install successfully! ${CEND}"
+    echo "${CSUCCESS}Nginx installed successfully! ${CEND}"
 else
     rm -rf $nginx_install_dir
     echo "${CFAILURE}Nginx install failed, Please Contact the author! ${CEND}"

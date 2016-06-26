@@ -44,7 +44,7 @@ make -j ${THREAD}
 make install
 
 if [ -d "$percona_install_dir/support-files" ];then
-    echo "${CSUCCESS}Percona install successfully! ${CEND}"
+    echo "${CSUCCESS}Percona installed successfully! ${CEND}"
     cd ..
     rm -rf percona-server-$percona_5_5_version
 else

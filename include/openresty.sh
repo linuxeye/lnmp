@@ -40,7 +40,7 @@ make -j ${THREAD} && make install
 if [ -e "$openresty_install_dir/nginx/conf/nginx.conf" ];then
     cd ..
     rm -rf openresty-$openresty_version
-    echo "${CSUCCESS}OpenResty install successfully! ${CEND}"
+    echo "${CSUCCESS}OpenResty installed successfully! ${CEND}"
 else
     rm -rf $openresty_install_dir
     echo "${CFAILURE}OpenResty install failed, Please Contact the author! ${CEND}"

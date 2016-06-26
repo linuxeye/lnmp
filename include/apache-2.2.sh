@@ -22,7 +22,7 @@ cd httpd-$apache_2_version
 ./configure --prefix=$apache_install_dir --enable-headers --enable-deflate --enable-mime-magic --enable-so --enable-rewrite --enable-ssl --with-ssl --enable-expires --enable-static-support --enable-suexec --disable-userdir --with-included-apr --with-mpm=$MPM --disable-userdir
 make -j ${THREAD} && make install
 if [ -e "$apache_install_dir/conf/httpd.conf" ];then
-    echo "${CSUCCESS}Apache install successfully! ${CEND}"
+    echo "${CSUCCESS}Apache installed successfully! ${CEND}"
     cd ..
     rm -rf httpd-$apache_2_version
 else

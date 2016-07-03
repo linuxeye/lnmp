@@ -40,4 +40,8 @@ else
     SYS_BIT_a=x86;SYS_BIT_b=i686;
 fi
 
+LIBC_VERSION=`getconf -a | grep GNU_LIBC_VERSION | awk '{print $NF}'`
+LIBC_YN=`echo "$LIBC_VERSION < 2.14" | bc`
+[ $LIBC_YN == '1' ] && GLIBC_FLAG=linux || GLIBC_FLAG=linux-glibc_214
+
 THREAD=$(grep 'processor' /proc/cpuinfo | sort -u | wc -l)

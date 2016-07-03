@@ -17,7 +17,15 @@ else
     [ "$IPADDR_STATE"x == "CN"x ] && DOWN_ADDR_MYSQL=http://mirrors.sohu.com/mysql/MySQL-5.6 || DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.6
 fi
 
-src_url=$DOWN_ADDR_MYSQL/mysql-${mysql_5_6_version}-linux-glibc2.5-${SYS_BIT_b}.tar.gz && Download_src
+FILE_NAME=mysql-${mysql_5_6_version}-linux-glibc2.5-${SYS_BIT_b}.tar.gz
+src_url=$DOWN_ADDR_MYSQL/$FILE_NAME && Download_src
+src_url=$DOWN_ADDR_MYSQL/$FILE_NAME.md5 && Download_src
+MYSQL_TAR_MD5=`awk '{print $1}' $FILE_NAME.md5`
+while [ "`md5sum $FILE_NAME | awk '{print $1}'`" != "$MYSQL_TAR_MD5" ];
+do
+    wget -c --no-check-certificate $DOWN_ADDR_MYSQL/$FILE_NAME;sleep 1
+    [ "`md5sum $FILE_NAME | awk '{print $1}'`" == "$MYSQL_TAR_MD5" ] && break || continue
+done
 
 id -u mysql >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin mysql

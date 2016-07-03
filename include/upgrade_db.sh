@@ -15,9 +15,6 @@ OLD_DB_version_tmp=`$db_install_dir/bin/mysql -V | awk '{print $5}' | awk -F, '{
 DB_tmp=`echo $OLD_DB_version_tmp | awk -F'-' '{print $2}'`
 if [ "$DB_tmp" == 'MariaDB' ];then
     [ "$IPADDR_STATE"x == "CN"x ] && DOWN_ADDR=http://mirrors.aliyun.com/mariadb || DOWN_ADDR=https://downloads.mariadb.org/f
-    LIBC_VERSION=`getconf -a | grep GNU_LIBC_VERSION | awk '{print $NF}'`
-    LIBC_YN=`echo "$LIBC_VERSION < 2.14" | bc`
-    [ $LIBC_YN == '1' ] && GLIBC_FLAG=linux || GLIBC_FLAG=linux-glibc_214
     DB=MariaDB
     OLD_DB_version=`echo $OLD_DB_version_tmp | awk -F'-' '{print $1}'`
 elif [ -n "$DB_tmp" -a "$DB_tmp" != 'MariaDB' ];then

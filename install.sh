@@ -468,10 +468,12 @@ fi
 if [ "$je_tc_malloc_yn" == 'y' -a "$je_tc_malloc" == '1' -a ! -e "/usr/local/lib/libjemalloc.so" ];then
     . include/jemalloc.sh
     Install_jemalloc | tee -a $oneinstack_dir/install.log
-elif [ "$DB_version" == '4' -a ! -e "/usr/local/lib/libjemalloc.so" ];then
+fi
+if [ "$DB_version" == '4' -a ! -e "/usr/local/lib/libjemalloc.so" ];then
     . include/jemalloc.sh
     Install_jemalloc | tee -a $oneinstack_dir/install.log
-elif [ "$je_tc_malloc_yn" == 'y' -a "$je_tc_malloc" == '2' -a ! -e "/usr/local/lib/libtcmalloc.so" ];then
+fi
+if [ "$je_tc_malloc_yn" == 'y' -a "$je_tc_malloc" == '2' -a ! -e "/usr/local/lib/libtcmalloc.so" ];then
     . include/tcmalloc.sh
     Install_tcmalloc | tee -a $oneinstack_dir/install.log
 fi

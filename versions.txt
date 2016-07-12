@@ -9,7 +9,7 @@ tomcat_8_version=8.0.30
 tomcat_7_version=7.0.69
 tomcat_6_version=6.0.45
 
-apache_4_version=2.4.20
+apache_4_version=2.4.23
 apache_2_version=2.2.31
 pcre_version=8.38
 apr_version=1.5.2
@@ -24,9 +24,9 @@ mariadb_10_1_version=10.1.14
 mariadb_10_0_version=10.0.26
 mariadb_5_5_version=5.5.50
 
-percona_5_7_version=5.7.12-5
-percona_5_6_version=5.6.30-76.3
-percona_5_5_version=5.5.49-37.9
+percona_5_7_version=5.7.13-6
+percona_5_6_version=5.6.31-77.0
+percona_5_5_version=5.5.50-38.0
 
 # JDK
 jdk_8_version=1.8.0_92
@@ -60,7 +60,7 @@ redis_version=3.2.1
 redis_pecl_version=2.2.8
 
 # Memcached
-memcached_version=1.4.25
+memcached_version=1.4.28
 libmemcached_version=1.0.18
 memcached_pecl_version=2.2.0
 memcache_pecl_version=3.0.8

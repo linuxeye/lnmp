@@ -75,7 +75,7 @@ else
 fi
 
 if [ -f "`$php_install_dir/bin/php-config --extension-dir`/ZendGuardLoader.so" ];then
-    cat > $php_install_dir/etc/php.d/ext-zendGuardLoader.ini << EOF
+    cat > $php_install_dir/etc/php.d/ext-ZendGuardLoader.ini << EOF
 [Zend Guard Loader]
 zend_extension=`$php_install_dir/bin/php-config --extension-dir`/ZendGuardLoader.so
 zend_loader.enable=1

@@ -125,7 +125,7 @@ else
 --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
 fi
 sed -i '/^BUILD_/ s/\$(CC)/\$(CXX)/g' Makefile
-make ZEND_EXTRA_LIBS='-liconv'
+make ZEND_EXTRA_LIBS='-liconv' -j ${THREAD}
 make install
 
 if [ -e "$php_install_dir/bin/phpize" ];then

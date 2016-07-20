@@ -320,11 +320,6 @@ if [ "$nginx_ssl_yn" == 'y' ]; then
     Create_SSL
     Nginx_conf=$(echo -e "listen $LISTENOPT;\nssl_certificate $PATH_SSL/$domain.crt;\nssl_certificate_key $PATH_SSL/$domain.key;\nssl_session_timeout 10m;\nssl_protocols TLSv1 TLSv1.1 TLSv1.2;\nssl_prefer_server_ciphers on;\nssl_ciphers "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-RC4-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:RC4-SHA:\!aNULL:\!eNULL:\!EXPORT:\!DES:\!3DES:\!MD5:\!DSS:\!PKS";\nssl_session_cache builtin:1000 shared:SSL:10m;\nresolver 8.8.8.8 8.8.4.4 valid=300s;\nresolver_timeout 5s;")
     Apache_SSL=$(echo -e "SSLEngine on\n    SSLCertificateFile \"$PATH_SSL/$domain.crt\"\n    SSLCertificateKeyFile \"$PATH_SSL/$domain.key\"")
-    if [ "$moredomainame_yn" == 'y' ]; then
-        Nginx_http_to_https=$(echo -e "server {\nlisten 80;\nserver_name $domain$moredomainame;\nrewrite ^/(.*) https://$domain/\$1 permanent;\n}")
-    else
-        Nginx_http_to_https=$(echo -e "server {\nlisten 80;\nserver_name $domain;\nrewrite ^/(.*) https://$domain/\$1 permanent;\n}")
-    fi
 elif [ "$apache_ssl_yn" == 'y' ]; then
     Create_SSL
     Apache_SSL=$(echo -e "SSLEngine on\n    SSLCertificateFile \"$PATH_SSL/$domain.crt\"\n    SSLCertificateKeyFile \"$PATH_SSL/$domain.key\"")
@@ -451,8 +446,38 @@ location ~ .*\.(js|css)?$ {
     }
 $NGX_CONF
 }
-$Nginx_http_to_https
 EOF
+
+if [ "$nginx_ssl_yn" == 'y' -a "$redirect_yn" == 'y' ];then
+cat >> $web_install_dir/conf/vhost/$domain.conf << EOF
+server {
+listen 80;
+server_name $domain$moredomainame;
+rewrite ^/(.*) https://$domain/\$1 permanent;
+}
+EOF
+elif [ "$nginx_ssl_yn" == 'y' ];then
+cat >> $web_install_dir/conf/vhost/$domain.conf << EOF
+server {
+listen 80;
+server_name $domain$moredomainame;
+$N_log
+index index.html index.htm index.jsp;
+root $vhostdir;
+$Nginx_redirect
+$anti_hotlinking
+location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|ico)$ {
+    expires 30d;
+    access_log off;
+    }
+location ~ .*\.(js|css)?$ {
+    expires 7d;
+    access_log off;
+    }
+$NGX_CONF
+}
+EOF
+fi
 
 cat > $tomcat_install_dir/conf/vhost/$domain.xml << EOF
 <Host name="$domain" appBase="webapps" unpackWARs="true" autoDeploy="true"> $Tomcat_Domain_alias
@@ -537,8 +562,39 @@ location ~ .*\.(js|css)?$ {
     access_log off;
     }
 }
-$Nginx_http_to_https
 EOF
+
+if [ "$nginx_ssl_yn" == 'y' -a "$redirect_yn" == 'y' ];then
+cat >> $web_install_dir/conf/vhost/$domain.conf << EOF
+server {
+listen 80;
+server_name $domain$moredomainame;
+rewrite ^/(.*) https://$domain/\$1 permanent;
+}
+EOF
+elif [ "$nginx_ssl_yn" == 'y' ];then
+cat >> $web_install_dir/conf/vhost/$domain.conf << EOF
+server {
+listen 80;
+server_name $domain$moredomainame;
+$N_log
+index index.html index.htm index.php;
+include $web_install_dir/conf/rewrite/$rewrite.conf;
+root $vhostdir;
+$Nginx_redirect
+$anti_hotlinking
+$NGX_CONF
+location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|ico)$ {
+    expires 30d;
+    access_log off;
+    }
+location ~ .*\.(js|css)?$ {
+    expires 7d;
+    access_log off;
+    }
+}
+EOF
+fi
 
 echo
 $web_install_dir/sbin/nginx -t
@@ -679,8 +735,48 @@ location ~ .*\.(js|css)?$ {
     access_log off;
     }
 }
-$Nginx_http_to_https
 EOF
+
+if [ "$nginx_ssl_yn" == 'y' -a "$redirect_yn" == 'y' ];then
+cat >> $web_install_dir/conf/vhost/$domain.conf << EOF
+server {
+listen 80;
+server_name $domain$moredomainame;
+rewrite ^/(.*) https://$domain/\$1 permanent;
+}
+EOF
+elif [ "$nginx_ssl_yn" == 'y' ];then
+cat >> $web_install_dir/conf/vhost/$domain.conf << EOF
+server {
+listen 80;
+server_name $domain$moredomainame;
+$N_log
+index index.html index.htm index.php;
+root $vhostdir;
+$Nginx_redirect
+$anti_hotlinking
+location / {
+    try_files \$uri @apache;
+    }
+location @apache {
+    proxy_pass http://127.0.0.1:88;
+    include proxy.conf;
+    }
+location ~ .*\.(php|php5|cgi|pl)?$ {
+    proxy_pass http://127.0.0.1:88;
+    include proxy.conf;
+    }
+location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|ico)$ {
+    expires 30d;
+    access_log off;
+    }
+location ~ .*\.(js|css)?$ {
+    expires 7d;
+    access_log off;
+    }
+}
+EOF
+fi
 
 echo
 $web_install_dir/sbin/nginx -t

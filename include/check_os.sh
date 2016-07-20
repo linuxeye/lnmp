@@ -21,10 +21,11 @@ elif [ -n "`grep Deepin /etc/issue`" -o "`lsb_release -is 2>/dev/null`" == 'Deep
     OS=Debian
     [ ! -e "`which lsb_release`" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
     Debian_version=`lsb_release -sr | awk -F. '{print $1}'`
-elif [ -n "`grep Ubuntu /etc/issue`" -o "`lsb_release -is 2>/dev/null`" == 'Ubuntu' ];then
+elif [ -n "`grep Ubuntu /etc/issue`" -o "`lsb_release -is 2>/dev/null`" == 'Ubuntu' -o -n "`grep 'Linux Mint' /etc/issue`" ];then
     OS=Ubuntu
     [ ! -e "`which lsb_release`" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
     Ubuntu_version=`lsb_release -sr | awk -F. '{print $1}'`
+    [ -n "`grep 'Linux Mint 18' /etc/issue`" ] && Ubuntu_version=16
 else
     echo "${CFAILURE}Does not support this OS, Please contact the author! ${CEND}"
     kill -9 $$

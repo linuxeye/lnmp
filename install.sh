@@ -439,7 +439,7 @@ while :; do echo
     else
         if [ "$HHVM_yn" == 'y' ];then
             [ -e "/usr/bin/hhvm" ] && { echo "${CWARNING}HHVM already installed! ${CEND}"; HHVM_yn=Other; break; }
-            if [ "$OS" == 'CentOS' -a "$OS_BIT" == '64' ] && [ -n "`grep -E ' 7\.| 6\.5| 6\.6| 6\.7' /etc/redhat-release`" ];then
+            if [ "$OS" == 'CentOS' -a "$OS_BIT" == '64' ] && [ -n "`grep -E ' 7\.| 6\.[5-9]' /etc/redhat-release`" ];then
                 break
             else
                 echo

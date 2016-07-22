@@ -25,7 +25,7 @@ Script properties:
 
 If your server system: CentOS/Redhat (Do not enter "//" and "// subsequent sentence)
 ```bash
-yum -y install wget screen   // For CentOS / Redhat
+yum -y install wget screen python   // For CentOS / Redhat
 wget http://mirrors.linuxeye.com/lnmp-full.tar.gz   // Contains the source code
 tar xzf lnmp-full.tar.gz
 cd lnmp    // If you need to modify the directory (installation, data storage, Nginx logs), modify options.conf file
@@ -34,7 +34,7 @@ screen -S lnmp    // if network interruption, you can execute the command `scree
 ```
 If your server system: Debian/Ubuntu (Do not enter "//" and "// subsequent sentence)
 ```bash
-apt-get -y install wget screen    // For Debian / Ubuntu
+apt-get -y install wget screen python   // For Debian / Ubuntu
 wget http://mirrors.linuxeye.com/lnmp-full.tar.gz   // Contains the source code
 tar xzf lnmp-full.tar.gz
 cd lnmp    // If you need to modify the directory (installation, data storage, Nginx logs), modify options.conf file

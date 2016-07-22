@@ -34,9 +34,9 @@ jdk_7_version=1.7.0_80
 jdk_6_version=1.6.0_45
 
 # PHP
-php_7_version=7.0.8
-php_6_version=5.6.23
-php_5_version=5.5.37
+php_7_version=7.0.9
+php_6_version=5.6.24
+php_5_version=5.5.38
 php_4_version=5.4.45
 php_3_version=5.3.29
 

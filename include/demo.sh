@@ -11,10 +11,10 @@
 DEMO() {
 cd $oneinstack_dir/src
 
-[ "$IPADDR_STATE"x == "CN"x ] && /bin/cp ../config/index_cn.html $wwwroot_dir/default/index.html || /bin/cp ../config/index.html $wwwroot_dir/default
+[ "$IPADDR_COUNTRY"x == "CN"x ] && /bin/cp ../config/index_cn.html $wwwroot_dir/default/index.html || /bin/cp ../config/index.html $wwwroot_dir/default
 
 if [ -e "$php_install_dir/bin/php" ];then
-    if [ "$IPADDR_STATE"x == "CN"x ];then
+    if [ "$IPADDR_COUNTRY"x == "CN"x ];then
         src_url=http://mirrors.linuxeye.com/oneinstack/src/tz.zip && Download_src
         unzip -q tz.zip -d $wwwroot_dir/default
     else

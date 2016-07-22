@@ -11,10 +11,10 @@
 Install_MySQL-5-5() {
 cd $oneinstack_dir/src
 
-if [ "`../include/check_port.py aliyun-oss.linuxeye.com 80`" == 'True' ];then
+if [ "$IPADDR_COUNTRY"x == "CN"x -a "$IPADDR_ISP" == 'aliyun' -a "`../include/check_port.py aliyun-oss.linuxeye.com 80`" == 'True' ];then
     DOWN_ADDR_MYSQL=http://aliyun-oss.linuxeye.com/mysql/MySQL-5.5
 else
-    [ "$IPADDR_STATE"x == "CN"x ] && DOWN_ADDR_MYSQL=http://mirrors.sohu.com/mysql/MySQL-5.5 || DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.5
+    [ "$IPADDR_COUNTRY"x == "CN"x ] && DOWN_ADDR_MYSQL=http://mirrors.sohu.com/mysql/MySQL-5.5 || DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.5
 fi
 
 FILE_NAME=mysql-${mysql_5_5_version}-linux2.6-${SYS_BIT_b}.tar.gz

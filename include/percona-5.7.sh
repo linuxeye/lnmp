@@ -10,7 +10,7 @@
 
 Install_Percona-5-7() {
 cd $oneinstack_dir/src
-[ "$IPADDR_STATE"x == "CN"x ] && DOWN_ADDR_BOOST=http://mirrors.linuxeye.com/oneinstack/src || DOWN_ADDR_BOOST=http://downloads.sourceforge.net/project/boost/boost/1.59.0
+[ "$IPADDR_COUNTRY"x == "CN"x ] && DOWN_ADDR_BOOST=http://mirrors.linuxeye.com/oneinstack/src || DOWN_ADDR_BOOST=http://downloads.sourceforge.net/project/boost/boost/1.59.0
 
 if [ ! -e "/usr/local/lib/libboost_system.so" ];then
     src_url=$DOWN_ADDR_BOOST/boost_1_59_0.tar.gz && Download_src

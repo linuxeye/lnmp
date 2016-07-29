@@ -40,7 +40,7 @@ else
 fi
 
 rm -rf ioncube
-cat > $php_install_dir/etc/php.d/ext-ioncube.ini << EOF
+cat > $php_install_dir/etc/php.d/ext-0ioncube.ini << EOF
 [ionCube Loader]
 zend_extension=$zend_extension
 EOF

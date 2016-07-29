@@ -3,13 +3,13 @@
 try:
     import sys,urllib2,socket
     socket.setdefaulttimeout(10)
-    apiurl = "http://ip.taobao.com/service/getIpInfo.php?ip=%s" % sys.argv[2] 
+    apiurl = "http://ip.taobao.com/service/getIpInfo.php?ip=%s" % sys.argv[1]
     content = urllib2.urlopen(apiurl).read()
     data = eval(content)['data']
     code = eval(content)['code']
     if code == 0:
-        print data[sys.argv[1]]
+        print data['country_id'],data['isp_id']
     else:
         print data
 except:
-    print "Usage:%s {country_id|isp} IP" % sys.argv[0]
+    print "Usage:%s IP" % sys.argv[0]

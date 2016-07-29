@@ -61,10 +61,10 @@ fi
 while :; do echo
     read -p "Please input Shadowsocks port(Default: $Shadowsocks_Default_port): " Shadowsocks_port
     [ -z "$Shadowsocks_port" ] && Shadowsocks_port=$Shadowsocks_Default_port
-    if [ $Shadowsocks_port -ge 9000 >/dev/null 2>&1 -a $Shadowsocks_port -le 10000 >/dev/null 2>&1 ];then
-        break
+    if [ $Shadowsocks_port -ge 1 >/dev/null 2>&1 -a $Shadowsocks_port -le 65535 >/dev/null 2>&1 ];then
+        [ -z "`netstat -an | grep :$Shadowsocks_port`" ] && break || echo "${CWARNING}This port is already used! ${CEND}"
     else
-        echo "${CWARNING}input error! Input range: 9001~9999${CEND}"
+        echo "${CWARNING}input error! Input range: 1~65535${CEND}"
     fi
 done
 
@@ -81,7 +81,7 @@ elif [[ $OS =~ ^Ubuntu$|^Debian$ ]];then
         iptables-save > /etc/iptables.up.rules
     fi
 else
-    echo "${CWARNING}This port is already in iptables${CEND}"
+    echo "${CWARNING}This port is already in iptables! ${CEND}"
 fi
 
 }
@@ -102,7 +102,7 @@ if [ "$OS" == 'CentOS' ]; then
     done
     AddUser_shadowsocks
     Iptables_set
-    for Package in wget unzip openssl-devel gcc swig python python-devel python-setuptools autoconf libtool libevent automake make curl curl-devel zlib-devel perl perl-devel cpio expat-devel gettext-devel git
+    for Package in wget unzip openssl-devel gcc swig python python-devel python-setuptools autoconf libtool libevent automake make curl curl-devel zlib-devel perl perl-devel cpio expat-devel gettext-devel git asciidoc xmlto
     do
         yum -y install $Package
     done

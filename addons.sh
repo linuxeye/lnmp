@@ -50,8 +50,8 @@ sed -i "s@^oneinstack_dir.*@oneinstack_dir=`pwd`@" ./options.conf
 
 # Check PHP
 if [ -e "$php_install_dir/bin/phpize" ];then
-    PHP_version_detail=`$php_install_dir/bin/php -r 'echo PHP_VERSION;'`
-    PHP_version=`echo $PHP_version_detail | awk -F. '{print $1"."$2}'`
+    PHP_version=`$php_install_dir/bin/php -r 'echo PHP_VERSION;'`
+    PHP_main_version=${PHP_version%.*}
 fi
 
 # Check PHP Extensions
@@ -192,19 +192,19 @@ What Are You Doing?
                 else
                     if [ $PHP_cache = 1 ];then
                         cd $oneinstack_dir/src
-                        if [[ $PHP_version =~ ^5.[3-4]$ ]];then
+                        if [[ $PHP_main_version =~ ^5.[3-4]$ ]];then
                             Install_ZendOPcache
-                        elif [ "$PHP_version" == '5.5' ];then
+                        elif [ "$PHP_main_version" == '5.5' ];then
                             src_url=http://www.php.net/distributions/php-$php_5_version.tar.gz && Download_src
                             tar xzf php-$php_5_version.tar.gz
                             cd php-$php_5_version/ext/opcache
                             Install_opcache
-                        elif [ "$PHP_version" == '5.6' ];then
+                        elif [ "$PHP_main_version" == '5.6' ];then
                             src_url=http://www.php.net/distributions/php-$php_6_version.tar.gz && Download_src
                             tar xzf php-$php_6_version.tar.gz
                             cd php-$php_6_version/ext/opcache
                             Install_opcache
-                        elif [ "$PHP_version" == '7.0' ];then
+                        elif [ "$PHP_main_version" == '7.0' ];then
                             src_url=http://www.php.net/distributions/php-$php_7_version.tar.gz && Download_src
                             tar xzf php-$php_7_version.tar.gz
                             cd php-$php_7_version/ext/opcache
@@ -212,7 +212,7 @@ What Are You Doing?
                         fi
                         Check_succ
                     elif [ $PHP_cache = 2 ];then
-                        if [[ $PHP_version =~ ^5.[3-6]$ ]];then
+                        if [[ $PHP_main_version =~ ^5.[3-6]$ ]];then
                             while :; do
                                 read -p "Please input xcache admin password: " xcache_admin_pass
                                 (( ${#xcache_admin_pass} >= 5 )) && { xcache_admin_md5_pass=`echo -n "$xcache_admin_pass" | md5sum | awk '{print $1}'` ; break ; } || echo "${CFAILURE}xcache admin password least 5 characters! ${CEND}"
@@ -223,17 +223,17 @@ What Are You Doing?
                             echo "${CWARNING}Your php does not support XCache! ${CEND}"; exit 1
                         fi
                     elif [ $PHP_cache = 3 ];then
-                        if [[ $PHP_version =~ ^5.[3-5]$ ]];then
+                        if [[ $PHP_main_version =~ ^5.[3-5]$ ]];then
                             Install_APCU
                             Check_succ
                         else
                             echo "${CWARNING}Your php does not support APCU! ${CEND}"; exit 1
                         fi
                     elif [ $PHP_cache = 4 ];then
-                        if [ "$PHP_version" == '5.3' ];then
+                        if [ "$PHP_main_version" == '5.3' ];then
                             Install_eAccelerator-0-9
                             Check_succ
-                        elif [ "$PHP_version" == '5.4' ];then
+                        elif [ "$PHP_main_version" == '5.4' ];then
                             Install_eAccelerator-1-0-dev
                             Check_succ
                         else
@@ -257,13 +257,13 @@ What Are You Doing?
                     echo "${CWARNING}input error! Please only input number 1,2${CEND}"
                 else
                     [ $Loader = 1 ] && PHP_extension=ZendGuardLoader
-                    [ $Loader = 2 ] && PHP_extension=ioncube
+                    [ $Loader = 2 ] && PHP_extension=0ioncube
                     break
                 fi
             done
             if [ $ACTION = 1 ];then
                 Check_PHP_Extension
-                if [[ $PHP_version =~ ^5.[3-6]$ ]];then
+                if [[ $PHP_main_version =~ ^5.[3-6]$ ]];then
                     if [ $Loader = 1 ];then
                         if [ -e $php_install_dir/etc/php.d/ext-opcache.ini ];then
                             echo; echo "${CWARNING}You have to install OpCache, You need to uninstall it before install ZendGuardLoader! ${CEND}"; echo; exit 1
@@ -273,7 +273,7 @@ What Are You Doing?
                         fi
                     elif [ $Loader = 2 ];then
                         Install_ionCube
-                        Restart_PHP; echo "${CSUCCESS}PHP $PHP_extension module installed successfully! ${CEND}";
+                        Restart_PHP; echo "${CSUCCESS}PHP ioncube module installed successfully! ${CEND}";
                     fi
                 else
                     echo; echo "${CWARNING}Your php does not support $PHP_extension! ${CEND}";
@@ -321,9 +321,9 @@ What Are You Doing?
             if [ $ACTION = 1 ];then
                 Check_PHP_Extension
                 cd $oneinstack_dir/src
-                src_url=http://www.php.net/distributions/php-$PHP_version_detail.tar.gz && Download_src
-                tar xzf php-$PHP_version_detail.tar.gz
-                cd php-$PHP_version_detail/ext/fileinfo
+                src_url=http://www.php.net/distributions/php-$PHP_version.tar.gz && Download_src
+                tar xzf php-$PHP_version.tar.gz
+                cd php-$PHP_version/ext/fileinfo
                 $php_install_dir/bin/phpize
                 ./configure --with-php-config=$php_install_dir/bin/php-config
                 make -j ${THREAD} && make install

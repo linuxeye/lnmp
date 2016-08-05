@@ -318,7 +318,7 @@ if [ "$nginx_ssl_yn" == 'y' ]; then
       LISTENOPT='443 ssl spdy'
     fi
     Create_SSL
-    Nginx_conf=$(echo -e "listen $LISTENOPT;\nssl_certificate $PATH_SSL/$domain.crt;\nssl_certificate_key $PATH_SSL/$domain.key;\nssl_session_timeout 10m;\nssl_protocols TLSv1 TLSv1.1 TLSv1.2;\nssl_prefer_server_ciphers on;\nssl_ciphers "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-RC4-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:RC4-SHA:\!aNULL:\!eNULL:\!EXPORT:\!DES:\!3DES:\!MD5:\!DSS:\!PKS";\nssl_session_cache builtin:1000 shared:SSL:10m;\nresolver 8.8.8.8 8.8.4.4 valid=300s;\nresolver_timeout 5s;")
+    Nginx_conf=$(echo -e "listen $LISTENOPT;\nssl_certificate $PATH_SSL/$domain.crt;\nssl_certificate_key $PATH_SSL/$domain.key;\nssl_protocols TLSv1 TLSv1.1 TLSv1.2;\nssl_ciphers EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;\nssl_prefer_server_ciphers on;\nssl_session_timeout 10m;\nssl_session_cache builtin:1000 shared:SSL:10m;\nssl_buffer_size 1400;\nadd_header Strict-Transport-Security max-age=15768000;\nssl_stapling on;\nssl_stapling_verify on;\n")
     Apache_SSL=$(echo -e "SSLEngine on\n    SSLCertificateFile \"$PATH_SSL/$domain.crt\"\n    SSLCertificateKeyFile \"$PATH_SSL/$domain.key\"")
 elif [ "$apache_ssl_yn" == 'y' ]; then
     Create_SSL

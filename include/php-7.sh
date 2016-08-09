@@ -11,6 +11,7 @@
 Install_PHP-7() {
 cd $oneinstack_dir/src
 src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-$libiconv_version.tar.gz && Download_src
+src_url=https://curl.haxx.se/download/curl-$curl_version.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/$libmcrypt_version/libmcrypt-$libmcrypt_version.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mhash/mhash/$mhash_version/mhash-$mhash_version.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/$mcrypt_version/mcrypt-$mcrypt_version.tar.gz && Download_src
@@ -24,6 +25,13 @@ cd libiconv-$libiconv_version
 make -j ${THREAD} && make install
 cd ..
 rm -rf libiconv-$libiconv_version
+
+tar xzf curl-$curl_version.tar.gz
+cd curl-$curl_version
+./configure --prefix=/usr/local
+make -j ${THREAD} && make install
+cd ..
+rm -rf curl-$curl_version
 
 tar xzf libmcrypt-$libmcrypt_version.tar.gz
 cd libmcrypt-$libmcrypt_version
@@ -71,7 +79,7 @@ if [[ $Apache_version =~ ^[1-2]$ ]] || [ -e "$apache_install_dir/bin/apxs" ];the
 --enable-mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
---enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex \
+--enable-sysvsem --enable-inline-optimization --with-curl=/usr/local --enable-mbregex \
 --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl \
 --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
 --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
@@ -82,7 +90,7 @@ else
 --enable-mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
---enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex \
+--enable-sysvsem --enable-inline-optimization --with-curl=/usr/local --enable-mbregex \
 --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl \
 --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
 --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug

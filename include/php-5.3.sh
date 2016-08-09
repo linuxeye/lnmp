@@ -11,6 +11,7 @@
 Install_PHP-5-3() {
 cd $oneinstack_dir/src
 src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-$libiconv_version.tar.gz && Download_src
+src_url=https://curl.haxx.se/download/curl-$curl_version.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/$libmcrypt_version/libmcrypt-$libmcrypt_version.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mhash/mhash/$mhash_version/mhash-$mhash_version.tar.gz && Download_src
 src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/$mcrypt_version/mcrypt-$mcrypt_version.tar.gz && Download_src
@@ -27,6 +28,33 @@ cd libiconv-$libiconv_version
 make -j ${THREAD} && make install
 cd ..
 rm -rf libiconv-$libiconv_version
+
+# Problem building php-5.3 with openssl
+if [ "$Debian_version" == '8' -o "$Ubuntu_version" == '16' ];then
+    if [ ! -e '/usr/local/openssl/lib/libcrypto.a' ];then
+        src_url=http://mirrors.linuxeye.com/oneinstack/src/openssl-1.0.0s.tar.gz && Download_src
+        tar xzf openssl-1.0.0s.tar.gz
+        cd openssl-1.0.0s
+        ./config --prefix=/usr/local/openssl -fPIC shared zlib
+        make -j ${THREAD} && make install
+        cd ..
+        rm -rf openssl-1.0.0s
+    fi
+    OpenSSL_args='--with-openssl=/usr/local/openssl'
+else
+    OpenSSL_args='--with-openssl'
+fi
+
+tar xzf curl-$curl_version.tar.gz
+cd curl-$curl_version
+if [ "$Debian_version" == '8' -o "$Ubuntu_version" == '16' ];then
+    LDFLAGS="-Wl,-rpath=/usr/local/openssl/lib" ./configure --prefix=/usr/local --with-ssl=/usr/local/openssl
+else
+    ./configure --prefix=/usr/local
+fi
+make -j ${THREAD} && make install
+cd ..
+rm -rf curl-$curl_version
 
 tar xzf libmcrypt-$libmcrypt_version.tar.gz
 cd libmcrypt-$libmcrypt_version
@@ -63,37 +91,6 @@ rm -rf mcrypt-$mcrypt_version
 id -u $run_user >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user
 
-# Problem building php-5.3 with openssl
-if [ "$Debian_version" == '8' -o "$Ubuntu_version" == '16' ];then
-    if [ -e '/usr/local/openssl/lib/libcrypto.a' ];then
-        OpenSSL_args='--with-openssl=/usr/local/openssl'
-    else
-        src_url=http://mirrors.linuxeye.com/oneinstack/src/openssl-1.0.0s.tar.gz && Download_src
-        tar xzf openssl-1.0.0s.tar.gz
-        cd openssl-1.0.0s
-        ./config --prefix=/usr/local/openssl -fPIC shared zlib
-        make -j ${THREAD} && make install
-        cd ..
-        [ -e '/usr/local/openssl/lib/libcrypto.a' ] && { OpenSSL_args='--with-openssl=/usr/local/openssl'; rm -rf openssl-1.0.0s; } || OpenSSL_args='--with-openssl'
-    fi
-    if [ "$Ubuntu_version" == '16' ];then
-        if [ -e '/usr/local/curl/lib/libcurl.a' ];then
-            Curl_args='--with-curl=/usr/local/curl'
-        else
-            src_url=http://mirrors.linuxeye.com/oneinstack/src/curl-7.29.0.tar.gz && Download_src
-            tar xzf curl-7.29.0.tar.gz
-            cd curl-7.29.0
-            LDFLAGS="-Wl,-rpath=/usr/local/openssl/lib" ./configure --prefix=/usr/local/curl --with-ssl=/usr/local/openssl
-            make -j ${THREAD} && make install
-            cd ..
-            [ -e '/usr/local/curl/lib/libcurl.a' ] && { Curl_args='--with-curl=/usr/local/curl'; rm -rf curl-7.29.0; } || Curl_args='--with-curl'
-        fi
-    fi
-else
-    OpenSSL_args='--with-openssl'
-    Curl_args='--with-curl'
-fi
-
 tar xzf php-$php_3_version.tar.gz
 patch -d php-$php_3_version -p0 < fpm-race-condition.patch
 cd php-$php_3_version
@@ -108,7 +105,7 @@ if [[ $Apache_version =~ ^[1-2]$ ]] || [ -e "$apache_install_dir/bin/apxs" ];the
 --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
---enable-sysvsem --enable-inline-optimization $Curl_args --enable-mbregex \
+--enable-sysvsem --enable-inline-optimization --with-curl=/usr/local --enable-mbregex \
 --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf $OpenSSL_args \
 --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
 --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
@@ -119,7 +116,7 @@ else
 --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
 --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
 --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
---enable-sysvsem --enable-inline-optimization $Curl_args --enable-mbregex \
+--enable-sysvsem --enable-inline-optimization --with-curl=/usr/local --enable-mbregex \
 --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf $OpenSSL_args \
 --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
 --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug

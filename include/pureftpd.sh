@@ -27,15 +27,13 @@ if [ -e "$pureftpd_install_dir/sbin/pure-ftpwho" ];then
     cp configuration-file/pure-config.pl $pureftpd_install_dir/sbin
     sed -i "s@/usr/local/pureftpd@$pureftpd_install_dir@" $pureftpd_install_dir/sbin/pure-config.pl
     chmod +x $pureftpd_install_dir/sbin/pure-config.pl
-    cp contrib/redhat.init /etc/init.d/pureftpd
-    sed -i "s@fullpath=.*@fullpath=$pureftpd_install_dir/sbin/\$prog@" /etc/init.d/pureftpd
-    sed -i "s@pureftpwho=.*@pureftpwho=$pureftpd_install_dir/sbin/pure-ftpwho@" /etc/init.d/pureftpd
-    sed -i "s@/etc/pure-ftpd.conf@$pureftpd_install_dir/etc/pure-ftpd.conf@" /etc/init.d/pureftpd
+    cd ../../
+    /bin/cp init.d/Pureftpd-init /etc/init.d/pureftpd 
+    sed -i "s@/usr/local/pureftpd@$pureftpd_install_dir@g" /etc/init.d/pureftpd
     chmod +x /etc/init.d/pureftpd
     [ "$OS" == 'CentOS' ] && { chkconfig --add pureftpd; chkconfig pureftpd on; }
-    [[ $OS =~ ^Ubuntu$|^Debian$ ]] && { sed -i 's@^. /etc/rc.d/init.d/functions@. /lib/lsb/init-functions@' /etc/init.d/pureftpd; [ -z "`grep ^'# Default-Start' /etc/init.d/pureftpd`" ] && sed -i "s@^# chkconfig.*@# chkconfig&\n# Default-Start: 2 3 4 5\n# Default-Stop: 0 1 6@" /etc/init.d/pureftpd; update-rc.d pureftpd defaults; }
+    [[ $OS =~ ^Ubuntu$|^Debian$ ]] && { sed -i 's@^. /etc/rc.d/init.d/functions@. /lib/lsb/init-functions@' /etc/init.d/pureftpd; update-rc.d pureftpd defaults; }
     [ "$Debian_version" == '7' ] && sed -i 's@/var/lock/subsys/@/var/lock/@g' /etc/init.d/pureftpd
-    cd ../../
 
     /bin/cp config/pure-ftpd.conf $pureftpd_install_dir/etc
     sed -i "s@^PureDB.*@PureDB  $pureftpd_install_dir/etc/pureftpd.pdb@" $pureftpd_install_dir/etc/pure-ftpd.conf
@@ -59,7 +57,7 @@ if [ -e "$pureftpd_install_dir/sbin/pure-ftpwho" ];then
     fi
 else
     rm -rf $pureftpd_install_dir
-    echo "${CFAILURE}Pure-Ftp install failed, Please contact the author! ${CEND}"
+    echo "${CFAILURE}Pure-Ftpd install failed, Please contact the author! ${CEND}"
     kill -9 $$
 fi
 }

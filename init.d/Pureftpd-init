@@ -1,0 +1,71 @@
+#!/bin/bash
+#
+# Startup script for the pure-ftpd FTP Server  $Revision: 1.3 $
+#
+# chkconfig: 2345 85 15
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# description: Pure-FTPd is an FTP server daemon based upon Troll-FTPd
+# processname: pure-ftpd
+# pidfile: /var/run/pure-ftpd.pid
+# config: /usr/local/pureftpd/etc/pure-ftpd.conf
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+RETVAL=0
+
+# Path to the pure-ftp binaries.
+prog=pure-config.pl
+fullpath=/usr/local/pureftpd/sbin/$prog
+pureftpwho=/usr/local/pureftpd/sbin/pure-ftpwho
+pure_config=/usr/local/pureftpd/etc/pure-ftpd.conf
+
+
+start() {
+	echo -n $"Starting $prog: "
+	$fullpath $pure_config --daemonize
+	RETVAL=$?
+	[ $RETVAL = 0 ] && touch /var/lock/subsys/$prog
+	echo
+}
+stop() {
+	echo -n $"Stopping $prog: "
+	kill $(cat /var/run/pure-ftpd.pid)
+	RETVAL=$?
+	[ $RETVAL = 0 ] && rm -f /var/lock/subsys/$prog
+	echo
+}
+
+# See how we were called.
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	restart)
+		stop
+		start
+		;;
+	condrestart)
+		if [ -f /var/lock/subsys/$prog ] ; then
+			stop
+			# avoid race
+			sleep 3
+			start
+		fi
+		;;
+	status)
+		status $prog
+		RETVAL=$?
+		if [ -f $pureftpwho ] && [ $RETVAL -eq 0 ] ; then
+			$pureftpwho
+		fi
+		;;
+	*)
+		echo $"Usage: $prog {start|stop|restart|condrestart|status}"
+		RETVAL=1
+esac
+exit $RETVAL

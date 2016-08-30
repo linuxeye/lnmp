@@ -312,13 +312,22 @@ if [ "$moredomainame_yn" == 'y' ]; then
 fi
 
 if [ "$nginx_ssl_yn" == 'y' ]; then
+    while :; do echo
+        read -p "Do you want to redirect all HTTP requests to HTTPS? [y/n]: " https_yn
+        if [[ ! $https_yn =~ ^[y,n]$ ]];then
+            echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
+        else
+            break
+        fi
+    done
+
     if [[ "$($web_install_dir/sbin/nginx -V 2>&1 | grep -Eo 'with-http_v2_module')" = 'with-http_v2_module' ]]; then
       LISTENOPT='443 ssl http2'
     else
       LISTENOPT='443 ssl spdy'
     fi
     Create_SSL
-    Nginx_conf=$(echo -e "listen $LISTENOPT;\nssl_certificate $PATH_SSL/$domain.crt;\nssl_certificate_key $PATH_SSL/$domain.key;\nssl_protocols TLSv1 TLSv1.1 TLSv1.2;\nssl_ciphers EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;\nssl_prefer_server_ciphers on;\nssl_session_timeout 10m;\nssl_session_cache builtin:1000 shared:SSL:10m;\nssl_buffer_size 1400;\nadd_header Strict-Transport-Security max-age=15768000;\nssl_stapling on;\nssl_stapling_verify on;\n")
+    Nginx_conf=$(echo -e "listen 80;\nlisten $LISTENOPT;\nssl_certificate $PATH_SSL/$domain.crt;\nssl_certificate_key $PATH_SSL/$domain.key;\nssl_protocols TLSv1 TLSv1.1 TLSv1.2;\nssl_ciphers EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;\nssl_prefer_server_ciphers on;\nssl_session_timeout 10m;\nssl_session_cache builtin:1000 shared:SSL:10m;\nssl_buffer_size 1400;\nadd_header Strict-Transport-Security max-age=15768000;\nssl_stapling on;\nssl_stapling_verify on;\n")
     Apache_SSL=$(echo -e "SSLEngine on\n    SSLCertificateFile \"$PATH_SSL/$domain.crt\"\n    SSLCertificateKeyFile \"$PATH_SSL/$domain.key\"")
 elif [ "$apache_ssl_yn" == 'y' ]; then
     Create_SSL
@@ -448,36 +457,7 @@ $NGX_CONF
 }
 EOF
 
-if [ "$nginx_ssl_yn" == 'y' -a "$redirect_yn" == 'y' ];then
-cat >> $web_install_dir/conf/vhost/$domain.conf << EOF
-server {
-listen 80;
-server_name $domain$moredomainame;
-rewrite ^/(.*) https://$domain/\$1 permanent;
-}
-EOF
-elif [ "$nginx_ssl_yn" == 'y' ];then
-cat >> $web_install_dir/conf/vhost/$domain.conf << EOF
-server {
-listen 80;
-server_name $domain$moredomainame;
-$N_log
-index index.html index.htm index.jsp;
-root $vhostdir;
-$Nginx_redirect
-$anti_hotlinking
-location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|ico)$ {
-    expires 30d;
-    access_log off;
-    }
-location ~ .*\.(js|css)?$ {
-    expires 7d;
-    access_log off;
-    }
-$NGX_CONF
-}
-EOF
-fi
+[ "$https_yn" == 'y' ] && sed -i "s@^root.*;@&\nif (\$ssl_protocol = \"\") { return 301 https://\$host\$request_uri; }@" $web_install_dir/conf/vhost/$domain.conf
 
 cat > $tomcat_install_dir/conf/vhost/$domain.xml << EOF
 <Host name="$domain" appBase="webapps" unpackWARs="true" autoDeploy="true"> $Tomcat_Domain_alias
@@ -564,37 +544,7 @@ location ~ .*\.(js|css)?$ {
 }
 EOF
 
-if [ "$nginx_ssl_yn" == 'y' -a "$redirect_yn" == 'y' ];then
-cat >> $web_install_dir/conf/vhost/$domain.conf << EOF
-server {
-listen 80;
-server_name $domain$moredomainame;
-rewrite ^/(.*) https://$domain/\$1 permanent;
-}
-EOF
-elif [ "$nginx_ssl_yn" == 'y' ];then
-cat >> $web_install_dir/conf/vhost/$domain.conf << EOF
-server {
-listen 80;
-server_name $domain$moredomainame;
-$N_log
-index index.html index.htm index.php;
-include $web_install_dir/conf/rewrite/$rewrite.conf;
-root $vhostdir;
-$Nginx_redirect
-$anti_hotlinking
-$NGX_CONF
-location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|ico)$ {
-    expires 30d;
-    access_log off;
-    }
-location ~ .*\.(js|css)?$ {
-    expires 7d;
-    access_log off;
-    }
-}
-EOF
-fi
+[ "$https_yn" == 'y' ] && sed -i "s@^root.*;@&\nif (\$ssl_protocol = \"\") { return 301 https://\$host\$request_uri; }@" $web_install_dir/conf/vhost/$domain.conf
 
 echo
 $web_install_dir/sbin/nginx -t
@@ -737,46 +687,7 @@ location ~ .*\.(js|css)?$ {
 }
 EOF
 
-if [ "$nginx_ssl_yn" == 'y' -a "$redirect_yn" == 'y' ];then
-cat >> $web_install_dir/conf/vhost/$domain.conf << EOF
-server {
-listen 80;
-server_name $domain$moredomainame;
-rewrite ^/(.*) https://$domain/\$1 permanent;
-}
-EOF
-elif [ "$nginx_ssl_yn" == 'y' ];then
-cat >> $web_install_dir/conf/vhost/$domain.conf << EOF
-server {
-listen 80;
-server_name $domain$moredomainame;
-$N_log
-index index.html index.htm index.php;
-root $vhostdir;
-$Nginx_redirect
-$anti_hotlinking
-location / {
-    try_files \$uri @apache;
-    }
-location @apache {
-    proxy_pass http://127.0.0.1:88;
-    include proxy.conf;
-    }
-location ~ .*\.(php|php5|cgi|pl)?$ {
-    proxy_pass http://127.0.0.1:88;
-    include proxy.conf;
-    }
-location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|ico)$ {
-    expires 30d;
-    access_log off;
-    }
-location ~ .*\.(js|css)?$ {
-    expires 7d;
-    access_log off;
-    }
-}
-EOF
-fi
+[ "$https_yn" == 'y' ] && sed -i "s@^root.*;@&\nif (\$ssl_protocol = \"\") { return 301 https://\$host\$request_uri; }@" $web_install_dir/conf/vhost/$domain.conf
 
 echo
 $web_install_dir/sbin/nginx -t

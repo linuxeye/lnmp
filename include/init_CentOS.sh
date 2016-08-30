@@ -26,9 +26,6 @@ fi
 
 yum check-update
 
-# check upgrade OS
-[ "$upgrade_yn" == 'y' ] && yum -y upgrade
-
 # Install needed packages
 for Package in deltarpm gcc gcc-c++ make cmake autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel libaio readline-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel libxslt-devel libicu-devel libevent-devel libtool libtool-ltdl bison gd-devel vim-enhanced pcre-devel zip unzip ntpdate sysstat patch bc expect rsync git lsof lrzsz
 do
@@ -205,9 +202,9 @@ fi
 # install htop
 if [ ! -e "`which htop`" ];then
     cd src
-    src_url=http://hisham.hm/htop/releases/2.0.0/htop-2.0.0.tar.gz && Download_src
-    tar xzf htop-2.0.0.tar.gz
-    cd htop-2.0.0
+    src_url=http://hisham.hm/htop/releases/2.0.2/htop-2.0.2.tar.gz && Download_src
+    tar xzf htop-2.0.2.tar.gz
+    cd htop-2.0.2
     ./configure
     make -j ${THREAD} && make install
     cd ../../

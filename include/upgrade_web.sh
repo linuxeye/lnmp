@@ -48,7 +48,7 @@ if [ -e "nginx-$NEW_Nginx_version.tar.gz" ];then
     ./configure $nginx_configure_arguments
     make -j ${THREAD}
     if [ -f "objs/nginx" ];then
-        /bin/mv $nginx_install_dir/sbin/nginx $nginx_install_dir/sbin/nginx$(date +%m%d)
+        /bin/mv $nginx_install_dir/sbin/nginx{,`date +%m%d`}
         /bin/cp objs/nginx $nginx_install_dir/sbin/nginx
         kill -USR2 `cat /var/run/nginx.pid`
         sleep 1
@@ -102,9 +102,9 @@ if [ -e "tengine-$NEW_Tengine_version.tar.gz" ];then
     ./configure $tengine_configure_arguments
     make -j ${THREAD}
     if [ -f "objs/nginx" ];then
-        /bin/mv $tengine_install_dir/sbin/nginx $tengine_install_dir/sbin/nginx$(date +%m%d)
-        /bin/mv $tengine_install_dir/sbin/dso_tool $tengine_install_dir/sbin/dso_tool$(date +%m%d)
-        /bin/mv $tengine_install_dir/modules $tengine_install_dir/modules$(date +%m%d)
+        /bin/mv $tengine_install_dir/sbin/nginx{,`date +%m%d`}
+        /bin/mv $tengine_install_dir/sbin/dso_tool{,`date +%m%d`}
+        /bin/mv $tengine_install_dir/modules{,`date +%m%d`}
         /bin/cp objs/nginx $tengine_install_dir/sbin/nginx
         /bin/cp objs/dso_tool $tengine_install_dir/sbin/dso_tool
         chmod +x $tengine_install_dir/sbin/*
@@ -164,7 +164,7 @@ if [ -e "openresty-$NEW_OpenResty_version.tar.gz" ];then
     ./configure --prefix=$openresty_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-openssl=../openssl-$openssl_version --with-pcre=../pcre-$pcre_version --with-pcre-jit $malloc_module
     make -j ${THREAD}
     if [ -f "build/nginx-$openresty_version_tmp/objs/nginx" ];then
-        /bin/mv $openresty_install_dir/nginx/sbin/nginx $openresty_install_dir/nginx/sbin/nginx$(date +%m%d)
+        /bin/mv $openresty_install_dir/nginx/sbin/nginx{,`date +%m%d`}
         make install
         kill -USR2 `cat /var/run/nginx.pid`
         sleep 1

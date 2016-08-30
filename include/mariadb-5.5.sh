@@ -14,7 +14,7 @@ cd $oneinstack_dir/src
 FILE_NAME=mariadb-${mariadb_5_5_version}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
 
 if [ "$IPADDR_COUNTRY"x == "CN"x ];then
-    DOWN_ADDR_MARIADB=http://mirrors.aliyun.com/mariadb/mariadb-${mariadb_5_5_version}/bintar-${GLIBC_FLAG}-$SYS_BIT_a
+    DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb_5_5_version}/bintar-${GLIBC_FLAG}-$SYS_BIT_a
     MARAIDB_TAR_MD5=`curl -Lk $DOWN_ADDR_MARIADB/md5sums.txt | grep $FILE_NAME | awk '{print $1}'`
     [ -z "$MARAIDB_TAR_MD5" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb_5_5_version}/bintar-${GLIBC_FLAG}-$SYS_BIT_a; MARAIDB_TAR_MD5=`curl -Lk $DOWN_ADDR_MARIADB/md5sums.txt | grep $FILE_NAME | awk '{print $1}'`; }
 else

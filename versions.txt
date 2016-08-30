@@ -2,7 +2,7 @@
 # Web
 nginx_version=1.10.1
 tengine_version=2.1.1
-openresty_version=1.9.15.1
+openresty_version=1.11.2.1
 openssl_version=1.0.2h
 
 tomcat_8_version=8.0.30
@@ -21,21 +21,21 @@ mysql_5_6_version=5.6.32
 mysql_5_5_version=5.5.51
 
 mariadb_10_1_version=10.1.16
-mariadb_10_0_version=10.0.26
+mariadb_10_0_version=10.0.27
 mariadb_5_5_version=5.5.51
 
-percona_5_7_version=5.7.13-6
-percona_5_6_version=5.6.31-77.0
-percona_5_5_version=5.5.50-38.0
+percona_5_7_version=5.7.14-7
+percona_5_6_version=5.6.32-78.0
+percona_5_5_version=5.5.51-38.1
 
 # JDK
-jdk_8_version=1.8.0_92
+jdk_8_version=1.8.0_102
 jdk_7_version=1.7.0_80
 jdk_6_version=1.6.0_45
 
 # PHP
-php_7_version=7.0.9
-php_6_version=5.6.24
+php_7_version=7.0.10
+php_6_version=5.6.25
 php_5_version=5.5.38
 php_4_version=5.4.45
 php_3_version=5.3.29
@@ -43,7 +43,7 @@ php_3_version=5.3.29
 zendopcache_version=7.0.5
 xcache_version=3.2.0
 apcu_version=4.0.10
-ImageMagick_version=6.9.5-4
+ImageMagick_version=6.9.5-7
 imagick_version=3.4.1
 GraphicsMagick_version=1.3.24
 gmagick_version=1.1.7RC3
@@ -61,13 +61,13 @@ redis_version=3.2.3
 redis_pecl_version=2.2.8
 
 # Memcached
-memcached_version=1.4.29
+memcached_version=1.4.31
 libmemcached_version=1.0.18
 memcached_pecl_version=2.2.0
 memcache_pecl_version=3.0.8
 
 # phpMyadmin
-phpMyAdmin_version=4.4.15.7
+phpMyAdmin_version=4.4.15.8
 
 # jemalloc
 jemalloc_version=4.2.1

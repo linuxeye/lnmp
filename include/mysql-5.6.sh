@@ -15,10 +15,10 @@ if [ "$IPADDR_COUNTRY"x == "CN"x -a "$IPADDR_ISP" == 'aliyun' -a "`../include/ch
     DOWN_ADDR_MYSQL=http://aliyun-oss.linuxeye.com/mysql/MySQL-5.6
 else
     if [ "$IPADDR_COUNTRY"x == "CN"x ];then
-        if [ "`../include/check_port.py mirrors.sohu.com 80`" == 'True' ];then
-            DOWN_ADDR_MYSQL=http://mirrors.sohu.com/mysql/MySQL-5.6
+        if [ "`../include/check_port.py mirrors.tuna.tsinghua.edu.cn 443`" == 'True' ];then
+            DOWN_ADDR_MYSQL=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.6
         else
-            DOWN_ADDR_MYSQL=http://mirror.bit.edu.cn/mysql/Downloads/MySQL-5.6
+            DOWN_ADDR_MYSQL=http://mirrors.sohu.com/mysql/MySQL-5.6
             DOWN_ADDR_MYSQL_BK=$DOWN_ADDR_MYSQL
         fi
     else
@@ -37,7 +37,7 @@ src_url=$DOWN_ADDR_MYSQL/$FILE_NAME.md5 && Download_src
 MYSQL_TAR_MD5=`awk '{print $1}' $FILE_NAME.md5`
 while [ "`md5sum $FILE_NAME | awk '{print $1}'`" != "$MYSQL_TAR_MD5" ];
 do
-    wget -c --no-check-certificate $DOWN_ADDR_MYSQL_BK/$FILE_NAME;sleep 1
+    wget -4c --no-check-certificate $DOWN_ADDR_MYSQL_BK/$FILE_NAME;sleep 1
     [ "`md5sum $FILE_NAME | awk '{print $1}'`" == "$MYSQL_TAR_MD5" ] && break || continue
 done
 

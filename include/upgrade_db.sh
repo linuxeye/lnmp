@@ -21,7 +21,7 @@ elif [ -n "$DB_tmp" -a "$DB_tmp" != 'MariaDB' ];then
     DB=Percona
     OLD_DB_version=$OLD_DB_version_tmp
 else
-    [ "$IPADDR_COUNTRY"x == "CN"x ] && DOWN_ADDR=http://mirrors.sohu.com/mysql || DOWN_ADDR=http://cdn.mysql.com/Downloads
+    [ "$IPADDR_COUNTRY"x == "CN"x ] && DOWN_ADDR=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads || DOWN_ADDR=http://cdn.mysql.com/Downloads
     DB=MySQL
     OLD_DB_version=$OLD_DB_version_tmp
 fi

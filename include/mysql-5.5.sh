@@ -32,7 +32,7 @@ else
 fi
 
 FILE_NAME=mysql-${mysql_5_5_version}-linux2.6-${SYS_BIT_b}.tar.gz
-src_url=$DOWN_ADDR_MYSQL/$FILE_NAME && Download_src
+wget --tries=6 -c --no-check-certificate $DOWN_ADDR_MYSQL/$FILE_NAME
 src_url=$DOWN_ADDR_MYSQL/$FILE_NAME.md5 && Download_src
 MYSQL_TAR_MD5=`awk '{print $1}' $FILE_NAME.md5`
 while [ "`md5sum $FILE_NAME | awk '{print $1}'`" != "$MYSQL_TAR_MD5" ];

@@ -53,10 +53,6 @@ for Service in sshd network crond iptables messagebus irqbalance syslog rsyslog 
 setenforce 0
 sed -i 's/^SELINUX=.*$/SELINUX=disabled/' /etc/selinux/config
 
-# initdefault
-sed -i 's/^id:.*$/id:3:initdefault:/' /etc/inittab
-init q
-
 # PS1
 [ -z "`grep ^PS1 ~/.bashrc`" ] && echo 'PS1="\[\e[37;40m\][\[\e[32;40m\]\u\[\e[37;40m\]@\h \[\e[35;40m\]\W\[\e[0m\]]\\$ "' >> ~/.bashrc
 

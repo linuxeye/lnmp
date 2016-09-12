@@ -10,7 +10,6 @@
 
 Install_Apache-2-2() {
 cd $oneinstack_dir/src
-src_url=http://mirrors.linuxeye.com/apache/httpd/httpd-$apache_2_version.tar.gz && Download_src
 
 id -u $run_user >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user
@@ -120,7 +119,6 @@ Include conf/vhost/*.conf
 EOF
 
 if [ "$Nginx_version" != '4' -o -e "$web_install_dir/sbin/nginx" ];then
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/mod_remoteip.c && Download_src
     $apache_install_dir/bin/apxs -i -c -n mod_remoteip.so mod_remoteip.c
     cat > $apache_install_dir/conf/extra/httpd-remoteip.conf << EOF
 LoadModule remoteip_module modules/mod_remoteip.so

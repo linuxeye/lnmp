@@ -45,19 +45,23 @@ xcache_version=3.2.0
 apcu_version=4.0.10
 ImageMagick_version=6.9.5-9
 imagick_version=3.4.1
+imagick_for_php53_version=3.3.0
 GraphicsMagick_version=1.3.24
+gmagick_for_php7_version=2.0.4RC1
 gmagick_version=1.1.7RC3
 libiconv_version=1.14
 curl_version=7.35.0
 libmcrypt_version=2.5.8
 mcrypt_version=2.6.8
 mhash_version=0.9.9.9
+eaccelerator_version=0.9.6.1
 
 # Ftp
 pureftpd_version=1.0.43
 
 # Redis
 redis_version=3.2.3
+redis_pecl_for_php7_version=3.0.0
 redis_pecl_version=2.2.8
 
 # Memcached
@@ -74,3 +78,11 @@ jemalloc_version=4.2.1
 
 # tcmalloc
 tcmalloc_version=2.5
+
+# boost
+boost_version=1.60.0
+
+# Others
+libevent_version=2.0.22-stable
+tmux_version=2.2
+htop_version=2.0.2

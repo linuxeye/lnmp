@@ -46,7 +46,7 @@ EOF
 }
 
 # add swapfile
-if [ "$Swap" == '0' ] ;then
+if [ "$Swap" == '0' ];then
     if [ $Mem -le 1024 ];then
         COUNT=1024
         Make-swapfile

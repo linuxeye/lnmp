@@ -10,8 +10,6 @@
 
 Install_jemalloc() {
 cd $oneinstack_dir/src
-src_url=http://mirrors.linuxeye.com/oneinstack/src/jemalloc-$jemalloc_version.tar.bz2 && Download_src
-
 tar xjf jemalloc-$jemalloc_version.tar.bz2
 cd jemalloc-$jemalloc_version
 LDFLAGS="${LDFLAGS} -lrt" ./configure

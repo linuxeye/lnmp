@@ -59,7 +59,7 @@ echo "Current $DB Version: ${CMSG}$OLD_DB_version${CEND}"
 
 while :; do echo
     read -p "Please input upgrade $DB Version(example: $OLD_DB_version): " NEW_DB_version
-    if [ `echo $NEW_DB_version | awk -F. '{print $1"."$2}'` == `echo $OLD_DB_version | awk -F. '{print $1"."$2}'` ]; then
+    if [ `echo $NEW_DB_version | awk -F. '{print $1"."$2}'` == `echo $OLD_DB_version | awk -F. '{print $1"."$2}'` ];then
         if [ "$DB" == 'MariaDB' ];then
             DB_name=mariadb-${NEW_DB_version}-${GLIBC_FLAG}-${SYS_BIT_b}
             DB_URL=$DOWN_ADDR/mariadb-${NEW_DB_version}/bintar-${GLIBC_FLAG}-$SYS_BIT_a/$DB_name.tar.gz

@@ -10,8 +10,6 @@
 
 Install_ImageMagick() {
 cd $oneinstack_dir/src
-src_url=http://mirrors.linuxeye.com/oneinstack/src/ImageMagick-$ImageMagick_version.tar.gz && Download_src
-
 tar xzf ImageMagick-$ImageMagick_version.tar.gz
 cd ImageMagick-$ImageMagick_version
 ./configure --prefix=/usr/local/imagemagick --enable-shared --enable-static
@@ -25,11 +23,9 @@ Install_php-imagick() {
 cd $oneinstack_dir/src
 if [ -e "$php_install_dir/bin/phpize" ];then
     if [ "`$php_install_dir/bin/php -r 'echo PHP_VERSION;' | awk -F. '{print $1"."$2}'`" == '5.3' ];then
-        src_url=https://pecl.php.net/get/imagick-3.3.0.tgz && Download_src
-        tar xzf imagick-3.3.0.tgz
-        cd imagick-3.3.0
+        tar xzf imagick-${imagick_for_php53_version}.tgz
+        cd imagick-${imagick_for_php53_version}
     else
-        src_url=http://pecl.php.net/get/imagick-$imagick_version.tgz && Download_src
         tar xzf imagick-$imagick_version.tgz
         cd imagick-$imagick_version
     fi

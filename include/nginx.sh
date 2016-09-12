@@ -10,9 +10,6 @@
 
 Install_Nginx() {
 cd $oneinstack_dir/src
-src_url=http://mirrors.linuxeye.com/oneinstack/src/pcre-$pcre_version.tar.gz && Download_src
-src_url=http://nginx.org/download/nginx-$nginx_version.tar.gz && Download_src
-src_url=https://www.openssl.org/source/openssl-$openssl_version.tar.gz && Download_src
 
 id -u $run_user >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user

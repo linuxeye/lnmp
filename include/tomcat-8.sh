@@ -12,9 +12,6 @@ Install_tomcat-8() {
 cd $oneinstack_dir/src
 . /etc/profile
 
-src_url=http://mirrors.linuxeye.com/apache/tomcat/v$tomcat_8_version/apache-tomcat-$tomcat_8_version.tar.gz && Download_src
-src_url=http://mirrors.linuxeye.com/apache/tomcat/v$tomcat_8_version/catalina-jmx-remote.jar && Download_src
-
 id -u $run_user >/dev/null 2>&1
 [ $? -ne 0 ] && useradd -M -s /bin/bash $run_user || { [ -z "`grep ^$run_user /etc/passwd | grep '/bin/bash'`" ] && usermod -s /bin/bash $run_user; }
 

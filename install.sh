@@ -185,6 +185,20 @@ while :; do echo
                         [ -n "`echo $dbrootpwd | grep '[+|&]'`" ] && { echo "${CWARNING}input error,not contain a plus sign (+) and & ${CEND}"; continue; }
                         (( ${#dbrootpwd} >= 5 )) && sed -i "s+^dbrootpwd.*+dbrootpwd='$dbrootpwd'+" ./options.conf && break || echo "${CWARNING}database root password least 5 characters! ${CEND}"
                     done
+                    # choose install methods
+                    while :; do echo
+                        echo "Please choose installation of the database:"
+                        echo -e "\t${CMSG}1${CEND}. Install database from binary package."
+                        echo -e "\t${CMSG}2${CEND}. Install database from source package."
+                        read -p "Please input a number:(Default 1 press Enter) " dbInstallMethods
+                        [ -z "$dbInstallMethods" ] && dbInstallMethods=1
+                        if [[ ! $dbInstallMethods =~ ^[1-2]$ ]];then
+                            echo "${CWARNING}input error! Please only input number 1,2${CEND}"
+                        else
+                            break
+                        fi
+                    done
+
                     break
                 fi
             done
@@ -455,15 +469,19 @@ IPADDR_COUNTRY_ISP=`./include/get_ipaddr_state.py $PUBLIC_IPADDR`
 IPADDR_COUNTRY=`echo $IPADDR_COUNTRY_ISP | awk '{print $1}'`
 [ "`echo $IPADDR_COUNTRY_ISP | awk '{print $2}'`"x == '1000323'x ] && IPADDR_ISP=aliyun
 
+# check download src
+. ./include/check_download.sh
+checkDownload 2>&1 | tee $oneinstack_dir/install.log
+
 # init
 . ./include/memory.sh
 if [ "$OS" == 'CentOS' ];then
-    . include/init_CentOS.sh 2>&1 | tee $oneinstack_dir/install.log
+    . include/init_CentOS.sh 2>&1 | tee -a $oneinstack_dir/install.log
     [ -n "`gcc --version | head -n1 | grep '4\.1\.'`" ] && export CC="gcc44" CXX="g++44"
 elif [ "$OS" == 'Debian' ];then
-    . include/init_Debian.sh 2>&1 | tee $oneinstack_dir/install.log
+    . include/init_Debian.sh 2>&1 | tee -a $oneinstack_dir/install.log
 elif [ "$OS" == 'Ubuntu' ];then
-    . include/init_Ubuntu.sh 2>&1 | tee $oneinstack_dir/install.log
+    . include/init_Ubuntu.sh 2>&1 | tee -a $oneinstack_dir/install.log
 fi
 
 # jemalloc or tcmalloc
@@ -482,6 +500,10 @@ fi
 
 # Database
 if [ "$DB_version" == '1' ];then
+    if [ "${dbInstallMethods}" == "2" ]; then
+      . include/boost.sh
+      installBoost 2>&1 | tee -a $oneinstack_dir/install.log
+    fi
     . include/mysql-5.7.sh
     Install_MySQL-5-7 2>&1 | tee -a $oneinstack_dir/install.log
 elif [ "$DB_version" == '2' ];then
@@ -491,6 +513,10 @@ elif [ "$DB_version" == '3' ];then
     . include/mysql-5.5.sh
     Install_MySQL-5-5 2>&1 | tee -a $oneinstack_dir/install.log
 elif [ "$DB_version" == '4' ];then
+    if [ "${dbInstallMethods}" == "2" ]; then
+      . include/boost.sh
+      installBoost 2>&1 | tee -a $oneinstack_dir/install.log
+    fi
     . include/mariadb-10.1.sh
     Install_MariaDB-10-1 2>&1 | tee -a $oneinstack_dir/install.log
 elif [ "$DB_version" == '5' ];then
@@ -500,6 +526,10 @@ elif [ "$DB_version" == '6' ];then
     . include/mariadb-5.5.sh
     Install_MariaDB-5-5 2>&1 | tee -a $oneinstack_dir/install.log
 elif [ "$DB_version" == '7' ];then
+    if [ "${dbInstallMethods}" == "2" ]; then
+      . include/boost.sh
+      installBoost 2>&1 | tee -a $oneinstack_dir/install.log
+    fi
     . include/percona-5.7.sh
     Install_Percona-5-7 2>&1 | tee -a $oneinstack_dir/install.log
 elif [ "$DB_version" == '8' ];then

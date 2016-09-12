@@ -10,10 +10,8 @@
 
 Install_eAccelerator-0-9() {
 cd $oneinstack_dir/src
-src_url=https://github.com/downloads/eaccelerator/eaccelerator/eaccelerator-0.9.6.1.tar.bz2 && Download_src
-
-tar jxf eaccelerator-0.9.6.1.tar.bz2
-cd eaccelerator-0.9.6.1
+tar jxf eaccelerator-${eaccelerator_version}.tar.bz2
+cd eaccelerator-${eaccelerator_version}
 make clean
 $php_install_dir/bin/phpize
 ./configure --enable-eaccelerator=shared --with-php-config=$php_install_dir/bin/php-config

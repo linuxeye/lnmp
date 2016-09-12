@@ -10,16 +10,6 @@
 
 Install_PHP-5-3() {
 cd $oneinstack_dir/src
-src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-$libiconv_version.tar.gz && Download_src
-src_url=https://curl.haxx.se/download/curl-$curl_version.tar.gz && Download_src
-src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/$libmcrypt_version/libmcrypt-$libmcrypt_version.tar.gz && Download_src
-src_url=http://downloads.sourceforge.net/project/mhash/mhash/$mhash_version/mhash-$mhash_version.tar.gz && Download_src
-src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/$mcrypt_version/mcrypt-$mcrypt_version.tar.gz && Download_src
-src_url=http://mirrors.linuxeye.com/oneinstack/src/fpm-race-condition.patch && Download_src
-src_url=http://mirrors.linuxeye.com/oneinstack/src/debian_patches_disable_SSLv2_for_openssl_1_0_0.patch && Download_src
-src_url=http://mirrors.linuxeye.com/oneinstack/src/libiconv-glibc-2.16.patch && Download_src
-src_url=http://mirrors.linuxeye.com/oneinstack/src/php5.3patch && Download_src
-src_url=http://www.php.net/distributions/php-$php_3_version.tar.gz && Download_src
 
 tar xzf libiconv-$libiconv_version.tar.gz
 patch -d libiconv-$libiconv_version -p0 < libiconv-glibc-2.16.patch
@@ -32,7 +22,6 @@ rm -rf libiconv-$libiconv_version
 # Problem building php-5.3 with openssl
 if [ "$Debian_version" == '8' -o "$Ubuntu_version" == '16' ];then
     if [ ! -e '/usr/local/openssl/lib/libcrypto.a' ];then
-        src_url=http://mirrors.linuxeye.com/oneinstack/src/openssl-1.0.0s.tar.gz && Download_src
         tar xzf openssl-1.0.0s.tar.gz
         cd openssl-1.0.0s
         ./config --prefix=/usr/local/openssl -fPIC shared zlib

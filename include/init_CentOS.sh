@@ -53,12 +53,22 @@ for Service in sshd network crond iptables messagebus irqbalance syslog rsyslog 
 setenforce 0
 sed -i 's/^SELINUX=.*$/SELINUX=disabled/' /etc/selinux/config
 
-# PS1
-[ -z "`grep ^PS1 ~/.bashrc`" ] && echo 'PS1="\[\e[37;40m\][\[\e[32;40m\]\u\[\e[37;40m\]@\h \[\e[35;40m\]\W\[\e[0m\]]\\$ "' >> ~/.bashrc
+# Custom profile
+cat > /etc/profile.d/oneinstack.sh << EOF
+HISTSIZE=10000
+PS1="\[\e[37;40m\][\[\e[32;40m\]\u\[\e[37;40m\]@\h \[\e[35;40m\]\W\[\e[0m\]]\\\\$ "
+HISTTIMEFORMAT="%F %T \`whoami\` "
+PROMPT_COMMAND='{ msg=\$(history 1 | { read x y; echo \$y; });logger "[euid=\$(whoami)]":\$(who am i):[\`pwd\`]"\$msg"; }'
 
-# history size
-sed -i 's/^HISTSIZE=.*$/HISTSIZE=100/' /etc/profile
-[ -z "`grep history-timestamp ~/.bashrc`" ] && echo "export PROMPT_COMMAND='{ msg=\$(history 1 | { read x y; echo \$y; });user=\$(whoami); echo \$(date \"+%Y-%m-%d %H:%M:%S\"):\$user:\`pwd\`/:\$msg ---- \$(who am i); } >> /tmp/\`hostname\`.\`whoami\`.history-timestamp'" >> ~/.bashrc
+alias l='ls -AFhlt'
+alias lh='l | head'
+alias vi=vim
+
+GREP_OPTIONS="--color=auto"
+alias grep='grep --color'
+alias egrep='egrep --color'
+alias fgrep='fgrep --color'
+EOF
 
 # /etc/security/limits.conf
 [ -e /etc/security/limits.d/*nproc.conf ] && rename nproc.conf nproc.conf_bk /etc/security/limits.d/*nproc.conf
@@ -83,9 +93,6 @@ ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 #nameserver 114.114.114.114
 #nameserver 8.8.8.8
 #EOF
-
-# alias vi
-[ -z "`grep 'alias vi=' ~/.bashrc`" ] && sed -i "s@alias mv=\(.*\)@alias mv=\1\nalias vi=vim@" ~/.bashrc && echo 'syntax on' >> /etc/vimrc
 
 # /etc/sysctl.conf
 sed -i 's/net.ipv4.tcp_syncookies.*$/net.ipv4.tcp_syncookies = 1/g' /etc/sysctl.conf
@@ -117,14 +124,16 @@ elif [ "$CentOS_RHEL_version" == '6' ];then
     sed -i 's@^start@#start@' /etc/init/control-alt-delete.conf
     sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/sysconfig/i18n
     [ -z "`grep net.netfilter.nf_conntrack_max /etc/sysctl.conf`" ] && cat >> /etc/sysctl.conf << EOF
-net.netfilter.nf_conntrack_max = 1048576
-net.netfilter.nf_conntrack_tcp_timeout_established = 1200
+net.nf_conntrack_max = 6553500
+net.netfilter.nf_conntrack_max = 6553500 
+net.netfilter.nf_conntrack_tcp_timeout_established = 180
 EOF
 elif [ "$CentOS_RHEL_version" == '7' ];then
     sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/locale.conf
     [ -z "`grep net.netfilter.nf_conntrack_max /etc/sysctl.conf`" ] && cat >> /etc/sysctl.conf << EOF
-net.netfilter.nf_conntrack_max = 1048576
-net.netfilter.nf_conntrack_tcp_timeout_established = 1200
+net.nf_conntrack_max = 6553500
+net.netfilter.nf_conntrack_max = 6553500
+net.netfilter.nf_conntrack_tcp_timeout_established = 180
 EOF
 fi
 init q
@@ -132,10 +141,9 @@ init q
 # Update time
 ntpdate pool.ntp.org
 [ ! -e "/var/spool/cron/root" -o -z "`grep 'ntpdate' /var/spool/cron/root`" ] && { echo "*/20 * * * * `which ntpdate` pool.ntp.org > /dev/null 2>&1" >> /var/spool/cron/root;chmod 600 /var/spool/cron/root; }
-service crond restart
 
 # iptables
-if [ -e '/etc/sysconfig/iptables' ] && [ -n "`grep ':INPUT DROP' /etc/sysconfig/iptables`" -a -n "`grep 'NEW -m tcp --dport 22 -j ACCEPT' /etc/sysconfig/iptables`" -a -n "`grep 'NEW -m tcp --dport 80 -j ACCEPT' /etc/sysconfig/iptables`" ];then
+if [ -e '/etc/sysconfig/iptables' ] && [ -n "`grep '^:INPUT DROP' /etc/sysconfig/iptables`" -a -n "`grep 'NEW -m tcp --dport 22 -j ACCEPT' /etc/sysconfig/iptables`" -a -n "`grep 'NEW -m tcp --dport 80 -j ACCEPT' /etc/sysconfig/iptables`" ];then
     IPTABLES_STATUS=yes
 else
     IPTABLES_STATUS=no
@@ -156,8 +164,8 @@ if [ "$IPTABLES_STATUS" == 'no' ];then
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 443 -j ACCEPT
--A INPUT -p icmp -m limit --limit 100/sec --limit-burst 100 -j ACCEPT
--A INPUT -p icmp -m limit --limit 1/s --limit-burst 10 -j ACCEPT
+-A INPUT -p icmp -m limit --limit 1/sec --limit-burst 10 -j ACCEPT
+-A INPUT -f -m limit --limit 100/sec --limit-burst 100 -j ACCEPT
 -A INPUT -p tcp -m tcp --tcp-flags FIN,SYN,RST,ACK SYN -j syn-flood
 -A INPUT -j REJECT --reject-with icmp-host-prohibited
 -A syn-flood -p tcp -m limit --limit 3/sec --limit-burst 6 -j RETURN
@@ -174,16 +182,14 @@ service sshd restart
 # install tmux
 if [ ! -e "`which tmux`" ];then
     cd src
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/libevent-2.0.22-stable.tar.gz && Download_src
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/tmux-2.2.tar.gz && Download_src
-    tar xzf libevent-2.0.22-stable.tar.gz
-    cd libevent-2.0.22-stable
+    tar xzf libevent-${libevent_version}.tar.gz
+    cd libevent-${libevent_version}
     ./configure
     make -j ${THREAD} && make install
     cd ..
 
-    tar xzf tmux-2.2.tar.gz
-    cd tmux-2.2
+    tar xzf tmux-${tmux_version}.tar.gz
+    cd tmux-${tmux_version}
     CFLAGS="-I/usr/local/include" LDFLAGS="-L//usr/local/lib" ./configure
     make -j ${THREAD} && make install
     cd ../../
@@ -198,12 +204,11 @@ fi
 # install htop
 if [ ! -e "`which htop`" ];then
     cd src
-    src_url=http://hisham.hm/htop/releases/2.0.2/htop-2.0.2.tar.gz && Download_src
-    tar xzf htop-2.0.2.tar.gz
-    cd htop-2.0.2
+    tar xzf htop-${htop_version}.tar.gz
+    cd htop-${htop_version}
     ./configure
     make -j ${THREAD} && make install
     cd ../../
 fi
+
 . /etc/profile
-. ~/.bashrc

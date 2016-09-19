@@ -40,14 +40,11 @@ if [ -n "`gcc --version | head -n1 | grep '4\.1\.'`" ];then
     export CC="gcc44" CXX="g++44"
 fi
 
-# check sendmail
-#[ "$sendmail_yn" == 'y' ] && yum -y install sendmail && service sendmail restart
-
 # closed Unnecessary services and remove obsolete rpm package
 [ "$CentOS_RHEL_version" == '7' ] && [ "`systemctl is-active NetworkManager.service`" == 'active' ] && NM_flag=1
 for Service in `chkconfig --list | grep 3:on | awk '{print $1}' | grep -vE 'nginx|httpd|tomcat|mysqld|php-fpm|pureftpd|redis-server|memcached|supervisord|aegis|NetworkManager'`;do chkconfig --level 3 $Service off;done
 [ "$NM_flag" == '1' ] && systemctl enable NetworkManager.service
-for Service in sshd network crond iptables messagebus irqbalance syslog rsyslog sendmail;do chkconfig --level 3 $Service on;done
+for Service in sshd network crond iptables messagebus irqbalance syslog rsyslog;do chkconfig --level 3 $Service on;done
 
 # Close SELINUX
 setenforce 0
@@ -58,7 +55,6 @@ cat > /etc/profile.d/oneinstack.sh << EOF
 HISTSIZE=10000
 PS1="\[\e[37;40m\][\[\e[32;40m\]\u\[\e[37;40m\]@\h \[\e[35;40m\]\W\[\e[0m\]]\\\\$ "
 HISTTIMEFORMAT="%F %T \`whoami\` "
-PROMPT_COMMAND='{ msg=\$(history 1 | { read x y; echo \$y; });logger "[euid=\$(whoami)]":\$(who am i):[\`pwd\`]"\$msg"; }'
 
 alias l='ls -AFhlt'
 alias lh='l | head'
@@ -68,6 +64,10 @@ GREP_OPTIONS="--color=auto"
 alias grep='grep --color'
 alias egrep='egrep --color'
 alias fgrep='fgrep --color'
+EOF
+
+[ -z "`grep ^'PROMPT_COMMAND=' /etc/bashrc`" ] && cat >> /etc/bashrc << EOF
+PROMPT_COMMAND='{ msg=\$(history 1 | { read x y; echo \$y; });logger "[euid=\$(whoami)]":\$(who am i):[\`pwd\`]"\$msg"; }'
 EOF
 
 # /etc/security/limits.conf
@@ -94,24 +94,43 @@ ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 #nameserver 8.8.8.8
 #EOF
 
+# ip_conntrack table full dropping packets
+[ ! -e "/etc/sysconfig/modules/iptables.modules" ] && { echo modprobe ip_conntrack > /etc/sysconfig/modules/iptables.modules; chmod +x /etc/sysconfig/modules/iptables.modules; }
+modprobe ip_conntrack
+echo options nf_conntrack hashsize=131072 > /etc/modprobe.d/nf_conntrack.conf
+
 # /etc/sysctl.conf
-sed -i 's/net.ipv4.tcp_syncookies.*$/net.ipv4.tcp_syncookies = 1/g' /etc/sysctl.conf
-[ -z "`grep 'fs.file-max' /etc/sysctl.conf`" ] && cat >> /etc/sysctl.conf << EOF
+[ ! -e "/etc/sysctl.conf_bk" ] && /bin/mv /etc/sysctl.conf{,_bk}
+cat > /etc/sysctl.conf << EOF
 fs.file-max=65535
-fs.inotify.max_user_instances = 8192
-net.ipv4.tcp_fin_timeout = 30
+net.ipv4.tcp_max_tw_buckets = 60000
+net.ipv4.tcp_sack = 1
+net.ipv4.tcp_window_scaling = 1
+net.ipv4.tcp_rmem = 4096 87380 4194304
+net.ipv4.tcp_wmem = 4096 16384 4194304
+net.ipv4.tcp_max_syn_backlog = 65536
+net.core.netdev_max_backlog = 32768
+net.core.somaxconn = 32768
+net.core.wmem_default = 8388608
+net.core.rmem_default = 8388608
+net.core.rmem_max = 16777216
+net.core.wmem_max = 16777216
+net.ipv4.tcp_timestamps = 0
+net.ipv4.tcp_synack_retries = 2
+net.ipv4.tcp_syn_retries = 2
+net.ipv4.tcp_tw_recycle = 1
+#net.ipv4.tcp_tw_len = 1
 net.ipv4.tcp_tw_reuse = 1
+net.ipv4.tcp_mem = 94500000 915000000 927000000
+net.ipv4.tcp_max_orphans = 3276800
 net.ipv4.tcp_tw_recycle = 1
 net.ipv4.ip_local_port_range = 1024 65000
-net.ipv4.tcp_max_syn_backlog = 65536
-net.ipv4.tcp_max_tw_buckets = 6000
-net.ipv4.route.gc_timeout = 100
-net.ipv4.tcp_syn_retries = 1
-net.ipv4.tcp_synack_retries = 1
-net.core.somaxconn = 65535
-net.core.netdev_max_backlog = 262144
-net.ipv4.tcp_timestamps = 0
-net.ipv4.tcp_max_orphans = 262144
+net.nf_conntrack_max = 6553500
+net.netfilter.nf_conntrack_max = 6553500
+net.netfilter.nf_conntrack_tcp_timeout_close_wait = 60
+net.netfilter.nf_conntrack_tcp_timeout_fin_wait = 120
+net.netfilter.nf_conntrack_tcp_timeout_time_wait = 120
+net.netfilter.nf_conntrack_tcp_timeout_established = 3600
 EOF
 sysctl -p
 
@@ -123,20 +142,9 @@ elif [ "$CentOS_RHEL_version" == '6' ];then
     sed -i 's@^ACTIVE_CONSOLES.*@ACTIVE_CONSOLES=/dev/tty[1-2]@' /etc/sysconfig/init
     sed -i 's@^start@#start@' /etc/init/control-alt-delete.conf
     sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/sysconfig/i18n
-    [ -z "`grep net.netfilter.nf_conntrack_max /etc/sysctl.conf`" ] && cat >> /etc/sysctl.conf << EOF
-net.nf_conntrack_max = 6553500
-net.netfilter.nf_conntrack_max = 6553500 
-net.netfilter.nf_conntrack_tcp_timeout_established = 180
-EOF
 elif [ "$CentOS_RHEL_version" == '7' ];then
     sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/locale.conf
-    [ -z "`grep net.netfilter.nf_conntrack_max /etc/sysctl.conf`" ] && cat >> /etc/sysctl.conf << EOF
-net.nf_conntrack_max = 6553500
-net.netfilter.nf_conntrack_max = 6553500
-net.netfilter.nf_conntrack_tcp_timeout_established = 180
-EOF
 fi
-init q
 
 # Update time
 ntpdate pool.ntp.org

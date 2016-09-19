@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #coding:utf-8
+import sys,urllib2,socket
 try:
-    import sys,urllib2,socket
     socket.setdefaulttimeout(10)
     apiurl = "http://ip.taobao.com/service/getIpInfo.php?ip=%s" % sys.argv[1]
     content = urllib2.urlopen(apiurl).read()

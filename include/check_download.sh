@@ -444,7 +444,7 @@ checkDownload() {
             # php 5.3
             src_url=${mirrorLink}/debian_patches_disable_SSLv2_for_openssl_1_0_0.patch && Download_src
             src_url=${mirrorLink}/php5.3patch && Download_src
-            if [[ "${Debian_version}" == "8" || "${Ubuntu_version}" == "16" ]];then
+            if [ "$Debian_version" == '8' -o "$Ubuntu_version" == '16' ];then
                 if [ ! -e "/usr/local/openssl/lib/libcrypto.a" ];then
                     src_url=${mirrorLink}/openssl-1.0.0s.tar.gz && Download_src
                 fi

@@ -44,16 +44,15 @@ elif [ "$Ubuntu_version" == '12' ];then
     apt-get -y install bison libcloog-ppl0
 fi
 
-# check sendmail
-#[ "$sendmail_yn" == 'y' ] && apt-get -y install sendmail
-
 # Custom profile
 cat > /etc/profile.d/oneinstack.sh << EOF
 HISTSIZE=10000
 HISTTIMEFORMAT="%F %T \`whoami\` "
 
-alias l='ls -AFhlt'
+alias l='ls -AFhlt --color=auto'
 alias lh='l | head'
+alias ll='ls -l --color=auto'
+alias ls='ls --color=auto'
 alias vi=vim
 
 GREP_OPTIONS="--color=auto"
@@ -62,10 +61,13 @@ alias egrep='egrep --color'
 alias fgrep='fgrep --color'
 EOF
 
+sed -i 's@^"syntax on@syntax on@' /etc/vim/vimrc
+
 # PS1
 [ -z "`grep ^PS1 ~/.bashrc`" ] && echo "PS1='\${debian_chroot:+(\$debian_chroot)}\\[\\e[1;32m\\]\\u@\\h\\[\\033[00m\\]:\\[\\033[01;34m\\]\\w\\[\\033[00m\\]\\$ '" >> ~/.bashrc
 
-[ -z "`grep history-timestamp ~/.bashrc`" ] && echo "export PROMPT_COMMAND='{ msg=\$(history 1 | { read x y; echo \$y; });user=\$(whoami); echo \$(date \"+%Y-%m-%d %H:%M:%S\"):\$user:\`pwd\`/:\$msg ---- \$(who am i); } >> /tmp/\`hostname\`.\`whoami\`.history-timestamp'" >> ~/.bashrc
+# history
+[ -z "`grep history-timestamp ~/.bashrc`" ] && echo "PROMPT_COMMAND='{ msg=\$(history 1 | { read x y; echo \$y; });user=\$(whoami); echo \$(date \"+%Y-%m-%d %H:%M:%S\"):\$user:\`pwd\`/:\$msg ---- \$(who am i); } >> /tmp/\`hostname\`.\`whoami\`.history-timestamp'" >> ~/.bashrc
 
 # /etc/security/limits.conf
 [ -e /etc/security/limits.d/*nproc.conf ] && rename nproc.conf nproc.conf_bk /etc/security/limits.d/*nproc.conf

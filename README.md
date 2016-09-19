@@ -43,7 +43,7 @@ screen -S lnmp    // if network interruption, you can execute the command `scree
 ## How to add Extensions
 
 ```bash
-cd ~/oneinstack    // Must enter the directory execution under oneinstack
+cd ~/lnmp    // Must enter the directory execution under lnmp
 ./addons.sh    // Do not sh addons.sh or bash addons.sh such execution
 ```
 

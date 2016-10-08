@@ -34,6 +34,17 @@ else
     kill -9 $$
 fi
 
+if uname -m | grep -Eqi "arm"; then
+    armPlatform="y"
+    if uname -m | grep -Eqi "armv7"; then
+        TARGET_ARCH="armv7"
+    elif uname -m | grep -Eqi "armv8"; then
+        TARGET_ARCH="arm64"
+    else
+        TARGET_ARCH="unknown"
+    fi
+fi
+
 if [ $(getconf WORD_BIT) == 32 ] && [ $(getconf LONG_BIT) == 64 ];then
     OS_BIT=64
     SYS_BIG_FLAG=x64 #jdk
@@ -46,10 +57,6 @@ fi
 
 LIBC_YN=$(awk -v A=$(getconf -a | grep GNU_LIBC_VERSION | awk '{print $NF}') -v B=2.14 'BEGIN{print(A>=B)?"0":"1"}')
 [ $LIBC_YN == '0' ] && GLIBC_FLAG=linux-glibc_214 || GLIBC_FLAG=linux
-
-if uname -m | grep -Eqi "arm";then
-    armTarget="y"
-fi
 
 THREAD=$(grep 'processor' /proc/cpuinfo | sort -u | wc -l)
 

@@ -67,8 +67,8 @@ checkDownload() {
         
         if [[ "${JDK_version}"  =~ ^[1-3]$ ]];then
             if [ "${JDK_version}" == "1" ];then
-                 echo "Download jdk 1.8..."
-                 JDK_FILE="jdk-$(echo ${jdk_8_version} | awk -F. '{print $2}')u$(echo ${jdk_8_version} | awk -F_ '{print $NF}')-linux-${SYS_BIG_FLAG}.tar.gz"
+                echo "Download jdk 1.8..."
+                JDK_FILE="jdk-$(echo ${jdk_8_version} | awk -F. '{print $2}')u$(echo ${jdk_8_version} | awk -F_ '{print $NF}')-linux-${SYS_BIG_FLAG}.tar.gz"
             fi
             if [ "${JDK_version}" == "2" ];then
                 echo "Download jdk 1.7..."
@@ -234,7 +234,7 @@ checkDownload() {
                 let "tryDlCount++"
                 [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${MARAIDB_TAR_MD5}" -o "${tryDlCount}" == "6" ] && break || continue
             done
-            if [ "${tryDlCount}" == "6" -o "${tryDlCount}" == "6" ];then
+            if [ "${tryDlCount}" == "6" ];then
                 echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
                 kill -9 $$
             else
@@ -273,7 +273,7 @@ checkDownload() {
                 let "tryDlCount++"
                 [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${MARAIDB_TAR_MD5}" -o "${tryDlCount}" == "6" ] && break || continue
             done
-            if [ "${tryDlCount}" == "6" -o "${tryDlCount}" == "6" ];then
+            if [ "${tryDlCount}" == "6" ];then
                 echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
                 kill -9 $$
             else
@@ -311,7 +311,7 @@ checkDownload() {
                 let "tryDlCount++"
                 [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${MARAIDB_TAR_MD5}" -o "${tryDlCount}" == "6" ] && break || continue
             done
-            if [ "${tryDlCount}" == "6" -o "${tryDlCount}" == "6" ];then
+            if [ "${tryDlCount}" == "6" ];then
                 echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
                 kill -9 $$
             else
@@ -345,7 +345,7 @@ checkDownload() {
                 let "tryDlCount++"
                 [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${PERCONA_TAR_MD5}" -o "${tryDlCount}" == "6" ] && break || continue
             done
-            if [ "${tryDlCount}" == "6" -o "${tryDlCount}" == "6" ];then
+            if [ "${tryDlCount}" == "6" ];then
                 echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
                 kill -9 $$
             else
@@ -380,7 +380,7 @@ checkDownload() {
                 let "tryDlCount++"
                 [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${PERCONA_TAR_MD5}" -o "${tryDlCount}" == "6" ] && break || continue
             done
-            if [ "${tryDlCount}" == "6" -o "${tryDlCount}" == "6" ];then
+            if [ "${tryDlCount}" == "6" ];then
                 echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
                 kill -9 $$
             else
@@ -475,10 +475,14 @@ checkDownload() {
             echo "Download xcache..."
             src_url=http://xcache.lighttpd.net/pub/Releases/${xcache_version}/xcache-${xcache_version}.tar.gz && Download_src
         fi
-        if [ "${PHP_cache}" == "3" ] && [[ "$PHP_version" =~ ^[1-3]$ ]];then
-            # php 5.3 5.4 5.5
+        if [ "${PHP_cache}" == "3" ];then
+            # php 5.3 5.4 5.5 5.6 7.0
             echo "Download apcu..."
-            src_url=http://pecl.php.net/get/apcu-${apcu_version}.tgz && Download_src
+            if [ "${PHP_version}" != "5" ]; then
+                src_url=http://pecl.php.net/get/apcu-${apcu_version}.tgz && Download_src
+            else
+                src_url=http://pecl.php.net/get/apcu-${apcu_for_php7_version}.tgz && Download_src
+            fi
         fi
         if [ "${PHP_cache}" == "4" -a "${PHP_version}" == "2" ];then
             echo "Download eaccelerator 1.0 dev..."
@@ -489,7 +493,7 @@ checkDownload() {
         fi
       
         # Zend Guard Loader
-        if [ "${ZendGuardLoader_yn}" == "y" ];then
+        if [ "${ZendGuardLoader_yn}" == "y" -a "${armPlatform}" != "y" ];then
             if [ "${PHP_version}" == "4" ];then
                 if [ "${OS_BIT}" == "64" ];then
                     # 64 bit
@@ -541,7 +545,11 @@ checkDownload() {
             if [ "${OS_BIT}" == '64' ];then
                 src_url=http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz && Download_src
             else
-                src_url=http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86.tar.gz && Download_src
+                if [ "${TARGET_ARCH}" == "armv7" ]; then
+                    src_url=http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_armv7l.tar.gz && Download_src
+                else
+                    src_url=http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86.tar.gz && Download_src
+                fi
             fi
         fi
       

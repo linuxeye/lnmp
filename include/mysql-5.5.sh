@@ -36,7 +36,7 @@ Install_MySQL-5-5() {
       EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"
     fi
     
-    [ "${armTarget}" == "y" ] && patch -p1 < ../mysql-5.5-fix-arm-client_plugin.patch
+    [ "${armPlatform}" == "y" ] && patch -p1 < ../mysql-5.5-fix-arm-client_plugin.patch
 
     cmake . -DCMAKE_INSTALL_PREFIX=${mysql_install_dir} \
     -DMYSQL_DATADIR=${mysql_data_dir} \

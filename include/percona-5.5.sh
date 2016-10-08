@@ -37,7 +37,7 @@ Install_Percona-5-5() {
       EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"
     fi
 
-    if [ "${armTarget}" == "y" ];then
+    if [ "${armPlatform}" == "y" ];then
       patch -p1 < ../mysql-5.5-fix-arm-client_plugin.patch
     fi
 

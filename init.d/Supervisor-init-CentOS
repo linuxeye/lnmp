@@ -43,111 +43,108 @@ ulimit -n 96000
 RETVAL=0
 
 
-running_pid()
-{
-    # Check if a given process pid's cmdline matches a given name
-    pid=$1
-    name=$2
-    [ -z "$pid" ] && return 1
-    [ ! -d /proc/$pid ] && return 1
-    (cat /proc/$pid/cmdline | tr "\000" "\n"|grep -q $name) || return 1
-    return 0
+running_pid() {
+  # Check if a given process pid's cmdline matches a given name
+  pid=$1
+  name=$2
+  [ -z "$pid" ] && return 1
+  [ ! -d /proc/$pid ] && return 1
+  (cat /proc/$pid/cmdline | tr "\000" "\n"|grep -q $name) || return 1
+  return 0
 }
 
-running()
-{
+running() {
 # Check if the process is running looking at /proc
 # (works for all users)
 
-    # No pidfile, probably no daemon present
-    [ ! -f "$PIDFILE" ] && return 1
-    # Obtain the pid and check it against the binary name
-    pid=`cat $PIDFILE`
-    running_pid $pid $SUPERVISORD || return 1
-    return 0
+  # No pidfile, probably no daemon present
+  [ ! -f "$PIDFILE" ] && return 1
+  # Obtain the pid and check it against the binary name
+  pid=`cat $PIDFILE`
+  running_pid $pid $SUPERVISORD || return 1
+  return 0
 }
 
 start() {
-        echo "Starting supervisord: "
+  echo "Starting supervisord: "
 
-        if [ -e $PIDFILE ]; then
-        echo "ALREADY STARTED"
-        return 1
-    fi
+  if [ -e $PIDFILE ]; then
+    echo "ALREADY STARTED"
+    return 1
+  fi
 
-    # start supervisord with options from sysconfig (stuff like -c)
-        $SUPERVISORD $OPTIONS
+  # start supervisord with options from sysconfig (stuff like -c)
+  $SUPERVISORD $OPTIONS
 
-    # show initial startup status
-    $SUPERVISORCTL $OPTIONS status
+  # show initial startup status
+  $SUPERVISORCTL $OPTIONS status
 
-    # only create the subsyslock if we created the PIDFILE
-        [ -e $PIDFILE ] && touch $LOCKFILE
+  # only create the subsyslock if we created the PIDFILE
+  [ -e $PIDFILE ] && touch $LOCKFILE
 }
 
 stop() {
-        echo -n "Stopping supervisord: "
-        $SUPERVISORCTL $OPTIONS shutdown
-    if [ -n "$WAIT_FOR_SUBPROCESSES" ]; then
-            echo "Waiting roughly 60 seconds for $PIDFILE to be removed after child processes exit"
-            for sleep in  2 2 2 2 4 4 4 4 8 8 8 8 last; do
-                if [ ! -e $PIDFILE ] ; then
-                    echo "Supervisord exited as expected in under $total_sleep seconds"
-                    break
-                else
-                    if [[ $sleep -eq "last" ]] ; then
-                        echo "Supervisord still working on shutting down. We've waited roughly 60 seconds, we'll let it do its thing from here"
-                        return 1
-                    else
-                        sleep $sleep
-                        total_sleep=$(( $total_sleep + $sleep ))
-                    fi
-
-                fi
-            done
+  echo -n "Stopping supervisord: "
+  $SUPERVISORCTL $OPTIONS shutdown
+  if [ -n "$WAIT_FOR_SUBPROCESSES" ]; then
+    echo "Waiting roughly 60 seconds for $PIDFILE to be removed after child processes exit"
+    for sleep in  2 2 2 2 4 4 4 4 8 8 8 8 last; do
+      if [ ! -e $PIDFILE ] ; then
+        echo "Supervisord exited as expected in under $total_sleep seconds"
+        break
+      else
+        if [[ $sleep -eq "last" ]] ; then
+          echo "Supervisord still working on shutting down. We've waited roughly 60 seconds, we'll let it do its thing from here"
+          return 1
+        else
+          sleep $sleep
+          total_sleep=$(( $total_sleep + $sleep ))
         fi
+      fi
+    done
+  fi
 
-        # always remove the subsys. We might have waited a while, but just remove it at this point.
-        rm -f $LOCKFILE
+  # always remove the subsys. We might have waited a while, but just remove it at this point.
+  rm -f $LOCKFILE
 }
 
 restart() {
-        stop
-        start
+  stop
+  start
 }
 
 case "$1" in
-    start)
-        start
-        RETVAL=$?
-        ;;
-    stop)
-        stop
-        RETVAL=$?
-        ;;
-    restart|force-reload)
-        restart
-        RETVAL=$?
-        ;;
-    reload)
-        $SUPERVISORCTL $OPTIONS reload
-        RETVAL=$?
-        ;;
-    condrestart)
-        [ -f $LOCKFILE ] && restart
-        RETVAL=$?
-        ;;
-    status)
-        $SUPERVISORCTL $OPTIONS status
-        if running ; then
-            RETVAL=0
-        else
-            RETVAL=1
-        fi
-        ;;
-    *)
-        echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
-        exit 1
+  start)
+    start
+    RETVAL=$?
+    ;;
+  stop)
+    stop
+    RETVAL=$?
+    ;;
+  restart|force-reload)
+    restart
+    RETVAL=$?
+    ;;
+  reload)
+    $SUPERVISORCTL $OPTIONS reload
+    RETVAL=$?
+    ;;
+  condrestart)
+    [ -f $LOCKFILE ] && restart
+    RETVAL=$?
+    ;;
+  status)
+    $SUPERVISORCTL $OPTIONS status
+    if running ; then
+      RETVAL=0
+    else
+      RETVAL=1
+    fi
+    ;;
+  *)
+    echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
+    exit 1
 esac
 
 exit $RETVAL

@@ -22,16 +22,16 @@ TOMCAT_USAGE="Usage: $0 {\e[00;32mstart\e[00m|\e[00;31mstop\e[00m|\e[00;32mstatu
 SHUTDOWN_WAIT=20
 
 tomcat_pid() {
-        echo `ps -ef | grep $CATALINA_HOME/ | grep -v grep | tr -s " "|cut -d" " -f2`
+  echo `ps -ef | grep $CATALINA_HOME/ | grep -v grep | tr -s " "|cut -d" " -f2`
 }
 
 start() {
   pid=$(tomcat_pid)
-  if [ -n "$pid" ];then
+  if [ -n "$pid" ]; then
     echo -e "\e[00;31mTomcat is already running (pid: $pid)\e[00m"
   else
     echo -e "\e[00;32mStarting tomcat\e[00m"
-    if [ `user_exists $TOMCAT_USER` = "1" ];then
+    if [ `user_exists $TOMCAT_USER` = "1" ]; then
       su $TOMCAT_USER -c $CATALINA_HOME/bin/startup.sh
     else
       $CATALINA_HOME/bin/startup.sh
@@ -41,9 +41,9 @@ start() {
   return 0
 }
 
-status(){
+status() {
   pid=$(tomcat_pid)
-  if [ -n "$pid" ];then
+  if [ -n "$pid" ]; then
     echo -e "\e[00;32mTomcat is running with pid: $pid\e[00m"
   else
     echo -e "\e[00;31mTomcat is not running\e[00m"
@@ -52,9 +52,9 @@ status(){
 
 stop() {
   pid=$(tomcat_pid)
-  if [ -n "$pid" ];then
+  if [ -n "$pid" ]; then
     echo -e "\e[00;31mStoping Tomcat\e[00m"
-        $CATALINA_HOME/bin/shutdown.sh
+    $CATALINA_HOME/bin/shutdown.sh
 
     let kwait=$SHUTDOWN_WAIT
     count=0;
@@ -65,7 +65,7 @@ stop() {
       let count=$count+1;
     done
 
-    if [ $count -gt $kwait ];then
+    if [ $count -gt $kwait ]; then
       echo -n -e "\n\e[00;31mkilling processes which didn't stop after $SHUTDOWN_WAIT seconds\e[00m"
       kill -9 $pid
     fi
@@ -76,7 +76,7 @@ stop() {
   return 0
 }
 
-user_exists(){
+user_exists() {
   if id -u $1 >/dev/null 2>&1; then
     echo "1"
   else
@@ -85,25 +85,21 @@ user_exists(){
 }
 
 case $1 in
-        start)
-          start
-        ;;
-
-        stop)
-          stop
-        ;;
-
-        restart)
-          stop
-          start
-        ;;
-
-        status)
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    stop
+    start
+    ;;
+  status)
     status
-        ;;
-
-        *)
+    ;;
+  *)
     echo -e $TOMCAT_USAGE
-        ;;
+    ;;
 esac
 exit 0

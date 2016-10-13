@@ -68,7 +68,7 @@ test -x $DAEMON || exit 0
 
 # Include nginx defaults if available
 if [ -f /etc/default/nginx ] ; then
-        . /etc/default/nginx
+  . /etc/default/nginx
 fi
 
 #set exit condition
@@ -80,233 +80,231 @@ fi
 
 setFilePerms(){
 
-        if [ -f $PIDSPATH/$PIDFILE ]; then
-                chmod 400 $PIDSPATH/$PIDFILE
-        fi
+  if [ -f $PIDSPATH/$PIDFILE ]; then
+    chmod 400 $PIDSPATH/$PIDFILE
+  fi
 }
 
 configtest() {
-    $DAEMON -t -c $NGINX_CONF_FILE
+  $DAEMON -t -c $NGINX_CONF_FILE
 }
 
 getPSCount() {
-    return `pgrep -f $PS | wc -l`
+  return `pgrep -f $PS | wc -l`
 }
 
 isRunning() {
-        if [ $1 ]; then
-                pidof_daemon $1
-                PID=$?
+  if [ $1 ]; then
+    pidof_daemon $1
+    PID=$?
 
-                if [ $PID -gt 0 ]; then
-                        return 1
-                else
-                        return 0
-                fi
-        else
-                pidof_daemon
-                PID=$?
+    if [ $PID -gt 0 ]; then
+      return 1
+    else
+      return 0
+    fi
+  else
+    pidof_daemon
+    PID=$?
 
-                if [ $PID -gt 0 ]; then
-                        return 1
-                else
-                        return 0
-                fi
-        fi
+    if [ $PID -gt 0 ]; then
+      return 1
+    else
+      return 0
+    fi
+  fi
 }
 
 #courtesy of php-fpm
 wait_for_pid () {
-        try=0
+  try=0
 
-        while test $try -lt 35 ; do
+  while test $try -lt 35 ; do
 
-                case "$1" in
-                        'created')
-                        if [ -f "$2" ] ; then
-                                try=''
-                                break
-                        fi
-                        ;;
+    case "$1" in
+      'created')
+      if [ -f "$2" ] ; then
+        try=''
+        break
+      fi
+      ;;
 
-                        'removed')
-                        if [ ! -f "$2" ] ; then
-                                try=''
-                                break
-                        fi
-                        ;;
-                esac
+      'removed')
+      if [ ! -f "$2" ] ; then
+        try=''
+        break
+      fi
+      ;;
+    esac
 
-                #echo -n .
-                try=`expr $try + 1`
-                sleep 1
-        done
+    #echo -n .
+    try=`expr $try + 1`
+    sleep 1
+  done
 }
 
 status(){
-    isRunning
-    isAlive=$?
+  isRunning
+  isAlive=$?
 
-    if [ "${isAlive}" -eq $TRUE ]; then
-                echo "$PIDNAME found running with processes:  `pidof $PS`"
-        else
-                echo "$PIDNAME is NOT running."
-        fi
-
-
+  if [ "${isAlive}" -eq $TRUE ]; then
+    echo "$PIDNAME found running with processes:  `pidof $PS`"
+  else
+    echo "$PIDNAME is NOT running."
+  fi
 }
 
 removePIDFile(){
-    if [ $1 ]; then
-                if [ -f $1 ]; then
-                    rm -f $1
-            fi
-        else
-        #Do default removal
-        if [ -f $PIDSPATH/$PIDFILE ]; then
-                    rm -f $PIDSPATH/$PIDFILE
-            fi
-        fi
+  if [ $1 ]; then
+    if [ -f $1 ]; then
+      rm -f $1
+    fi
+  else
+    #Do default removal
+    if [ -f $PIDSPATH/$PIDFILE ]; then
+      rm -f $PIDSPATH/$PIDFILE
+    fi
+  fi
 }
 
 start() {
-        log_daemon_msg "Starting $DESCRIPTION"
+  log_daemon_msg "Starting $DESCRIPTION"
 
-    isRunning
-    isAlive=$?
+  isRunning
+  isAlive=$?
 
-        if [ "${isAlive}" -eq $TRUE ]; then
-                log_end_msg $SCRIPT_ERROR
-        else
-                start-stop-daemon --start --quiet --chuid $RUNAS --pidfile $PIDSPATH/$PIDFILE --exec $DAEMON \
-                -- -c $NGINX_CONF_FILE
-                setFilePerms
-                log_end_msg $SCRIPT_OK
-        fi
+  if [ "${isAlive}" -eq $TRUE ]; then
+    log_end_msg $SCRIPT_ERROR
+  else
+    start-stop-daemon --start --quiet --chuid $RUNAS --pidfile $PIDSPATH/$PIDFILE --exec $DAEMON \
+    -- -c $NGINX_CONF_FILE
+    setFilePerms
+    log_end_msg $SCRIPT_OK
+  fi
 }
 
 stop() {
-    log_daemon_msg "Stopping $DESCRIPTION"
+  log_daemon_msg "Stopping $DESCRIPTION"
 
-    isRunning
-    isAlive=$?
-        if [ "${isAlive}" -eq $TRUE ]; then
-                start-stop-daemon --stop --quiet --pidfile $PIDSPATH/$PIDFILE
+  isRunning
+  isAlive=$?
+  if [ "${isAlive}" -eq $TRUE ]; then
+    start-stop-daemon --stop --quiet --pidfile $PIDSPATH/$PIDFILE
 
-        wait_for_pid 'removed' $PIDSPATH/$PIDFILE
+    wait_for_pid 'removed' $PIDSPATH/$PIDFILE
 
-                if [ -n "$try" ] ; then
-                        log_end_msg $SCRIPT_ERROR
-                else
-                        removePIDFile
-                    log_end_msg $SCRIPT_OK
-                fi
+    if [ -n "$try" ] ; then
+      log_end_msg $SCRIPT_ERROR
+    else
+      removePIDFile
+      log_end_msg $SCRIPT_OK
+    fi
 
-        else
-                log_end_msg $SCRIPT_ERROR
-        fi
+  else
+    log_end_msg $SCRIPT_ERROR
+  fi
 }
 
 reload() {
-    configtest || return $?
+  configtest || return $?
 
-    log_daemon_msg "Reloading (via HUP) $DESCRIPTION"
+  log_daemon_msg "Reloading (via HUP) $DESCRIPTION"
 
-        isRunning
-        if [ $? -eq $TRUE ]; then
-        `killall -HUP $PS` #to be safe
+  isRunning
+  if [ $? -eq $TRUE ]; then
+    `killall -HUP $PS` #to be safe
 
-                log_end_msg $SCRIPT_OK
-        else
-                log_end_msg $SCRIPT_ERROR
-        fi
+    log_end_msg $SCRIPT_OK
+  else
+    log_end_msg $SCRIPT_ERROR
+  fi
 }
 
 quietupgrade() {
-    log_daemon_msg "Peforming Quiet Upgrade $DESCRIPTION"
+  log_daemon_msg "Peforming Quiet Upgrade $DESCRIPTION"
 
-        isRunning
-        isAlive=$?
-        if [ "${isAlive}" -eq $TRUE ]; then
-        kill -USR2 `cat $PIDSPATH/$PIDFILE`
-        kill -WINCH `cat $PIDSPATH/$PIDFILE.oldbin`
+  isRunning
+  isAlive=$?
+  if [ "${isAlive}" -eq $TRUE ]; then
+    kill -USR2 `cat $PIDSPATH/$PIDFILE`
+    kill -WINCH `cat $PIDSPATH/$PIDFILE.oldbin`
 
-        isRunning
-        isAlive=$?
-        if [ "${isAlive}" -eq $TRUE ]; then
-            kill -QUIT `cat $PIDSPATH/$PIDFILE.oldbin`
-            wait_for_pid 'removed' $PIDSPATH/$PIDFILE.oldbin
-                        removePIDFile $PIDSPATH/$PIDFILE.oldbin
+    isRunning
+    isAlive=$?
+    if [ "${isAlive}" -eq $TRUE ]; then
+      kill -QUIT `cat $PIDSPATH/$PIDFILE.oldbin`
+      wait_for_pid 'removed' $PIDSPATH/$PIDFILE.oldbin
+      removePIDFile $PIDSPATH/$PIDFILE.oldbin
 
-            log_end_msg $SCRIPT_OK
-        else
-            log_end_msg $SCRIPT_ERROR
+      log_end_msg $SCRIPT_OK
+    else
+      log_end_msg $SCRIPT_ERROR
 
-            log_daemon_msg "ERROR! Reverting back to original $DESCRIPTION"
+      log_daemon_msg "ERROR! Reverting back to original $DESCRIPTION"
 
-            kill -HUP `cat $PIDSPATH/$PIDFILE`
-            kill -TERM `cat $PIDSPATH/$PIDFILE.oldbin`
-            kill -QUIT `cat $PIDSPATH/$PIDFILE.oldbin`
+      kill -HUP `cat $PIDSPATH/$PIDFILE`
+      kill -TERM `cat $PIDSPATH/$PIDFILE.oldbin`
+      kill -QUIT `cat $PIDSPATH/$PIDFILE.oldbin`
 
-            wait_for_pid 'removed' $PIDSPATH/$PIDFILE.oldbin
-                        removePIDFile $PIDSPATH/$PIDFILE.oldbin
+      wait_for_pid 'removed' $PIDSPATH/$PIDFILE.oldbin
+      removePIDFile $PIDSPATH/$PIDFILE.oldbin
 
-            log_end_msg $SCRIPT_ok
-        fi
-        else
-                log_end_msg $SCRIPT_ERROR
-        fi
+      log_end_msg $SCRIPT_ok
+    fi
+  else
+    log_end_msg $SCRIPT_ERROR
+  fi
 }
 
 terminate() {
-        log_daemon_msg "Force terminating (via KILL) $DESCRIPTION"
+  log_daemon_msg "Force terminating (via KILL) $DESCRIPTION"
 
-    PIDS=`pidof $PS` || true
+  PIDS=`pidof $PS` || true
 
-    [ -e $PIDSPATH/$PIDFILE ] && PIDS2=`cat $PIDSPATH/$PIDFILE`
+  [ -e $PIDSPATH/$PIDFILE ] && PIDS2=`cat $PIDSPATH/$PIDFILE`
 
-    for i in $PIDS; do
-        if [ "$i" = "$PIDS2" ]; then
-                kill $i
-                        wait_for_pid 'removed' $PIDSPATH/$PIDFILE
-            removePIDFile
-        fi
-    done
+  for i in $PIDS; do
+    if [ "$i" = "$PIDS2" ]; then
+      kill $i
+      wait_for_pid 'removed' $PIDSPATH/$PIDFILE
+      removePIDFile
+    fi
+  done
 
-    log_end_msg $SCRIPT_OK
+  log_end_msg $SCRIPT_OK
 }
 
 destroy() {
-    log_daemon_msg "Force terminating and may include self (via KILLALL) $DESCRIPTION"
-    killall $PS -q >> /dev/null 2>&1
-    log_end_msg $SCRIPT_OK
+  log_daemon_msg "Force terminating and may include self (via KILLALL) $DESCRIPTION"
+  killall $PS -q >> /dev/null 2>&1
+  log_end_msg $SCRIPT_OK
 }
 
 pidof_daemon() {
-    PIDS=`pidof $PS` || true
+  PIDS=`pidof $PS` || true
 
-    [ -e $PIDSPATH/$PIDFILE ] && PIDS2=`cat $PIDSPATH/$PIDFILE`
+  [ -e $PIDSPATH/$PIDFILE ] && PIDS2=`cat $PIDSPATH/$PIDFILE`
 
-    for i in $PIDS; do
-        if [ "$i" = "$PIDS2" ]; then
-            return 1
-        fi
-    done
-    return 0
+  for i in $PIDS; do
+    if [ "$i" = "$PIDS2" ]; then
+      return 1
+    fi
+  done
+  return 0
 }
 
 case "$1" in
   start)
     start
-        ;;
+    ;;
   stop)
     stop
-        ;;
+    ;;
   restart|force-reload)
     stop
     sleep 3
     start
-        ;;
+    ;;
   reload)
     $1
     ;;
@@ -314,8 +312,8 @@ case "$1" in
     status
     ;;
   configtest)
-        $1
-        ;;
+    $1
+    ;;
   quietupgrade)
     $1
     ;;

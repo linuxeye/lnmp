@@ -9,22 +9,20 @@
 #       https://github.com/lj2007331/oneinstack
 
 Install_tcmalloc() {
-cd $oneinstack_dir/src
-
-tar xzf gperftools-$tcmalloc_version.tar.gz
-cd gperftools-$tcmalloc_version
-./configure --enable-frame-pointers
-make -j ${THREAD} && make install
-
-if [ -f "/usr/local/lib/libtcmalloc.so" ];then
+  pushd ${oneinstack_dir}/src
+  tar xzf gperftools-$tcmalloc_version.tar.gz
+  pushd gperftools-$tcmalloc_version
+  ./configure --enable-frame-pointers
+  make -j ${THREAD} && make install
+  popd
+  if [ -f "/usr/local/lib/libtcmalloc.so" ]; then
     echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
     ldconfig
     echo "${CSUCCESS}tcmalloc module installed successfully! ${CEND}"
-    cd ..
     rm -rf gperftools-$tcmalloc_version
-else
+  else
     echo "${CFAILURE}tcmalloc module install failed, Please contact the author! ${CEND}"
     kill -9 $$
-fi
-cd ..
+  fi
+  popd
 }

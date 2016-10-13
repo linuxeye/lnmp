@@ -9,16 +9,16 @@
 #       https://github.com/lj2007331/oneinstack
 
 Install_ZendOPcache() {
-    pushd $oneinstack_dir/src
-    phpExtensionDir=`$php_install_dir/bin/php-config --extension-dir`
-    tar xzf zendopcache-$zendopcache_version.tgz
-    pushd zendopcache-$zendopcache_version
-    make clean
-    $php_install_dir/bin/phpize
-    ./configure --with-php-config=$php_install_dir/bin/php-config
-    make -j ${THREAD} && make install
-    if [ -f "${phpExtensionDir}/opcache.so" ];then
-        cat > $php_install_dir/etc/php.d/ext-opcache.ini << EOF
+  pushd ${oneinstack_dir}/src
+  phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
+  tar xzf zendopcache-$zendopcache_version.tgz
+  pushd zendopcache-$zendopcache_version
+  ${php_install_dir}/bin/phpize
+  ./configure --with-php-config=${php_install_dir}/bin/php-config
+  make -j ${THREAD} && make install
+  popd
+  if [ -f "${phpExtensionDir}/opcache.so" ]; then
+    cat > ${php_install_dir}/etc/php.d/ext-opcache.ini << EOF
 [opcache]
 zend_extension=${phpExtensionDir}/opcache.so
 opcache.enable=1
@@ -31,12 +31,10 @@ opcache.fast_shutdown=1
 opcache.enable_cli=1
 ;opcache.optimization_level=0
 EOF
-        echo "${CSUCCESS}PHP OPcache module installed successfully! ${CEND}"
-        popd
-        rm -rf zendopcache-$zendopcache_version
-        [ "$Apache_version" != '1' -a "$Apache_version" != '2' ] && service php-fpm restart || service httpd restart
-    else
-        echo "${CFAILURE}PHP OPcache module install failed, Please contact the author! ${CEND}"
-    fi
-    popd
+    echo "${CSUCCESS}PHP OPcache module installed successfully! ${CEND}"
+    rm -rf zendopcache-${zendopcache_version}
+  else
+    echo "${CFAILURE}PHP OPcache module install failed, Please contact the author! ${CEND}"
+  fi
+  popd
 }

@@ -9,12 +9,10 @@
 #       https://github.com/lj2007331/oneinstack
 
 Install_hhvm_CentOS() {
-cd $oneinstack_dir/src
-
-id -u $run_user >/dev/null 2>&1
-[ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user
-
-if [ "$CentOS_RHEL_version" == '7' ];then
+  pushd ${oneinstack_dir}/src
+  id -u $run_user >/dev/null 2>&1
+  [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user
+  if [ "$CentOS_RHEL_version" == '7' ]; then
     [ ! -e /etc/yum.repos.d/epel.repo ] && cat > /etc/yum.repos.d/epel.repo << EOF
 [epel]
 name=Extra Packages for Enterprise Linux 7 - \$basearch
@@ -33,9 +31,9 @@ gpgcheck=0
 EOF
     yum -y install hhvm
     [ ! -e "/usr/bin/hhvm" -a "/usr/local/bin/hhvm" ] && ln -s /usr/local/bin/hhvm /usr/bin/hhvm
-fi
+  fi
 
-if [ "$CentOS_RHEL_version" == '6' ];then
+  if [ "$CentOS_RHEL_version" == '6' ]; then
     [ ! -e /etc/yum.repos.d/epel.repo ] && cat > /etc/yum.repos.d/epel.repo << EOF
 [epel]
 name=Extra Packages for Enterprise Linux 6 - \$basearch
@@ -62,13 +60,13 @@ gpgcheck=0
 EOF
     yum --disablerepo=epel -y install mysql mysql-devel mysql-libs
     yum --disablerepo=epel -y install hhvm
-fi
-
-userdel -r nginx;userdel -r saslauth
-rm -rf /var/log/hhvm
-mkdir /var/log/hhvm
-chown -R ${run_user}.${run_user} /var/log/hhvm
-cat > /etc/hhvm/config.hdf << EOF
+  fi
+  
+  userdel -r nginx;userdel -r saslauth
+  rm -rf /var/log/hhvm
+  mkdir /var/log/hhvm
+  chown -R ${run_user}.${run_user} /var/log/hhvm
+  cat > /etc/hhvm/config.hdf << EOF
 ResourceLimit {
   CoreFileSize = 0          # in bytes
   MaxSocket = 10000         # must be not 0, otherwise HHVM will not start
@@ -107,7 +105,7 @@ Mail {
 }
 EOF
 
-cat > /etc/hhvm/server.ini << EOF
+  cat > /etc/hhvm/server.ini << EOF
 ; php options
 pid = /var/log/hhvm/pid
 
@@ -121,29 +119,29 @@ hhvm.log.file = /var/log/hhvm/error.log
 hhvm.repo.central.path = /var/log/hhvm/hhvm.hhbc
 EOF
 
-cat > /etc/hhvm/php.ini << EOF
+  cat > /etc/hhvm/php.ini << EOF
 hhvm.mysql.socket = /tmp/mysql.sock
 expose_php = 0
 memory_limit = 400000000
 post_max_size = 50000000
 EOF
 
-if [ -e "$web_install_dir/sbin/nginx" -a -e "/usr/bin/hhvm" -a ! -e "$php_install_dir" ];then
+  if [ -e "$web_install_dir/sbin/nginx" -a -e "/usr/bin/hhvm" -a ! -e "$php_install_dir" ]; then
     sed -i 's@/dev/shm/php-cgi.sock@/var/log/hhvm/sock@' $web_install_dir/conf/nginx.conf
     [ -z "`grep 'fastcgi_param SCRIPT_FILENAME' $web_install_dir/conf/nginx.conf`" ] && sed -i "s@fastcgi_index index.php;@&\n\t\tfastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;@" $web_install_dir/conf/nginx.conf
     sed -i 's@include fastcgi.conf;@include fastcgi_params;@' $web_install_dir/conf/nginx.conf
     service nginx reload
-fi
-
-rm -rf /etc/ld.so.conf.d/*_64.conf
-ldconfig
-# Supervisor
-yum -y install python-setuptools
-ping pypi.python.org -c 4 >/dev/null 2>&1
-easy_install supervisor
-echo_supervisord_conf > /etc/supervisord.conf
-sed -i 's@pidfile=/tmp/supervisord.pid@pidfile=/var/run/supervisord.pid@' /etc/supervisord.conf
-[ -z "`grep 'program:hhvm' /etc/supervisord.conf`" ] && cat >> /etc/supervisord.conf << EOF
+  fi
+  
+  rm -rf /etc/ld.so.conf.d/*_64.conf
+  ldconfig
+  # Supervisor
+  yum -y install python-setuptools
+  ping pypi.python.org -c 4 >/dev/null 2>&1
+  easy_install supervisor
+  echo_supervisord_conf > /etc/supervisord.conf
+  sed -i 's@pidfile=/tmp/supervisord.pid@pidfile=/var/run/supervisord.pid@' /etc/supervisord.conf
+  [ -z "`grep 'program:hhvm' /etc/supervisord.conf`" ] && cat >> /etc/supervisord.conf << EOF
 [program:hhvm]
 command=/usr/bin/hhvm --mode server --user $run_user --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
 numprocs=1 ; number of processes copies to start (def 1)
@@ -152,9 +150,9 @@ autostart=true ; start at supervisord start (default: true)
 autorestart=unexpected ; whether/when to restart (default: unexpected)
 stopwaitsecs=10 ; max num secs to wait b4 SIGKILL (default 10)
 EOF
-/bin/cp ../init.d/Supervisor-init-CentOS /etc/init.d/supervisord
-chmod +x /etc/init.d/supervisord
-chkconfig supervisord on
-service supervisord start
-cd ..
+  /bin/cp ../init.d/Supervisor-init-CentOS /etc/init.d/supervisord
+  chmod +x /etc/init.d/supervisord
+  chkconfig supervisord on
+  service supervisord start
+  popd
 }

@@ -31,18 +31,18 @@ case "$1" in
     chown redis:redis $PIDFILE
     if start-stop-daemon --start --quiet --pidfile $PIDFILE --chuid redis:redis --exec $DAEMON -- $DAEMON_ARGS
     then
-        echo "$NAME."
+      echo "$NAME."
     else
-        echo "failed"
+      echo "failed"
     fi
     ;;
   stop)
     echo -n "Stopping $DESC: "
     if start-stop-daemon --stop --retry 10 --quiet --oknodo --pidfile $PIDFILE --exec $DAEMON
     then
-        echo "$NAME."
+      echo "$NAME."
     else
-        echo "failed"
+      echo "failed"
     fi
     rm -f $PIDFILE
     ;;

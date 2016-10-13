@@ -8,10 +8,9 @@
 #       https://github.com/lj2007331/oneinstack
 
 installBoost() {
-  pushd $oneinstack_dir/src
-
+  pushd ${oneinstack_dir}/src
   if [ ! -e "/usr/local/lib/libboost_system.so" ]; then
-    boostVersion2=$(echo $boost_version | awk -F. '{print $1}')_$(echo $boost_version | awk -F. '{print $2}')_$(echo $boost_version | awk -F. '{print $3}')
+    boostVersion2=$(echo ${boost_version} | awk -F. '{print $1}')_$(echo ${boost_version} | awk -F. '{print $2}')_$(echo ${boost_version} | awk -F. '{print $3}')
     tar xvf boost_${boostVersion2}.tar.gz
     pushd boost_${boostVersion2}
     ./bootstrap.sh
@@ -19,15 +18,13 @@ installBoost() {
     ./b2 install
     popd
   fi
-  if [ -e "/usr/local/lib/libboost_system.so" ];then
-    echo "${CSUCCESS}Boost installed successfully! ${CEND}"
-    rm -rf boost_${boostVersion2}
+  if [ -e "/usr/local/lib/libboost_system.so" ]; then
     echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
     ldconfig
-  else
+    echo "${CSUCCESS}Boost installed successfully! ${CEND}"
     rm -rf boost_${boostVersion2}
+  else
     echo "${CFAILURE}Boost installed failed, Please contact the author! ${CEND}"
   fi
-
   popd
 }

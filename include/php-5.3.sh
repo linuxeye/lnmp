@@ -9,143 +9,143 @@
 #       https://github.com/lj2007331/oneinstack
 
 Install_PHP-5-3() {
-cd $oneinstack_dir/src
-
-tar xzf libiconv-$libiconv_version.tar.gz
-patch -d libiconv-$libiconv_version -p0 < libiconv-glibc-2.16.patch
-cd libiconv-$libiconv_version
-./configure --prefix=/usr/local
-make -j ${THREAD} && make install
-cd ..
-rm -rf libiconv-$libiconv_version
-
-# Problem building php-5.3 with openssl
-if [ "$Debian_version" == '8' -o "$Ubuntu_version" == '16' ];then
-    if [ ! -e '/usr/local/openssl/lib/libcrypto.a' ];then
-        tar xzf openssl-1.0.0s.tar.gz
-        cd openssl-1.0.0s
-        ./config --prefix=/usr/local/openssl -fPIC shared zlib
-        make -j ${THREAD} && make install
-        cd ..
-        rm -rf openssl-1.0.0s
+  pushd ${oneinstack_dir}/src
+  
+  tar xzf libiconv-$libiconv_version.tar.gz
+  patch -d libiconv-$libiconv_version -p0 < libiconv-glibc-2.16.patch
+  pushd libiconv-$libiconv_version
+  ./configure --prefix=/usr/local
+  make -j ${THREAD} && make install
+  popd
+  rm -rf libiconv-$libiconv_version
+  
+  # Problem building php-5.3 with openssl
+  if [ "$Debian_version" == '8' -o "$Ubuntu_version" == '16' ]; then
+    if [ ! -e '/usr/local/openssl/lib/libcrypto.a' ]; then
+      tar xzf openssl-1.0.0s.tar.gz
+      pushd openssl-1.0.0s
+      ./config --prefix=/usr/local/openssl -fPIC shared zlib
+      make -j ${THREAD} && make install
+      popd 
+      rm -rf openssl-1.0.0s
     fi
     OpenSSL_args='--with-openssl=/usr/local/openssl'
-else
+  else
     OpenSSL_args='--with-openssl'
-fi
-
-tar xzf curl-$curl_version.tar.gz
-cd curl-$curl_version
-if [ "$Debian_version" == '8' -o "$Ubuntu_version" == '16' ];then
+  fi
+  
+  tar xzf curl-$curl_version.tar.gz
+  pushd curl-$curl_version
+  if [ "$Debian_version" == '8' -o "$Ubuntu_version" == '16' ]; then
     LDFLAGS="-Wl,-rpath=/usr/local/openssl/lib" ./configure --prefix=/usr/local --with-ssl=/usr/local/openssl
-else
+  else
     ./configure --prefix=/usr/local
-fi
-make -j ${THREAD} && make install
-cd ..
-rm -rf curl-$curl_version
-
-tar xzf libmcrypt-$libmcrypt_version.tar.gz
-cd libmcrypt-$libmcrypt_version
-./configure
-make -j ${THREAD} && make install
-ldconfig
-cd libltdl
-./configure --enable-ltdl-install
-make -j ${THREAD} && make install
-cd ../../
-rm -rf libmcrypt-$libmcrypt_version
-
-tar xzf mhash-$mhash_version.tar.gz
-cd mhash-$mhash_version
-./configure
-make -j ${THREAD} && make install
-cd ..
-rm -rf mhash-$mhash_version
-
-echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
-ldconfig
-[ "$OS" == 'CentOS' ] && { ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config; [ "$OS_BIT" == '64' ] && ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1 || ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1; }
-
-[ ! -e '/usr/include/freetype2/freetype' ] &&  ln -s /usr/include/freetype2 /usr/include/freetype2/freetype
-
-tar xzf mcrypt-$mcrypt_version.tar.gz
-cd mcrypt-$mcrypt_version
-ldconfig
-./configure
-make -j ${THREAD} && make install
-cd ..
-rm -rf mcrypt-$mcrypt_version
-
-id -u $run_user >/dev/null 2>&1
-[ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user
-
-tar xzf php-$php_3_version.tar.gz
-patch -d php-$php_3_version -p0 < fpm-race-condition.patch
-cd php-$php_3_version
-patch -p1 < ../php5.3patch
-patch -p1 < ../debian_patches_disable_SSLv2_for_openssl_1_0_0.patch
-make clean
-[ ! -d "$php_install_dir" ] && mkdir -p $php_install_dir
-if [[ $Apache_version =~ ^[1-2]$ ]] || [ -e "$apache_install_dir/bin/apxs" ];then
+  fi
+  make -j ${THREAD} && make install
+  popd
+  rm -rf curl-$curl_version
+  
+  tar xzf libmcrypt-$libmcrypt_version.tar.gz
+  pushd libmcrypt-$libmcrypt_version
+  ./configure
+  make -j ${THREAD} && make install
+  ldconfig
+  pushd libltdl
+  ./configure --enable-ltdl-install
+  make -j ${THREAD} && make install
+  popd;popd 
+  rm -rf libmcrypt-$libmcrypt_version
+  
+  tar xzf mhash-$mhash_version.tar.gz
+  pushd mhash-$mhash_version
+  ./configure
+  make -j ${THREAD} && make install
+  popd 
+  rm -rf mhash-$mhash_version
+  
+  echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
+  ldconfig
+  [ "$OS" == 'CentOS' ] && { ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config; [ "$OS_BIT" == '64' ] && ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1 || ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1; }
+  
+  [ ! -e '/usr/include/freetype2/freetype' ] &&  ln -s /usr/include/freetype2 /usr/include/freetype2/freetype
+  
+  tar xzf mcrypt-$mcrypt_version.tar.gz
+  pushd mcrypt-$mcrypt_version
+  ldconfig
+  ./configure
+  make -j ${THREAD} && make install
+  popd 
+  rm -rf mcrypt-$mcrypt_version
+  
+  id -u $run_user >/dev/null 2>&1
+  [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user
+  
+  tar xzf php-$php_3_version.tar.gz
+  patch -d php-$php_3_version -p0 < fpm-race-condition.patch
+  pushd php-$php_3_version
+  patch -p1 < ../php5.3patch
+  patch -p1 < ../debian_patches_disable_SSLv2_for_openssl_1_0_0.patch
+  make clean
+  [ ! -d "$php_install_dir" ] && mkdir -p $php_install_dir
+  if [[ $Apache_version =~ ^[1-2]$ ]] || [ -e "$apache_install_dir/bin/apxs" ]; then
     ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
---with-config-file-scan-dir=$php_install_dir/etc/php.d \
---with-apxs2=$apache_install_dir/bin/apxs --disable-fileinfo \
---with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
---with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
---with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
---enable-sysvsem --enable-inline-optimization --with-curl=/usr/local --enable-mbregex \
---enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf $OpenSSL_args \
---with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
---with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
-else
+    --with-config-file-scan-dir=$php_install_dir/etc/php.d \
+    --with-apxs2=$apache_install_dir/bin/apxs --disable-fileinfo \
+    --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
+    --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
+    --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
+    --enable-sysvsem --enable-inline-optimization --with-curl=/usr/local --enable-mbregex \
+    --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf $OpenSSL_args \
+    --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
+    --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
+  else
     ./configure --prefix=$php_install_dir --with-config-file-path=$php_install_dir/etc \
---with-config-file-scan-dir=$php_install_dir/etc/php.d \
---with-fpm-user=$run_user --with-fpm-group=$run_user --enable-fpm --disable-fileinfo \
---with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
---with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
---with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
---enable-sysvsem --enable-inline-optimization --with-curl=/usr/local --enable-mbregex \
---enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf $OpenSSL_args \
---with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
---with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
-fi
-sed -i '/^BUILD_/ s/\$(CC)/\$(CXX)/g' Makefile
-make ZEND_EXTRA_LIBS='-liconv' -j ${THREAD}
-make install
-
-if [ -e "$php_install_dir/bin/phpize" ];then
+    --with-config-file-scan-dir=$php_install_dir/etc/php.d \
+    --with-fpm-user=$run_user --with-fpm-group=$run_user --enable-fpm --disable-fileinfo \
+    --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
+    --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
+    --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
+    --enable-sysvsem --enable-inline-optimization --with-curl=/usr/local --enable-mbregex \
+    --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf $OpenSSL_args \
+    --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
+    --with-gettext --enable-zip --enable-soap --disable-ipv6 --disable-debug
+  fi
+  sed -i '/^BUILD_/ s/\$(CC)/\$(CXX)/g' Makefile
+  make ZEND_EXTRA_LIBS='-liconv' -j ${THREAD}
+  make install
+  
+  if [ -e "$php_install_dir/bin/phpize" ]; then
     echo "${CSUCCESS}PHP installed successfully! ${CEND}"
-else
+  else
     rm -rf $php_install_dir
     echo "${CFAILURE}PHP install failed, Please Contact the author! ${CEND}"
     kill -9 $$
-fi
-
-[ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$php_install_dir/bin:\$PATH" >> /etc/profile
-[ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep $php_install_dir /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$php_install_dir/bin:\1@" /etc/profile
-. /etc/profile
-
-# wget -c http://pear.php.net/go-pear.phar
-# $php_install_dir/bin/php go-pear.phar
-
-[ ! -e "$php_install_dir/etc/php.d" ] && mkdir -p $php_install_dir/etc/php.d
-/bin/cp php.ini-production $php_install_dir/etc/php.ini
-
-sed -i "s@^memory_limit.*@memory_limit = ${Memory_limit}M@" $php_install_dir/etc/php.ini
-sed -i 's@^output_buffering =@output_buffering = On\noutput_buffering =@' $php_install_dir/etc/php.ini
-sed -i 's@^;cgi.fix_pathinfo.*@cgi.fix_pathinfo=0@' $php_install_dir/etc/php.ini
-sed -i 's@^short_open_tag = Off@short_open_tag = On@' $php_install_dir/etc/php.ini
-sed -i 's@^expose_php = On@expose_php = Off@' $php_install_dir/etc/php.ini
-sed -i 's@^request_order.*@request_order = "CGP"@' $php_install_dir/etc/php.ini
-sed -i 's@^;date.timezone.*@date.timezone = Asia/Shanghai@' $php_install_dir/etc/php.ini
-sed -i 's@^post_max_size.*@post_max_size = 100M@' $php_install_dir/etc/php.ini
-sed -i 's@^upload_max_filesize.*@upload_max_filesize = 50M@' $php_install_dir/etc/php.ini
-sed -i 's@^max_execution_time.*@max_execution_time = 5@' $php_install_dir/etc/php.ini
-sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,stream_socket_server,fsocket,popen@' $php_install_dir/etc/php.ini
-[ -e /usr/sbin/sendmail ] && sed -i 's@^;sendmail_path.*@sendmail_path = /usr/sbin/sendmail -t -i@' $php_install_dir/etc/php.ini
-
-if [[ ! $Apache_version =~ ^[1-2]$ ]] && [ ! -e "$apache_install_dir/bin/apxs" ];then
+  fi
+  
+  [ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=$php_install_dir/bin:\$PATH" >> /etc/profile
+  [ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep $php_install_dir /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=$php_install_dir/bin:\1@" /etc/profile
+  . /etc/profile
+  
+  # wget -c http://pear.php.net/go-pear.phar
+  # $php_install_dir/bin/php go-pear.phar
+  
+  [ ! -e "$php_install_dir/etc/php.d" ] && mkdir -p $php_install_dir/etc/php.d
+  /bin/cp php.ini-production $php_install_dir/etc/php.ini
+  
+  sed -i "s@^memory_limit.*@memory_limit = ${Memory_limit}M@" $php_install_dir/etc/php.ini
+  sed -i 's@^output_buffering =@output_buffering = On\noutput_buffering =@' $php_install_dir/etc/php.ini
+  sed -i 's@^;cgi.fix_pathinfo.*@cgi.fix_pathinfo=0@' $php_install_dir/etc/php.ini
+  sed -i 's@^short_open_tag = Off@short_open_tag = On@' $php_install_dir/etc/php.ini
+  sed -i 's@^expose_php = On@expose_php = Off@' $php_install_dir/etc/php.ini
+  sed -i 's@^request_order.*@request_order = "CGP"@' $php_install_dir/etc/php.ini
+  sed -i 's@^;date.timezone.*@date.timezone = Asia/Shanghai@' $php_install_dir/etc/php.ini
+  sed -i 's@^post_max_size.*@post_max_size = 100M@' $php_install_dir/etc/php.ini
+  sed -i 's@^upload_max_filesize.*@upload_max_filesize = 50M@' $php_install_dir/etc/php.ini
+  sed -i 's@^max_execution_time.*@max_execution_time = 5@' $php_install_dir/etc/php.ini
+  sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,stream_socket_server,fsocket,popen@' $php_install_dir/etc/php.ini
+  [ -e /usr/sbin/sendmail ] && sed -i 's@^;sendmail_path.*@sendmail_path = /usr/sbin/sendmail -t -i@' $php_install_dir/etc/php.ini
+  
+  if [[ ! $Apache_version =~ ^[1-2]$ ]] && [ ! -e "$apache_install_dir/bin/apxs" ]; then
     # php-fpm Init Script
     /bin/cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
     chmod +x /etc/init.d/php-fpm
@@ -210,40 +210,40 @@ EOF
 
     [ -d "/run/shm" -a ! -e "/dev/shm" ] && sed -i 's@/dev/shm@/run/shm@' $php_install_dir/etc/php-fpm.conf $oneinstack_dir/vhost.sh $oneinstack_dir/config/nginx.conf
 
-    if [ $Mem -le 3000 ];then
-        sed -i "s@^pm.max_children.*@pm.max_children = $(($Mem/3/20))@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.start_servers.*@pm.start_servers = $(($Mem/3/30))@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = $(($Mem/3/40))@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = $(($Mem/3/20))@" $php_install_dir/etc/php-fpm.conf
-    elif [ $Mem -gt 3000 -a $Mem -le 4500 ];then
-        sed -i "s@^pm.max_children.*@pm.max_children = 50@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.start_servers.*@pm.start_servers = 30@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = 20@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 50@" $php_install_dir/etc/php-fpm.conf
-    elif [ $Mem -gt 4500 -a $Mem -le 6500 ];then
-        sed -i "s@^pm.max_children.*@pm.max_children = 60@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.start_servers.*@pm.start_servers = 40@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = 30@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 60@" $php_install_dir/etc/php-fpm.conf
-    elif [ $Mem -gt 6500 -a $Mem -le 8500 ];then
-        sed -i "s@^pm.max_children.*@pm.max_children = 70@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.start_servers.*@pm.start_servers = 50@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = 40@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 70@" $php_install_dir/etc/php-fpm.conf
-    elif [ $Mem -gt 8500 ];then
-        sed -i "s@^pm.max_children.*@pm.max_children = 80@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.start_servers.*@pm.start_servers = 60@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = 50@" $php_install_dir/etc/php-fpm.conf
-        sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 80@" $php_install_dir/etc/php-fpm.conf
+    if [ $Mem -le 3000 ]; then
+      sed -i "s@^pm.max_children.*@pm.max_children = $(($Mem/3/20))@" $php_install_dir/etc/php-fpm.conf
+      sed -i "s@^pm.start_servers.*@pm.start_servers = $(($Mem/3/30))@" $php_install_dir/etc/php-fpm.conf
+      sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = $(($Mem/3/40))@" $php_install_dir/etc/php-fpm.conf
+      sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = $(($Mem/3/20))@" $php_install_dir/etc/php-fpm.conf
+    elif [ $Mem -gt 3000 -a $Mem -le 4500 ]; then
+      sed -i "s@^pm.max_children.*@pm.max_children = 50@" $php_install_dir/etc/php-fpm.conf
+      sed -i "s@^pm.start_servers.*@pm.start_servers = 30@" $php_install_dir/etc/php-fpm.conf
+      sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = 20@" $php_install_dir/etc/php-fpm.conf
+      sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 50@" $php_install_dir/etc/php-fpm.conf
+    elif [ $Mem -gt 4500 -a $Mem -le 6500 ]; then
+      sed -i "s@^pm.max_children.*@pm.max_children = 60@" $php_install_dir/etc/php-fpm.conf
+      sed -i "s@^pm.start_servers.*@pm.start_servers = 40@" $php_install_dir/etc/php-fpm.conf
+      sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = 30@" $php_install_dir/etc/php-fpm.conf
+      sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 60@" $php_install_dir/etc/php-fpm.conf
+    elif [ $Mem -gt 6500 -a $Mem -le 8500 ]; then
+      sed -i "s@^pm.max_children.*@pm.max_children = 70@" $php_install_dir/etc/php-fpm.conf
+      sed -i "s@^pm.start_servers.*@pm.start_servers = 50@" $php_install_dir/etc/php-fpm.conf
+      sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = 40@" $php_install_dir/etc/php-fpm.conf
+      sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 70@" $php_install_dir/etc/php-fpm.conf
+    elif [ $Mem -gt 8500 ]; then
+      sed -i "s@^pm.max_children.*@pm.max_children = 80@" $php_install_dir/etc/php-fpm.conf
+      sed -i "s@^pm.start_servers.*@pm.start_servers = 60@" $php_install_dir/etc/php-fpm.conf
+      sed -i "s@^pm.min_spare_servers.*@pm.min_spare_servers = 50@" $php_install_dir/etc/php-fpm.conf
+      sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 80@" $php_install_dir/etc/php-fpm.conf
     fi
 
     #[ "$Web_yn" == 'n' ] && sed -i "s@^listen =.*@listen = $IPADDR:9000@" $php_install_dir/etc/php-fpm.conf
     service php-fpm start
 
-elif [[ $Apache_version =~ ^[1-2]$ ]] || [ -e "$apache_install_dir/bin/apxs" ];then
+  elif [[ $Apache_version =~ ^[1-2]$ ]] || [ -e "$apache_install_dir/bin/apxs" ]; then
     service httpd restart
-fi
-cd ..
-[ -e "$php_install_dir/bin/phpize" ] && rm -rf php-$php_3_version
-cd ..
+  fi
+  popd
+  [ -e "$php_install_dir/bin/phpize" ] && rm -rf php-$php_3_version
+  popd
 }

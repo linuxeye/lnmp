@@ -17,22 +17,22 @@ Install_MariaDB-10-1() {
   [ ! -d "${mariadb_install_dir}" ] && mkdir -p ${mariadb_install_dir}
   mkdir -p ${mariadb_data_dir};chown mysql.mysql -R ${mariadb_data_dir}
 
-  if [ "${dbInstallMethods}" == "1" ];then
+  if [ "${dbInstallMethods}" == "1" ]; then
     tar zxf mariadb-${mariadb_10_1_version}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
     mv mariadb-${mariadb_10_1_version}-*-${SYS_BIT_b}/* ${mariadb_install_dir}
 
-    if [ "${je_tc_malloc}" == "1" ];then
+    if [ "${je_tc_malloc}" == "1" ]; then
       sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mariadb_install_dir}/bin/mysqld_safe
-    elif [ "${je_tc_malloc}" == "2" ];then
+    elif [ "${je_tc_malloc}" == "2" ]; then
       sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libtcmalloc.so@' ${mariadb_install_dir}/bin/mysqld_safe
     fi
-  elif [ "${dbInstallMethods}" == "2" ];then
+  elif [ "${dbInstallMethods}" == "2" ]; then
     tar xvf mariadb-${mariadb_10_1_version}.tar.gz
     pushd mariadb-${mariadb_10_1_version}
 
-    if [ "${je_tc_malloc}" == "1" ];then
+    if [ "${je_tc_malloc}" == "1" ]; then
       EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
-    elif [ "${je_tc_malloc}" == "2" ];then
+    elif [ "${je_tc_malloc}" == "2" ]; then
       EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"
     fi
 
@@ -56,11 +56,11 @@ Install_MariaDB-10-1() {
     popd
   fi
 
-  if [ -d "${mariadb_install_dir}/support-files" ];then
+  if [ -d "${mariadb_install_dir}/support-files" ]; then
     echo "${CSUCCESS}MariaDB installed successfully! ${CEND}"
-    if [ "${dbInstallMethods}" == "1" ];then
+    if [ "${dbInstallMethods}" == "1" ]; then
       rm -rf mariadb-${mariadb_10_1_version}-*-${SYS_BIT_b}
-    elif [ "${dbInstallMethods}" == "2" ];then
+    elif [ "${dbInstallMethods}" == "2" ]; then
       rm -rf mariadb-${mariadb_10_1_version}
     fi
   else
@@ -177,7 +177,7 @@ write_buffer = 4M
 EOF
 
   sed -i "s@max_connections.*@max_connections = $((${Mem}/2))@" /etc/my.cnf
-  if [ ${Mem} -gt 1500 -a ${Mem} -le 2500 ];then
+  if [ ${Mem} -gt 1500 -a ${Mem} -le 2500 ]; then
     sed -i 's@^thread_cache_size.*@thread_cache_size = 16@' /etc/my.cnf
     sed -i 's@^query_cache_size.*@query_cache_size = 16M@' /etc/my.cnf
     sed -i 's@^myisam_sort_buffer_size.*@myisam_sort_buffer_size = 16M@' /etc/my.cnf
@@ -185,7 +185,7 @@ EOF
     sed -i 's@^innodb_buffer_pool_size.*@innodb_buffer_pool_size = 128M@' /etc/my.cnf
     sed -i 's@^tmp_table_size.*@tmp_table_size = 32M@' /etc/my.cnf
     sed -i 's@^table_open_cache.*@table_open_cache = 256@' /etc/my.cnf
-  elif [ ${Mem} -gt 2500 -a ${Mem} -le 3500 ];then
+  elif [ ${Mem} -gt 2500 -a ${Mem} -le 3500 ]; then
     sed -i 's@^thread_cache_size.*@thread_cache_size = 32@' /etc/my.cnf
     sed -i 's@^query_cache_size.*@query_cache_size = 32M@' /etc/my.cnf
     sed -i 's@^myisam_sort_buffer_size.*@myisam_sort_buffer_size = 32M@' /etc/my.cnf
@@ -193,7 +193,7 @@ EOF
     sed -i 's@^innodb_buffer_pool_size.*@innodb_buffer_pool_size = 512M@' /etc/my.cnf
     sed -i 's@^tmp_table_size.*@tmp_table_size = 64M@' /etc/my.cnf
     sed -i 's@^table_open_cache.*@table_open_cache = 512@' /etc/my.cnf
-  elif [ ${Mem} -gt 3500 ];then
+  elif [ ${Mem} -gt 3500 ]; then
     sed -i 's@^thread_cache_size.*@thread_cache_size = 64@' /etc/my.cnf
     sed -i 's@^query_cache_size.*@query_cache_size = 64M@' /etc/my.cnf
     sed -i 's@^myisam_sort_buffer_size.*@myisam_sort_buffer_size = 64M@' /etc/my.cnf

@@ -23,49 +23,49 @@ pure_config=/usr/local/pureftpd/etc/pure-ftpd.conf
 
 
 start() {
-	echo -n $"Starting $prog: "
-	$fullpath $pure_config --daemonize
-	RETVAL=$?
-	[ $RETVAL = 0 ] && touch /var/lock/subsys/$prog
-	echo
+  echo -n $"Starting $prog: "
+  $fullpath $pure_config --daemonize
+  RETVAL=$?
+  [ $RETVAL = 0 ] && touch /var/lock/subsys/$prog
+  echo
 }
 stop() {
-	echo -n $"Stopping $prog: "
-	kill $(cat /var/run/pure-ftpd.pid)
-	RETVAL=$?
-	[ $RETVAL = 0 ] && rm -f /var/lock/subsys/$prog
-	echo
+  echo -n $"Stopping $prog: "
+  kill $(cat /var/run/pure-ftpd.pid)
+  RETVAL=$?
+  [ $RETVAL = 0 ] && rm -f /var/lock/subsys/$prog
+  echo
 }
 
 # See how we were called.
 case "$1" in
-	start)
-		start
-		;;
-	stop)
-		stop
-		;;
-	restart)
-		stop
-		start
-		;;
-	condrestart)
-		if [ -f /var/lock/subsys/$prog ] ; then
-			stop
-			# avoid race
-			sleep 3
-			start
-		fi
-		;;
-	status)
-		status $prog
-		RETVAL=$?
-		if [ -f $pureftpwho ] && [ $RETVAL -eq 0 ] ; then
-			$pureftpwho
-		fi
-		;;
-	*)
-		echo $"Usage: $prog {start|stop|restart|condrestart|status}"
-		RETVAL=1
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    stop
+    start
+    ;;
+  condrestart)
+    if [ -f /var/lock/subsys/$prog ] ; then
+      stop
+      # avoid race
+      sleep 3
+      start
+    fi
+    ;;
+  status)
+    status $prog
+    RETVAL=$?
+    if [ -f $pureftpwho ] && [ $RETVAL -eq 0 ] ; then
+      $pureftpwho
+    fi
+    ;;
+  *)
+    echo $"Usage: $prog {start|stop|restart|condrestart|status}"
+    RETVAL=1
 esac
 exit $RETVAL

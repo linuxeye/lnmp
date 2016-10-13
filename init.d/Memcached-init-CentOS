@@ -17,59 +17,59 @@ DAEMON=/usr/local/memcached/bin/memcached
 
 if [ "$NETWORKING" = "no" ]
 then
-    exit 0
+  exit 0
 fi
 
 RETVAL=0
 prog="memcached"
 
 start () {
-    echo -n $"Starting $prog: "
-    # insure that /var/run/memcached has proper permissions
-    mkdir -p /var/run/memcached
-    if [ "`stat -c %U /var/run/memcached`" != "$USER" ]; then
-        chown $USER /var/run/memcached
-    fi
-    $DAEMON -d -p $PORT -u $USER  -m $CACHESIZE -c $MAXCONN -P /var/run/memcached/memcached.pid $OPTIONS
-    RETVAL=$?
-    echo
-    [ $RETVAL -eq 0 ] && touch /var/lock/subsys/memcached
+  echo -n $"Starting $prog: "
+  # insure that /var/run/memcached has proper permissions
+  mkdir -p /var/run/memcached
+  if [ "`stat -c %U /var/run/memcached`" != "$USER" ]; then
+    chown $USER /var/run/memcached
+  fi
+  $DAEMON -d -p $PORT -u $USER  -m $CACHESIZE -c $MAXCONN -P /var/run/memcached/memcached.pid $OPTIONS
+  RETVAL=$?
+  echo
+  [ $RETVAL -eq 0 ] && touch /var/lock/subsys/memcached
 }
 stop () {
-    echo -n $"Stopping $prog: "
-    killproc memcached
-    RETVAL=$?
-    echo
-    if [ $RETVAL -eq 0 ] ; then
-        rm -f /var/lock/subsys/memcached
-        rm -f /var/run/memcached/memcached.pid
-    fi
+  echo -n $"Stopping $prog: "
+  killproc memcached
+  RETVAL=$?
+  echo
+  if [ $RETVAL -eq 0 ] ; then
+    rm -f /var/lock/subsys/memcached
+    rm -f /var/run/memcached/memcached.pid
+  fi
 }
 
 restart () {
-    stop
-    start
+  stop
+  start
 }
 
 
 # See how we were called.
 case "$1" in
-    start)
-        start
-        ;;
-    stop)
+  start)
+    start
+    ;;
+  stop)
     stop
     ;;
-    status)
+  status)
     status memcached
     ;;
-    restart|reload)
+  restart|reload)
     restart
     ;;
-    condrestart)
+  condrestart)
     [ -f /var/lock/subsys/memcached ] && restart || :
     ;;
-    *)
+  *)
     echo $"Usage: $0 {start|stop|status|restart|reload|condrestart}"
     exit 1
 esac

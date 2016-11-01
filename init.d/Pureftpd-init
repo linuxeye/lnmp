@@ -1,5 +1,13 @@
 #!/bin/bash
-#
+### BEGIN INIT INFO
+# Provides:          pureftpd
+# Required-Start:    $local_fs $remote_fs $network $syslog
+# Required-Stop:     $local_fs $remote_fs $network $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Startup script for the pure-ftpd FTP Server
+# Description:       pureftpd daemon
+### END INIT INFO
 # Startup script for the pure-ftpd FTP Server  $Revision: 1.3 $
 #
 # chkconfig: 2345 85 15

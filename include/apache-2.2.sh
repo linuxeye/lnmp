@@ -15,9 +15,10 @@ Install_Apache-2-2() {
   tar xzf httpd-$apache_2_version.tar.gz
   pushd httpd-$apache_2_version
   [ ! -d "$apache_install_dir" ] && mkdir -p $apache_install_dir
-  [ "$ZendGuardLoader_yn" == 'y' -o "$ionCube_yn" == 'y' ] && MPM=prefork || MPM=worker
-  ./configure --prefix=$apache_install_dir --enable-headers --enable-deflate --enable-mime-magic --enable-so --enable-rewrite --enable-ssl --with-ssl --enable-expires --enable-static-support --enable-suexec --disable-userdir --with-included-apr --with-mpm=$MPM --disable-userdir
+  [ "${Ubuntu_version}" == "12" ] && sed -i '@SSL_PROTOCOL_SSLV2@d' modules/ssl/ssl_engine_io.c
+  LDFLAGS=-ldl ./configure --prefix=$apache_install_dir --with-mpm=prefork --with-included-apr --enable-headers --enable-deflate --enable-so --enable-rewrite --enable-ssl --with-ssl --enable-expires --enable-static-support --enable-suexec --enable-modules=all --enable-mods-shared=all
   make -j ${THREAD} && make install
+  unset LDFLAGS
   if [ -e "$apache_install_dir/conf/httpd.conf" ]; then
     echo "${CSUCCESS}Apache installed successfully! ${CEND}"
     popd
@@ -61,16 +62,16 @@ Install_Apache-2-2() {
   #logrotate apache log
   cat > /etc/logrotate.d/apache << EOF
 $wwwlogs_dir/*apache.log {
-daily
-rotate 5
-missingok
-dateext
-compress
-notifempty
-sharedscripts
-postrotate
-[ -f $apache_install_dir/logs/httpd.pid ] && kill -USR1 \`cat $apache_install_dir/logs/httpd.pid\`
-endscript
+  daily
+  rotate 5
+  missingok
+  dateext
+  compress
+  notifempty
+  sharedscripts
+  postrotate
+    [ -f $apache_install_dir/logs/httpd.pid ] && kill -USR1 \`cat $apache_install_dir/logs/httpd.pid\`
+  endscript
 }
 EOF
 
@@ -78,37 +79,37 @@ EOF
   cat >> $apache_install_dir/conf/vhost/0.conf << EOF
 NameVirtualHost *:$TMP_PORT
 <VirtualHost *:$TMP_PORT>
-    ServerAdmin admin@linuxeye.com
-    DocumentRoot "$wwwroot_dir/default"
-    ServerName $TMP_IP
-    ErrorLog "$wwwlogs_dir/error_apache.log"
-    CustomLog "$wwwlogs_dir/access_apache.log" common
+  ServerAdmin admin@linuxeye.com
+  DocumentRoot "$wwwroot_dir/default"
+  ServerName $TMP_IP
+  ErrorLog "$wwwlogs_dir/error_apache.log"
+  CustomLog "$wwwlogs_dir/access_apache.log" common
 <Directory "$wwwroot_dir/default">
-    SetOutputFilter DEFLATE
-    Options FollowSymLinks ExecCGI
-    AllowOverride All
-    Order allow,deny
-    Allow from all
-    DirectoryIndex index.html index.php
+  SetOutputFilter DEFLATE
+  Options FollowSymLinks ExecCGI
+  AllowOverride All
+  Order allow,deny
+  Allow from all
+  DirectoryIndex index.html index.php
 </Directory>
 <Location /server-status>
-    SetHandler server-status
-    Order Deny,Allow
-    Deny from all
-    Allow from 127.0.0.1
+  SetHandler server-status
+  Order Deny,Allow
+  Deny from all
+  Allow from 127.0.0.1
 </Location>
 </VirtualHost>
 EOF
 
   cat >> $apache_install_dir/conf/httpd.conf <<EOF
 <IfModule mod_headers.c>
-    AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml text/javascript
-    <FilesMatch "\.(js|css|html|htm|png|jpg|swf|pdf|shtml|xml|flv|gif|ico|jpeg)\$">
-        RequestHeader edit "If-None-Match" "^(.*)-gzip(.*)\$" "\$1\$2"
-        Header edit "ETag" "^(.*)-gzip(.*)\$" "\$1\$2"
-    </FilesMatch>
-    DeflateCompressionLevel 6
-    SetOutputFilter DEFLATE
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml text/javascript
+  <FilesMatch "\.(js|css|html|htm|png|jpg|swf|pdf|shtml|xml|flv|gif|ico|jpeg)\$">
+    RequestHeader edit "If-None-Match" "^(.*)-gzip(.*)\$" "\$1\$2"
+    Header edit "ETag" "^(.*)-gzip(.*)\$" "\$1\$2"
+  </FilesMatch>
+  DeflateCompressionLevel 6
+  SetOutputFilter DEFLATE
 </IfModule>
 
 ServerTokens ProductOnly

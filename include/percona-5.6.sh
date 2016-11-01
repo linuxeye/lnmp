@@ -226,7 +226,7 @@ EOF
   ${percona_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "delete from mysql.proxies_priv where Host!='localhost';"
   ${percona_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "drop database test;"
   ${percona_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "reset master;"
-  rm -rf /etc/ld.so.conf.d/{mysql,mariadb,percona}*.conf
+  rm -rf /etc/ld.so.conf.d/{mysql,mariadb,percona,alisql}*.conf
   echo "${percona_install_dir}/lib" > /etc/ld.so.conf.d/percona.conf
   ldconfig
   service mysqld stop

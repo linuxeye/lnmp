@@ -1,6 +1,6 @@
 # newest software version
 # Web
-nginx_version=1.10.1
+nginx_version=1.10.2
 tengine_version=2.1.1
 openresty_version=1.11.2.1
 openssl_version=1.0.2j
@@ -21,21 +21,23 @@ mysql_5_6_version=5.6.34
 mysql_5_5_version=5.5.53
 
 mariadb_10_1_version=10.1.18
-mariadb_10_0_version=10.0.27
-mariadb_5_5_version=5.5.52
+mariadb_10_0_version=10.0.28
+mariadb_5_5_version=5.5.53
 
-percona_5_7_version=5.7.14-8
-percona_5_6_version=5.6.32-78.1
+percona_5_7_version=5.7.15-9
+percona_5_6_version=5.6.33-79.0
 percona_5_5_version=5.5.52-38.3
 
+alisql_5_6_version=5.6.32-1
+
 # JDK
-jdk_8_version=1.8.0_102
+jdk_8_version=1.8.0_112
 jdk_7_version=1.7.0_80
 jdk_6_version=1.6.0_45
 
 # PHP
-php_7_version=7.0.11
-php_6_version=5.6.26
+php_7_version=7.0.12
+php_6_version=5.6.27
 php_5_version=5.5.38
 php_4_version=5.4.45
 php_3_version=5.3.29
@@ -61,12 +63,12 @@ eaccelerator_version=0.9.6.1
 pureftpd_version=1.0.43
 
 # Redis
-redis_version=3.2.4
+redis_version=3.2.5
 redis_pecl_for_php7_version=3.0.0
 redis_pecl_version=2.2.8
 
 # Memcached
-memcached_version=1.4.31
+memcached_version=1.4.32
 libmemcached_version=1.0.18
 memcached_pecl_version=2.2.0
 memcache_pecl_version=3.0.8

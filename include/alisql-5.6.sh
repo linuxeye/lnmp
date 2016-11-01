@@ -8,71 +8,48 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_MySQL-5-7() {
+Install_AliSQL-5-6() {
   pushd ${oneinstack_dir}/src
 
   id -u mysql >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin mysql
 
-  [ ! -d "${mysql_install_dir}" ] && mkdir -p ${mysql_install_dir}
-  mkdir -p ${mysql_data_dir};chown mysql.mysql -R ${mysql_data_dir}
+  [ ! -d "${alisql_install_dir}" ] && mkdir -p ${alisql_install_dir}
+  mkdir -p ${alisql_data_dir};chown mysql.mysql -R ${alisql_data_dir}
 
-  if [ "${dbInstallMethods}" == "1" ]; then
-    tar xvf mysql-${mysql_5_7_version}-linux-glibc2.5-${SYS_BIT_b}.tar.gz
-    mv mysql-${mysql_5_7_version}-linux-glibc2.5-${SYS_BIT_b}/* ${mysql_install_dir}
+  tar xvf alisql-${alisql_5_6_version}.tar.gz
+  pushd alisql-${alisql_5_6_version}
+  cmake . -DCMAKE_INSTALL_PREFIX=${alisql_install_dir} \
+  -DMYSQL_DATADIR=${alisql_data_dir} \
+  -DSYSCONFDIR=/etc \
+  -DWITH_INNOBASE_STORAGE_ENGINE=1 \
+  -DWITH_PARTITION_STORAGE_ENGINE=1 \
+  -DWITH_FEDERATED_STORAGE_ENGINE=1 \
+  -DWITH_BLACKHOLE_STORAGE_ENGINE=1 \
+  -DWITH_MYISAM_STORAGE_ENGINE=1 \
+  -DWITH_EMBEDDED_SERVER=1 \
+  -DENABLE_DTRACE=0 \
+  -DENABLED_LOCAL_INFILE=1 \
+  -DDEFAULT_CHARSET=utf8mb4 \
+  -DDEFAULT_COLLATION=utf8mb4_general_ci \
+  -DEXTRA_CHARSETS=all
+  make -j ${THREAD}
+  make install
+  popd
 
-    if [ "${je_tc_malloc}" == "1" ]; then
-      sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mysql_install_dir}/bin/mysqld_safe
-    elif [ "${je_tc_malloc}" == "2" ]; then
-      sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libtcmalloc.so@' ${mysql_install_dir}/bin/mysqld_safe
-    fi
-  elif [ "${dbInstallMethods}" == "2" ]; then
-    tar xvf mysql-${mysql_5_7_version}.tar.gz
-    pushd mysql-${mysql_5_7_version}
-
-    if [ "${je_tc_malloc}" == "1" ]; then
-      EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
-    elif [ "${je_tc_malloc}" == "2" ]; then
-      EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"
-    fi
-
-    cmake . -DCMAKE_INSTALL_PREFIX=${mysql_install_dir} \
-    -DMYSQL_DATADIR=${mysql_data_dir} \
-    -DSYSCONFDIR=/etc \
-    -DWITH_INNOBASE_STORAGE_ENGINE=1 \
-    -DWITH_PARTITION_STORAGE_ENGINE=1 \
-    -DWITH_FEDERATED_STORAGE_ENGINE=1 \
-    -DWITH_BLACKHOLE_STORAGE_ENGINE=1 \
-    -DWITH_MYISAM_STORAGE_ENGINE=1 \
-    -DWITH_EMBEDDED_SERVER=1 \
-    -DENABLE_DTRACE=0 \
-    -DENABLED_LOCAL_INFILE=1 \
-    -DDEFAULT_CHARSET=utf8mb4 \
-    -DDEFAULT_COLLATION=utf8mb4_general_ci \
-    -DEXTRA_CHARSETS=all \
-    ${EXE_LINKER}
-    make -j ${THREAD}
-    make install
-    popd
-  fi
-
-  if [ -d "${mysql_install_dir}/support-files" ]; then
-    echo "${CSUCCESS}MySQL installed successfully! ${CEND}"
-    if [ "${dbInstallMethods}" == "1" ]; then
-      rm -rf mysql-${mysql_5_7_version}-*-${SYS_BIT_b}
-    elif [ "${dbInstallMethods}" == "2" ]; then
-      rm -rf mysql-${mysql_5_7_version}
-    fi
+  if [ -d "${alisql_install_dir}/support-files" ]; then
+    echo "${CSUCCESS}AliSQL installed successfully! ${CEND}"
+    rm -rf alisql-${alisql_5_6_version}
   else
-    rm -rf ${mysql_install_dir}
-    rm -rf mysql-${mysql_5_7_version}
-    echo "${CFAILURE}MySQL install failed, Please contact the author! ${CEND}"
+    rm -rf ${alisql_install_dir}
+    rm -rf alisql-${alisql_5_6_version}
+    echo "${CFAILURE}AliSQL install failed, Please contact the author! ${CEND}"
     kill -9 $$
   fi
 
-  /bin/cp ${mysql_install_dir}/support-files/mysql.server /etc/init.d/mysqld
-  sed -i "s@^basedir=.*@basedir=${mysql_install_dir}@" /etc/init.d/mysqld
-  sed -i "s@^datadir=.*@datadir=${mysql_data_dir}@" /etc/init.d/mysqld
+  /bin/cp ${alisql_install_dir}/support-files/mysql.server /etc/init.d/mysqld
+  sed -i "s@^basedir=.*@basedir=${alisql_install_dir}@" /etc/init.d/mysqld
+  sed -i "s@^datadir=.*@datadir=${alisql_data_dir}@" /etc/init.d/mysqld
   chmod +x /etc/init.d/mysqld
   [ "${OS}" == "CentOS" ] && { chkconfig --add mysqld; chkconfig mysqld on; }
   [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]] && update-rc.d mysqld defaults
@@ -87,16 +64,16 @@ socket = /tmp/mysql.sock
 default-character-set = utf8mb4
 
 [mysql]
-prompt="MySQL [\\d]> "
+prompt="AliSQL [\\d]> "
 no-auto-rehash
 
 [mysqld]
 port = 3306
 socket = /tmp/mysql.sock
 
-basedir = ${mysql_install_dir}
-datadir = ${mysql_data_dir}
-pid-file = ${mysql_data_dir}/mysql.pid
+basedir = ${alisql_install_dir}
+datadir = ${alisql_data_dir}
+pid-file = ${alisql_data_dir}/mysql.pid
 user = mysql
 bind-address = 0.0.0.0
 server-id = 1
@@ -135,10 +112,10 @@ log_bin = mysql-bin
 binlog_format = mixed
 expire_logs_days = 7
 
-log_error = ${mysql_data_dir}/mysql-error.log
+log_error = ${alisql_data_dir}/mysql-error.log
 slow_query_log = 1
 long_query_time = 1
-slow_query_log_file = ${mysql_data_dir}/mysql-slow.log
+slow_query_log_file = ${alisql_data_dir}/mysql-slow.log
 
 performance_schema = 0
 explicit_defaults_for_timestamp
@@ -148,7 +125,6 @@ explicit_defaults_for_timestamp
 skip-external-locking
 
 default_storage_engine = InnoDB
-#default-storage-engine = MyISAM
 innodb_file_per_table = 1
 innodb_open_files = 500
 innodb_buffer_pool_size = 64M
@@ -209,21 +185,25 @@ EOF
     sed -i 's@^table_open_cache.*@table_open_cache = 1024@' /etc/my.cnf
   fi
 
-  ${mysql_install_dir}/bin/mysqld --initialize-insecure --user=mysql --basedir=${mysql_install_dir} --datadir=${mysql_data_dir}
+  ${alisql_install_dir}/scripts/mysql_install_db --user=mysql --basedir=${alisql_install_dir} --datadir=${alisql_data_dir}
 
-  chown mysql.mysql -R ${mysql_data_dir}
+  chown mysql.mysql -R ${alisql_data_dir}
   [ -d "/etc/mysql" ] && mv /etc/mysql{,_bk}
   service mysqld start
-  [ -z "$(grep ^'export PATH=' /etc/profile)" ] && echo "export PATH=${mysql_install_dir}/bin:\$PATH" >> /etc/profile
-  [ -n "$(grep ^'export PATH=' /etc/profile)" -a -z "$(grep ${mysql_install_dir} /etc/profile)" ] && sed -i "s@^export PATH=\(.*\)@export PATH=${mysql_install_dir}/bin:\1@" /etc/profile
+  [ -z "$(grep ^'export PATH=' /etc/profile)" ] && echo "export PATH=${alisql_install_dir}/bin:\$PATH" >> /etc/profile
+  [ -n "$(grep ^'export PATH=' /etc/profile)" -a -z "$(grep ${alisql_install_dir} /etc/profile)" ] && sed -i "s@^export PATH=\(.*\)@export PATH=${alisql_install_dir}/bin:\1@" /etc/profile
   . /etc/profile
 
-  ${mysql_install_dir}/bin/mysql -e "grant all privileges on *.* to root@'127.0.0.1' identified by \"${dbrootpwd}\" with grant option;"
-  ${mysql_install_dir}/bin/mysql -e "grant all privileges on *.* to root@'localhost' identified by \"${dbrootpwd}\" with grant option;"
-  ${mysql_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "reset master;"
+  ${alisql_install_dir}/bin/mysql -e "grant all privileges on *.* to root@'127.0.0.1' identified by \"${dbrootpwd}\" with grant option;"
+  ${alisql_install_dir}/bin/mysql -e "grant all privileges on *.* to root@'localhost' identified by \"${dbrootpwd}\" with grant option;"
+  ${alisql_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "delete from mysql.user where Password='';"
+  ${alisql_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "delete from mysql.db where User='';"
+  ${alisql_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "delete from mysql.proxies_priv where Host!='localhost';"
+  ${alisql_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "drop database test;"
+  ${alisql_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "reset master;"
   rm -rf /etc/ld.so.conf.d/{mysql,mariadb,percona,alisql}*.conf
-  [ -e "${mysql_install_dir}/my.cnf" ] && rm -rf ${mysql_install_dir}/my.cnf
-  echo "${mysql_install_dir}/lib" > /etc/ld.so.conf.d/mysql.conf
+  [ -e "${alisql_install_dir}/my.cnf" ] && rm -rf ${alisql_install_dir}/my.cnf
+  echo "${alisql_install_dir}/lib" > /etc/ld.so.conf.d/alisql.conf
   ldconfig
   service mysqld stop
 }

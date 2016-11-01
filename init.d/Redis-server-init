@@ -11,7 +11,6 @@
 # Description:      redis-server - Persistent key-value db
 ### END INIT INFO
 
-
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 DAEMON=/usr/local/redis/bin/redis-server
 DAEMON_ARGS=/usr/local/redis/etc/redis.conf
@@ -31,7 +30,7 @@ case "$1" in
     chown redis:redis $PIDFILE
     if start-stop-daemon --start --quiet --pidfile $PIDFILE --chuid redis:redis --exec $DAEMON -- $DAEMON_ARGS
     then
-      echo "$NAME."
+      echo -e "\e[00;32m[OK]\e[00m"
     else
       echo "failed"
     fi
@@ -40,7 +39,7 @@ case "$1" in
     echo -n "Stopping $DESC: "
     if start-stop-daemon --stop --retry 10 --quiet --oknodo --pidfile $PIDFILE --exec $DAEMON
     then
-      echo "$NAME."
+      echo -e "\e[00;32m[OK]\e[00m"
     else
       echo "failed"
     fi

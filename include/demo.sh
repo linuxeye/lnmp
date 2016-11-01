@@ -23,7 +23,7 @@ DEMO() {
       sed -i 's@https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js@http://lib.sinaapp.com/js/jquery/1.7/jquery.min.js@' ${wwwroot_dir}/default/proberv.php
     fi
 
-    echo '<?php phpinfo() ?>' > ${wwwroot_dir}/default/phpinfo.php
+    echo "<?php phpinfo() ?>" > ${wwwroot_dir}/default/phpinfo.php
     case "${PHP_cache}" in
       1)
         src_url=http://mirrors.linuxeye.com/oneinstack/src/ocp.php && Download_src

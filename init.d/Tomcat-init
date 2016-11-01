@@ -1,4 +1,13 @@
 #!/bin/bash
+### BEGIN INIT INFO
+# Provides:          tomcat
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: tomcat-server daemon
+# Description:       tomcat-server daemon
+### END INIT INFO
 #
 # chkconfig: - 95 15
 # description: Tomcat start/stop/status script

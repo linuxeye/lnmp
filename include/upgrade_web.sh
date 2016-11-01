@@ -163,7 +163,7 @@ Upgrade_OpenResty() {
     rm -rf $$
     [ -n "`echo $openresty_configure_arguments | grep jemalloc`"] && malloc_module="--with-ld-opt='-ljemalloc'"
     [ -n "`echo $openresty_configure_arguments | grep perftools`" ] && malloc_module='--with-google_perftools_module'
-    ./configure --prefix=$openresty_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-openssl=../openssl-$openssl_version --with-pcre=../pcre-$pcre_version --with-pcre-jit $malloc_module
+    ./configure --prefix=$openresty_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-openssl=../openssl-$openssl_version --with-pcre=../pcre-$pcre_version --with-pcre-jit $malloc_module
     make -j ${THREAD}
     if [ -f "build/nginx-$openresty_version_tmp/objs/nginx" ]; then
       /bin/mv $openresty_install_dir/nginx/sbin/nginx{,`date +%m%d`}

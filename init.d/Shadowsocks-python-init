@@ -1,6 +1,15 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://blog.linuxeye.com
+### BEGIN INIT INFO
+# Provides:          shadowsocks
+# Required-Start:    $local_fs $remote_fs $network $syslog
+# Required-Start:    $local_fs $remote_fs $network $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: shadowsocks - Shadowsocks-python starts daemon
+# Description:       shadowsocks - lightweight secured scoks5 proxy
+### END INIT INFO
 #
 # chkconfig: - 90 10
 # description: Shadowsocks start/stop/status/restart script

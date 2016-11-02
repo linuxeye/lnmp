@@ -685,14 +685,9 @@ checkDownload(){
     src_url=https://launchpad.net/libmemcached/1.0/${libmemcached_version}/+download/libmemcached-${libmemcached_version}.tar.gz && Download_src
   fi
 
-  if [ "${je_tc_malloc_yn}" == 'y' ]; then
-    if [ "${je_tc_malloc}" == '1' ]; then
-      echo "Download jemalloc..."
-      src_url=${mirrorLink}/jemalloc-${jemalloc_version}.tar.bz2 && Download_src
-    elif [ "${je_tc_malloc}" == '2' ]; then
-      echo "Download tcmalloc..."
-      src_url=${mirrorLink}/gperftools-${tcmalloc_version}.tar.gz && Download_src
-    fi
+  if [[ $Nginx_version =~ ^[1-3]$ ]] || [ "$DB_yn" == 'y' -a "$DB_version" != '10' ]; then
+    echo "Download jemalloc..."
+    src_url=${mirrorLink}/jemalloc-${jemalloc_version}.tar.bz2 && Download_src
   fi
 
   # others

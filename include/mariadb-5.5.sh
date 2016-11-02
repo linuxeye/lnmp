@@ -20,26 +20,11 @@ Install_MariaDB-5-5() {
   if [ "${dbInstallMethods}" == "1" ]; then
     tar zxf mariadb-${mariadb_5_5_version}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
     mv mariadb-${mariadb_5_5_version}-*-${SYS_BIT_b}/* ${mariadb_install_dir}
-
-    if [ "${je_tc_malloc}" == "1" ]; then
-      sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mariadb_install_dir}/bin/mysqld_safe
-    elif [ "${je_tc_malloc}" == "2" ]; then
-      sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libtcmalloc.so@' ${mariadb_install_dir}/bin/mysqld_safe
-    fi
+    sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mariadb_install_dir}/bin/mysqld_safe
   elif [ "${dbInstallMethods}" == "2" ]; then
     tar xvf mariadb-${mariadb_5_5_version}.tar.gz
     pushd mariadb-${mariadb_5_5_version}
-
-    if [ "${je_tc_malloc}" == "1" ]; then
-      EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
-    elif [ "${je_tc_malloc}" == "2" ]; then
-      EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"
-    fi
-    
-    if [ "${armPlatform}" == "y" ]; then
-      patch -p1 < ../mysql-5.5-fix-arm-client_plugin.patch
-    fi
-
+    [ "${armPlatform}" == "y" ] && patch -p1 < ../mysql-5.5-fix-arm-client_plugin.patch
     cmake . -DCMAKE_INSTALL_PREFIX=${mariadb_install_dir} \
     -DMYSQL_DATADIR=${mariadb_data_dir} \
     -DSYSCONFDIR=/etc \
@@ -55,7 +40,7 @@ Install_MariaDB-5-5() {
     -DDEFAULT_CHARSET=utf8mb4 \
     -DDEFAULT_COLLATION=utf8mb4_general_ci \
     -DEXTRA_CHARSETS=all \
-    ${EXE_LINKER}
+    -DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'
     make -j ${THREAD}
     make install
     popd

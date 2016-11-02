@@ -30,7 +30,7 @@ case "$1" in
     chown redis:redis $PIDFILE
     if start-stop-daemon --start --quiet --pidfile $PIDFILE --chuid redis:redis --exec $DAEMON -- $DAEMON_ARGS
     then
-      echo -e "\e[00;32m[OK]\e[00m"
+      echo "[OK]"
     else
       echo "failed"
     fi
@@ -39,7 +39,7 @@ case "$1" in
     echo -n "Stopping $DESC: "
     if start-stop-daemon --stop --retry 10 --quiet --oknodo --pidfile $PIDFILE --exec $DAEMON
     then
-      echo -e "\e[00;32m[OK]\e[00m"
+      echo "[OK]"
     else
       echo "failed"
     fi

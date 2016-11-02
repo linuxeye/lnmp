@@ -13,7 +13,7 @@ Script properties:
 - According to their needs to install PHP Cache Accelerator provides ZendOPcache, xcache, apcu, eAccelerator. And php encryption and decryption tool ionCube, ZendGuardLoader
 - Installation Pureftpd, phpMyAdmin according to their needs
 - Install memcached, redis according to their needs
-- Tcmalloc can use according to their needs or jemalloc optimize MySQL, Nginx
+- Jemalloc optimize MySQL, Nginx
 - Providing add a virtual host script, include Let's Encrypt SSL certificate
 - Provide Nginx/Tengine, MySQL/MariaDB/Percona, PHP, Redis, phpMyAdmin upgrade script
 - Provide local backup and remote backup (rsync between servers) script

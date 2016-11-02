@@ -95,62 +95,62 @@ while :; do echo
         fi
       done
       # Tomcat
-      while :; do echo
-        echo 'Please select tomcat server:'
-        echo -e "\t${CMSG}1${CEND}. Install Tomcat-8"
-        echo -e "\t${CMSG}2${CEND}. Install Tomcat-7"
-        echo -e "\t${CMSG}3${CEND}. Install Tomcat-6"
-        echo -e "\t${CMSG}4${CEND}. Do not install"
-        read -p "Please input a number:(Default 4 press Enter) " Tomcat_version
-        [ -z "$Tomcat_version" ] && Tomcat_version=4
-        if [[ ! $Tomcat_version =~ ^[1-4]$ ]]; then
-          echo "${CWARNING}input error! Please only input number 1,2,3,4${CEND}"
-        else
-          [ "$Tomcat_version" != '4' -a -e "$tomcat_install_dir/conf/server.xml" ] && { echo "${CWARNING}Tomcat already installed! ${CEND}" ; Tomcat_version=Other; }
-          if [ "$Tomcat_version" == '1' ]; then
-            while :; do echo
-              echo 'Please select JDK version:'
-              echo -e "\t${CMSG}1${CEND}. Install JDK-1.8"
-              echo -e "\t${CMSG}2${CEND}. Install JDK-1.7"
-              read -p "Please input a number:(Default 2 press Enter) " JDK_version
-              [ -z "$JDK_version" ] && JDK_version=2
-              if [[ ! $JDK_version =~ ^[1-2]$ ]]; then
-                echo "${CWARNING}input error! Please only input number 1,2${CEND}"
-              else
-                break
-              fi
-            done
-          elif [ "$Tomcat_version" == '2' ]; then
-            while :; do echo
-              echo 'Please select JDK version:'
-              echo -e "\t${CMSG}1${CEND}. Install JDK-1.8"
-              echo -e "\t${CMSG}2${CEND}. Install JDK-1.7"
-              echo -e "\t${CMSG}3${CEND}. Install JDK-1.6"
-              read -p "Please input a number:(Default 2 press Enter) " JDK_version
-              [ -z "$JDK_version" ] && JDK_version=2
-              if [[ ! $JDK_version =~ ^[1-3]$ ]]; then
-                echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
-              else
-                break
-              fi
-            done
-          elif [ "$Tomcat_version" == '3' ]; then
-            while :; do echo
-              echo 'Please select JDK version:'
-              echo -e "\t${CMSG}2${CEND}. Install JDK-1.7"
-              echo -e "\t${CMSG}3${CEND}. Install JDK-1.6"
-              read -p "Please input a number:(Default 2 press Enter) " JDK_version
-              [ -z "$JDK_version" ] && JDK_version=2
-              if [[ ! $JDK_version =~ ^[2-3]$ ]]; then
-                echo "${CWARNING}input error! Please only input number 2,3${CEND}"
-              else
-                break
-              fi
-            done
-          fi
-          break
-        fi
-      done
+      #while :; do echo
+      #  echo 'Please select tomcat server:'
+      #  echo -e "\t${CMSG}1${CEND}. Install Tomcat-8"
+      #  echo -e "\t${CMSG}2${CEND}. Install Tomcat-7"
+      #  echo -e "\t${CMSG}3${CEND}. Install Tomcat-6"
+      #  echo -e "\t${CMSG}4${CEND}. Do not install"
+      #  read -p "Please input a number:(Default 4 press Enter) " Tomcat_version
+      #  [ -z "$Tomcat_version" ] && Tomcat_version=4
+      #  if [[ ! $Tomcat_version =~ ^[1-4]$ ]]; then
+      #    echo "${CWARNING}input error! Please only input number 1,2,3,4${CEND}"
+      #  else
+      #    [ "$Tomcat_version" != '4' -a -e "$tomcat_install_dir/conf/server.xml" ] && { echo "${CWARNING}Tomcat already installed! ${CEND}" ; Tomcat_version=Other; }
+      #    if [ "$Tomcat_version" == '1' ]; then
+      #      while :; do echo
+      #        echo 'Please select JDK version:'
+      #        echo -e "\t${CMSG}1${CEND}. Install JDK-1.8"
+      #        echo -e "\t${CMSG}2${CEND}. Install JDK-1.7"
+      #        read -p "Please input a number:(Default 2 press Enter) " JDK_version
+      #        [ -z "$JDK_version" ] && JDK_version=2
+      #        if [[ ! $JDK_version =~ ^[1-2]$ ]]; then
+      #          echo "${CWARNING}input error! Please only input number 1,2${CEND}"
+      #        else
+      #          break
+      #        fi
+      #      done
+      #    elif [ "$Tomcat_version" == '2' ]; then
+      #      while :; do echo
+      #        echo 'Please select JDK version:'
+      #        echo -e "\t${CMSG}1${CEND}. Install JDK-1.8"
+      #        echo -e "\t${CMSG}2${CEND}. Install JDK-1.7"
+      #        echo -e "\t${CMSG}3${CEND}. Install JDK-1.6"
+      #        read -p "Please input a number:(Default 2 press Enter) " JDK_version
+      #        [ -z "$JDK_version" ] && JDK_version=2
+      #        if [[ ! $JDK_version =~ ^[1-3]$ ]]; then
+      #          echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
+      #        else
+      #          break
+      #        fi
+      #      done
+      #    elif [ "$Tomcat_version" == '3' ]; then
+      #      while :; do echo
+      #        echo 'Please select JDK version:'
+      #        echo -e "\t${CMSG}2${CEND}. Install JDK-1.7"
+      #        echo -e "\t${CMSG}3${CEND}. Install JDK-1.6"
+      #        read -p "Please input a number:(Default 2 press Enter) " JDK_version
+      #        [ -z "$JDK_version" ] && JDK_version=2
+      #        if [[ ! $JDK_version =~ ^[2-3]$ ]]; then
+      #          echo "${CWARNING}input error! Please only input number 2,3${CEND}"
+      #        else
+      #          break
+      #        fi
+      #      done
+      #    fi
+      #    break
+      #  fi
+      #done
     fi
     break
   fi
@@ -420,32 +420,6 @@ while :; do echo
   fi
 done
 
-# check jemalloc or tcmalloc
-if [[ $Nginx_version =~ ^[1-3]$ ]] || [ "$DB_yn" == 'y' -a "$DB_version" != '10' ]; then
-  while :; do echo
-    read -p "Do you want to use jemalloc or tcmalloc optimize Database and Web server? [y/n]: " je_tc_malloc_yn
-    if [[ ! $je_tc_malloc_yn =~ ^[y,n]$ ]]; then
-      echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
-    else
-      if [ "$je_tc_malloc_yn" == 'y' ]; then
-        echo 'Please select jemalloc or tcmalloc:'
-        echo -e "\t${CMSG}1${CEND}. jemalloc"
-        echo -e "\t${CMSG}2${CEND}. tcmalloc"
-        while :; do
-          read -p "Please input a number:(Default 1 press Enter) " je_tc_malloc
-          [ -z "$je_tc_malloc" ] && je_tc_malloc=1
-          if [[ ! $je_tc_malloc =~ ^[1-2]$ ]]; then
-            echo "${CWARNING}input error! Please only input number 1,2${CEND}"
-          else
-            break
-          fi
-        done
-      fi
-      break
-    fi
-  done
-fi
-
 while :; do echo
   read -p "Do you want to install HHVM? [y/n]: " HHVM_yn
   if [[ ! $HHVM_yn =~ ^[y,n]$ ]]; then
@@ -511,18 +485,12 @@ checkDownload 2>&1 | tee -a ${oneinstack_dir}/install.log
 # Install dependencies from source package
 installDepsBySrc 2>&1 | tee -a ${oneinstack_dir}/install.log
 
-# jemalloc or tcmalloc
-if [ "$je_tc_malloc_yn" == 'y' -a "$je_tc_malloc" == '1' -a ! -e "/usr/local/lib/libjemalloc.so" ]; then
-  . include/jemalloc.sh
-  Install_jemalloc | tee -a $oneinstack_dir/install.log
-fi
-if [ "$DB_version" == '4' -a ! -e "/usr/local/lib/libjemalloc.so" ]; then
-  . include/jemalloc.sh
-  Install_jemalloc | tee -a $oneinstack_dir/install.log
-fi
-if [ "$je_tc_malloc_yn" == 'y' -a "$je_tc_malloc" == '2' -a ! -e "/usr/local/lib/libtcmalloc.so" ]; then
-  . include/tcmalloc.sh
-  Install_tcmalloc | tee -a $oneinstack_dir/install.log
+# jemalloc
+if [[ $Nginx_version =~ ^[1-3]$ ]] || [ "$DB_yn" == 'y' -a "$DB_version" != '10' ]; then
+  if [ ! -e "/usr/local/lib/libjemalloc.so" ]; then
+    . include/jemalloc.sh
+    Install_jemalloc | tee -a $oneinstack_dir/install.log
+  fi
 fi
 
 # Database

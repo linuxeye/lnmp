@@ -20,22 +20,10 @@ Install_MySQL-5-7() {
   if [ "${dbInstallMethods}" == "1" ]; then
     tar xvf mysql-${mysql_5_7_version}-linux-glibc2.5-${SYS_BIT_b}.tar.gz
     mv mysql-${mysql_5_7_version}-linux-glibc2.5-${SYS_BIT_b}/* ${mysql_install_dir}
-
-    if [ "${je_tc_malloc}" == "1" ]; then
-      sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mysql_install_dir}/bin/mysqld_safe
-    elif [ "${je_tc_malloc}" == "2" ]; then
-      sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libtcmalloc.so@' ${mysql_install_dir}/bin/mysqld_safe
-    fi
+    sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mysql_install_dir}/bin/mysqld_safe
   elif [ "${dbInstallMethods}" == "2" ]; then
     tar xvf mysql-${mysql_5_7_version}.tar.gz
     pushd mysql-${mysql_5_7_version}
-
-    if [ "${je_tc_malloc}" == "1" ]; then
-      EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
-    elif [ "${je_tc_malloc}" == "2" ]; then
-      EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"
-    fi
-
     cmake . -DCMAKE_INSTALL_PREFIX=${mysql_install_dir} \
     -DMYSQL_DATADIR=${mysql_data_dir} \
     -DSYSCONFDIR=/etc \
@@ -50,7 +38,7 @@ Install_MySQL-5-7() {
     -DDEFAULT_CHARSET=utf8mb4 \
     -DDEFAULT_COLLATION=utf8mb4_general_ci \
     -DEXTRA_CHARSETS=all \
-    ${EXE_LINKER}
+    -DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'
     make -j ${THREAD}
     make install
     popd

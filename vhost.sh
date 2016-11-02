@@ -319,7 +319,7 @@ Input_Add_domain() {
           break
         fi
       done
-      [ "${redirect_yn}" == 'y' ] && Nginx_redirect=$(echo -e "if (\$host != $domain) {\n  rewrite ^/(.*)\$ \$scheme://$domain/\$1 permanent;\n}")
+      [ "${redirect_yn}" == 'y' ] && Nginx_redirect=$(echo -e "if (\$host != $domain) {\n    rewrite ^/(.*)\$ \$scheme://$domain/\$1 permanent;\n  }")
     fi
   fi
 

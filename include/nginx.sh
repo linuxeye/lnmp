@@ -26,16 +26,8 @@ Install_Nginx() {
   # close debug
   sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc
   
-  if [ "$je_tc_malloc" == '1' ]; then
-    malloc_module="--with-ld-opt='-ljemalloc'"
-  elif [ "$je_tc_malloc" == '2' ]; then
-    malloc_module='--with-google_perftools_module'
-    mkdir /tmp/tcmalloc
-    chown -R ${run_user}.$run_user /tmp/tcmalloc
-  fi
-
   [ ! -d "$nginx_install_dir" ] && mkdir -p $nginx_install_dir
-  ./configure --prefix=$nginx_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-openssl=../openssl-$openssl_version --with-pcre=../pcre-$pcre_version --with-pcre-jit $malloc_module
+  ./configure --prefix=$nginx_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-openssl=../openssl-$openssl_version --with-pcre=../pcre-$pcre_version --with-pcre-jit --with-ld-opt='-ljemalloc' 
   make -j ${THREAD} && make install
   if [ -e "$nginx_install_dir/conf/nginx.conf" ]; then
     popd 
@@ -84,21 +76,20 @@ EOF
   sed -i "s@/data/wwwroot/default@$wwwroot_dir/default@" $nginx_install_dir/conf/nginx.conf
   sed -i "s@/data/wwwlogs@$wwwlogs_dir@g" $nginx_install_dir/conf/nginx.conf
   sed -i "s@^user www www@user $run_user $run_user@" $nginx_install_dir/conf/nginx.conf
-  [ "$je_tc_malloc" == '2' ] && sed -i 's@^pid\(.*\)@pid\1\ngoogle_perftools_profiles /tmp/tcmalloc;@' $nginx_install_dir/conf/nginx.conf
   
   # logrotate nginx log
   cat > /etc/logrotate.d/nginx << EOF
 $wwwlogs_dir/*nginx.log {
-daily
-rotate 5
-missingok
-dateext
-compress
-notifempty
-sharedscripts
-postrotate
+  daily
+  rotate 5
+  missingok
+  dateext
+  compress
+  notifempty
+  sharedscripts
+  postrotate
     [ -e /var/run/nginx.pid ] && kill -USR1 \`cat /var/run/nginx.pid\`
-endscript
+  endscript
 }
 EOF
   popd

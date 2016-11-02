@@ -21,22 +21,10 @@ Install_Percona-5-6() {
     perconaVerStr1=$(echo ${percona_5_6_version} | sed "s@-@-rel@")
     tar xvf Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.${sslLibVer}.tar.gz
     mv Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.${sslLibVer}/* ${percona_install_dir}
-
-    if [ "${je_tc_malloc}" == "1" ]; then
-      sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${percona_install_dir}/bin/mysqld_safe
-    elif [ "${je_tc_malloc}" == "2" ]; then
-      sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libtcmalloc.so@' ${percona_install_dir}/bin/mysqld_safe
-    fi
+    sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${percona_install_dir}/bin/mysqld_safe
   elif [ "${dbInstallMethods}" == "2" ]; then
     tar xvf percona-server-${percona_5_6_version}.tar.gz
     pushd percona-server-${percona_5_6_version}
-
-    if [ "${je_tc_malloc}" == "1" ]; then
-      EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'"
-    elif [ "${je_tc_malloc}" == "2" ]; then
-      EXE_LINKER="-DCMAKE_EXE_LINKER_FLAGS='-ltcmalloc'"
-    fi
-
     cmake . -DCMAKE_INSTALL_PREFIX=${percona_install_dir} \
     -DMYSQL_DATADIR=${percona_data_dir} \
     -DSYSCONFDIR=/etc \
@@ -52,7 +40,7 @@ Install_Percona-5-6() {
     -DDEFAULT_CHARSET=utf8mb4 \
     -DDEFAULT_COLLATION=utf8mb4_general_ci \
     -DEXTRA_CHARSETS=all \
-    ${EXE_LINKER}
+    -DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'
     make -j ${THREAD}
     make install
     popd

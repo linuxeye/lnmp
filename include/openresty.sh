@@ -23,16 +23,8 @@ Install_OpenResty() {
   openresty_version_tmp=${openresty_version%.*}
   sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' bundle/nginx-$openresty_version_tmp/auto/cc/gcc # close debug
   
-  if [ "$je_tc_malloc" == '1' ]; then
-    malloc_module="--with-ld-opt='-ljemalloc'"
-  elif [ "$je_tc_malloc" == '2' ]; then
-    malloc_module='--with-google_perftools_module'
-    mkdir /tmp/tcmalloc
-    chown -R ${run_user}.$run_user /tmp/tcmalloc
-  fi
-
   [ ! -d "$openresty_install_dir" ] && mkdir -p $openresty_install_dir
-  ./configure --prefix=$openresty_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-openssl=../openssl-$openssl_version --with-pcre=../pcre-$pcre_version --with-pcre-jit $malloc_module
+  ./configure --prefix=$openresty_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-openssl=../openssl-$openssl_version --with-pcre=../pcre-$pcre_version --with-pcre-jit --with-ld-opt='-ljemalloc' 
   make -j ${THREAD} && make install
   if [ -e "$openresty_install_dir/nginx/conf/nginx.conf" ]; then
     popd
@@ -81,21 +73,20 @@ EOF
   sed -i "s@/data/wwwroot/default@$wwwroot_dir/default@" $openresty_install_dir/nginx/conf/nginx.conf
   sed -i "s@/data/wwwlogs@$wwwlogs_dir@g" $openresty_install_dir/nginx/conf/nginx.conf
   sed -i "s@^user www www@user $run_user $run_user@" $openresty_install_dir/nginx/conf/nginx.conf
-  [ "$je_tc_malloc" == '2' ] && sed -i 's@^pid\(.*\)@pid\1\ngoogle_perftools_profiles /tmp/tcmalloc;@' $openresty_install_dir/nginx/conf/nginx.conf
   
   # logrotate nginx log
   cat > /etc/logrotate.d/nginx << EOF
 $wwwlogs_dir/*nginx.log {
-daily
-rotate 5
-missingok
-dateext
-compress
-notifempty
-sharedscripts
-postrotate
+  daily
+  rotate 5
+  missingok
+  dateext
+  compress
+  notifempty
+  sharedscripts
+  postrotate
     [ -e /var/run/nginx.pid ] && kill -USR1 \`cat /var/run/nginx.pid\`
-endscript
+  endscript
 }
 EOF
   popd

@@ -44,5 +44,5 @@ Upgrade_phpMyAdmin() {
     chown -R ${run_user}.$run_user ${wwwroot_dir}/default/phpMyAdmin
     echo "You have ${CMSG}successfully${CEND} upgrade from ${CWARNING}$OLD_phpMyAdmin_version${CEND} to ${CWARNING}$NEW_phpMyAdmin_version${CEND}"
   fi
-  popd
+  popd > /dev/null
 }

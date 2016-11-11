@@ -126,13 +126,13 @@ Choose_env() {
 
   case "${NGX_FLAG}" in
     "php")
-      NGX_CONF=$(echo -e "location ~ [^/]\.php(/|$) {\n  #fastcgi_pass remote_php_ip:9000;\n  fastcgi_pass unix:/dev/shm/php-cgi.sock;\n  fastcgi_index index.php;\n  include fastcgi.conf;\n}")
+      NGX_CONF=$(echo -e "location ~ [^/]\.php(/|$) {\n    #fastcgi_pass remote_php_ip:9000;\n    fastcgi_pass unix:/dev/shm/php-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi.conf;\n  }")
       ;;
     "java")
-      NGX_CONF=$(echo -e "location ~ {\n  proxy_pass http://127.0.0.1:8080;\n  include proxy.conf;\n}")
+      NGX_CONF=$(echo -e "location ~ {\n    proxy_pass http://127.0.0.1:8080;\n    include proxy.conf;\n  }")
       ;;
     "hhvm")
-      NGX_CONF=$(echo -e "location ~ .*\.(php|php5)?$ {\n  fastcgi_pass unix:/var/log/hhvm/sock;\n  fastcgi_index index.php;\n  fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;\n  include fastcgi_params;\n}")
+      NGX_CONF=$(echo -e "location ~ .*\.(php|php5)?$ {\n    fastcgi_pass unix:/var/log/hhvm/sock;\n    fastcgi_index index.php;\n    fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;\n    include fastcgi_params;\n  }")
       ;;
   esac
 }
@@ -219,9 +219,9 @@ Create_SSL() {
           Cron_Command="/etc/init.d/httpd graceful"
         fi
         [ "${OS}" == "CentOS" ] && Cron_file=/var/spool/cron/root || Cron_file=/var/spool/cron/crontabs/root
-        [ -z "$(grep "${domain} ${moredomainame_D}" ${Cron_file})" ] && echo "0 10 * * 1 /usr/local/bin/certbot-auto certonly -a webroot --agree-tos --renew-by-default --webroot-path=${wwwroot_dir}/${domain} -d ${domain} ${moredomainame_D};${Cron_Command}" >> $Cron_file
+        [ -z "$(grep "${domain} ${moredomainame_D}" ${Cron_file})" ] && echo "0 10 * * 1 /usr/local/bin/certbot-auto certonly --agree-tos --renew-by-default --webroot -w ${wwwroot_dir}/${domain} -d ${domain} ${moredomainame_D};${Cron_Command}" >> $Cron_file
       else
-        echo "${CFAILURE}Error: Let's Encrypt SSL certificate installation failed${CEND}"
+        echo "${CFAILURE}Error: Let's Encrypt SSL certificate installation failed! ${CEND}"
         exit 1
       fi
     else
@@ -455,6 +455,8 @@ server {
   ${N_log}
   index index.html index.htm index.jsp;
   root ${vhostdir};
+  #error_page 404 = /404.html;
+  #error_page 502 = /502.html;
   ${Nginx_redirect}
   ${anti_hotlinking}
   location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|mp4|ico)$ {
@@ -465,9 +467,10 @@ server {
     expires 7d;
     access_log off;
   }
+  location ~ /\.ht {
+    deny all;
+  }
   ${NGX_CONF}
-  #error_page 404 = /404.html;
-  #error_page 502 = /502.html;
 }
 EOF
 
@@ -544,6 +547,8 @@ server {
   index index.html index.htm index.php;
   include ${web_install_dir}/conf/rewrite/${rewrite}.conf;
   root ${vhostdir};
+  #error_page 404 = /404.html;
+  #error_page 502 = /502.html;
   ${Nginx_redirect}
   ${anti_hotlinking}
   ${NGX_CONF}
@@ -555,8 +560,9 @@ server {
     expires 7d;
     access_log off;
   }
-  #error_page 404 = /404.html;
-  #error_page 502 = /502.html;
+  location ~ /\.ht {
+    deny all;
+  }
 }
 EOF
 
@@ -667,6 +673,7 @@ EOF
   echo "$(printf "%-30s" "Your domain:")${CMSG}${domain}${CEND}"
   echo "$(printf "%-30s" "Virtualhost conf:")${CMSG}${apache_install_dir}/conf/vhost/${domain}.conf${CEND}"
   echo "$(printf "%-30s" "Directory of:")${CMSG}${vhostdir}${CEND}"
+  [ "${apache_ssl_yn}" == 'y' ] && Print_ssl
 }
 
 Create_nginx_apache_mod-php_conf() {
@@ -699,6 +706,9 @@ server {
   location ~ .*\.(js|css)?$ {
     expires 7d;
     access_log off;
+  }
+  location ~ /\.ht {
+    deny all;
   }
 }
 EOF
@@ -820,7 +830,7 @@ Del_NGX_Vhost() {
             echo "${CWARNING}input error! ${CEND}"
           else
             if [ -e "${web_install_dir}/conf/vhost/${domain}.conf" ]; then
-              Directory=$(grep ^root ${web_install_dir}/conf/vhost/${domain}.conf | awk -F'[ ;]' '{print $2}')
+              Directory=$(grep '^  root' ${web_install_dir}/conf/vhost/${domain}.conf | head -1 | awk -F'[ ;]' '{print $(NF-1)}')
               rm -rf ${web_install_dir}/conf/vhost/${domain}.conf
               ${web_install_dir}/sbin/nginx -s reload
               while :; do echo
@@ -867,7 +877,7 @@ Del_Apache_Vhost() {
             echo "${CWARNING}input error! ${CEND}"
           else
             if [ -e "${apache_install_dir}/conf/vhost/${domain}.conf" ]; then
-              Directory=$(grep '^<Directory' ${apache_install_dir}/conf/vhost/${domain}.conf | awk -F'"' '{print $2}')
+              Directory=$(grep '^<Directory ' ${apache_install_dir}/conf/vhost/${domain}.conf | head -1 | awk -F'"' '{print $2}')
               rm -rf ${apache_install_dir}/conf/vhost/${domain}.conf
               /etc/init.d/httpd restart
               while :; do echo

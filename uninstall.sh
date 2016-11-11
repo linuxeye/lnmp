@@ -32,7 +32,7 @@ Usage(){
 Usage: $0 [  ${CMSG}all${CEND} | ${CMSG}web${CEND} | ${CMSG}db${CEND} | ${CMSG}php${CEND} | ${CMSG}hhvm${CEND} | ${CMSG}pureftpd${CEND} | ${CMSG}redis${CEND} | ${CMSG}memcached${CEND} ]
 ${CMSG}all${CEND}            --->Uninstall All
 ${CMSG}web${CEND}            --->Uninstall Nginx/Tengine/Apache/Tomcat
-${CMSG}db${CEND}             --->Uninstall MySQL/MariaDB/Percona
+${CMSG}db${CEND}             --->Uninstall MySQL/MariaDB/Percona/AliSQL
 ${CMSG}php${CEND}            --->Uninstall PHP
 ${CMSG}hhvm${CEND}           --->Uninstall HHVM
 ${CMSG}pureftpd${CEND}       --->Uninstall PureFtpd
@@ -176,7 +176,7 @@ while :; do
 What Are You Doing?
 \t${CMSG}0${CEND}. Uninstall All
 \t${CMSG}1${CEND}. Uninstall Nginx/Tengine/Apache/Tomcat
-\t${CMSG}2${CEND}. Uninstall MySQL/MariaDB/Percona
+\t${CMSG}2${CEND}. Uninstall MySQL/MariaDB/Percona/AliSQL
 \t${CMSG}3${CEND}. Uninstall PHP
 \t${CMSG}4${CEND}. Uninstall HHVM
 \t${CMSG}5${CEND}. Uninstall PureFtpd

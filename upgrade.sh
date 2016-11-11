@@ -31,6 +31,7 @@ sed -i "s@^oneinstack_dir.*@oneinstack_dir=`pwd`@" ./options.conf
 . ./include/upgrade_db.sh
 . ./include/upgrade_php.sh
 . ./include/upgrade_redis.sh
+. ./include/upgrade_memcached.sh
 . ./include/upgrade_phpmyadmin.sh
 
 # Check if user is root
@@ -42,11 +43,12 @@ IPADDR_COUNTRY=`./include/get_ipaddr_state.py $PUBLIC_IPADDR | awk '{print $1}'`
 
 Usage(){
   printf "
-Usage: $0 [ ${CMSG}web${CEND} | ${CMSG}db${CEND} | ${CMSG}php${CEND} | ${CMSG}redis${CEND} | ${CMSG}phpmyadmin${CEND} ]
+Usage: $0 [ ${CMSG}web${CEND} | ${CMSG}db${CEND} | ${CMSG}php${CEND} | ${CMSG}redis${CEND} | ${CMSG}memcached${CEND} | ${CMSG}phpmyadmin${CEND} ]
 ${CMSG}web${CEND}            --->Upgrade Nginx/Tengine/OpenResty
 ${CMSG}db${CEND}             --->Upgrade MySQL/MariaDB/Percona
 ${CMSG}php${CEND}            --->Upgrade PHP
 ${CMSG}redis${CEND}          --->Upgrade Redis
+${CMSG}memcached${CEND}      --->Upgrade Memcached 
 ${CMSG}phpmyadmin${CEND}     --->Upgrade phpMyAdmin
 
 "
@@ -60,13 +62,14 @@ What Are You Doing?
 \t${CMSG}2${CEND}. Upgrade MySQL/MariaDB/Percona
 \t${CMSG}3${CEND}. Upgrade PHP
 \t${CMSG}4${CEND}. Upgrade Redis
-\t${CMSG}5${CEND}. Upgrade phpMyAdmin
+\t${CMSG}5${CEND}. Upgrade Memcached 
+\t${CMSG}6${CEND}. Upgrade phpMyAdmin
 \t${CMSG}q${CEND}. Exit
 "
     echo
     read -p "Please input the correct option: " Number
-    if [[ ! $Number =~ ^[1-5,q]$ ]]; then
-      echo "${CWARNING}input error! Please only input 1,2,3,4,5 and q${CEND}"
+    if [[ ! $Number =~ ^[1-6,q]$ ]]; then
+      echo "${CWARNING}input error! Please only input 1,2,3,4,5,6 and q${CEND}"
     else
       case "$Number" in
       1)
@@ -88,6 +91,9 @@ What Are You Doing?
         Upgrade_Redis
         ;;
       5)
+        Upgrade_Memcached
+        ;;
+      6)
         Upgrade_phpMyAdmin
         ;;
       q)
@@ -119,6 +125,9 @@ elif [ $# == 1 ]; then
     ;;
   redis)
     Upgrade_Redis
+    ;;
+  memcached)
+    Upgrade_Memcached
     ;;
   phpmyadmin)
     Upgrade_phpMyAdmin

@@ -90,7 +90,7 @@ $wwwlogs_dir/*apache.log {
 EOF
 
   mkdir $apache_install_dir/conf/vhost
-  cat >> $apache_install_dir/conf/vhost/0.conf << EOF
+  cat > $apache_install_dir/conf/vhost/0.conf << EOF
 <VirtualHost *:$TMP_PORT>
   ServerAdmin admin@linuxeye.com
   DocumentRoot "$wwwroot_dir/default"

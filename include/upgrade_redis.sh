@@ -47,11 +47,12 @@ Upgrade_Redis() {
       service redis-server stop
       /bin/cp src/{redis-benchmark,redis-check-aof,redis-check-rdb,redis-cli,redis-sentinel,redis-server} $redis_install_dir/bin/
       service redis-server start
+      popd > /dev/null
       echo "You have ${CMSG}successfully${CEND} upgrade from ${CWARNING}$OLD_Redis_version${CEND} to ${CWARNING}$NEW_Redis_version${CEND}"
+      rm -rf redis-$NEW_Redis_version
     else
       echo "${CFAILURE}Upgrade Redis failed! ${CEND}"
     fi
-    popd > /dev/null
   fi
   popd > /dev/null
 }

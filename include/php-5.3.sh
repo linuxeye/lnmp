@@ -34,16 +34,18 @@ Install_PHP-5-3() {
     OpenSSL_args='--with-openssl'
   fi
   
-  tar xzf curl-$curl_version.tar.gz
-  pushd curl-$curl_version
   if [ "$Debian_version" == '8' -o "$Ubuntu_version" == '16' ]; then
+    tar xzf curl-7.35.0.tar.gz
+    pushd curl-7.35.0
     LDFLAGS="-Wl,-rpath=/usr/local/openssl/lib" ./configure --prefix=/usr/local --with-ssl=/usr/local/openssl
   else
+    tar xzf curl-$curl_version.tar.gz
+    pushd curl-$curl_version
     ./configure --prefix=/usr/local
   fi
   make -j ${THREAD} && make install
   popd
-  rm -rf curl-$curl_version
+  rm -rf curl-7.35.0 curl-$curl_version 
   
   tar xzf libmcrypt-$libmcrypt_version.tar.gz
   pushd libmcrypt-$libmcrypt_version

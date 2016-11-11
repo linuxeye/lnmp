@@ -137,7 +137,7 @@ EOF
 }
 
 Uninstall_letsencrypt() {
-  rm -rf /usr/local/bin/cerbot-auto /etc/letsencrypt /var/log/letsencrypt
+  rm -rf /usr/local/bin/cerbot-auto /etc/letsencrypt /var/log/letsencrypt /var/lib/letsencrypt
   [ "${OS}" == "CentOS" ] && Cron_file=/var/spool/cron/root || Cron_file=/var/spool/cron/crontabs/root
   sed -i '/certbot-auto/d' ${Cron_file}
   echo; echo "${CMSG}Let's Encrypt client uninstall completed${CEND}";

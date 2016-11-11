@@ -69,7 +69,6 @@ Install_Percona-5-7() {
   popd
 
   # my.cnf
-  [ -d "/etc/mysql" ] && /bin/mv /etc/mysql{,_bk}
   cat > /etc/my.cnf << EOF
 [client]
 port = 3306
@@ -201,7 +200,7 @@ EOF
   ${percona_install_dir}/bin/mysqld --initialize-insecure --user=mysql --basedir=${percona_install_dir} --datadir=${percona_data_dir}
 
   chown mysql.mysql -R ${percona_data_dir}
-  [ -d "/etc/mysql" ] && mv /etc/mysql{,_bk}
+  [ -d "/etc/mysql" ] && /bin/mv /etc/mysql{,_bk}
   service mysqld start
   [ -z "$(grep ^'export PATH=' /etc/profile)" ] && echo "export PATH=${percona_install_dir}/bin:\$PATH" >> /etc/profile
   [ -n "$(grep ^'export PATH=' /etc/profile)" -a -z "$(grep ${percona_install_dir} /etc/profile)" ] && sed -i "s@^export PATH=\(.*\)@export PATH=${percona_install_dir}/bin:\1@" /etc/profile

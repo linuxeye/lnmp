@@ -76,7 +76,7 @@ $wwwlogs_dir/*apache.log {
 EOF
 
   mkdir $apache_install_dir/conf/vhost
-  cat >> $apache_install_dir/conf/vhost/0.conf << EOF
+  cat > $apache_install_dir/conf/vhost/0.conf << EOF
 NameVirtualHost *:$TMP_PORT
 <VirtualHost *:$TMP_PORT>
   ServerAdmin admin@linuxeye.com

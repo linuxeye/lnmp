@@ -1,7 +1,7 @@
 # newest software version
 # Web
 nginx_version=1.10.2
-tengine_version=2.1.1
+tengine_version=2.1.2
 openresty_version=1.11.2.1
 openssl_version=1.0.2j
 
@@ -20,7 +20,7 @@ mysql_5_7_version=5.7.16
 mysql_5_6_version=5.6.34
 mysql_5_5_version=5.5.53
 
-mariadb_10_1_version=10.1.18
+mariadb_10_1_version=10.1.19
 mariadb_10_0_version=10.0.28
 mariadb_5_5_version=5.5.53
 
@@ -36,8 +36,8 @@ jdk_7_version=1.7.0_80
 jdk_6_version=1.6.0_45
 
 # PHP
-php_7_version=7.0.12
-php_6_version=5.6.27
+php_7_version=7.0.13
+php_6_version=5.6.28
 php_5_version=5.5.38
 php_4_version=5.4.45
 php_3_version=5.3.29
@@ -46,14 +46,14 @@ zendopcache_version=7.0.5
 xcache_version=3.2.0
 apcu_version=4.0.11
 apcu_for_php7_version=5.1.7
-ImageMagick_version=6.9.6-3
+ImageMagick_version=6.9.6-4
 imagick_version=3.4.1
 imagick_for_php53_version=3.3.0
 GraphicsMagick_version=1.3.25
 gmagick_for_php7_version=2.0.4RC1
 gmagick_version=1.1.7RC3
 libiconv_version=1.14
-curl_version=7.50.3
+curl_version=7.51.0
 libmcrypt_version=2.5.8
 mcrypt_version=2.6.8
 mhash_version=0.9.9.9
@@ -68,7 +68,7 @@ redis_pecl_for_php7_version=3.0.0
 redis_pecl_version=2.2.8
 
 # Memcached
-memcached_version=1.4.32
+memcached_version=1.4.33
 libmemcached_version=1.0.18
 memcached_pecl_version=2.2.0
 memcache_pecl_version=3.0.8
@@ -77,7 +77,7 @@ memcache_pecl_version=3.0.8
 phpMyAdmin_version=4.4.15.8
 
 # jemalloc
-jemalloc_version=4.2.1
+jemalloc_version=4.3.1
 
 # boost
 boost_version=1.59.0

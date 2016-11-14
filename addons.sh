@@ -13,7 +13,7 @@ clear
 printf "
 #######################################################################
 #       OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+      #
-#                  Install/Uninstall PHP Extensions                   #
+#                    Install/Uninstall Extensions                     #
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
@@ -75,9 +75,6 @@ if [ -e "${php_install_dir}/bin/phpize" ]; then
       kill -9 $$
       ;;
   esac
-else
-  echo "${CFAILURE}Couldn't find phpize! ${CEND}"
-  kill -9 $$
 fi
 
 # Check PHP Extensions
@@ -124,12 +121,26 @@ EOF
   fi
 
   pushd ${oneinstack_dir}/src
-  src_url=https://dl.eff.org/certbot-auto && Download_src
-  /bin/mv certbot-auto /usr/local/bin/
-  chmod +x /usr/local/bin/certbot-auto
-  certbot-auto -n
+  if [ "${OS}" == "CentOS" ]; then
+    pkgList="gcc dialog augeas-libs openssl openssl-devel libffi-devel redhat-rpm-config ca-certificates python python-devel python-virtualenv python-tools python-pip"
+    for Package in ${pkgList}; do
+      yum -y install ${Package}
+    done
+  elif [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]]; then
+    pkgList="python python-dev virtualenv python-virtualenv gcc dialog libaugeas0 augeas-lenses libssl-dev libffi-dev ca-certificates"
+    for Package in ${pkgList}; do
+      apt-get -y install $Package
+    done
+  fi
+  if [ ! -e "~/.pip/pip.conf" ] ;then
+    # get the IP information
+    PUBLIC_IPADDR=$(../include/get_public_ipaddr.py)
+    IPADDR_COUNTRY=$(../include/get_ipaddr_state.py $PUBLIC_IPADDR | awk '{print $1}')
+    [ "$IPADDR_COUNTRY"x != "CN"x ] && { mkdir ~/.pip; echo -e "[global]\nindex-url = https://pypi.tuna.tsinghua.edu.cn/simple" > ~/.pip/pip.conf; }
+  fi
+  pip install certbot
   popd
-  if [ -e "/root/.local/share/letsencrypt/bin/letsencrypt" ] && certbot-auto -h | grep '\-\-standalone' > /dev/null ; then
+  if [ -e "/usr/bin/certbot" ]; then
     echo; echo "${CSUCCESS}Let's Encrypt client installed successfully! ${CEND}"
   else
     echo; echo "${CFAILURE}Let's Encrypt client install failed, Please try again! ${CEND}"
@@ -137,9 +148,10 @@ EOF
 }
 
 Uninstall_letsencrypt() {
-  rm -rf /usr/local/bin/cerbot-auto /etc/letsencrypt /var/log/letsencrypt /var/lib/letsencrypt
+  pip uninstall -y certbot
+  rm -rf /etc/letsencrypt /var/log/letsencrypt /var/lib/letsencrypt
   [ "${OS}" == "CentOS" ] && Cron_file=/var/spool/cron/root || Cron_file=/var/spool/cron/crontabs/root
-  sed -i '/certbot-auto/d' ${Cron_file}
+  sed -i '/certbot/d' ${Cron_file}
   echo; echo "${CMSG}Let's Encrypt client uninstall completed${CEND}";
 }
 

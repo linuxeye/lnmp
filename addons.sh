@@ -132,15 +132,48 @@ EOF
       apt-get -y install $Package
     done
   fi
-  if [ ! -e "~/.pip/pip.conf" ] ;then
+  # Install Python27
+  if [ ! -e "${python_install_dir}/bin/python" ] ;then
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/Python-${python_version}.tgz && Download_src
+    tar xzf Python-${python_version}.tgz
+    pushd Python-${python_version}
+    ./configure --prefix=${python_install_dir}
+    make && make install
+    popd
+    rm -rf Python-${python_version}
+  fi
+
+  if [ ! -e "${python_install_dir}/bin/easy_install" ] ;then
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/setuptools-${setuptools_version}.tar.gz && Download_src
+    tar xzf setuptools-${setuptools_version}.tar.gz
+    pushd setuptools-${setuptools_version}
+    ${python_install_dir}/bin/python setup.py install
+    popd
+    rm -rf setuptools-${setuptools_version}
+  fi
+
+  if [ ! -e "${python_install_dir}/bin/pip" ] ;then
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/pip-${pip_version}.tar.gz && Download_src
+    tar xzf pip-${pip_version}.tar.gz
+    pushd pip-${pip_version}
+    ${python_install_dir}/bin/python setup.py install
+    popd
+    rm -rf pip-${pip_version}
+  fi
+
+  if [ ! -e "/root/.pip/pip.conf" ] ;then
     # get the IP information
     PUBLIC_IPADDR=$(../include/get_public_ipaddr.py)
     IPADDR_COUNTRY=$(../include/get_ipaddr_state.py $PUBLIC_IPADDR | awk '{print $1}')
-    [ "$IPADDR_COUNTRY"x != "CN"x ] && { mkdir ~/.pip; echo -e "[global]\nindex-url = https://pypi.tuna.tsinghua.edu.cn/simple" > ~/.pip/pip.conf; }
+    if [ "$IPADDR_COUNTRY"x != "CN"x ]; then
+      [ ! -d "/root/.pip" ] && mkdir /root/.pip
+      echo -e "[global]\nindex-url = https://pypi.tuna.tsinghua.edu.cn/simple" > /root/.pip/pip.conf
+    fi
   fi
-  pip install certbot
+
+  ${python_install_dir}/bin/pip install certbot
   popd
-  if [ -e "/usr/bin/certbot" ]; then
+  if [ -e "${python_install_dir}/bin/certbot" ]; then
     echo; echo "${CSUCCESS}Let's Encrypt client installed successfully! ${CEND}"
   else
     echo; echo "${CFAILURE}Let's Encrypt client install failed, Please try again! ${CEND}"
@@ -148,10 +181,10 @@ EOF
 }
 
 Uninstall_letsencrypt() {
-  pip uninstall -y certbot
-  rm -rf /etc/letsencrypt /var/log/letsencrypt /var/lib/letsencrypt
+  ${python_install_dir}/bin/pip uninstall -y certbot
+  rm -rf /etc/letsencrypt /var/log/letsencrypt /var/lib/letsencrypt ${python_install_dir}
   [ "${OS}" == "CentOS" ] && Cron_file=/var/spool/cron/root || Cron_file=/var/spool/cron/crontabs/root
-  sed -i '/certbot/d' ${Cron_file}
+  [ -e "$Cron_file" ] && sed -i '/certbot/d' ${Cron_file}
   echo; echo "${CMSG}Let's Encrypt client uninstall completed${CEND}";
 }
 

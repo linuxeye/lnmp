@@ -174,7 +174,7 @@ If you enter '.', the field will be left blank.
 }
 
 Create_SSL() {
-  if [ -e "/usr/bin/certbot" ]; then
+  if [ -e "${python_install_dir}/bin/certbot" ]; then
     while :; do echo
       read -p "Do you want to use a Let's Encrypt certificate? [y/n]: " letsencrypt_yn
       if [[ ! ${letsencrypt_yn} =~ ^[y,n]$ ]]; then
@@ -218,14 +218,21 @@ Create_SSL() {
   DocumentRoot "${vhostdir}"
   ServerName ${domain}
   ${Apache_Domain_alias}
-  ErrorLog "/dev/null" common
-  CustomLog "/dev/null" common
+<Directory "${vhostdir}">
+  SetOutputFilter DEFLATE
+  Options FollowSymLinks ExecCGI
+  Require all granted
+  AllowOverride All
+  Order allow,deny
+  Allow from all
+  DirectoryIndex index.html index.php
+</Directory>
 </VirtualHost>
 EOF
         /etc/init.d/httpd restart > /dev/null
       fi
 
-      certbot certonly --webroot --agree-tos --quiet --email ${Admin_Email} -w ${vhostdir} -d ${domain} ${moredomainame_D}
+      ${python_install_dir}/bin/certbot certonly --webroot --agree-tos --quiet --email ${Admin_Email} -w ${vhostdir} -d ${domain} ${moredomainame_D}
       if [ -s "/etc/letsencrypt/live/${domain}/cert.pem" ]; then
         [ -e "${PATH_SSL}/${domain}.crt" ] && rm -rf ${PATH_SSL}/${domain}.{crt,key}
         ln -s /etc/letsencrypt/live/${domain}/fullchain.pem ${PATH_SSL}/${domain}.crt
@@ -238,7 +245,7 @@ EOF
           Cron_Command="/etc/init.d/httpd graceful"
         fi
         [ "${OS}" == "CentOS" ] && Cron_file=/var/spool/cron/root || Cron_file=/var/spool/cron/crontabs/root
-        [ -z "$(grep 'certbot renew' ${Cron_file})" ] && echo "0 0 1 * * /usr/bin/certbot renew --renew-hook \"${Cron_Command}\"" >> $Cron_file
+        [ -z "$(grep 'certbot renew' ${Cron_file})" ] && echo "0 0 1 * * ${python_install_dir}/bin/certbot renew --renew-hook \"${Cron_Command}\"" >> $Cron_file
       else
         echo "${CFAILURE}Error: Let's Encrypt SSL certificate installation failed! ${CEND}"
         exit 1

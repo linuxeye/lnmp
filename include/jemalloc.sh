@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_jemalloc() {
+Install_Jemalloc() {
   pushd ${oneinstack_dir}/src
   tar xjf jemalloc-$jemalloc_version.tar.bz2
   pushd jemalloc-$jemalloc_version

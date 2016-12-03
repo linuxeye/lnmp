@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_MySQL-5-7() {
+Install_MySQL57() {
   pushd ${oneinstack_dir}/src
 
   id -u mysql >/dev/null 2>&1
@@ -18,12 +18,12 @@ Install_MySQL-5-7() {
   mkdir -p ${mysql_data_dir};chown mysql.mysql -R ${mysql_data_dir}
 
   if [ "${dbInstallMethods}" == "1" ]; then
-    tar xvf mysql-${mysql_5_7_version}-linux-glibc2.5-${SYS_BIT_b}.tar.gz
-    mv mysql-${mysql_5_7_version}-linux-glibc2.5-${SYS_BIT_b}/* ${mysql_install_dir}
+    tar xvf mysql-${mysql57_version}-linux-glibc2.5-${SYS_BIT_b}.tar.gz
+    mv mysql-${mysql57_version}-linux-glibc2.5-${SYS_BIT_b}/* ${mysql_install_dir}
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mysql_install_dir}/bin/mysqld_safe
   elif [ "${dbInstallMethods}" == "2" ]; then
-    tar xvf mysql-${mysql_5_7_version}.tar.gz
-    pushd mysql-${mysql_5_7_version}
+    tar xvf mysql-${mysql57_version}.tar.gz
+    pushd mysql-${mysql57_version}
     cmake . -DCMAKE_INSTALL_PREFIX=${mysql_install_dir} \
     -DMYSQL_DATADIR=${mysql_data_dir} \
     -DSYSCONFDIR=/etc \
@@ -47,13 +47,13 @@ Install_MySQL-5-7() {
   if [ -d "${mysql_install_dir}/support-files" ]; then
     echo "${CSUCCESS}MySQL installed successfully! ${CEND}"
     if [ "${dbInstallMethods}" == "1" ]; then
-      rm -rf mysql-${mysql_5_7_version}-*-${SYS_BIT_b}
+      rm -rf mysql-${mysql57_version}-*-${SYS_BIT_b}
     elif [ "${dbInstallMethods}" == "2" ]; then
-      rm -rf mysql-${mysql_5_7_version}
+      rm -rf mysql-${mysql57_version}
     fi
   else
     rm -rf ${mysql_install_dir}
-    rm -rf mysql-${mysql_5_7_version}
+    rm -rf mysql-${mysql57_version}
     echo "${CFAILURE}MySQL install failed, Please contact the author! ${CEND}"
     kill -9 $$
   fi

@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_PHP70() {
+Install_PHP71() {
   pushd ${oneinstack_dir}/src
   
   tar xzf libiconv-$libiconv_version.tar.gz
@@ -59,8 +59,8 @@ Install_PHP70() {
   id -u $run_user >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user
   
-  tar xzf php-$php70_version.tar.gz
-  pushd php-$php70_version
+  tar xzf php-$php71_version.tar.gz
+  pushd php-$php71_version
   make clean
   ./buildconf
   [ ! -d "$php_install_dir" ] && mkdir -p $php_install_dir
@@ -240,6 +240,6 @@ EOF
     service httpd restart
   fi
   popd
-  [ -e "$php_install_dir/bin/phpize" ] && rm -rf php-$php70_version
+  [ -e "$php_install_dir/bin/phpize" ] && rm -rf php-$php71_version
   popd
 }

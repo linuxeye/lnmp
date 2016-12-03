@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_PHP-5-6() {
+Install_PHP56() {
   pushd ${oneinstack_dir}/src
   
   tar xzf libiconv-$libiconv_version.tar.gz
@@ -59,8 +59,8 @@ Install_PHP-5-6() {
   id -u $run_user >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user
   
-  tar xzf php-$php_6_version.tar.gz
-  pushd php-$php_6_version
+  tar xzf php-$php56_version.tar.gz
+  pushd php-$php56_version
   make clean
   [ ! -d "$php_install_dir" ] && mkdir -p $php_install_dir
   [ "$PHP_cache" == '1' ] && PHP_cache_tmp='--enable-opcache' || PHP_cache_tmp='--disable-opcache'
@@ -234,6 +234,6 @@ EOF
     service httpd restart
   fi
   popd
-  [ -e "$php_install_dir/bin/phpize" ] && rm -rf php-$php_6_version
+  [ -e "$php_install_dir/bin/phpize" ] && rm -rf php-$php56_version
   popd
 }

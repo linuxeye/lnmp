@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_Percona-5-6() {
+Install_Percona56() {
   pushd ${oneinstack_dir}/src
 
   id -u mysql >/dev/null 2>&1
@@ -18,13 +18,13 @@ Install_Percona-5-6() {
   mkdir -p ${percona_data_dir};chown mysql.mysql -R ${percona_data_dir}
 
   if [ "${dbInstallMethods}" == "1" ]; then
-    perconaVerStr1=$(echo ${percona_5_6_version} | sed "s@-@-rel@")
+    perconaVerStr1=$(echo ${percona56_version} | sed "s@-@-rel@")
     tar xvf Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.${sslLibVer}.tar.gz
     mv Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.${sslLibVer}/* ${percona_install_dir}
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${percona_install_dir}/bin/mysqld_safe
   elif [ "${dbInstallMethods}" == "2" ]; then
-    tar xvf percona-server-${percona_5_6_version}.tar.gz
-    pushd percona-server-${percona_5_6_version}
+    tar xvf percona-server-${percona56_version}.tar.gz
+    pushd percona-server-${percona56_version}
     cmake . -DCMAKE_INSTALL_PREFIX=${percona_install_dir} \
     -DMYSQL_DATADIR=${percona_data_dir} \
     -DSYSCONFDIR=/etc \
@@ -51,11 +51,11 @@ Install_Percona-5-6() {
     if [ "${dbInstallMethods}" == "1" ]; then
       rm -rf Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.${sslLibVer}
     elif [ "${dbInstallMethods}" == "2" ]; then
-      rm -rf percona-server-${percona_5_6_version}
+      rm -rf percona-server-${percona56_version}
     fi
   else
     rm -rf ${percona_install_dir}
-    rm -rf percona-server-${percona_5_6_version}
+    rm -rf percona-server-${percona56_version}
     echo "${CFAILURE}Percona install failed, Please contact the author! ${CEND}"
     kill -9 $$
   fi

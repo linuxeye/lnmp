@@ -8,12 +8,12 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_Apache-2-2() {
+Install_Apache22() {
   pushd ${oneinstack_dir}/src
   id -u $run_user >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user
-  tar xzf httpd-$apache_2_version.tar.gz
-  pushd httpd-$apache_2_version
+  tar xzf httpd-$apache22_version.tar.gz
+  pushd httpd-$apache22_version
   [ ! -d "$apache_install_dir" ] && mkdir -p $apache_install_dir
   [ "${Ubuntu_version}" == "12" ] && sed -i '@SSL_PROTOCOL_SSLV2@d' modules/ssl/ssl_engine_io.c
   LDFLAGS=-ldl ./configure --prefix=$apache_install_dir --with-mpm=prefork --with-included-apr --enable-headers --enable-deflate --enable-so --enable-rewrite --enable-ssl --with-ssl --enable-expires --enable-static-support --enable-suexec --enable-modules=all --enable-mods-shared=all
@@ -22,7 +22,7 @@ Install_Apache-2-2() {
   if [ -e "$apache_install_dir/conf/httpd.conf" ]; then
     echo "${CSUCCESS}Apache installed successfully! ${CEND}"
     popd
-    rm -rf httpd-$apache_2_version
+    rm -rf httpd-$apache22_version
   else
     rm -rf $apache_install_dir
     echo "${CFAILURE}Apache install failed, Please contact the author! ${CEND}"

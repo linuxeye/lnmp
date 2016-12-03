@@ -224,10 +224,11 @@ while :; do echo
         echo -e "\t${CMSG}3${CEND}. Install php-5.5"
         echo -e "\t${CMSG}4${CEND}. Install php-5.6"
         echo -e "\t${CMSG}5${CEND}. Install php-7.0"
-        read -p "Please input a number:(Default 3 press Enter) " PHP_version
-        [ -z "$PHP_version" ] && PHP_version=3
-        if [[ ! $PHP_version =~ ^[1-5]$ ]]; then
-          echo "${CWARNING}input error! Please only input number 1,2,3,4,5${CEND}"
+        echo -e "\t${CMSG}6${CEND}. Install php-7.1"
+        read -p "Please input a number:(Default 4 press Enter) " PHP_version
+        [ -z "$PHP_version" ] && PHP_version=4
+        if [[ ! $PHP_version =~ ^[1-6]$ ]]; then
+          echo "${CWARNING}input error! Please only input number 1,2,3,4,5,6${CEND}"
         else
           while :; do echo
             read -p "Do you want to install opcode cache of the PHP? [y/n]: " PHP_cache_yn
@@ -297,7 +298,7 @@ while :; do echo
                     fi
                   done
                 fi
-                if [ $PHP_version == 5 ]; then
+                if [[ $PHP_version =~ ^[5-6]$ ]]; then 
                   while :; do
                     echo 'Please select a opcode cache of the PHP:'
                     echo -e "\t${CMSG}1${CEND}. Install Zend OPcache"
@@ -388,7 +389,7 @@ while :; do echo
 done
 
 # check phpMyAdmin
-if [[ $PHP_version =~ ^[1-5]$ ]] || [ -e "$php_install_dir/bin/phpize" ]; then
+if [[ $PHP_version =~ ^[1-6]$ ]] || [ -e "$php_install_dir/bin/phpize" ]; then
   while :; do echo
     read -p "Do you want to install phpMyAdmin? [y/n]: " phpMyAdmin_yn
     if [[ ! $phpMyAdmin_yn =~ ^[y,n]$ ]]; then
@@ -489,7 +490,7 @@ installDepsBySrc 2>&1 | tee -a ${oneinstack_dir}/install.log
 if [[ $Nginx_version =~ ^[1-3]$ ]] || [ "$DB_yn" == 'y' -a "$DB_version" != '10' ]; then
   if [ ! -e "/usr/local/lib/libjemalloc.so" ]; then
     . include/jemalloc.sh
-    Install_jemalloc | tee -a $oneinstack_dir/install.log
+    Install_Jemalloc | tee -a $oneinstack_dir/install.log
   fi
 fi
 
@@ -501,15 +502,15 @@ case "${DB_version}" in
       installBoost 2>&1 | tee -a ${oneinstack_dir}/install.log
     fi
     . include/mysql-5.7.sh
-    Install_MySQL-5-7 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install_MySQL57 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   2)
     . include/mysql-5.6.sh
-    Install_MySQL-5-6 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install_MySQL56 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   3)
     . include/mysql-5.5.sh
-    Install_MySQL-5-5 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install_MySQL55 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   4)
     if [ "${dbInstallMethods}" == "2" ]; then
@@ -517,15 +518,15 @@ case "${DB_version}" in
       installBoost 2>&1 | tee -a ${oneinstack_dir}/install.log
     fi
     . include/mariadb-10.1.sh
-    Install_MariaDB-10-1 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install_MariaDB101 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   5)
     . include/mariadb-10.0.sh
-    Install_MariaDB-10-0 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install_MariaDB100 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   6)
     . include/mariadb-5.5.sh
-    Install_MariaDB-5-5 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install_MariaDB55 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   7)
     if [ "${dbInstallMethods}" == "2" ]; then
@@ -533,52 +534,56 @@ case "${DB_version}" in
       installBoost 2>&1 | tee -a ${oneinstack_dir}/install.log
     fi
     . include/percona-5.7.sh
-    Install_Percona-5-7 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install_Percona57 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   8)
     . include/percona-5.6.sh
-    Install_Percona-5-6 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install_Percona56 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   9)
     . include/percona-5.5.sh
-    Install_Percona-5-5 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install_Percona55 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   10)
     . include/alisql-5.6.sh
-    Install_AliSQL-5-6 2>&1 | tee -a $oneinstack_dir/install.log
+    Install_AliSQL56 2>&1 | tee -a $oneinstack_dir/install.log
     ;;
 esac
 
 # Apache
 if [ "$Apache_version" == '1' ]; then
   . include/apache-2.4.sh
-  Install_Apache-2-4 2>&1 | tee -a $oneinstack_dir/install.log
+  Install_Apache24 2>&1 | tee -a $oneinstack_dir/install.log
 elif [ "$Apache_version" == '2' ]; then
   . include/apache-2.2.sh
-  Install_Apache-2-2 2>&1 | tee -a $oneinstack_dir/install.log
+  Install_Apache22 2>&1 | tee -a $oneinstack_dir/install.log
 fi
 
 # PHP
 case "${PHP_version}" in
   1)
     . include/php-5.3.sh
-    Install_PHP-5-3 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install_PHP53 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   2)
     . include/php-5.4.sh
-    Install_PHP-5-4 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install_PHP54 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   3)
     . include/php-5.5.sh
-    Install_PHP-5-5 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install_PHP55 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   4)
     . include/php-5.6.sh
-    Install_PHP-5-6 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install_PHP56 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   5)
     . include/php-7.0.sh
-    Install_PHP-7-0 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install_PHP70 2>&1 | tee -a ${oneinstack_dir}/install.log
+    ;;
+  6)
+    . include/php-7.1.sh
+    Install_PHP71 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
 esac
 
@@ -649,30 +654,30 @@ esac
 case "${JDK_version}" in
   1)
     . include/jdk-1.8.sh
-    Install-JDK-1-8 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install-JDK18 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   2)
     . include/jdk-1.7.sh
-    Install-JDK-1-7 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install-JDK17 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   3)
     . include/jdk-1.6.sh
-    Install-JDK-1-6 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install-JDK16 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
 esac
 
 case "${Tomcat_version}" in
   1)
     . include/tomcat-8.sh
-    Install_tomcat-8 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install_Tomcat8 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   2)
     . include/tomcat-7.sh
-    Install_tomcat-7 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install_Tomcat7 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   3)
     . include/tomcat-6.sh
-    Install_tomcat-6 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install_Tomcat6 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
 esac
 

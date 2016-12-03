@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_PHP-5-5() {
+Install_PHP55() {
   pushd ${oneinstack_dir}/src
   
   tar xzf libiconv-$libiconv_version.tar.gz
@@ -58,9 +58,9 @@ Install_PHP-5-5() {
   
   id -u $run_user >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user
-  tar xzf php-$php_5_version.tar.gz
-  patch -d php-$php_5_version -p0 < fpm-race-condition.patch
-  pushd php-$php_5_version
+  tar xzf php-$php55_version.tar.gz
+  patch -d php-$php55_version -p0 < fpm-race-condition.patch
+  pushd php-$php55_version
   [ ! -d "$php_install_dir" ] && mkdir -p $php_install_dir
   [ "$PHP_cache" == '1' ] && PHP_cache_tmp='--enable-opcache' || PHP_cache_tmp='--disable-opcache'
   if [[ $Apache_version =~ ^[1-2]$ ]] || [ -e "$apache_install_dir/bin/apxs" ]; then
@@ -233,6 +233,6 @@ EOF
     service httpd restart
   fi
   popd
-  [ -e "$php_install_dir/bin/phpize" ] && rm -rf php-$php_5_version
+  [ -e "$php_install_dir/bin/phpize" ] && rm -rf php-$php55_version
   popd
 }

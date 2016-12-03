@@ -8,16 +8,16 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_tomcat-6() {
+Install_Tomcat6() {
   pushd ${oneinstack_dir}/src
   . /etc/profile
 
   id -u ${run_user} >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /bin/bash ${run_user} || { [ -z "$(grep ^${run_user} /etc/passwd | grep '/bin/bash')" ] && usermod -s /bin/bash ${run_user}; }
 
-  tar xzf apache-tomcat-${tomcat_6_version}.tar.gz
+  tar xzf apache-tomcat-${tomcat6_version}.tar.gz
   [ ! -d "${tomcat_install_dir}" ] && mkdir -p ${tomcat_install_dir}
-  /bin/cp -R apache-tomcat-${tomcat_6_version}/* ${tomcat_install_dir}
+  /bin/cp -R apache-tomcat-${tomcat6_version}/* ${tomcat_install_dir}
   rm -rf ${tomcat_install_dir}/webapps/{docs,examples,host-manager,manager,ROOT/*}
 
   if [ ! -e "${tomcat_install_dir}/conf/server.xml" ]; then
@@ -81,7 +81,7 @@ EOF
 
     [ ! -d "${tomcat_install_dir}/conf/vhost" ] && mkdir ${tomcat_install_dir}/conf/vhost
     cat > ${tomcat_install_dir}/conf/vhost/localhost.xml << EOF
-<Host name="localhost" appBase="webapps" unpackWARs="true" autoDeploy="true">
+<Host name="localhost" appBase="${wwwroot_dir}/default" unpackWARs="true" autoDeploy="true">
   <Context path="" docBase="${wwwroot_dir}/default" debug="0" reloadable="false" crossContext="true"/>
   <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
     prefix="localhost_access_log." suffix=".txt" pattern="%h %l %u %t &quot;%r&quot; %s %b" />
@@ -118,7 +118,7 @@ EOF
     [ "${OS}" == "CentOS" ] && { chkconfig --add tomcat; chkconfig tomcat on; }
     [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]] && update-rc.d tomcat defaults
     echo "${CSUCCESS}Tomcat installed successfully! ${CEND}"
-    rm -rf apache-tomcat-${tomcat_6_version}
+    rm -rf apache-tomcat-${tomcat6_version}
   else
     popd
     echo "${CFAILURE}Tomcat install failed, Please contact the author! ${CEND}"

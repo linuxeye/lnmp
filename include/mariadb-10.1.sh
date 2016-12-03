@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_MariaDB-10-1() {
+Install_MariaDB101() {
   pushd ${oneinstack_dir}/src
 
   id -u mysql >/dev/null 2>&1
@@ -18,12 +18,12 @@ Install_MariaDB-10-1() {
   mkdir -p ${mariadb_data_dir};chown mysql.mysql -R ${mariadb_data_dir}
 
   if [ "${dbInstallMethods}" == "1" ]; then
-    tar zxf mariadb-${mariadb_10_1_version}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
-    mv mariadb-${mariadb_10_1_version}-*-${SYS_BIT_b}/* ${mariadb_install_dir}
+    tar zxf mariadb-${mariadb101_version}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
+    mv mariadb-${mariadb101_version}-*-${SYS_BIT_b}/* ${mariadb_install_dir}
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mariadb_install_dir}/bin/mysqld_safe
   elif [ "${dbInstallMethods}" == "2" ]; then
-    tar xvf mariadb-${mariadb_10_1_version}.tar.gz
-    pushd mariadb-${mariadb_10_1_version}
+    tar xvf mariadb-${mariadb101_version}.tar.gz
+    pushd mariadb-${mariadb101_version}
     cmake . -DCMAKE_INSTALL_PREFIX=${mariadb_install_dir} \
     -DMYSQL_DATADIR=${mariadb_data_dir} \
     -DSYSCONFDIR=/etc \
@@ -47,13 +47,13 @@ Install_MariaDB-10-1() {
   if [ -d "${mariadb_install_dir}/support-files" ]; then
     echo "${CSUCCESS}MariaDB installed successfully! ${CEND}"
     if [ "${dbInstallMethods}" == "1" ]; then
-      rm -rf mariadb-${mariadb_10_1_version}-*-${SYS_BIT_b}
+      rm -rf mariadb-${mariadb101_version}-*-${SYS_BIT_b}
     elif [ "${dbInstallMethods}" == "2" ]; then
-      rm -rf mariadb-${mariadb_10_1_version}
+      rm -rf mariadb-${mariadb101_version}
     fi
   else
     rm -rf ${mariadb_install_dir}
-    rm -rf mariadb-${mariadb_10_1_version}
+    rm -rf mariadb-${mariadb101_version}
     echo "${CFAILURE}MariaDB install failed, Please contact the author! ${CEND}"
     kill -9 $$
   fi

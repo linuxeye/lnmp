@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_Percona-5-7() {
+Install_Percona57() {
   pushd ${oneinstack_dir}/src
 
   id -u mysql >/dev/null 2>&1
@@ -18,12 +18,12 @@ Install_Percona-5-7() {
   mkdir -p ${percona_data_dir};chown mysql.mysql -R ${percona_data_dir}
 
   if [ "${dbInstallMethods}" == "1" ]; then
-    tar xvf Percona-Server-${percona_5_7_version}-Linux.${SYS_BIT_b}.${sslLibVer}.tar.gz
-    mv Percona-Server-${percona_5_7_version}-Linux.${SYS_BIT_b}.${sslLibVer}/* ${percona_install_dir}
+    tar xvf Percona-Server-${percona57_version}-Linux.${SYS_BIT_b}.${sslLibVer}.tar.gz
+    mv Percona-Server-${percona57_version}-Linux.${SYS_BIT_b}.${sslLibVer}/* ${percona_install_dir}
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${percona_install_dir}/bin/mysqld_safe
   elif [ "${dbInstallMethods}" == "2" ]; then
-    tar xvf percona-server-${percona_5_7_version}.tar.gz
-    pushd percona-server-${percona_5_7_version}
+    tar xvf percona-server-${percona57_version}.tar.gz
+    pushd percona-server-${percona57_version}
     cmake . -DCMAKE_INSTALL_PREFIX=${percona_install_dir} \
     -DMYSQL_DATADIR=${percona_data_dir} \
     -DSYSCONFDIR=/etc \
@@ -49,13 +49,13 @@ Install_Percona-5-7() {
   if [ -d "${percona_install_dir}/support-files" ]; then
     echo "${CSUCCESS}Percona installed successfully! ${CEND}"
     if [ "${dbInstallMethods}" == "1" ]; then
-      rm -rf Percona-Server-${percona_5_7_version}-Linux.${SYS_BIT_b}.${sslLibVer}
+      rm -rf Percona-Server-${percona57_version}-Linux.${SYS_BIT_b}.${sslLibVer}
     elif [ "${dbInstallMethods}" == "2" ]; then
-      rm -rf percona-server-${percona_5_7_version}
+      rm -rf percona-server-${percona57_version}
     fi
   else
     rm -rf ${percona_install_dir}
-    rm -rf percona-server-${percona_5_7_version}
+    rm -rf percona-server-${percona57_version}
     echo "${CFAILURE}Percona install failed, Please contact the author! ${CEND}"
     kill -9 $$
   fi

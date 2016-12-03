@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_AliSQL-5-6() {
+Install_AliSQL56() {
   pushd ${oneinstack_dir}/src
 
   id -u mysql >/dev/null 2>&1
@@ -17,8 +17,8 @@ Install_AliSQL-5-6() {
   [ ! -d "${alisql_install_dir}" ] && mkdir -p ${alisql_install_dir}
   mkdir -p ${alisql_data_dir};chown mysql.mysql -R ${alisql_data_dir}
 
-  tar xvf alisql-${alisql_5_6_version}.tar.gz
-  pushd alisql-${alisql_5_6_version}
+  tar xvf alisql-${alisql56_version}.tar.gz
+  pushd alisql-${alisql56_version}
   cmake . -DCMAKE_INSTALL_PREFIX=${alisql_install_dir} \
   -DMYSQL_DATADIR=${alisql_data_dir} \
   -DSYSCONFDIR=/etc \
@@ -39,10 +39,10 @@ Install_AliSQL-5-6() {
 
   if [ -d "${alisql_install_dir}/support-files" ]; then
     echo "${CSUCCESS}AliSQL installed successfully! ${CEND}"
-    rm -rf alisql-${alisql_5_6_version}
+    rm -rf alisql-${alisql56_version}
   else
     rm -rf ${alisql_install_dir}
-    rm -rf alisql-${alisql_5_6_version}
+    rm -rf alisql-${alisql56_version}
     echo "${CFAILURE}AliSQL install failed, Please contact the author! ${CEND}"
     kill -9 $$
   fi

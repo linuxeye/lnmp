@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_PHP-5-4() {
+Install_PHP54() {
   pushd ${oneinstack_dir}/src
   
   tar xzf libiconv-$libiconv_version.tar.gz
@@ -59,9 +59,9 @@ Install_PHP-5-4() {
   id -u $run_user >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user
   
-  tar xzf php-$php_4_version.tar.gz
-  patch -d php-$php_4_version -p0 < fpm-race-condition.patch
-  pushd php-$php_4_version
+  tar xzf php-$php54_version.tar.gz
+  patch -d php-$php54_version -p0 < fpm-race-condition.patch
+  pushd php-$php54_version
   make clean
   [ ! -d "$php_install_dir" ] && mkdir -p $php_install_dir
   if [[ $Apache_version =~ ^[1-2]$ ]] || [ -e "$apache_install_dir/bin/apxs" ]; then
@@ -220,6 +220,6 @@ EOF
     service httpd restart
   fi
   popd
-  [ -e "$php_install_dir/bin/phpize" ] && rm -rf php-$php_4_version
+  [ -e "$php_install_dir/bin/phpize" ] && rm -rf php-$php54_version
   popd
 }

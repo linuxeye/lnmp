@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_PHP-5-3() {
+Install_PHP53() {
   pushd ${oneinstack_dir}/src
   
   tar xzf libiconv-$libiconv_version.tar.gz
@@ -82,9 +82,9 @@ Install_PHP-5-3() {
   id -u $run_user >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user
   
-  tar xzf php-$php_3_version.tar.gz
-  patch -d php-$php_3_version -p0 < fpm-race-condition.patch
-  pushd php-$php_3_version
+  tar xzf php-$php53_version.tar.gz
+  patch -d php-$php53_version -p0 < fpm-race-condition.patch
+  pushd php-$php53_version
   patch -p1 < ../php5.3patch
   patch -p1 < ../debian_patches_disable_SSLv2_for_openssl_1_0_0.patch
   make clean
@@ -246,6 +246,6 @@ EOF
     service httpd restart
   fi
   popd
-  [ -e "$php_install_dir/bin/phpize" ] && rm -rf php-$php_3_version
+  [ -e "$php_install_dir/bin/phpize" ] && rm -rf php-$php53_version
   popd
 }

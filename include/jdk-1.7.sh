@@ -8,12 +8,12 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install-JDK-1-7() {
+Install-JDK17() {
   pushd ${oneinstack_dir}/src
 
-  JDK_FILE="jdk-`echo $jdk_7_version | awk -F. '{print $2}'`u`echo $jdk_7_version | awk -F_ '{print $NF}'`-linux-$SYS_BIG_FLAG.tar.gz"
+  JDK_FILE="jdk-`echo $jdk17_version | awk -F. '{print $2}'`u`echo $jdk17_version | awk -F_ '{print $NF}'`-linux-$SYS_BIG_FLAG.tar.gz"
   JAVA_dir=/usr/java
-  JDK_NAME="jdk$jdk_7_version"
+  JDK_NAME="jdk$jdk17_version"
   JDK_PATH=$JAVA_dir/$JDK_NAME
   
   [ "$OS" == 'CentOS' ] && [ -n "`rpm -qa | grep jdk`" ] && rpm -e `rpm -qa | grep jdk`

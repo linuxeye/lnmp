@@ -442,6 +442,16 @@ while :; do echo
   fi
 done
 
+#htop
+while :; do echo
+  read -p "Do you want to install HTOP? [y/n]: " HTOP_yn
+  if [[ ! $HTOP_yn =~ ^[y,n]$ ]]; then
+    echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
+  else
+    break
+  fi
+done
+
 # get the IP information
 IPADDR=`./include/get_ipaddr.py`
 PUBLIC_IPADDR=`./include/get_public_ipaddr.py`
@@ -721,6 +731,12 @@ fi
 if [ "${HHVM_yn}" == 'y' ]; then
   . include/hhvm_CentOS.sh
   Install_hhvm_CentOS 2>&1 | tee -a ${oneinstack_dir}/install.log
+fi
+
+# HTOP
+if [ "${HTOP_yn}" == 'y' ]; then
+  . include/htop.sh
+  Install_htop 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # Starting DB

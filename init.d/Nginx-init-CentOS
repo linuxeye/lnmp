@@ -59,7 +59,7 @@ start() {
 
 stop() {
   echo -n $"Stopping $prog: "
-  killproc $prog -QUIT
+  $nginx -s stop
   retval=$?
   echo
   [ $retval -eq 0 ] && rm -f $lockfile
@@ -76,7 +76,7 @@ restart() {
 reload() {
   configtest || return $?
   echo -n $"Reloading $prog: "
-  killproc $nginx -HUP
+  $nginx -s reload
   RETVAL=$?
   echo
 }

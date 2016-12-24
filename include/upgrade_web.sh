@@ -159,7 +159,7 @@ Upgrade_OpenResty() {
     openresty_version_tmp=${NEW_OpenResty_version%.*}
     sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' bundle/nginx-$openresty_version_tmp/auto/cc/gcc # close debug
     $openresty_install_dir/nginx/sbin/nginx -V &> $$
-    ./configure --prefix=$openresty_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-openssl=../openssl-$openssl_version --with-pcre=../pcre-$pcre_version --with-pcre-jit --with-ld-opt='-ljemalloc' 
+    ./configure --prefix=$openresty_install_dir --user=$run_user --group=$run_user --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-openssl=../openssl-$openssl_version --with-pcre=../pcre-$pcre_version --with-pcre-jit --with-ld-opt='-ljemalloc' $nginx_modules_options 
     make -j ${THREAD}
     if [ -f "build/nginx-$openresty_version_tmp/objs/nginx" ]; then
       /bin/mv $openresty_install_dir/nginx/sbin/nginx{,`date +%m%d`}

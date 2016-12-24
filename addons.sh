@@ -132,13 +132,14 @@ EOF
       apt-get -y install $Package
     done
   fi
-  # Install Python27
-  if [ ! -e "${python_install_dir}/bin/python" ] ;then
+  # Install Python
+  if [ ! -e "${python_install_dir}/bin/python" -a ! -e "${python_install_dir}/bin/python3" ] ;then
     src_url=http://mirrors.linuxeye.com/oneinstack/src/Python-${python_version}.tgz && Download_src
     tar xzf Python-${python_version}.tgz
     pushd Python-${python_version}
     ./configure --prefix=${python_install_dir}
     make && make install
+    [ ! -e "${python_install_dir}/bin/python" -a -e "${python_install_dir}/bin/python3" ] && ln -s ${python_install_dir}/bin/python{3,}
     popd
     rm -rf Python-${python_version}
   fi
@@ -181,7 +182,7 @@ EOF
 }
 
 Uninstall_letsencrypt() {
-  ${python_install_dir}/bin/pip uninstall -y certbot
+  ${python_install_dir}/bin/pip uninstall -y certbot > /dev/null 2>&1
   rm -rf /etc/letsencrypt /var/log/letsencrypt /var/lib/letsencrypt ${python_install_dir}
   [ "${OS}" == "CentOS" ] && Cron_file=/var/spool/cron/root || Cron_file=/var/spool/cron/crontabs/root
   [ -e "$Cron_file" ] && sed -i '/certbot/d' ${Cron_file}
@@ -396,6 +397,7 @@ What Are You Doing?
           ./configure --with-php-config=${php_install_dir}/bin/php-config
           make -j ${THREAD} && make install
           popd;popd
+          rm -rf php-${PHP_detail_version}
           echo "extension=fileinfo.so" > ${php_install_dir}/etc/php.d/ext-fileinfo.ini
           Check_succ
         else

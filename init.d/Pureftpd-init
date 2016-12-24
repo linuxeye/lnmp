@@ -24,11 +24,9 @@
 RETVAL=0
 
 # Path to the pure-ftp binaries.
-prog=pure-config.pl
-fullpath=/usr/local/pureftpd/sbin/$prog
-pureftpwho=/usr/local/pureftpd/sbin/pure-ftpwho
+prog=pure-ftpd
+fullpath=/usr/local/pureftpd/sbin/pure-config.pl
 pure_config=/usr/local/pureftpd/etc/pure-ftpd.conf
-
 
 start() {
   echo -n $"Starting $prog: "
@@ -57,23 +55,11 @@ case "$1" in
     stop
     start
     ;;
-  condrestart)
-    if [ -f /var/lock/subsys/$prog ] ; then
-      stop
-      # avoid race
-      sleep 3
-      start
-    fi
-    ;;
   status)
     status $prog
-    RETVAL=$?
-    if [ -f $pureftpwho ] && [ $RETVAL -eq 0 ] ; then
-      $pureftpwho
-    fi
     ;;
   *)
-    echo $"Usage: $prog {start|stop|restart|condrestart|status}"
+    echo $"Usage: $prog {start|stop|restart|status}"
     RETVAL=1
 esac
 exit $RETVAL

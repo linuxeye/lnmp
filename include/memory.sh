@@ -14,6 +14,7 @@ Swap=`free -m | awk '/Swap:/{print $2}'`
 if [ $Mem -le 640 ]; then
   Mem_level=512M
   Memory_limit=64
+  THREAD=1
 elif [ $Mem -gt 640 -a $Mem -le 1280 ]; then
   Mem_level=1G
   Memory_limit=128

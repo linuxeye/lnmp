@@ -9,18 +9,18 @@ tomcat8_version=8.0.30
 tomcat7_version=7.0.69
 tomcat6_version=6.0.45
 
-apache24_version=2.4.23
+apache24_version=2.4.25
 apache22_version=2.2.31
 pcre_version=8.39
 apr_version=1.5.2
 apr_util_version=1.5.4
 
 # DB
-mysql57_version=5.7.16
-mysql56_version=5.6.34
-mysql55_version=5.5.53
+mysql57_version=5.7.17
+mysql56_version=5.6.35
+mysql55_version=5.5.54
 
-mariadb101_version=10.1.19
+mariadb101_version=10.1.20
 mariadb100_version=10.0.28
 mariadb55_version=5.5.53
 
@@ -37,8 +37,8 @@ jdk16_version=1.6.0_45
 
 # PHP
 php71_version=7.1.0
-php70_version=7.0.13
-php56_version=5.6.28
+php70_version=7.0.14
+php56_version=5.6.29
 php55_version=5.5.38
 php54_version=5.4.45
 php53_version=5.3.29
@@ -47,14 +47,14 @@ zendopcache_version=7.0.5
 xcache_version=3.2.0
 apcu_version=4.0.11
 apcu_for_php7_version=5.1.7
-ImageMagick_version=6.9.6-6
+ImageMagick_version=6.9.7-0
 imagick_version=3.4.3RC1
 imagick_for_php53_version=3.3.0
 GraphicsMagick_version=1.3.25
 gmagick_for_php7_version=2.0.4RC1
 gmagick_version=1.1.7RC3
 libiconv_version=1.14
-curl_version=7.51.0
+curl_version=7.52.0
 libmcrypt_version=2.5.8
 mcrypt_version=2.6.8
 mhash_version=0.9.9.9
@@ -64,8 +64,8 @@ eaccelerator_version=0.9.6.1
 pureftpd_version=1.0.43
 
 # Redis
-redis_version=3.2.5
-redis_pecl_for_php7_version=3.0.0
+redis_version=3.2.6
+redis_pecl_for_php7_version=3.1.0
 redis_pecl_version=2.2.8
 
 # Memcached
@@ -78,16 +78,16 @@ memcache_pecl_version=3.0.8
 phpMyAdmin_version=4.4.15.9
 
 # jemalloc
-jemalloc_version=4.3.1
+jemalloc_version=4.4.0
 
 # boost
 boost_version=1.59.0
 
 # Others
 libevent_version=2.0.22-stable
-tmux_version=2.2
+tmux_version=2.3
 htop_version=2.0.2
 bison_version=2.7.1
-python_version=2.7.12
-setuptools_version=30.0.0
+python_version=2.7.13
+setuptools_version=32.0.0
 pip_version=9.0.1

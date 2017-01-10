@@ -15,6 +15,26 @@ Install_Tomcat7() {
   id -u ${run_user} >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /bin/bash ${run_user} || { [ -z "$(grep ^${run_user} /etc/passwd | grep '/bin/bash')" ] && usermod -s /bin/bash ${run_user}; }
 
+  # install openssl-1.0.2
+  if [ ! -e "${openssl_install_dir}/lib/libcrypto.a" ]; then
+    tar xzf openssl-${openssl_version}.tar.gz
+    pushd openssl-${openssl_version}
+    ./config --prefix=${openssl_install_dir} -fPIC shared zlib
+    make -j ${THREAD} && make install
+    popd
+    rm -rf openssl-${openssl_version}
+  fi
+
+  # install apr
+  if [ ! -e "/usr/local/apr/bin/apr-1-config" ]; then
+    tar xzf apr-${apr_version}.tar.gz
+    pushd apr-${apr_version}
+    ./configure
+    make -j ${THREAD} && make install
+    popd
+    rm -rf apr-${apr_version} 
+  fi
+
   tar xzf apache-tomcat-${tomcat7_version}.tar.gz
   [ ! -d "${tomcat_install_dir}" ] && mkdir -p ${tomcat_install_dir}
   /bin/cp -R apache-tomcat-${tomcat7_version}/* ${tomcat_install_dir}
@@ -37,17 +57,14 @@ Install_Tomcat7() {
   popd
   rm -rf ${tomcat_install_dir}/lib/catalina
 
-  [ "${OS}" == "CentOS" ] && yum -y install apr apr-devel
-  [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]] && apt-get -y install libapr1-dev libaprutil1-dev
   pushd ${tomcat_install_dir}/bin
   tar xzf tomcat-native.tar.gz
-  pushd tomcat-native-*-src/jni/native/
-    rm -rf /usr/local/apr
-    ./configure --with-apr=/usr/bin/apr-1-config
+  pushd tomcat-native-*-src/native
+    ./configure --with-apr=/usr/local/apr --with-ssl=${openssl_install_dir}
     make -j ${THREAD} && make install
   popd
   rm -rf tomcat-native-*
-  if [ -d "/usr/local/apr/lib" ]; then
+  if [ -e "/usr/local/apr/lib/libtcnative-1.la" ]; then
     [ ${Mem} -le 768 ] && let Xms_Mem="${Mem}/3" || Xms_Mem=256
     let XmxMem="${Mem}/2"
     cat > ${tomcat_install_dir}/bin/setenv.sh << EOF

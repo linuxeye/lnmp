@@ -205,7 +205,7 @@ Create_SSL() {
       if [ "${nginx_ssl_yn}" == 'y' ]; then 
         [ ! -d ${web_install_dir}/conf/vhost ] && mkdir ${web_install_dir}/conf/vhost
         echo "server {  server_name ${domain}${moredomainame};  root ${vhostdir};  access_log off; }" > ${web_install_dir}/conf/vhost/${domain}.conf
-        /etc/init.d/nginx reload > /dev/null
+        ${web_install_dir}/sbin/nginx -s reload
       fi
 
       if [ "${apache_ssl_yn}" == 'y' ]; then

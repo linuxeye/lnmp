@@ -21,15 +21,15 @@ Install_PHP53() {
   
   # Problem building php-5.3 with openssl
   if [ "$Debian_version" == '8' -o "$Ubuntu_version" == '16' ]; then
-    if [ ! -e '/usr/local/openssl/lib/libcrypto.a' ]; then
+    if [ ! -e '/usr/local/openssl100s/lib/libcrypto.a' ]; then
       tar xzf openssl-1.0.0s.tar.gz
       pushd openssl-1.0.0s
-      ./config --prefix=/usr/local/openssl -fPIC shared zlib
+      ./config --prefix=/usr/local/openssl100s -fPIC shared zlib
       make -j ${THREAD} && make install
       popd 
       rm -rf openssl-1.0.0s
     fi
-    OpenSSL_args='--with-openssl=/usr/local/openssl'
+    OpenSSL_args='--with-openssl=/usr/local/openssl100s'
   else
     OpenSSL_args='--with-openssl'
   fi
@@ -37,7 +37,7 @@ Install_PHP53() {
   if [ "$Debian_version" == '8' -o "$Ubuntu_version" == '16' ]; then
     tar xzf curl-7.35.0.tar.gz
     pushd curl-7.35.0
-    LDFLAGS="-Wl,-rpath=/usr/local/openssl/lib" ./configure --prefix=/usr/local --with-ssl=/usr/local/openssl
+    LDFLAGS="-Wl,-rpath=/usr/local/openssl100s/lib" ./configure --prefix=/usr/local --with-ssl=/usr/local/openssl100s
   else
     tar xzf curl-$curl_version.tar.gz
     pushd curl-$curl_version

@@ -40,6 +40,7 @@ checkDownload() {
       echo "Download apache 2.4..."
       src_url=http://archive.apache.org/dist/apr/apr-${apr_version}.tar.gz && Download_src
       src_url=http://archive.apache.org/dist/apr/apr-util-${apr_util_version}.tar.gz && Download_src
+      src_url=http://mirrors.linuxeye.com/apache/httpd/nghttp2-${nghttp2_version}.tar.gz && Download_src
       src_url=http://mirrors.linuxeye.com/apache/httpd/httpd-${apache24_version}.tar.gz && Download_src
     fi
     if [ "${Apache_version}" == '2' ]; then
@@ -84,6 +85,8 @@ checkDownload() {
           JDK_FILE="jdk-$(echo ${jdk16_version} | awk -F. '{print $2}')u$(echo ${jdk16_version} | awk -F_ '{print $NF}')-linux-${SYS_BIG_FLAG}.bin"
           ;;
       esac
+      echo "Download apr..."
+      src_url=http://archive.apache.org/dist/apr/apr-${apr_version}.tar.gz && Download_src
       # start download...
       src_url=http://mirrors.linuxeye.com/jdk/${JDK_FILE} && Download_src
     fi

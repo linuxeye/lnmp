@@ -15,7 +15,7 @@ Script properties:
 - Install memcached, redis according to their needs
 - Jemalloc optimize MySQL, Nginx
 - Providing add a virtual host script, include Let's Encrypt SSL certificate
-- Provide Nginx/Tengine, MySQL/MariaDB/Percona, PHP, Redis, phpMyAdmin upgrade script
+- Provide Nginx/Tengine/OpenResty, MySQL/MariaDB/Percona, PHP, Redis, Memcached, phpMyAdmin upgrade script
 - Provide local backup and remote backup (rsync between servers) script
 - Provided under HHVM install CentOS 6,7
 

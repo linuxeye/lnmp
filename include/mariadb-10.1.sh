@@ -163,7 +163,7 @@ read_buffer = 4M
 write_buffer = 4M
 EOF
 
-  sed -i "s@max_connections.*@max_connections = $((${Mem}/2))@" /etc/my.cnf
+  sed -i "s@max_connections.*@max_connections = $((${Mem}/3))@" /etc/my.cnf
   if [ ${Mem} -gt 1500 -a ${Mem} -le 2500 ]; then
     sed -i 's@^thread_cache_size.*@thread_cache_size = 16@' /etc/my.cnf
     sed -i 's@^query_cache_size.*@query_cache_size = 16M@' /etc/my.cnf

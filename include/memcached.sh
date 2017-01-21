@@ -43,8 +43,8 @@ Install_memcached() {
 
 Install_php-memcache() {
   pushd ${oneinstack_dir}/src
-  phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
   if [ -e "${php_install_dir}/bin/phpize" ]; then
+    phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
     # php memcache extension
     if [ "$(${php_install_dir}/bin/php -r 'echo PHP_VERSION;' | awk -F. '{print $1}')" == '7' ]; then
       #git clone https://github.com/websupport-sk/pecl-memcache.git
@@ -72,8 +72,8 @@ Install_php-memcache() {
 
 Install_php-memcached() {
   pushd ${oneinstack_dir}/src
-  phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
   if [ -e "${php_install_dir}/bin/phpize" ]; then
+    phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
     # php memcached extension
     tar xzf libmemcached-${libmemcached_version}.tar.gz
     pushd libmemcached-${libmemcached_version}

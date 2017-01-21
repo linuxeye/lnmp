@@ -24,12 +24,12 @@ Install_Apache24() {
 
   # install openssl-1.0.2
   if [ ! -e "${openssl_install_dir}/lib/libcrypto.a" ]; then
-    tar xzf ${openssl_version}.tar.gz
-    pushd ${openssl_version}
+    tar xzf openssl-${openssl_version}.tar.gz
+    pushd openssl-${openssl_version}
     ./config --prefix=${openssl_install_dir} -fPIC shared zlib
     make -j ${THREAD} && make install
     popd
-    rm -rf ${openssl_version}
+    rm -rf openssl-${openssl_version}
   fi
 
   # install nghttp2

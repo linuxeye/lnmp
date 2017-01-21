@@ -10,7 +10,7 @@ tomcat7_version=7.0.73
 tomcat6_version=6.0.48
 
 apache24_version=2.4.25
-apache22_version=2.2.31
+apache22_version=2.2.32
 pcre_version=8.39
 apr_version=1.5.2
 apr_util_version=1.5.4
@@ -37,9 +37,9 @@ jdk17_version=1.7.0_80
 jdk16_version=1.6.0_45
 
 # PHP
-php71_version=7.1.0
-php70_version=7.0.14
-php56_version=5.6.29
+php71_version=7.1.1
+php70_version=7.0.15
+php56_version=5.6.30
 php55_version=5.5.38
 php54_version=5.4.45
 php53_version=5.3.29

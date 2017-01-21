@@ -24,7 +24,7 @@ Install_PHP53() {
     if [ ! -e '/usr/local/openssl100s/lib/libcrypto.a' ]; then
       tar xzf openssl-1.0.0s.tar.gz
       pushd openssl-1.0.0s
-      ./config --prefix=/usr/local/openssl100s -fPIC shared zlib
+      CFLAGS=-fPIC ./config --prefix=/usr/local/openssl100s shared zlib
       make -j ${THREAD} && make install
       popd 
       rm -rf openssl-1.0.0s

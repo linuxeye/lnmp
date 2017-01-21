@@ -19,7 +19,7 @@ Install_Tomcat6() {
   if [ ! -e "${openssl_install_dir}/lib/libcrypto.a" ]; then
     tar xzf openssl-${openssl_version}.tar.gz
     pushd openssl-${openssl_version}
-    ./config --prefix=${openssl_install_dir} -fPIC shared zlib
+    CFLAGS=-fPIC ./config --prefix=${openssl_install_dir} shared zlib
     make -j ${THREAD} && make install
     popd
     rm -rf openssl-${openssl_version}

@@ -21,8 +21,8 @@ Install_GraphicsMagick() {
 
 Install_php-gmagick() {
   pushd ${oneinstack_dir}/src
-  phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
   if [ -e "${php_install_dir}/bin/phpize" ]; then
+    phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
     if [ "`${php_install_dir}/bin/php -r 'echo PHP_VERSION;' | awk -F. '{print $1}'`" == '7' ]; then
       tar xzf gmagick-${gmagick_for_php7_version}.tgz 
       pushd gmagick-${gmagick_for_php7_version} 

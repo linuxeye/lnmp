@@ -493,7 +493,7 @@ checkDownload() {
         src_url=${mirrorLink}/php5.3patch && Download_src
         # Use the special ssl for php5.3
         if [ "${Debian_version}" == '8' -o "${Ubuntu_version}" == "16" ]; then
-          if [ ! -e "/usr/local/openssl/lib/libcrypto.a" ]; then
+          if [ ! -e "/usr/local/openssl100s/lib/libcrypto.a" ]; then
             src_url=${mirrorLink}/openssl-1.0.0s.tar.gz && Download_src
             src_url=${mirrorLink}/curl-7.35.0.tar.gz && Download_src
           fi
@@ -647,7 +647,7 @@ checkDownload() {
 
   if [ "${FTP_yn}" == 'y' ]; then
     echo "Download pureftpd..."
-    src_url=http://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-${pureftpd_version}.tar.gz && Download_src
+    src_url=https://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-${pureftpd_version}.tar.gz && Download_src
   fi
 
   if [ "${phpMyAdmin_yn}" == 'y' ]; then

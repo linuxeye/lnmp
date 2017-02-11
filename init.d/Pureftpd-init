@@ -25,12 +25,12 @@ RETVAL=0
 
 # Path to the pure-ftp binaries.
 prog=pure-ftpd
-fullpath=/usr/local/pureftpd/sbin/pure-config.pl
+fullpath=/usr/local/pureftpd/sbin/$prog
 pure_config=/usr/local/pureftpd/etc/pure-ftpd.conf
 
 start() {
   echo -n $"Starting $prog: "
-  $fullpath $pure_config --daemonize
+  $fullpath $pure_config
   RETVAL=$?
   [ $RETVAL = 0 ] && touch /var/lock/subsys/$prog
   echo

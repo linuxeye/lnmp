@@ -15,16 +15,6 @@ Install_Tomcat7() {
   id -u ${run_user} >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /bin/bash ${run_user} || { [ -z "$(grep ^${run_user} /etc/passwd | grep '/bin/bash')" ] && usermod -s /bin/bash ${run_user}; }
 
-  # install openssl-1.0.2
-  if [ ! -e "${openssl_install_dir}/lib/libcrypto.a" ]; then
-    tar xzf openssl-${openssl_version}.tar.gz
-    pushd openssl-${openssl_version}
-    CFLAGS=-fPIC ./config --prefix=${openssl_install_dir} shared zlib
-    make -j ${THREAD} && make install
-    popd
-    rm -rf openssl-${openssl_version}
-  fi
-
   # install apr
   if [ ! -e "/usr/local/apr/bin/apr-1-config" ]; then
     tar xzf apr-${apr_version}.tar.gz

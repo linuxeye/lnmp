@@ -486,12 +486,20 @@ checkDownload 2>&1 | tee -a ${oneinstack_dir}/install.log
 # Install dependencies from source package
 installDepsBySrc 2>&1 | tee -a ${oneinstack_dir}/install.log
 
-# jemalloc
+# Jemalloc
 if [[ $Nginx_version =~ ^[1-3]$ ]] || [ "$DB_yn" == 'y' -a "$DB_version" != '10' ]; then
-  if [ ! -e "/usr/local/lib/libjemalloc.so" ]; then
-    . include/jemalloc.sh
-    Install_Jemalloc | tee -a $oneinstack_dir/install.log
-  fi
+  . include/jemalloc.sh
+  Install_Jemalloc | tee -a $oneinstack_dir/install.log
+fi
+
+# openSSL 
+. ./include/openssl.sh
+if [ "$Debian_version" == '8' -o "$Ubuntu_version" == '16' ] && [ "$PHP_version" == '1' ]; then
+  # Problem building php-5.3 with openssl
+  Install_openSSL100 | tee -a $oneinstack_dir/install.log
+fi
+if [[ $Tomcat_version =~ ^[1-3]$ ]] || [ "$DB_yn" == 'y' -a "$Apache_version" == '1' ]; then
+  Install_openSSL102 | tee -a $oneinstack_dir/install.log
 fi
 
 # Database

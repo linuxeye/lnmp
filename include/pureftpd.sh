@@ -21,10 +21,7 @@ Install_PureFTPd() {
   make -j ${THREAD} && make install
   if [ -e "${pureftpd_install_dir}/sbin/pure-ftpwho" ]; then
     [ ! -e "${pureftpd_install_dir}/etc" ] && mkdir ${pureftpd_install_dir}/etc
-    /bin/cp configuration-file/pure-config.pl ${pureftpd_install_dir}/sbin
     popd
-    sed -i "s@/usr/local/pureftpd@${pureftpd_install_dir}@" ${pureftpd_install_dir}/sbin/pure-config.pl
-    chmod +x ${pureftpd_install_dir}/sbin/pure-config.pl
     /bin/cp ../init.d/Pureftpd-init /etc/init.d/pureftpd
     /bin/cp ../config/pure-ftpd.conf ${pureftpd_install_dir}/etc
     sed -i "s@/usr/local/pureftpd@${pureftpd_install_dir}@g" /etc/init.d/pureftpd

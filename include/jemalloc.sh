@@ -9,25 +9,28 @@
 #       https://github.com/lj2007331/oneinstack
 
 Install_Jemalloc() {
-  pushd ${oneinstack_dir}/src
-  tar xjf jemalloc-$jemalloc_version.tar.bz2
-  pushd jemalloc-$jemalloc_version
-  LDFLAGS="${LDFLAGS} -lrt" ./configure
-  make -j ${THREAD} && make install
-  popd
-  if [ -f "/usr/local/lib/libjemalloc.so" ]; then
-    if [ "$OS_BIT" == '64' -a "$OS" == 'CentOS' ]; then
-      ln -s /usr/local/lib/libjemalloc.so.2 /usr/lib64/libjemalloc.so.1
+  if [ ! -e "/usr/local/lib/libjemalloc.so" ]; then
+    pushd ${oneinstack_dir}/src
+    tar xjf jemalloc-$jemalloc_version.tar.bz2
+    pushd jemalloc-$jemalloc_version
+    LDFLAGS="${LDFLAGS} -lrt" ./configure
+    make -j ${THREAD} && make install
+    unset LDFLAGS
+    popd
+    if [ -f "/usr/local/lib/libjemalloc.so" ]; then
+      if [ "$OS_BIT" == '64' -a "$OS" == 'CentOS' ]; then
+        ln -s /usr/local/lib/libjemalloc.so.2 /usr/lib64/libjemalloc.so.1
+      else
+        ln -s /usr/local/lib/libjemalloc.so.2 /usr/lib/libjemalloc.so.1
+      fi
+      echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
+      ldconfig
+      echo "${CSUCCESS}jemalloc module installed successfully! ${CEND}"
+      rm -rf jemalloc-${jemalloc_version}
     else
-      ln -s /usr/local/lib/libjemalloc.so.2 /usr/lib/libjemalloc.so.1
+      echo "${CFAILURE}jemalloc install failed, Please contact the author! ${CEND}"
+      kill -9 $$
     fi
-    echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
-    ldconfig
-    echo "${CSUCCESS}jemalloc module installed successfully! ${CEND}"
-    rm -rf jemalloc-${jemalloc_version}
-  else
-    echo "${CFAILURE}jemalloc install failed, Please contact the author! ${CEND}"
-    kill -9 $$
+    popd
   fi
-  popd
 }

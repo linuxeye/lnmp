@@ -145,8 +145,8 @@ EOF
   fi
 
   if [ ! -e "${python_install_dir}/bin/easy_install" ] ;then
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/setuptools-${setuptools_version}.tar.gz && Download_src
-    tar xzf setuptools-${setuptools_version}.tar.gz
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/setuptools-${setuptools_version}.zip && Download_src
+    unzip -q setuptools-${setuptools_version}.zip
     pushd setuptools-${setuptools_version}
     ${python_install_dir}/bin/python setup.py install
     popd

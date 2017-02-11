@@ -141,6 +141,7 @@ installDepsBySrc() {
       pushd tmux-${tmux_version}
       CFLAGS="-I/usr/local/include" LDFLAGS="-L//usr/local/lib" ./configure
       make -j ${THREAD} && make install
+      unset LDFLAGS
       popd
       rm -rf tmux-${tmux_version}
 

@@ -37,8 +37,8 @@ jdk17_version=1.7.0_80
 jdk16_version=1.6.0_45
 
 # PHP
-php71_version=7.1.1
-php70_version=7.0.15
+php71_version=7.1.2
+php70_version=7.0.16
 php56_version=5.6.30
 php55_version=5.5.38
 php54_version=5.4.45
@@ -47,7 +47,7 @@ php53_version=5.3.29
 zendopcache_version=7.0.5
 xcache_version=3.2.0
 apcu_version=4.0.11
-apcu_for_php7_version=5.1.7
+apcu_for_php7_version=5.1.8
 ImageMagick_version=6.9.7-6
 imagick_version=3.4.3
 imagick_for_php53_version=3.3.0
@@ -65,7 +65,7 @@ eaccelerator_version=0.9.6.1
 pureftpd_version=1.0.45
 
 # Redis
-redis_version=3.2.6
+redis_version=3.2.8
 redis_pecl_for_php7_version=3.1.1
 redis_pecl_version=2.2.8
 

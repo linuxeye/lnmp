@@ -165,6 +165,7 @@ Upgrade_DB() {
       mkdir -p $mysql_data_dir;chown mysql.mysql -R $mysql_data_dir
       mv $DB_name/* $mysql_install_dir/
       sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' $mysql_install_dir/bin/mysqld_safe
+      sed -i "s@/usr/local/mysql@${mysql_install_dir}@g" ${mysql_install_dir}/bin/mysqld_safe
       [ "`echo $NEW_DB_version | awk -F. '{print $1"."$2}'`" != '5.7' ] && $mysql_install_dir/scripts/mysql_install_db --user=mysql --basedir=$mysql_install_dir --datadir=$mysql_data_dir
       [ "`echo $NEW_DB_version | awk -F. '{print $1"."$2}'`" == '5.7' ] && $mysql_install_dir/bin/mysqld --initialize-insecure --user=mysql --basedir=$mysql_install_dir --datadir=$mysql_data_dir
 

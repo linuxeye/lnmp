@@ -153,6 +153,7 @@ fi
 
 FW_PORT_FLAG=$(grep -ow "dport ${SSH_PORT}" /etc/sysconfig/iptables)
 [ -z "${FW_PORT_FLAG}" -a "${SSH_PORT}" != "22" ] && sed -i "s@dport 22 -j ACCEPT@&\n-A INPUT -p tcp -m state --state NEW -m tcp --dport ${SSH_PORT} -j ACCEPT@" /etc/sysconfig/iptables
+service rsyslog restart
 service iptables restart
 service sshd restart
 

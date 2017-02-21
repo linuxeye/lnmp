@@ -45,6 +45,8 @@ sed -i "s@^oneinstack_dir.*@oneinstack_dir=$(pwd)@" ./options.conf
 
 . ./include/redis.sh
 
+. ./include/python.sh
+
 # Check if user is root
 [ $(id -u) != '0' ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
 
@@ -98,82 +100,8 @@ Uninstall_succ() {
 }
 
 Install_letsencrypt() {
-  if [ "${CentOS_RHEL_version}" == '7' ]; then
-    [ ! -e /etc/yum.repos.d/epel.repo ] && cat > /etc/yum.repos.d/epel.repo << EOF
-[epel]
-name=Extra Packages for Enterprise Linux 7 - \$basearch
-#baseurl=http://download.fedoraproject.org/pub/epel/7/\$basearch
-mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=\$basearch
-failovermethod=priority
-enabled=1
-gpgcheck=0
-EOF
-  elif [ "${CentOS_RHEL_version}" == '6' ]; then
-    [ ! -e /etc/yum.repos.d/epel.repo ] && cat > /etc/yum.repos.d/epel.repo << EOF
-[epel]
-name=Extra Packages for Enterprise Linux 6 - \$basearch
-#baseurl=http://download.fedoraproject.org/pub/epel/6/\$basearch
-mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-6&arch=\$basearch
-failovermethod=priority
-enabled=1
-gpgcheck=0
-EOF
-  fi
-
-  pushd ${oneinstack_dir}/src
-  if [ "${OS}" == "CentOS" ]; then
-    pkgList="gcc dialog augeas-libs openssl openssl-devel libffi-devel redhat-rpm-config ca-certificates python python-devel python-virtualenv python-tools python-pip"
-    for Package in ${pkgList}; do
-      yum -y install ${Package}
-    done
-  elif [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]]; then
-    pkgList="python python-dev virtualenv python-virtualenv gcc dialog libaugeas0 augeas-lenses libssl-dev libffi-dev ca-certificates"
-    for Package in ${pkgList}; do
-      apt-get -y install $Package
-    done
-  fi
-  # Install Python
-  if [ ! -e "${python_install_dir}/bin/python" -a ! -e "${python_install_dir}/bin/python3" ] ;then
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/Python-${python_version}.tgz && Download_src
-    tar xzf Python-${python_version}.tgz
-    pushd Python-${python_version}
-    ./configure --prefix=${python_install_dir}
-    make && make install
-    [ ! -e "${python_install_dir}/bin/python" -a -e "${python_install_dir}/bin/python3" ] && ln -s ${python_install_dir}/bin/python{3,}
-    popd
-    rm -rf Python-${python_version}
-  fi
-
-  if [ ! -e "${python_install_dir}/bin/easy_install" ] ;then
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/setuptools-${setuptools_version}.zip && Download_src
-    unzip -q setuptools-${setuptools_version}.zip
-    pushd setuptools-${setuptools_version}
-    ${python_install_dir}/bin/python setup.py install
-    popd
-    rm -rf setuptools-${setuptools_version}
-  fi
-
-  if [ ! -e "${python_install_dir}/bin/pip" ] ;then
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/pip-${pip_version}.tar.gz && Download_src
-    tar xzf pip-${pip_version}.tar.gz
-    pushd pip-${pip_version}
-    ${python_install_dir}/bin/python setup.py install
-    popd
-    rm -rf pip-${pip_version}
-  fi
-
-  if [ ! -e "/root/.pip/pip.conf" ] ;then
-    # get the IP information
-    PUBLIC_IPADDR=$(../include/get_public_ipaddr.py)
-    IPADDR_COUNTRY=$(../include/get_ipaddr_state.py $PUBLIC_IPADDR | awk '{print $1}')
-    if [ "$IPADDR_COUNTRY"x != "CN"x ]; then
-      [ ! -d "/root/.pip" ] && mkdir /root/.pip
-      echo -e "[global]\nindex-url = https://pypi.tuna.tsinghua.edu.cn/simple" > /root/.pip/pip.conf
-    fi
-  fi
-
+  [ ! -e "${python_install_dir}/bin/python" ] && Install_Python
   ${python_install_dir}/bin/pip install certbot
-  popd
   if [ -e "${python_install_dir}/bin/certbot" ]; then
     echo; echo "${CSUCCESS}Let's Encrypt client installed successfully! ${CEND}"
   else
@@ -187,6 +115,58 @@ Uninstall_letsencrypt() {
   [ "${OS}" == "CentOS" ] && Cron_file=/var/spool/cron/root || Cron_file=/var/spool/cron/crontabs/root
   [ -e "$Cron_file" ] && sed -i '/certbot/d' ${Cron_file}
   echo; echo "${CMSG}Let's Encrypt client uninstall completed${CEND}";
+}
+
+Install_fail2ban() {
+  [ ! -e "${python_install_dir}/bin/python" ] && Install_Python
+  pushd ${oneinstack_dir}/src
+  src_url=http://mirrors.linuxeye.com/oneinstack/src/fail2ban-${fail2ban_version}.tar.gz && Download_src
+  tar xzf fail2ban-${fail2ban_version}.tar.gz
+  pushd fail2ban-${fail2ban_version}
+  ${python_install_dir}/bin/python setup.py install
+  /bin/cp /etc/fail2ban/jail.{conf,local}
+  sed -i 's@^# \[sshd\]@[sshd]@' /etc/fail2ban/jail.local
+  sed -i 's@^# enabled = true@enabled = true@' /etc/fail2ban/jail.local
+  if [ "${OS}" == "CentOS" ]; then
+    sed -i 's@%(sshd_log)s@/var/log/secure@' /etc/fail2ban/jail.local
+    /bin/cp files/redhat-initd /etc/init.d/fail2ban 
+    sed -i "s@^FAIL2BAN=.*@FAIL2BAN=${python_install_dir}/bin/fail2ban-client@" /etc/init.d/fail2ban
+    chmod +x /etc/init.d/fail2ban
+    chkconfig --add fail2ban
+    chkconfig fail2ban on
+  fi
+  if [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]]; then
+    /bin/cp files/debian-initd /etc/init.d/fail2ban 
+    sed -i 's@2 3 4 5@3 4 5@' /etc/init.d/fail2ban
+    sed -i "s@^DAEMON=.*@DAEMON=${python_install_dir}/bin/\$NAME-client@" /etc/init.d/fail2ban
+    chmod +x /etc/init.d/fail2ban
+    update-rc.d fail2ban defaults
+  fi
+  cat > /etc/logrotate.d/fail2ban << EOF 
+/var/log/fail2ban.log {
+    missingok
+    notifempty
+    postrotate
+      ${python_install_dir}/bin/fail2ban-client flushlogs >/dev/null || true
+    endscript
+}
+EOF
+  kill -9 `ps -ef | grep fail2ban | grep -v grep | awk '{print $2}'`
+  /etc/init.d/fail2ban start
+  popd
+  if [ -e "${python_install_dir}/bin/fail2ban-python" ]; then
+    echo; echo "${CSUCCESS}fail2ban installed successfully! ${CEND}"
+  else
+    echo; echo "${CFAILURE}fail2ban install failed, Please try again! ${CEND}"
+  fi
+  popd
+}
+
+Uninstall_fail2ban() {
+  /etc/init.d/fail2ban stop
+  ${python_install_dir}/bin/pip uninstall -y fail2ban > /dev/null 2>&1
+  rm -rf /etc/init.d/fail2ban /etc/fail2ban /etc/logrotate.d/fail2ban /var/log/fail2ban.* /var/run/fail2ban 
+  echo; echo "${CMSG}fail2ban uninstall completed${CEND}";
 }
 
 ACTION_FUN() {
@@ -215,11 +195,12 @@ What Are You Doing?
 \t${CMSG}5${CEND}. Install/Uninstall memcached/memcache
 \t${CMSG}6${CEND}. Install/Uninstall Redis
 \t${CMSG}7${CEND}. Install/Uninstall Let's Encrypt client
+\t${CMSG}8${CEND}. Install/Uninstall fail2ban 
 \t${CMSG}q${CEND}. Exit
 "
   read -p "Please input the correct option: " Number
-  if [[ ! "${Number}" =~ ^[1-7,q]$ ]]; then
-    echo "${CFAILURE}input error! Please only input 1 ~ 7 and q${CEND}"
+  if [[ ! "${Number}" =~ ^[1-8,q]$ ]]; then
+    echo "${CFAILURE}input error! Please only input 1 ~ 8 and q${CEND}"
   else
     case "${Number}" in
       1)
@@ -470,6 +451,14 @@ What Are You Doing?
           Install_letsencrypt
         else
           Uninstall_letsencrypt
+        fi
+        ;;
+      8)
+        ACTION_FUN
+        if [ "${ACTION}" = '1' ]; then
+          Install_fail2ban
+        else
+          Uninstall_fail2ban
         fi
         ;;
       q)

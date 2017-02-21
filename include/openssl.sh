@@ -16,7 +16,7 @@ Install_openSSL102() {
     pushd openssl-${openssl_version}
     ./config --prefix=${openssl_install_dir} -fPIC shared zlib-dynamic
     make -j ${THREAD} && make install
-    popd;popd
+    popd
     if [ -f "${openssl_install_dir}/lib/libcrypto.a" ]; then
       echo "${CSUCCESS}openssl-1.0.2 module installed successfully! ${CEND}"
       rm -rf openssl-${openssl_version}
@@ -24,6 +24,7 @@ Install_openSSL102() {
       echo "${CFAILURE}openssl-1.0.2 install failed, Please contact the author! ${CEND}"
       kill -9 $$
     fi
+    popd
   fi
 }
 
@@ -34,7 +35,7 @@ Install_openSSL100() {
     pushd openssl-1.0.0s
     ./config --prefix=/usr/local/openssl100s -fPIC shared zlib-dynamic
     make -j ${THREAD} && make install
-    popd;popd
+    popd
     if [ -f "/usr/local/openssl100s/lib/libcrypto.a" ]; then
       echo "${CSUCCESS}openssl-1.0.0s module installed successfully! ${CEND}"
       rm -rf openssl-1.0.0s
@@ -42,5 +43,6 @@ Install_openSSL100() {
       echo "${CFAILURE}openssl-1.0.0s install failed, Please contact the author! ${CEND}"
       kill -9 $$
     fi
+    popd
   fi
 }

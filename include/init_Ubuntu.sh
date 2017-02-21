@@ -131,6 +131,7 @@ cat > /etc/network/if-pre-up.d/iptables << EOF
 /sbin/iptables-restore < /etc/iptables.up.rules
 EOF
 chmod +x /etc/network/if-pre-up.d/iptables
+service rsyslog restart
 service ssh restart
 
 . /etc/profile

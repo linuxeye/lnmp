@@ -124,11 +124,8 @@ Install_fail2ban() {
   tar xzf fail2ban-${fail2ban_version}.tar.gz
   pushd fail2ban-${fail2ban_version}
   ${python_install_dir}/bin/python setup.py install
-  /bin/cp /etc/fail2ban/jail.{conf,local}
-  sed -i 's@^# \[sshd\]@[sshd]@' /etc/fail2ban/jail.local
-  sed -i 's@^# enabled = true@enabled = true@' /etc/fail2ban/jail.local
   if [ "${OS}" == "CentOS" ]; then
-    sed -i 's@%(sshd_log)s@/var/log/secure@' /etc/fail2ban/jail.local
+    LOGPATH=/var/log/secure
     /bin/cp files/redhat-initd /etc/init.d/fail2ban 
     sed -i "s@^FAIL2BAN=.*@FAIL2BAN=${python_install_dir}/bin/fail2ban-client@" /etc/init.d/fail2ban
     chmod +x /etc/init.d/fail2ban
@@ -136,12 +133,26 @@ Install_fail2ban() {
     chkconfig fail2ban on
   fi
   if [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]]; then
+    LOGPATH=/var/log/auth.log
     /bin/cp files/debian-initd /etc/init.d/fail2ban 
     sed -i 's@2 3 4 5@3 4 5@' /etc/init.d/fail2ban
     sed -i "s@^DAEMON=.*@DAEMON=${python_install_dir}/bin/\$NAME-client@" /etc/init.d/fail2ban
     chmod +x /etc/init.d/fail2ban
     update-rc.d fail2ban defaults
   fi
+  [ -z "`grep ^Port /etc/ssh/sshd_config`" ] && ssh_port=22 || ssh_port=`grep ^Port /etc/ssh/sshd_config | awk '{print $2}'`
+  cat > /etc/fail2ban/jail.local << EOF
+[DEFAULT]
+ignoreip = 127.0.0.1/8
+bantime  = 86400
+findtime = 600
+maxretry = 5
+[ssh-iptables]
+enabled = true
+filter  = sshd
+action  = iptables[name=SSH, port=$ssh_port, protocol=tcp]
+logpath = $LOGPATH 
+EOF
   cat > /etc/logrotate.d/fail2ban << EOF 
 /var/log/fail2ban.log {
     missingok
@@ -151,7 +162,7 @@ Install_fail2ban() {
     endscript
 }
 EOF
-  kill -9 `ps -ef | grep fail2ban | grep -v grep | awk '{print $2}'`
+  kill -9 `ps -ef | grep fail2ban | grep -v grep | awk '{print $2}'` > /dev/null 2>&1
   /etc/init.d/fail2ban start
   popd
   if [ -e "${python_install_dir}/bin/fail2ban-python" ]; then

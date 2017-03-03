@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Script to run Shadowsocks in daemon mode at boot time.
+# Script to run SS in daemon mode at boot time.
 # ScriptAuthor: icyboy
 # Revision 1.0 - 14th Sep 2013
 #====================================================================
@@ -23,7 +23,7 @@
 [ ${NETWORKING} ="yes" ] || exit 0
 
 # Daemon
-NAME=shadowsocks-server
+NAME=ss-server
 DAEMON=/usr/local/bin/ss-server
 
 # Path to the configuration file.
@@ -60,7 +60,7 @@ PID=/var/run/$NAME/pid
 
 RETVAL=0
 
-# Start shadowsocks as daemon.
+# Start SS as daemon.
 #
 start() {
   if [ -f $LOCK_FILE ]; then
@@ -80,7 +80,7 @@ start() {
 }
 
 
-# Stop shadowsocks.
+# Stop SS. 
 #
 stop() {
   echo -n $"Shutting down ${NAME}: "

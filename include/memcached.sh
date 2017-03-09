@@ -85,10 +85,8 @@ Install_php-memcached() {
     rm -rf libmemcached-${libmemcached_version}
 
     if [ "$(${php_install_dir}/bin/php -r 'echo PHP_VERSION;' | awk -F. '{print $1}')" == '7' ]; then
-      #git clone -b php7 https://github.com/php-memcached-dev/php-memcached.git
-      #cd php-memcached
-      tar xzf php-memcached-php7.tgz
-      pushd php-memcached-php7
+      tar xzf memcached-${memcached_pecl_php7_version}.tgz 
+      pushd memcached-${memcached_pecl_php7_version} 
     else
       tar xzf memcached-${memcached_pecl_version}.tgz
       pushd memcached-${memcached_pecl_version}
@@ -98,12 +96,12 @@ Install_php-memcached() {
     make -j ${THREAD} && make install
     popd
     if [ -f "${phpExtensionDir}/memcached.so" ]; then
-        cat > ${php_install_dir}/etc/php.d/ext-memcached.ini << EOF
+      cat > ${php_install_dir}/etc/php.d/ext-memcached.ini << EOF
 extension=memcached.so
 memcached.use_sasl=1
 EOF
       echo "${CSUCCESS}PHP memcached module installed successfully! ${CEND}"
-      rm -rf php-memcached-php7 memcached-${memcached_pecl_version}
+      rm -rf memcached-${memcached_pecl_version} memcached-${memcached_pecl_php7_version}
     else
       echo "${CFAILURE}PHP memcached module install failed, Please contact the author! ${CEND}"
     fi

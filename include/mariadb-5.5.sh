@@ -21,6 +21,7 @@ Install_MariaDB55() {
     tar zxf mariadb-${mariadb55_version}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
     mv mariadb-${mariadb55_version}-*-${SYS_BIT_b}/* ${mariadb_install_dir}
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mariadb_install_dir}/bin/mysqld_safe
+    sed -i "s@/usr/local/mysql@${mariadb_install_dir}@g" ${mariadb_install_dir}/bin/mysqld_safe
   elif [ "${dbInstallMethods}" == "2" ]; then
     tar xvf mariadb-${mariadb55_version}.tar.gz
     pushd mariadb-${mariadb55_version}

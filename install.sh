@@ -488,7 +488,7 @@ checkDownload 2>&1 | tee -a ${oneinstack_dir}/install.log
 installDepsBySrc 2>&1 | tee -a ${oneinstack_dir}/install.log
 
 # Jemalloc
-if [[ $Nginx_version =~ ^[1-3]$ ]] || [ "$DB_yn" == 'y' -a "$DB_version" != '10' ]; then
+if [[ $Nginx_version =~ ^[1-3]$ ]] || [ "$DB_yn" == 'y' ]; then
   . include/jemalloc.sh
   Install_Jemalloc | tee -a $oneinstack_dir/install.log
 fi

@@ -107,7 +107,7 @@ Def_parameter() {
     done
     AddUser_SS
     Iptables_set
-    pkgList="wget unzip openssl-devel gcc swig autoconf libtool libevent automake make curl curl-devel zlib-devel perl perl-devel cpio expat-devel gettext-devel git asciidoc xmlto pcre-devel"
+    pkgList="wget unzip openssl-devel gcc swig autoconf libtool libevent automake make curl curl-devel zlib-devel perl perl-devel cpio expat-devel gettext-devel git asciidoc xmlto pcre-devel mbedtls-devel udns-devel libev-devel"
     for Package in ${pkgList}; do
       yum -y install ${Package}
     done
@@ -116,7 +116,7 @@ Def_parameter() {
     AddUser_SS
     Iptables_set
     apt-get -y update
-    pkgList="curl wget unzip gcc swig automake make perl cpio git"
+    pkgList="curl wget unzip gcc swig automake make perl cpio git libmbedtls-dev libudns-dev libev-dev"
     for Package in ${pkgList}; do
       apt-get -y install $Package
     done
@@ -143,8 +143,15 @@ Install_SS-python() {
 }
 
 Install_SS-libev() {
-  git clone https://github.com/shadowsocks/shadowsocks-libev.git
-  pushd shadowsocks-libev
+  src_url=http://mirrors.linuxeye.com/oneinstack/src/shadowsocks-libev-3.0.4.tar.gz && Download_src
+  src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-1.0.12.tar.gz && Download_src
+  tar xzf shadowsocks-libev-3.0.4.tar.gz
+  tar xzf libsodium-1.0.12.tar.gz
+  pushd libsodium-1.0.12
+  ./configure
+  make -j ${THREAD} && make install
+  popd
+  pushd shadowsocks-libev-3.0.4
   ./configure
   make -j ${THREAD} && make install
   popd
@@ -187,7 +194,7 @@ Uninstall_SS() {
         echo "${CFAILURE}SS-libev uninstall failed! ${CEND}"
       fi
     elif [ "${SS_version}" == '2' ]; then
-      pip uninstall -y shadowsocks
+      ${python_install_dir}/bin/pip uninstall -y shadowsocks
       if [ $? -eq 0 ]; then
         echo "${CSUCCESS}SS-python uninstall successful! ${CEND}"
       else

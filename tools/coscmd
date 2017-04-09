@@ -1,0 +1,501 @@
+#!/usr/bin/env python
+#coding:utf-8
+
+import sys,os
+import datetime
+import random
+import threading
+import time
+import datetime
+import logging
+import ConfigParser
+from optparse import OptionParser
+from logging.handlers import RotatingFileHandler
+from time import strftime, localtime
+from time import sleep
+from datetime import date
+from datetime import timedelta
+from cos import CosClient
+from cos import UploadFileRequest
+from cos import CreateFolderRequest
+from cos import DelFileRequest
+from cos import DelFolderRequest
+from cos import ListFolderRequest
+from cos import threadpool 
+
+MAX_RETRY_TIMES = 3
+LOG_SAVE_EVERY_NUM = 1024
+ONE_TASK_DEL_FILE_NUMS = 50
+log_level = 1
+log_file_name = "del_file.log"
+dir_thread_num = 2
+file_thread_num = 5
+log_out_to_screen = 1
+delete_folder_fail_exist = 0
+
+CONFIGFILE = "%s/.coscredentials" % os.path.expanduser('~')
+CONFIGSECTION = 'COSCredentials'
+
+HAS_FORK = hasattr(os, 'fork')
+
+HELP = \
+'''coscmd:
+    config         --appid=[appid] --id=[secret_id] --key=[secret_key] --region=[region] --bucket=[bucket] 
+    ls             cosdir
+    mkdir          dirname
+    put            localfile  cosdir 
+    rm(delete,del) object
+    '''
+
+CMD_LIST = {}
+def cmd_configure(args, options):
+    if options.appid is None or options.secret_id is None or options.secret_key is None  or options.region is None or options.bucket is None:
+        print("%s miss parameters, use --appid=[appid] --id=[secret_id] --key=[secret_key] --region=[region] --bucket=[bucket] to specify appid/id/key/region/bucket pair" % args[0])
+        sys.exit(-1)
+    config = ConfigParser.RawConfigParser()
+    config.add_section(CONFIGSECTION)
+    config.set(CONFIGSECTION, 'appid', options.appid)
+    config.set(CONFIGSECTION, 'secret_id', options.secret_id)
+    config.set(CONFIGSECTION, 'secret_key', options.secret_key)
+    if options.region in ['sh','gz','tj','sgp']:
+        config.set(CONFIGSECTION, 'region', options.region)
+    else:
+        print("input region error, setup use : --region={sh,gz,tj,sgp}")
+        sys.exit(-1)
+    config.set(CONFIGSECTION, 'bucket', options.bucket)
+    cfgfile = open(CONFIGFILE, 'w+')
+    config.write(cfgfile)
+    print("Your configuration is saved into %s ." % CONFIGFILE)
+    cfgfile.close()
+    import stat
+    os.chmod(CONFIGFILE, stat.S_IREAD | stat.S_IWRITE)
+
+def cmd_loadconfigure():
+    config = ConfigParser.ConfigParser()
+    config.read(CONFIGFILE)
+    global appid
+    global secret_id
+    global secret_key
+    global region 
+    global bucket
+    appid = int(config.get(CONFIGSECTION, 'appid'))
+    secret_id = config.get(CONFIGSECTION, 'secret_id').decode('utf-8')
+    secret_key = config.get(CONFIGSECTION, 'secret_key').decode('utf-8')
+    region = config.get(CONFIGSECTION, 'region')
+    bucket = config.get(CONFIGSECTION, 'bucket').decode('utf-8')
+    if len(secret_id) == 0 or len(secret_key) == 0 or len(region) == 0 or len(bucket) == 0:
+        print("can't get appid/secret_id/secret_key/region/bucket, setup use : config --appid=[appid] --id=[secret_id] --key=[secret_key] --region=[region] --bucket=[bucket]")
+        sys.exit(1)
+
+def cmd_lsdir(COSDIR):
+    cosdir = COSDIR.decode('utf-8')
+    request = ListFolderRequest(bucket, cosdir)
+    list_folder_ret = cos_client.list_folder(request)
+    if list_folder_ret[u'code'] == 0:
+        print(True) 
+    else:
+        print("%s, appid/secret_id/secret_key/region/bucket invalid"% list_folder_ret[u'message'])
+
+def cmd_mkdir(COSDIR):
+    cosdir = COSDIR.decode('utf-8')
+    request = CreateFolderRequest(bucket, cosdir)
+    create_folder_ret = cos_client.create_folder(request)
+    if create_folder_ret[u'code'] == 0:
+        print("mkdir cos://%s%s OK" % (bucket,COSDIR))
+    else:
+        print(create_folder_ret[u'message'])
+
+def cmd_put(LOCALFILE,COSFILE):
+    localfile = LOCALFILE.decode('utf-8')
+    cosfile = COSFILE.decode('utf-8')
+    request = UploadFileRequest(bucket, cosfile, localfile)
+    request.set_insert_only(0)
+    upload_file_ret = cos_client.upload_file(request)
+    if upload_file_ret[u'code'] == 0:
+        print("put cos://%s%s OK" % (bucket,COSFILE))
+    else:
+        print(upload_file_ret[u'message'])
+
+def loginit():
+    global config
+    if (log_file_name == ""):
+        return
+    log_level = logging.ERROR
+    if log_level == 0:
+        log_level = logging.DEBUG
+    if log_level == 1:
+        log_level = logging.INFO
+    if log_level == 2:
+        log_level = logging.WARNING
+
+        #定义一个RotatingFileHandler，最多备份5个日志文件，每个日志文件最大20M
+    logger = logging.getLogger("")
+    Rthandler = RotatingFileHandler(log_file_name, maxBytes= 20*1024*1024,backupCount=5)
+    Rthandler.setLevel(log_level)
+    formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+    Rthandler.setFormatter(formatter)
+    logger.addHandler(Rthandler)
+        #输出日志到屏幕
+    console = logging.StreamHandler()
+    console.setFormatter(formatter)
+    if (log_out_to_screen == 1):
+        logger.addHandler(console)
+
+    logger.setLevel(log_level)
+    return logger
+
+#日期相关操作
+class Dateop():
+    @staticmethod
+    def isValidDate(str):
+        try:
+            time.strptime(str, "%Y""%m""%d")
+            return True
+        except:
+            return False
+
+    @staticmethod
+    def getdaystr(n=0):
+        dt = date.today()-timedelta(days=n)
+        tt = dt.timetuple()
+        daystr = strftime("%Y""%m""%d",tt)
+        return daystr
+
+    @staticmethod
+    def cmpDateAgo(t1,t2):
+        if (Dateop.isValidDate(t1)==False or Dateop.isValidDate(t2)==False):
+            return False
+        if (int(t1) <= int (t2)):
+            return True
+        return False
+
+    @staticmethod
+    def isNeedDeleteDir(dirname, n=0):
+        if (len(dirname) != 8):
+            return False
+        if Dateop.isValidDate(dirname) == False:
+            return False
+        d2 = Dateop.getdaystr(n);
+        if Dateop.cmpDateAgo(dirname, d2):
+            return True
+        return False
+#删除文件统计
+class FileStat():
+    global cos_log
+    def __init__(self):
+        self.delfilesuccnum = 0
+        self.deldirsuccnum = 0
+        self.delfilefailnum = 0
+        self.deldirfailnum = 0
+        self.lock = threading.Lock()
+ 
+    def addDelFileFailNum(self,num=1):
+        self.lock.acquire(1)
+        self.delfilefailnum += num
+        self.lock.release()
+    def addDelDirFailNum(self,num=1):
+        self.lock.acquire(1)
+        self.deldirfailnum += num
+        self.lock.release()
+    def addDelDirSuccNum(self, num=1):
+        self.lock.acquire(1)
+        self.deldirsuccnum += num
+        self.lock.release()
+    def addDelFileSuccNum(self, num=1):
+        self.lock.acquire(1)
+        self.delfilesuccnum += num
+        self.lock.release()
+    def printStat(self):
+        msg ="".join(["delfilesuccnum=",str(self.delfilesuccnum),
+                ",delfilefailnum=",str(self.delfilefailnum),
+                ",deldirsuccnum=",str(self.deldirsuccnum),
+                ",deldirfailnum=",str(self.deldirfailnum)])
+        print(msg) 
+    def logStat(self):
+        curtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        log = ''.join(["delfilenum=",str(self.delfilesuccnum),
+            ",deldirnum=",str(self.deldirsuccnum),",delfilefailnum=",
+            str(self.delfilefailnum),",deldirfailnum=",str(self.deldirfailnum)])
+        cos_log.info(log)
+
+#执行时间统计
+class TimeStat(object):
+    global cos_log
+    def __init__(self):
+        self.start()
+    def start(self):
+        self.start = datetime.datetime.now()
+        self.t1 = time.time()
+        msg = "delete task started  ..........."
+        cos_log.info(msg)
+    def end(self):
+        self.end = datetime.datetime.now()
+        self.t2 = time.time()
+        msg = "delete task ended\n\nrm task finished,\ntimecost:"+str(self.t2-self.t1) + " (s)"
+        cos_log.info(msg)
+
+#删除文件列表中的文件
+def delfiles(cos_client, bucket, filelist):
+    for f in filelist:
+        delfile(cos_client, bucket, f)
+
+def delfolders(cos_client, bucket, folderlist):
+    for f in folderlist:
+        delfolder(cos_client, bucket, f)
+#文件夹删除
+def delfolder(cos_client, bucket, folder):
+    global stat
+    global cos_log
+    if not folder:
+        return 0
+    delfolderreq = DelFolderRequest(bucket, folder)
+    retry = 0
+    while (retry < MAX_RETRY_TIMES):
+        ret = cos_client.del_folder(delfolderreq)
+        msg = "delfolder fail, bucket="+bucket+",folder="+folder+ret['message']
+        if (ret['code'] == 0):
+            break
+        elif (ret['code'] == -166):
+            cos_log.warning(msg)
+            break
+        #操作太频繁,频控
+        elif (ret['code'] == -71):
+            sleep(random.randint(1,5))
+            cos_log.warning(msg)
+            retry += 1
+            continue
+        #文件夹非空
+        elif (ret['code'] == -173):
+            break
+        else:
+            cos_log.warning(msg)
+            retry += 1
+    if (ret['code'] != 0 and  ret['code'] != -166):
+        stat.addDelDirFailNum()
+        cos_log.error("delfolder fail, bucket="+bucket+",folder="+folder+ret['message'])
+        return ret['code']
+    if (ret['code'] == 0):
+        stat.addDelDirSuccNum()
+        msg = "delfolder success, bucket="+bucket+",folder="+folder
+        cos_log.info(msg)
+    return 0
+
+#文件删除
+def delfile(cos_client, bucket, filepath):
+    global stat
+    global cos_log
+    delfilereq = DelFileRequest(bucket, filepath)
+    retry = 0
+    while (retry < MAX_RETRY_TIMES):
+        ret = cos_client.del_file(delfilereq)
+        msg = "delfile fail bucket="+bucket+",file="+filepath+ret['message']
+        if (ret['code'] == 0):
+            break
+        #文件不存在
+        elif (ret['code'] == -166):
+            cos_log.warning(msg)
+            break
+        #单目录写操作过快
+        elif (ret['code'] == -143):
+            sleep(random.randint(1,5))
+            cos_log.warning(msg)
+            retry += 1
+            continue
+        #操作太频繁,频控
+        elif (ret['code'] == -71):
+            sleep(random.randint(1,5))
+            cos_log.warning(msg)
+            retry += 1
+            continue
+        else:
+            cos_log.warning(msg)
+            retry += 1
+            continue
+    if (ret['code'] != 0 and  ret['code'] != -166):
+        stat.addDelFileFailNum()
+        cos_log.error("delfile fail, bucket="+bucket+",file="+filepath+ret['message'])
+        return ret['code']
+    if (ret['code'] == 0):
+        stat.addDelFileSuccNum()
+        msg = "delfile success, bucket="+bucket+",file="+filepath
+        cos_log.info(msg)
+    return 0
+
+#递归文件夹进行文件删除
+def delete_r(cos_client, bucket, path, thread_pool_file):
+    global stat
+    global config
+    global cos_log
+    cos_log.debug("delete_r bucket:"+bucket+",path:"+path)
+    context = u""
+    #递归文件夹
+    while True:
+        listfolderreq = ListFolderRequest(bucket, path, 1000, u'', context)
+        retry = 0
+        while (retry < MAX_RETRY_TIMES):
+            listret = cos_client.list_folder(listfolderreq)
+            if listret['code'] != 0 :
+                retry += 1
+                sleep(random.randint(1,3))
+                continue
+            else:
+                break
+        if (listret['code'] != 0):
+            cos_log.error("delete_r: list folder fail:"+path +",return msg:"+ listret['message'])
+            return listret['code']
+        if (len(listret['data']['infos']) == 0):
+            break;
+        filelist = []
+        dirlist = []
+        for info in listret['data']['infos']:
+            fullname = path + info['name']
+            #list出来的文件列表中文件夹和文件本身是混杂一起的
+            if info.has_key('filesize'):
+                filelist.append(fullname)
+                if (len(filelist) >= ONE_TASK_DEL_FILE_NUMS):
+                    args = [cos_client, bucket, filelist]
+                    args_tuple = (args,None)
+                    args_list = [args_tuple]
+                    requests = threadpool.makeRequests(delfiles, args_list)
+                    for req in requests:
+                        thread_pool_file.putRequest(req)
+                        filelist = []
+                        continue
+                else:
+                    pass
+            else:
+                dirlist.append(fullname)
+                if (len(dirlist) >= ONE_TASK_DEL_FILE_NUMS):
+                    args = [cos_client, bucket, dirlist]
+                    args_tuple = (args,None)
+                    args_list = [args_tuple]
+                    requests = threadpool.makeRequests(delfolders, args_list)
+                    for req in requests:
+                        thread_pool_file.putRequest(req)
+                        dirlist = []
+                        continue
+                else:
+                    pass
+                pass
+
+        if (len(filelist) > 0):
+            args = [cos_client, bucket, filelist]
+            args_tuple = (args,None)
+            args_list = [args_tuple]
+            requests = threadpool.makeRequests(delfiles, args_list)
+            for req in requests:
+                thread_pool_file.putRequest(req)
+                filelist = []
+        else:
+            pass
+
+        if (len(dirlist) > 0):
+            args = [cos_client, bucket, dirlist]
+            args_tuple = (args,None)
+            args_list = [args_tuple]
+            requests = threadpool.makeRequests(delfolders, args_list)
+            for req in requests:
+                thread_pool_file.putRequest(req)
+                filelist = []
+        else:
+            pass
+ 
+        cos_log.debug("delete_r thread pool file waiting\n")
+        thread_pool_file.wait()
+        cos_log.debug("delete_r thread pool file waiting end\n")
+
+        if (listret['data']['listover'] == False):
+            context = listret['data']['context']
+            continue
+        else:
+            break
+
+    stat.logStat()
+    return 0
+#支持Ctrl+C终止程序
+class Watcher():
+             
+    def __init__(self):
+        self.child = os.fork()
+        if self.child == 0:
+            return
+        else:
+            self.watch()
+             
+    def watch(self):
+        global cos_log
+        try: 
+            os.wait()
+        except KeyboardInterrupt:
+            cos_log.ERROR("ctrl+c terminated rm_recursive.py, exiting...")                                                                                        
+            self.kill()
+        sys.exit()
+    def kill(self):
+        try: 
+            os.kill(self.child, signal.SIGKILL)
+        except OSError:
+            pass
+def cmd_rm(COSDIR):
+    global thread_pool
+    global cos_log
+    global stat 
+    cos_log = loginit()
+    stat = FileStat()
+    timestat = TimeStat()
+    if HAS_FORK:
+      Watcher()
+    path = COSDIR.decode('utf-8')
+    thread_pool_dir = threadpool.ThreadPool(dir_thread_num)
+    thread_pool_file = threadpool.ThreadPool(file_thread_num)
+    cos_log.debug("bucket:"+bucket +",path:"+path)
+    args = [cos_client, bucket, path, thread_pool_file]
+    args_tuple = (args, None)
+    args_list = [args_tuple]
+    requests = threadpool.makeRequests(delete_r, args_list)
+    for req in requests:
+        thread_pool_dir.putRequest(req)
+
+    cos_log.debug("thread_pool_dir waiting.....\n")
+    thread_pool_dir.wait()
+    thread_pool_dir.dismissWorkers(dir_thread_num, True)
+    cos_log.debug("thread_pool_dir wait end.....\n")
+
+    timestat.end()
+    stat.logStat()
+
+if sys.argv[1] in ['config','ls','mkdir','put','rm','delete','del'] and len(sys.argv) >= 3:
+    if sys.argv[1] == 'config':
+        parser = OptionParser()
+        parser.add_option("-a", "--appid", dest="appid", help="specify appid")
+        parser.add_option("-i", "--id", dest="secret_id", help="specify secret id")
+        parser.add_option("-k", "--key", dest="secret_key", help="specify secret key")
+        parser.add_option("-r", "--region", dest="region", help="specify region")
+        parser.add_option("-b", "--bucket", dest="bucket", help="specify bucket")
+        (options, args) = parser.parse_args()
+        CMD_LIST['config'] = cmd_configure    
+        CMD_LIST['config'](args, options)
+    if sys.argv[1] == 'ls':
+        cmd_loadconfigure()
+        cos_client = CosClient(appid, secret_id, secret_key, region)
+        COSDIR = sys.argv[2]
+        cmd_lsdir(COSDIR)
+    if sys.argv[1] == 'mkdir':
+        cmd_loadconfigure()
+        cos_client = CosClient(appid, secret_id, secret_key, region)
+        COSDIR = sys.argv[2]
+        cmd_mkdir(COSDIR)
+    if sys.argv[1] == 'put' and len(sys.argv) == 4:
+        cmd_loadconfigure()
+        cos_client = CosClient(appid, secret_id, secret_key, region)
+        LOCALFILE = sys.argv[2]
+        COSFILE = sys.argv[3]
+        cmd_put(LOCALFILE,COSFILE)
+    if sys.argv[1] in ('rm','delete','del'):
+        cmd_loadconfigure()
+        cos_client = CosClient(appid, secret_id, secret_key, region)
+        COSDIR = sys.argv[2]
+        path = COSDIR.decode('utf-8') 
+        cmd_rm(path)
+else:
+    print(HELP)
+    exit()

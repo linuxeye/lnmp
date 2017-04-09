@@ -22,9 +22,6 @@ printf "
 . ./include/color.sh
 . ./include/check_dir.sh
 
-# Check if user is root
-[ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
-
 Reset_db_root_password()
 {
   [ ! -d "$db_install_dir" ] && { echo "${CFAILURE}Database is not installed on your system! ${CEND}"; exit 1; }

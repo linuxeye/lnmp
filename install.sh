@@ -449,6 +449,10 @@ IPADDR_COUNTRY_ISP=`./include/get_ipaddr_state.py $PUBLIC_IPADDR`
 IPADDR_COUNTRY=`echo $IPADDR_COUNTRY_ISP | awk '{print $1}'`
 [ "`echo $IPADDR_COUNTRY_ISP | awk '{print $2}'`"x == '1000323'x ] && IPADDR_ISP=aliyun
 
+# del openssl for jcloud
+[ -e "/usr/local/bin/openssl" ] && rm -rf /usr/local/bin/openssl
+[ -e "/usr/local/include/openssl" ] && rm -rf /usr/local/include/openssl
+
 # Check binary dependencies packages
 . ./include/check_sw.sh
 case "${OS}" in

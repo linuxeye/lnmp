@@ -18,6 +18,9 @@ printf "
 #######################################################################
 "
 
+# Check if user is root
+[ $(id -u) != '0' ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
+
 # get pwd
 sed -i "s@^oneinstack_dir.*@oneinstack_dir=$(pwd)@" ./options.conf
 
@@ -46,9 +49,6 @@ sed -i "s@^oneinstack_dir.*@oneinstack_dir=$(pwd)@" ./options.conf
 . ./include/redis.sh
 
 . ./include/python.sh
-
-# Check if user is root
-[ $(id -u) != '0' ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
 
 # Check PHP
 if [ -e "${php_install_dir}/bin/phpize" ]; then
@@ -162,6 +162,7 @@ EOF
     endscript
 }
 EOF
+  sed -i 's@^iptables = iptables.*@iptables = iptables@' /etc/fail2ban/action.d/iptables-common.conf
   kill -9 `ps -ef | grep fail2ban | grep -v grep | awk '{print $2}'` > /dev/null 2>&1
   /etc/init.d/fail2ban start
   popd

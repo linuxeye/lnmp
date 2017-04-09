@@ -14,6 +14,7 @@ Install_openSSL102() {
     pushd ${oneinstack_dir}/src
     tar xzf openssl-${openssl_version}.tar.gz
     pushd openssl-${openssl_version}
+    make clean
     ./config --prefix=${openssl_install_dir} -fPIC shared zlib-dynamic
     make -j ${THREAD} && make install
     popd
@@ -33,6 +34,7 @@ Install_openSSL100() {
     pushd ${oneinstack_dir}/src
     tar xzf openssl-1.0.0s.tar.gz
     pushd openssl-1.0.0s
+    make clean
     ./config --prefix=/usr/local/openssl100s -fPIC shared zlib-dynamic
     make -j ${THREAD} && make install
     popd

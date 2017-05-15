@@ -128,6 +128,7 @@ Install_fail2ban() {
     LOGPATH=/var/log/secure
     /bin/cp files/redhat-initd /etc/init.d/fail2ban 
     sed -i "s@^FAIL2BAN=.*@FAIL2BAN=${python_install_dir}/bin/fail2ban-client@" /etc/init.d/fail2ban
+    sed -i 's@Starting fail2ban.*@&\n    [ ! -e "/var/run/fail2ban" ] \&\& mkdir /var/run/fail2ban@' /etc/init.d/fail2ban
     chmod +x /etc/init.d/fail2ban
     chkconfig --add fail2ban
     chkconfig fail2ban on

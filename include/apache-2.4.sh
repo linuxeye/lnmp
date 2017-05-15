@@ -140,13 +140,12 @@ EOF
 </IfModule>
 
 ProtocolsHonorOrder On
-Protocols h2 http/1.1
 PidFile /var/run/httpd.pid
 ServerTokens ProductOnly
 ServerSignature Off
 Include conf/vhost/*.conf
 EOF
-
+  [ "${Nginx_version}" == '4' -a ! -e "${web_install_dir}/sbin/nginx" ] && echo 'Protocols h2 http/1.1' >> ${apache_install_dir}/conf/httpd.conf
   if [ "${Nginx_version}" != '4' -o -e "${web_install_dir}/sbin/nginx" ]; then
     cat > ${apache_install_dir}/conf/extra/httpd-remoteip.conf << EOF
 LoadModule remoteip_module modules/mod_remoteip.so

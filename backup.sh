@@ -69,45 +69,41 @@ WEB_COS_BK() {
   for W in `echo $website_name | tr ',' ' '`
   do
     [ ! -e "$wwwroot_dir/$WebSite" ] && { echo "[$wwwroot_dir/$WebSite] not exist"; break; }
-    Web_FILE="Web_${W}_$(date +%Y%m%d_%H).tgz"
-    if [ ! -e "$backup_dir/$Web_FILE" ];then
+    PUSH_FILE="$backup_dir/Web_${W}_$(date +%Y%m%d_%H).tgz"
+    if [ ! -e "$PUSH_FILE" ]; then
       pushd $wwwroot_dir
-      tar czf $Web_FILE ./$W
+      tar czf $PUSH_FILE ./$W
       popd
-      PUSH_FILE="$wwwroot_dir/$Web_FILE"
-    else
-      PUSH_FILE="$backup_dir/$Web_FILE"
     fi
-
-    ${python_install_dir}/bin/python ./coscmd put $PUSH_FILE /`date +%F`/$Web_FILE
-    [ $? -eq 0 ] && { [ -e "$wwwroot_dir/$Web_FILE" ] && rm -rf $wwwroot_dir/$Web_FILE; ${python_install_dir}/bin/python ./coscmd rm /`date +%F --date="$expired_days days ago"`/ > /dev/null 2>&1; }
+    ${python_install_dir}/bin/python ./coscmd put $PUSH_FILE /`date +%F`/Web_${W}_$(date +%Y%m%d_%H).tgz
+    [ $? -eq 0 ] && { [ -e "$PUSH_FILE" ] && rm -rf $PUSH_FILE; ${python_install_dir}/bin/python ./coscmd rm /`date +%F --date="$expired_days days ago"`/ > /dev/null 2>&1; }
   done
 }
 
-if [ "$backup_destination" == 'local' ];then
+if [ "$backup_destination" == 'local' ]; then
   [ -n "`echo $backup_content | grep -ow db`" ] && DB_Local_BK
   [ -n "`echo $backup_content | grep -ow web`" ] && WEB_Local_BK
-elif [ "$backup_destination" == 'remote' ];then
+elif [ "$backup_destination" == 'remote' ]; then
   echo "com:::[ ! -e "$backup_dir" ] && mkdir -p $backup_dir" > config_bakcup.txt
   [ -n "`echo $backup_content | grep -ow db`" ] && DB_Remote_BK
   [ -n "`echo $backup_content | grep -ow web`" ] && WEB_Remote_BK
   ./mabs.sh -c config_bakcup.txt -T -1 | tee mabs.log
-elif [ "$backup_destination" == 'cos' ];then
+elif [ "$backup_destination" == 'cos' ]; then
   [ -n "`echo $backup_content | grep -ow db`" ] && DB_COS_BK
   [ -n "`echo $backup_content | grep -ow web`" ] && WEB_COS_BK
-elif [ "$backup_destination" == 'local,remote' ];then
+elif [ "$backup_destination" == 'local,remote' ]; then
   echo "com:::[ ! -e "$backup_dir" ] && mkdir -p $backup_dir" > config_bakcup.txt
   [ -n "`echo $backup_content | grep -ow db`" ] && DB_Local_BK
   [ -n "`echo $backup_content | grep -ow web`" ] && WEB_Local_BK
   [ -n "`echo $backup_content | grep -ow db`" ] && DB_Remote_BK
   [ -n "`echo $backup_content | grep -ow web`" ] && WEB_Remote_BK
   ./mabs.sh -c config_bakcup.txt -T -1 | tee mabs.log	
-elif [ "$backup_destination" == 'local,cos' ];then
+elif [ "$backup_destination" == 'local,cos' ]; then
   [ -n "`echo $backup_content | grep -ow db`" ] && DB_Local_BK
   [ -n "`echo $backup_content | grep -ow db`" ] && DB_COS_BK
   [ -n "`echo $backup_content | grep -ow web`" ] && WEB_Local_BK
   [ -n "`echo $backup_content | grep -ow web`" ] && WEB_COS_BK
-elif [ "$backup_destination" == 'remote,cos' ];then
+elif [ "$backup_destination" == 'remote,cos' ]; then
   echo "com:::[ ! -e "$backup_dir" ] && mkdir -p $backup_dir" > config_bakcup.txt
   [ -n "`echo $backup_content | grep -ow db`" ] && DB_Remote_BK 
   [ -n "`echo $backup_content | grep -ow db`" ] && DB_COS_BK

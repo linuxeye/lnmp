@@ -482,8 +482,8 @@ server {
   index index.html index.htm index.jsp;
   root ${vhostdir};
   ${Nginx_redirect}
-  #error_page 404 = /404.html;
-  #error_page 502 = /502.html;
+  #error_page 404 /404.html;
+  #error_page 502 /502.html;
   ${anti_hotlinking}
   location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|mp4|ico)$ {
     expires 30d;
@@ -500,13 +500,13 @@ server {
 }
 EOF
 
-  [ "${https_yn}" == 'y' ] && sed -i "s@^root.*;@&\nif (\$ssl_protocol = \"\") { return 301 https://\$server_name\$request_uri; }@" ${web_install_dir}/conf/vhost/${domain}.conf
+  [ "${https_yn}" == 'y' ] && sed -i "s@^root.*;@&\nif (\$ssl_protocol = \"\") { return 301 https://\$host\$request_uri; }@" ${web_install_dir}/conf/vhost/${domain}.conf
 
   cat > ${tomcat_install_dir}/conf/vhost/${domain}.xml << EOF
 <Host name="${domain}" appBase="${vhostdir}" unpackWARs="true" autoDeploy="true"> ${Tomcat_Domain_alias}
-  <Context path="" docBase="${vhostdir}" debug="0" reloadable="false" crossContext="true"/>
+  <Context path="" docBase="${vhostdir}" reloadable="false" crossContext="true"/>
   <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
-    prefix="${domain}_access_log." suffix=".txt" pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+    prefix="${domain}_access_log" suffix=".txt" pattern="%h %l %u %t &quot;%r&quot; %s %b" />
 </Host>
 EOF
   [ -z "$(grep -o "vhost-${domain} SYSTEM" ${tomcat_install_dir}/conf/server.xml)" ] && sed -i "/vhost-localhost SYSTEM/a<\!ENTITY vhost-${domain} SYSTEM \"file://${tomcat_install_dir}/conf/vhost/${domain}.xml\">" ${tomcat_install_dir}/conf/server.xml
@@ -540,9 +540,9 @@ EOF
 Create_tomcat_conf() {
   cat > ${tomcat_install_dir}/conf/vhost/${domain}.xml << EOF
 <Host name="${domain}" appBase="webapps" unpackWARs="true" autoDeploy="true"> ${Tomcat_Domain_alias}
-  <Context path="" docBase="${vhostdir}" debug="0" reloadable="false" crossContext="true"/>
+  <Context path="" docBase="${vhostdir}" reloadable="false" crossContext="true"/>
   <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
-    prefix="${domain}_access_log." suffix=".txt" pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+    prefix="${domain}_access_log" suffix=".txt" pattern="%h %l %u %t &quot;%r&quot; %s %b" />
 </Host>
 EOF
   [ -z "$(grep -o "vhost-${domain} SYSTEM" ${tomcat_install_dir}/conf/server.xml)" ] && sed -i "/vhost-localhost SYSTEM/a<\!ENTITY vhost-${domain} SYSTEM \"file://${tomcat_install_dir}/conf/vhost/${domain}.xml\">" ${tomcat_install_dir}/conf/server.xml
@@ -574,8 +574,8 @@ server {
   root ${vhostdir};
   ${Nginx_redirect}
   include ${web_install_dir}/conf/rewrite/${rewrite}.conf;
-  #error_page 404 = /404.html;
-  #error_page 502 = /502.html;
+  #error_page 404 /404.html;
+  #error_page 502 /502.html;
   ${anti_hotlinking}
   ${NGX_CONF}
   location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|mp4|ico)$ {
@@ -626,7 +626,7 @@ EOF
     fi
   fi
 
-  [ "${https_yn}" == 'y' ] && sed -i "s@^  root.*;@&\n  if (\$ssl_protocol = \"\") { return 301 https://\$server_name\$request_uri; }@" ${web_install_dir}/conf/vhost/${domain}.conf
+  [ "${https_yn}" == 'y' ] && sed -i "s@^  root.*;@&\n  if (\$ssl_protocol = \"\") { return 301 https://\$host\$request_uri; }@" ${web_install_dir}/conf/vhost/${domain}.conf
 
   echo
   ${web_install_dir}/sbin/nginx -t
@@ -773,7 +773,7 @@ server {
 }
 EOF
 
-  [ "${https_yn}" == 'y' ] && sed -i "s@^  root.*;@&\n  if (\$ssl_protocol = \"\") { return 301 https://\$server_name\$request_uri; }@" ${web_install_dir}/conf/vhost/${domain}.conf
+  [ "${https_yn}" == 'y' ] && sed -i "s@^  root.*;@&\n  if (\$ssl_protocol = \"\") { return 301 https://\$host\$request_uri; }@" ${web_install_dir}/conf/vhost/${domain}.conf
 
   echo
   ${web_install_dir}/sbin/nginx -t

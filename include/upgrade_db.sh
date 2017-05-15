@@ -63,11 +63,9 @@ Upgrade_DB() {
         DB_name=percona-server-$NEW_DB_version
         DB_URL=http://www.percona.com/redir/downloads/Percona-Server-`echo $NEW_DB_version | awk -F. '{print $1"."$2}'`/LATEST/source/tarball/$DB_name.tar.gz
       elif [ "$DB" == 'MySQL' ]; then
-        [ `echo $NEW_DB_version | awk -F. '{print $1"."$2}'` != '5.5' ] && DB_name=mysql-${NEW_DB_version}-linux-glibc2.5-${SYS_BIT_b} || DB_name=mysql-${NEW_DB_version}-linux2.6-${SYS_BIT_b}
         DB_URL=$DOWN_ADDR/MySQL-`echo $NEW_DB_version | awk -F. '{print $1"."$2}'`/$DB_name.tar.gz
       fi
         [ ! -e "$DB_name.tar.gz" ] && wget --no-check-certificate -c $DB_URL > /dev/null 2>&1
-
         if [ -e "$DB_name.tar.gz" ]; then
           echo "Download [${CMSG}$DB_name.tar.gz${CEND}] successfully! "
         else

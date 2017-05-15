@@ -17,10 +17,14 @@ printf "
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
+# get pwd
+sed -i "s@^oneinstack_dir.*@oneinstack_dir=$(pwd)@" ./options.conf
 
 . ./options.conf
+. ./versions.txt
 . ./include/color.sh
 . ./include/check_dir.sh
+. ./include/download.sh
 . ./include/python.sh
 
 # Check if user is root
@@ -107,7 +111,7 @@ if [ "$CONTENT_BK" != '2' ]; then
   sed -i "s@^db_name=.*@db_name=$db_name@" ./options.conf
 fi
 
-if [ "$CONTENT_BK" != '1' ];then
+if [ "$CONTENT_BK" != '1' ]; then
   websites=`ls $wwwroot_dir | grep -vw default`
   while :; do echo
     echo "Please enter one or more name for website, separate multiple website names with commas: "

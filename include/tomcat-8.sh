@@ -89,9 +89,9 @@ EOF
     [ ! -d "${tomcat_install_dir}/conf/vhost" ] && mkdir ${tomcat_install_dir}/conf/vhost
     cat > ${tomcat_install_dir}/conf/vhost/localhost.xml << EOF
 <Host name="localhost" appBase="${wwwroot_dir}/default" unpackWARs="true" autoDeploy="true">
-  <Context path="" docBase="${wwwroot_dir}/default" debug="0" reloadable="false" crossContext="true"/>
+  <Context path="" docBase="${wwwroot_dir}/default" reloadable="false" crossContext="true"/>
   <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
-    prefix="localhost_access_log." suffix=".txt" pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+    prefix="localhost_access_log" suffix=".txt" pattern="%h %l %u %t &quot;%r&quot; %s %b" />
 </Host>
 EOF
     # logrotate tomcat catalina.out

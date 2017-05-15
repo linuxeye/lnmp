@@ -109,16 +109,18 @@ checkDownload() {
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             if [ "$(../include/check_port.py mirrors.tuna.tsinghua.edu.cn 443)" == "True" ]; then
               DOWN_ADDR_MYSQL=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.7
+              DOWN_ADDR_MYSQL_BK=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.7
             else
               DOWN_ADDR_MYSQL=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.7
-              DOWN_ADDR_MYSQL_BK=${DOWN_ADDR_MYSQL}
+              DOWN_ADDR_MYSQL_BK=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.7
             fi
           else
             if [ "$(../include/check_port.py cdn.mysql.com 80)" == "True" ]; then
               DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.7
+              DOWN_ADDR_MYSQL_BK=http://mysql.he.net/Downloads/MySQL-5.7
             else
               DOWN_ADDR_MYSQL=http://mysql.he.net/Downloads/MySQL-5.7
-              DOWN_ADDR_MYSQL_BK=${DOWN_ADDR_MYSQL}
+              DOWN_ADDR_MYSQL_BK=http://cdn.mysql.com/Downloads/MySQL-5.7
             fi
           fi
         fi
@@ -131,9 +133,9 @@ checkDownload() {
         fi
         # start download
         wget --tries=6 -c --no-check-certificate ${DOWN_ADDR_MYSQL}/${FILE_NAME}
-        wget --tries=6 -c --no-check-certificate ${DOWN_ADDR_MYSQL}/${FILE_NAME}.md5
-        MYSQL_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
         # verifying download
+        MYSQL_TAR_MD5=$(curl -Lk ${DOWN_ADDR_MYSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
+        [ -z "${MYSQL_TAR_MD5}" ] && MYSQL_TAR_MD5=$(curl -Lk ${DOWN_ADDR_MYSQL_BK}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}') 
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${MYSQL_TAR_MD5}" ]; do
           wget -c --no-check-certificate ${DOWN_ADDR_MYSQL_BK}/${FILE_NAME};sleep 1
@@ -156,16 +158,18 @@ checkDownload() {
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             if [ "$(../include/check_port.py mirrors.tuna.tsinghua.edu.cn 443)" == "True" ]; then
               DOWN_ADDR_MYSQL=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.6
+              DOWN_ADDR_MYSQL_BK=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.6
             else
               DOWN_ADDR_MYSQL=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.6
-              DOWN_ADDR_MYSQL_BK=${DOWN_ADDR_MYSQL}
+              DOWN_ADDR_MYSQL_BK=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.6
             fi
           else
             if [ "$(../include/check_port.py cdn.mysql.com 80)" == "True" ]; then
               DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.6
+              DOWN_ADDR_MYSQL_BK=http://mysql.he.net/Downloads/MySQL-5.6
             else
               DOWN_ADDR_MYSQL=http://mysql.he.net/Downloads/MySQL-5.6
-              DOWN_ADDR_MYSQL_BK=${DOWN_ADDR_MYSQL}
+              DOWN_ADDR_MYSQL_BK=http://cdn.mysql.com/Downloads/MySQL-5.6
             fi
           fi
         fi
@@ -177,8 +181,9 @@ checkDownload() {
           FILE_NAME=mysql-${mysql56_version}.tar.gz
         fi
         wget --tries=6 -c --no-check-certificate ${DOWN_ADDR_MYSQL}/${FILE_NAME}
-        wget --tries=6 -c --no-check-certificate ${DOWN_ADDR_MYSQL}/${FILE_NAME}.md5
-        MYSQL_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
+        # verifying download
+        MYSQL_TAR_MD5=$(curl -Lk ${DOWN_ADDR_MYSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
+        [ -z "${MYSQL_TAR_MD5}" ] && MYSQL_TAR_MD5=$(curl -Lk ${DOWN_ADDR_MYSQL_BK}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}') 
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${MYSQL_TAR_MD5}" ]; do
           wget -c --no-check-certificate ${DOWN_ADDR_MYSQL_BK}/${FILE_NAME};sleep 1
@@ -201,30 +206,33 @@ checkDownload() {
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             if [ "$(../include/check_port.py mirrors.tuna.tsinghua.edu.cn 443)" == "True" ]; then
               DOWN_ADDR_MYSQL=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.5
+              DOWN_ADDR_MYSQL_BK=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.5
             else
               DOWN_ADDR_MYSQL=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.5
-              DOWN_ADDR_MYSQL_BK=${DOWN_ADDR_MYSQL}
+              DOWN_ADDR_MYSQL_BK=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.5
             fi
           else
             if [ "$(../include/check_port.py cdn.mysql.com 80)" == "True" ]; then
               DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.5
+              DOWN_ADDR_MYSQL_BK=http://mysql.he.net/Downloads/MySQL-5.5
             else
               DOWN_ADDR_MYSQL=http://mysql.he.net/Downloads/MySQL-5.5
-              DOWN_ADDR_MYSQL_BK=${DOWN_ADDR_MYSQL}
+              DOWN_ADDR_MYSQL_BK=http://cdn.mysql.com/Downloads/MySQL-5.5
             fi
           fi
         fi
         if [ "${dbInstallMethods}" == '1' ]; then
           echo "Download MySQL 5.5 binary package..."
-          FILE_NAME=mysql-${mysql55_version}-linux2.6-${SYS_BIT_b}.tar.gz
+          FILE_NAME=mysql-${mysql55_version}-linux-glibc2.5-${SYS_BIT_b}.tar.gz
         elif [ "${dbInstallMethods}" == '2' ]; then
           echo "Download MySQL 5.5 source package..."
           FILE_NAME=mysql-${mysql55_version}.tar.gz
           src_url=${mirrorLink}/mysql-5.5-fix-arm-client_plugin.patch && Download_src
         fi
         wget --tries=6 -c --no-check-certificate ${DOWN_ADDR_MYSQL}/${FILE_NAME}
-        wget --tries=6 -c --no-check-certificate ${DOWN_ADDR_MYSQL}/${FILE_NAME}.md5
-        MYSQL_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
+        # verifying download
+        MYSQL_TAR_MD5=$(curl -Lk ${DOWN_ADDR_MYSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
+        [ -z "${MYSQL_TAR_MD5}" ] && MYSQL_TAR_MD5=$(curl -Lk ${DOWN_ADDR_MYSQL_BK}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}') 
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${MYSQL_TAR_MD5}" ]; do
           wget -c --no-check-certificate ${DOWN_ADDR_MYSQL_BK}/${FILE_NAME};sleep 1
@@ -368,9 +376,9 @@ checkDownload() {
           FILE_NAME=percona-server-${percona57_version}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             DOWN_ADDR_PERCONA=${mirrorLink}
-            DOWN_ADDR_PERCONA_2=https://www.percona.com/downloads/Percona-Server-5.7/source/tarball
-            PERCONA_TAR_MD5=$(curl -Lk ${DOWN_ADDR_PERCONA_2}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${PERCONA_TAR_MD5}" ] && { DOWN_ADDR_PERCONA=${mirrorLink}; PERCONA_TAR_MD5=$(curl -Lk ${DOWN_ADDR_PERCONA_2}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}'); }
+            DOWN_ADDR_PERCONA_BK=https://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_version}/source/tarball
+            PERCONA_TAR_MD5=$(curl -Lk ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}')
+            [ -z "${PERCONA_TAR_MD5}" ] && { DOWN_ADDR_PERCONA=${DOWN_ADDR_PERCONA_BK}; PERCONA_TAR_MD5=$(curl -Lk ${DOWN_ADDR_PERCONA_BK}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}'); }
           else
             DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_version}/source/tarball
             PERCONA_TAR_MD5=$(curl -Lk ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
@@ -378,7 +386,7 @@ checkDownload() {
         fi
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${PERCONA_TAR_MD5}" ]; do
-          wget -c --no-check-certificate ${DOWN_ADDR_PERCONA}/${FILE_NAME};sleep 1
+          wget -c --no-check-certificate ${DOWN_ADDR_PERCONA}/${FILE_NAME}; sleep 1
           let "tryDlCount++"
           [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${PERCONA_TAR_MD5}" -o "${tryDlCount}" == '6' ] && break || continue
         done
@@ -403,9 +411,9 @@ checkDownload() {
           FILE_NAME=percona-server-${percona56_version}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             DOWN_ADDR_PERCONA=${mirrorLink}
-            DOWN_ADDR_PERCONA_2=https://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_version}/source/tarball
-            PERCONA_TAR_MD5=$(curl -Lk ${DOWN_ADDR_PERCONA_2}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${PERCONA_TAR_MD5}" ] && { DOWN_ADDR_PERCONA=${mirrorLink}; PERCONA_TAR_MD5=$(curl -Lk ${DOWN_ADDR_PERCONA_2}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}'); }
+            DOWN_ADDR_PERCONA_BK=https://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_version}/source/tarball
+            PERCONA_TAR_MD5=$(curl -Lk ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}')
+            [ -z "${PERCONA_TAR_MD5}" ] && { DOWN_ADDR_PERCONA=${DOWN_ADDR_PERCONA_BK}; PERCONA_TAR_MD5=$(curl -Lk ${DOWN_ADDR_PERCONA_BK}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}'); }
           else
             DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_version}/source/tarball
             PERCONA_TAR_MD5=$(curl -Lk ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
@@ -413,7 +421,7 @@ checkDownload() {
         fi
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${PERCONA_TAR_MD5}" ]; do
-          wget -c --no-check-certificate ${DOWN_ADDR_PERCONA}/${FILE_NAME};sleep 1
+          wget -c --no-check-certificate ${DOWN_ADDR_PERCONA}/${FILE_NAME}; sleep 1
           let "tryDlCount++"
           [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${PERCONA_TAR_MD5}" -o "${tryDlCount}" == '6' ] && break || continue
         done
@@ -438,9 +446,9 @@ checkDownload() {
           FILE_NAME=percona-server-${percona55_version}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             DOWN_ADDR_PERCONA=${mirrorLink}
-            DOWN_ADDR_PERCONA_2=https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-${percona55_version}/source/tarball
-            PERCONA_TAR_MD5=$(curl -Lk ${DOWN_ADDR_PERCONA_2}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${PERCONA_TAR_MD5}" ] && { DOWN_ADDR_PERCONA=${mirrorLink}; PERCONA_TAR_MD5=$(curl -Lk ${DOWN_ADDR_PERCONA_2}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}'); }
+            DOWN_ADDR_PERCONA_BK=https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-${percona55_version}/source/tarball
+            PERCONA_TAR_MD5=$(curl -Lk ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}')
+            [ -z "${PERCONA_TAR_MD5}" ] && { DOWN_ADDR_PERCONA=${DOWN_ADDR_PERCONA_BK}; PERCONA_TAR_MD5=$(curl -Lk ${DOWN_ADDR_PERCONA_BK}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}'); }
           else
             DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-${percona55_version}/source/tarball
             PERCONA_TAR_MD5=$(curl -Lk ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}')
@@ -448,7 +456,7 @@ checkDownload() {
         fi
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${PERCONA_TAR_MD5}" ]; do
-          wget -c --no-check-certificate ${DOWN_ADDR_PERCONA}/${FILE_NAME};sleep 1
+          wget -c --no-check-certificate ${DOWN_ADDR_PERCONA}/${FILE_NAME}; sleep 1
           let "tryDlCount++"
           [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${PERCONA_TAR_MD5}" -o "${tryDlCount}" == '6' ] && break || continue
         done

@@ -28,7 +28,7 @@ mariadb55_version=5.5.56
 
 percona57_version=5.7.18-15
 percona56_version=5.6.36-82.0
-percona55_version=5.5.58-38.8
+percona55_version=5.5.55-38.8
 
 alisql56_version=5.6.32-5
 
@@ -88,7 +88,7 @@ boost_version=1.59.0
 
 # Others
 libevent_version=2.0.22-stable
-tmux_version=2.3
+tmux_version=2.5
 htop_version=2.0.2
 bison_version=2.7.1
 python_version=2.7.13

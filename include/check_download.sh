@@ -248,6 +248,45 @@ checkDownload() {
         ;;
 
       4)
+        # MariaDB 10.2
+        if [ "${dbInstallMethods}" == '1' ]; then
+          echo "Download MariaDB 10.2 binary package..."
+          FILE_NAME=mariadb-${mariadb102_version}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
+          if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
+            DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb102_version}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
+            MARAIDB_TAR_MD5=$(curl -Lk ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
+            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb102_version}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}; MARAIDB_TAR_MD5=$(curl -Lk ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
+          else
+            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb102_version}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
+            MARAIDB_TAR_MD5=$(curl -Lk http://archive.mariadb.org/mariadb-${mariadb102_version}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
+          fi
+        elif [ "${dbInstallMethods}" == '2' ]; then
+          echo "Download MariaDB 10.2 source package..."
+          FILE_NAME=mariadb-${mariadb102_version}.tar.gz
+          if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
+            DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb102_version}/source
+            MARAIDB_TAR_MD5=$(curl -Lk ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
+            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb102_version}/source; MARAIDB_TAR_MD5=$(curl -Lk ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
+          else
+            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb102_version}/source
+            MARAIDB_TAR_MD5=$(curl -Lk http://archive.mariadb.org/mariadb-${mariadb102_version}/source/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
+          fi
+        fi
+        tryDlCount=0
+        while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${MARAIDB_TAR_MD5}" ]; do
+          wget -c --no-check-certificate ${DOWN_ADDR_MARIADB}/${FILE_NAME};sleep 1
+          let "tryDlCount++"
+          [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${MARAIDB_TAR_MD5}" -o "${tryDlCount}" == '6' ] && break || continue
+        done
+        if [ "${tryDlCount}" == '6' ]; then
+          echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
+          kill -9 $$
+        else
+          echo "[${CMSG}${FILE_NAME}${CEND}] found."
+        fi
+        ;;
+
+      5)
         # MariaDB 10.1
         if [ "${dbInstallMethods}" == '1' ]; then
           echo "Download MariaDB 10.1 binary package..."
@@ -286,7 +325,7 @@ checkDownload() {
         fi
         ;;
 
-      5)
+      6)
         # MariaDB 10.0
         if [ "${dbInstallMethods}" == '1' ]; then
           echo "Download MariaDB 10.0 binary package..."
@@ -325,7 +364,7 @@ checkDownload() {
         fi
         ;;
 
-      6)
+      7)
         # MariaDB 5.5
         if [ "${dbInstallMethods}" == '1' ]; then
           echo "Download MariaDB 5.5 binary package..."
@@ -364,7 +403,7 @@ checkDownload() {
         fi
         ;;
 
-      7)
+      8)
         # Precona 5.7
         if [ "${dbInstallMethods}" == '1' ]; then
           echo "Download Percona 5.7 binary package..."
@@ -398,7 +437,7 @@ checkDownload() {
         fi
         ;;
 
-      8)
+      9)
         # Precona 5.6
         if [ "${dbInstallMethods}" == '1' ]; then
           echo "Download Percona 5.6 binary package..."
@@ -433,7 +472,7 @@ checkDownload() {
         fi
         ;;
 
-      9)
+      10)
         # Percona 5.5
         if [ "${dbInstallMethods}" == '1' ]; then
           echo "Download Percona 5.5 binary package..."
@@ -468,7 +507,7 @@ checkDownload() {
         fi
         ;;
 
-      10)
+      11)
         # AliSQL 5.6
         DOWN_ADDR_ALISQL=$mirrorLink
         echo "Download AliSQL 5.6 source package..."

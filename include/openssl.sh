@@ -20,6 +20,8 @@ Install_openSSL102() {
     popd
     if [ -f "${openssl_install_dir}/lib/libcrypto.a" ]; then
       echo "${CSUCCESS}openssl-1.0.2 module installed successfully! ${CEND}"
+      echo "${openssl_install_dir}/lib" > /etc/ld.so.conf.d/openssl.conf
+      ldconfig
       rm -rf openssl-${openssl_version}
     else
       echo "${CFAILURE}openssl-1.0.2 install failed, Please contact the author! ${CEND}"

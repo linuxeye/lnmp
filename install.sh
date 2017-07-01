@@ -500,11 +500,7 @@ fi
 
 # openSSL 
 . ./include/openssl.sh
-if [ "$Debian_version" == '8' -o "$Ubuntu_version" == '16' ] && [ "$PHP_version" == '1' ]; then
-  # Problem building php-5.3 with openssl
-  Install_openSSL100 | tee -a $oneinstack_dir/install.log
-fi
-if [[ $Tomcat_version =~ ^[1-3]$ ]] || [ "$DB_yn" == 'y' -a "$Apache_version" == '1' ]; then
+if [[ $Tomcat_version =~ ^[1-3]$ ]] || [[ $Apache_version =~ ^[1-2]$ ]] || [[ $PHP_version =~ ^[1-6]$ ]]; then
   Install_openSSL102 | tee -a $oneinstack_dir/install.log
 fi
 

@@ -9,11 +9,11 @@ tomcat8_version=8.5.15
 tomcat7_version=7.0.78
 tomcat6_version=6.0.53
 
-apache24_version=2.4.25
+apache24_version=2.4.26
 apache22_version=2.2.32
 pcre_version=8.40
-apr_version=1.5.2
-apr_util_version=1.5.4
+apr_version=1.6.2
+apr_util_version=1.6.0
 nghttp2_version=1.23.1
 
 # DB
@@ -38,8 +38,8 @@ jdk17_version=1.7.0_80
 jdk16_version=1.6.0_45
 
 # PHP
-php71_version=7.1.5
-php70_version=7.0.19
+php71_version=7.1.6
+php70_version=7.0.20
 php56_version=5.6.30
 php55_version=5.5.38
 php54_version=5.4.45
@@ -49,14 +49,14 @@ zendopcache_version=7.0.5
 xcache_version=3.2.0
 apcu_version=4.0.11
 apcu_for_php7_version=5.1.8
-ImageMagick_version=6.9.8-8
+ImageMagick_version=6.9.8-10
 imagick_version=3.4.3
 imagick_for_php53_version=3.3.0
 GraphicsMagick_version=1.3.25
 gmagick_for_php7_version=2.0.4RC1
 gmagick_version=1.1.7RC3
 libiconv_version=1.15
-curl_version=7.54.0
+curl_version=7.54.1
 libmcrypt_version=2.5.8
 mcrypt_version=2.6.8
 mhash_version=0.9.9.9
@@ -71,7 +71,7 @@ redis_pecl_for_php7_version=3.1.2
 redis_pecl_version=2.2.8
 
 # Memcached
-memcached_version=1.4.36
+memcached_version=1.4.38
 libmemcached_version=1.0.18
 memcached_pecl_version=2.2.0
 memcached_pecl_php7_version=3.0.3

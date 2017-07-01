@@ -19,26 +19,13 @@ Install_PHP53() {
   popd
   rm -rf libiconv-$libiconv_version
   
-  # Problem building php-5.3 with openssl
-  if [ "$Debian_version" == '8' -o "$Ubuntu_version" == '16' ]; then
-    OpenSSL_args='--with-openssl=/usr/local/openssl100s'
-  else
-    OpenSSL_args='--with-openssl'
-  fi
-  
-  if [ "$Debian_version" == '8' -o "$Ubuntu_version" == '16' ]; then
-    tar xzf curl-7.35.0.tar.gz
-    pushd curl-7.35.0
-    LDFLAGS="-Wl,-rpath=/usr/local/openssl100s/lib" ./configure --prefix=/usr/local --with-ssl=/usr/local/openssl100s
-  else
-    tar xzf curl-$curl_version.tar.gz
-    pushd curl-$curl_version
-    ./configure --prefix=/usr/local
-  fi
+  tar xzf curl-$curl_version.tar.gz
+  pushd curl-$curl_version
+  ./configure --prefix=/usr/local --with-ssl=${openssl_install_dir}
   make -j ${THREAD} && make install
   popd
-  rm -rf curl-7.35.0 curl-$curl_version 
-  
+  rm -rf curl-$curl_version
+
   tar xzf libmcrypt-$libmcrypt_version.tar.gz
   pushd libmcrypt-$libmcrypt_version
   ./configure
@@ -89,7 +76,7 @@ Install_PHP53() {
     --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
     --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
     --enable-sysvsem --enable-inline-optimization --with-curl=/usr/local --enable-mbregex \
-    --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf $OpenSSL_args \
+    --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl=${openssl_install_dir} \
     --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
     --with-gettext --enable-zip --enable-soap --disable-debug $php_modules_options
   else
@@ -100,7 +87,7 @@ Install_PHP53() {
     --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
     --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
     --enable-sysvsem --enable-inline-optimization --with-curl=/usr/local --enable-mbregex \
-    --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf $OpenSSL_args \
+    --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl=${openssl_install_dir} \
     --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
     --with-gettext --enable-zip --enable-soap --disable-debug $php_modules_options
   fi

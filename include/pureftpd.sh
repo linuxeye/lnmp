@@ -36,17 +36,19 @@ Install_PureFTPd() {
     service pureftpd start
 
     # iptables Ftp
-    if [ "${OS}" == "CentOS" ]; then
-      if [ -z "$(grep '20000:30000' /etc/sysconfig/iptables)" ]; then
-        iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
-        iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
-        service iptables save
-      fi
-    elif [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]]; then
-      if [ -z "$(grep '20000:30000' /etc/iptables.up.rules)" ]; then
-        iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
-        iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
-        iptables-save > /etc/iptables.up.rules
+    if [ "$iptables_yn" == 'y' ]; then
+      if [ "${OS}" == "CentOS" ]; then
+        if [ -z "$(grep '20000:30000' /etc/sysconfig/iptables)" ]; then
+          iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
+          iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
+          service iptables save
+        fi
+      elif [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]]; then
+        if [ -z "$(grep '20000:30000' /etc/iptables.up.rules)" ]; then
+          iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
+          iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
+          iptables-save > /etc/iptables.up.rules
+        fi
       fi
     fi
 

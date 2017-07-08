@@ -73,15 +73,17 @@ EOF
     sed -i "s@/usr/local/tomcat@${tomcat_install_dir}@g" ${tomcat_install_dir}/conf/server.xml
     sed -i /ThreadLocalLeakPreventionListener/d ${tomcat_install_dir}/conf/server.xml
     if [ ! -e "${nginx_install_dir}/sbin/nginx" -a ! -e "${tengine_install_dir}/sbin/nginx" -a ! -e "${apache_install_dir}/conf/httpd.conf" ]; then
-      if [ "${OS}" == "CentOS" ]; then
-        if [ -z "$(grep -w '8080' /etc/sysconfig/iptables)" ]; then
-          iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
-          service iptables save
-        fi
-      elif [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]]; then
-        if [ -z "$(grep -w '8080' /etc/iptables.up.rules)" ]; then
-          iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
-          iptables-save > /etc/iptables.up.rules
+      if [ "$iptables_yn" == 'y' ]; then
+        if [ "${OS}" == "CentOS" ]; then
+          if [ -z "$(grep -w '8080' /etc/sysconfig/iptables)" ]; then
+            iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
+            service iptables save
+          fi
+        elif [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]]; then
+          if [ -z "$(grep -w '8080' /etc/iptables.up.rules)" ]; then
+            iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
+            iptables-save > /etc/iptables.up.rules
+          fi
         fi
       fi
     fi

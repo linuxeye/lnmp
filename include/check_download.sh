@@ -15,6 +15,7 @@ checkDownload() {
   if [ "${Web_yn}" == 'y' ]; then
     echo "Download openSSL..."
     src_url=https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && Download_src
+    src_url=http://curl.haxx.se/ca/cacert.pem && Download_src
     case "${Nginx_version}" in
       1)
         echo "Download nginx..."

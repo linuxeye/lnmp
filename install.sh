@@ -54,6 +54,16 @@ if [ -e "/etc/ssh/sshd_config" ]; then
   fi
 fi
 
+# check iptables
+while :; do echo
+  read -p "Do you want to enable iptables? [y/n]: " iptables_yn
+  if [[ ! $iptables_yn =~ ^[y,n]$ ]]; then
+    echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
+  else
+    break
+  fi
+done
+
 # check Web server
 while :; do echo
   read -p "Do you want to install Web server? [y/n]: " Web_yn

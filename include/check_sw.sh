@@ -54,9 +54,11 @@ installDepsCentOS() {
   echo "${CMSG}Removing the conflicting packages...${CEND}"
   if [ "${CentOS_RHEL_version}" == '7' ]; then
     yum -y groupremove "Basic Web Server" "MySQL Database server" "MySQL Database client" "File and Print Server"
-    yum -y install iptables-services
     systemctl mask firewalld.service
-    systemctl enable iptables.service
+    if [ "$iptables_yn" == 'y' ]; then
+      yum -y install iptables-services
+      systemctl enable iptables.service
+    fi
   elif [ "${CentOS_RHEL_version}" == '6' ]; then
     yum -y groupremove "FTP Server" "PostgreSQL Database client" "PostgreSQL Database server" "MySQL Database server" "MySQL Database client" "Web Server" "Office Suite and Productivity" "E-mail server" "Ruby Support" "Printing client"
   elif [ "${CentOS_RHEL_version}" == '5' ]; then

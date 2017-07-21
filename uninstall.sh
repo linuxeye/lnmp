@@ -75,7 +75,6 @@ Print_web() {
   [ -e "/etc/logrotate.d/tomcat" ] && echo "/etc/logrotate.d/tomcat"
   [ -d "/usr/java" ] && echo '/usr/java'
   [ -d "/usr/local/apr" ] && echo '/usr/local/apr'
-  [ -d "${openssl_install_dir}" ] && echo "${openssl_install_dir}"
 }
 
 Uninstall_Web() {
@@ -85,7 +84,6 @@ Uninstall_Web() {
   [ -d "${apache_install_dir}" ] && { service httpd stop > /dev/null 2>&1; rm -rf ${apache_install_dir} /etc/init.d/httpd /etc/logrotate.d/apache; sed -i "s@${apache_install_dir}/bin:@@" /etc/profile; }
   [ -d "${tomcat_install_dir}" ] && { killall java > /dev/null 2>&1; chmod +x /etc/logrotate.d/tomcat; rm -rf ${tomcat_install_dir} /etc/init.d/tomcat /etc/logrotate.d/tomcat /usr/local/apr; }
   [ -d "/usr/java" ] && { rm -rf /usr/java; sed -i '/export JAVA_HOME=/d' /etc/profile; sed -i '/export CLASSPATH=/d' /etc/profile; sed -i 's@\$JAVA_HOME/bin:@@' /etc/profile; }
-  [ -d "${openssl_install_dir}" ] && rm -rf ${openssl_install_dir}
   [ -e "${wwwroot_dir}" ] && /bin/mv ${wwwroot_dir}{,$(date +%Y%m%d%H)}
   sed -i 's@^website_name=.*@website_name=@' ./options.conf
   sed -i 's@^local_bankup_yn=.*@local_bankup_yn=y@' ./options.conf
@@ -113,7 +111,6 @@ Print_PHP() {
   [ -e "/etc/init.d/php-fpm" ] && echo "/etc/init.d/php-fpm"
   [ -e "/usr/local/imagemagick" ] && echo "/usr/local/imagemagick"
   [ -e "/usr/local/graphicsmagick" ] && echo '/usr/local/graphicsmagick'
-  [ -e "/usr/local/openssl100s" ] && echo '/usr/local/openssl100s'
 }
 
 Uninstall_PHP() {
@@ -121,7 +118,6 @@ Uninstall_PHP() {
   [ -e "${php_install_dir}/bin/phpize" -a ! -e "${php_install_dir}/etc/php-fpm.conf" ] && rm -rf ${php_install_dir}
   [ -e "/usr/local/imagemagick" ] && rm -rf /usr/local/imagemagick
   [ -e "/usr/local/graphicsmagick" ] && rm -rf /usr/local/graphicsmagick
-  [ -e "/usr/local/openssl100s" ] && rm -rf /usr/local/openssl100s 
   sed -i "s@${php_install_dir}/bin:@@" /etc/profile
   echo "${CMSG}PHP uninstall completed${CEND}"
 }
@@ -174,6 +170,16 @@ Uninstall_Memcached() {
   echo "${CMSG}Memcached uninstall completed${CEND}"
 }
 
+Print_curlopenssl() {
+  [ -e "/usr/local/bin/curl" ] && echo "/usr/local/bin/curl"
+  [ -d "${openssl_install_dir}" ] && echo "${openssl_install_dir}"
+}
+
+Uninstall_curlopenssl() {
+  [ -e "/usr/local/bin/curl" ] && rm -rf /usr/local/lib/libcurl* /usr/local/bin/curl
+  [ -d "${openssl_install_dir}" ] && { rm -rf ${openssl_install_dir} /etc/ld.so.conf.d/openssl.conf; ldconfig; }
+}
+
 Menu(){
 while :; do
   printf "
@@ -203,6 +209,7 @@ What Are You Doing?
       Print_PureFtpd
       Print_Redis
       Print_Memcached
+      Print_curlopenssl
 
       Uninstall_status
       if [ "${uninstall_yn}" == 'y' ]; then
@@ -213,6 +220,7 @@ What Are You Doing?
         Uninstall_PureFtpd
         Uninstall_Redis
         Uninstall_Memcached
+        Uninstall_curlopenssl
       else
         exit
       fi
@@ -275,6 +283,7 @@ elif [ $# == 1 ]; then
     Print_PureFtpd
     Print_Redis
     Print_Memcached
+    Print_curlopenssl
 
     Uninstall_status
     if [ "${uninstall_yn}" == 'y' ]; then
@@ -285,6 +294,7 @@ elif [ $# == 1 ]; then
       Uninstall_PureFtpd
       Uninstall_Redis
       Uninstall_Memcached
+      Uninstall_curlopenssl
     else
       exit
     fi

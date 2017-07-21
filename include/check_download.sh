@@ -127,7 +127,7 @@ checkDownload() {
         fi
         if [ "${dbInstallMethods}" == '1' ]; then
           echo "Download MySQL 5.7 binary package..."
-          FILE_NAME=mysql-${mysql57_version}-linux-glibc2.5-${SYS_BIT_b}.tar.gz
+          FILE_NAME=mysql-${mysql57_version}-linux-glibc2.12-${SYS_BIT_b}.tar.gz
         elif [ "${dbInstallMethods}" == '2' ]; then
           echo "Download MySQL 5.7 source package..."
           FILE_NAME=mysql-${mysql57_version}.tar.gz
@@ -176,7 +176,7 @@ checkDownload() {
         fi
         if [ "${dbInstallMethods}" == '1' ]; then
           echo "Download MySQL 5.6 binary package..."
-          FILE_NAME=mysql-${mysql56_version}-linux-glibc2.5-${SYS_BIT_b}.tar.gz
+          FILE_NAME=mysql-${mysql56_version}-linux-glibc2.12-${SYS_BIT_b}.tar.gz
         elif [ "${dbInstallMethods}" == '2' ]; then
           echo "Download MySQL 5.6 source package..."
           FILE_NAME=mysql-${mysql56_version}.tar.gz
@@ -224,7 +224,7 @@ checkDownload() {
         fi
         if [ "${dbInstallMethods}" == '1' ]; then
           echo "Download MySQL 5.5 binary package..."
-          FILE_NAME=mysql-${mysql55_version}-linux-glibc2.5-${SYS_BIT_b}.tar.gz
+          FILE_NAME=mysql-${mysql55_version}-linux-glibc2.12-${SYS_BIT_b}.tar.gz
         elif [ "${dbInstallMethods}" == '2' ]; then
           echo "Download MySQL 5.5 source package..."
           FILE_NAME=mysql-${mysql55_version}.tar.gz

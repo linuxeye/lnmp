@@ -57,10 +57,10 @@ def cmd_configure(args, options):
     config.set(CONFIGSECTION, 'appid', options.appid)
     config.set(CONFIGSECTION, 'secret_id', options.secret_id)
     config.set(CONFIGSECTION, 'secret_key', options.secret_key)
-    if options.region in ['sh','gz','tj','sgp']:
+    if options.region in ['sh','gz','tj','cd','sgp']:
         config.set(CONFIGSECTION, 'region', options.region)
     else:
-        print("input region error, setup use : --region={sh,gz,tj,sgp}")
+        print("input region error, setup use : --region={sh,gz,tj,cd,sgp}")
         sys.exit(-1)
     config.set(CONFIGSECTION, 'bucket', options.bucket)
     cfgfile = open(CONFIGFILE, 'w+')

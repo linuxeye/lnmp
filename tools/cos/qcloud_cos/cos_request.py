@@ -595,6 +595,10 @@ class DownloadFileRequest(BaseRequest):
         self._range_start = range_start
         self._range_end = range_end
 
+        self._custom_headers = None
+        if 'headers' in kwargs:
+            self._custom_headers = kwargs['headers']
+
     def check_params_valid(self):
         if not super(DownloadFileRequest, self).check_params_valid():
             return False

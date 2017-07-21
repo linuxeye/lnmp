@@ -18,8 +18,8 @@ Install_MySQL56() {
   mkdir -p ${mysql_data_dir};chown mysql.mysql -R ${mysql_data_dir}
 
   if [ "${dbInstallMethods}" == "1" ]; then
-    tar xvf mysql-${mysql56_version}-linux-glibc2.5-${SYS_BIT_b}.tar.gz
-    mv mysql-${mysql56_version}-linux-glibc2.5-${SYS_BIT_b}/* ${mysql_install_dir}
+    tar xvf mysql-${mysql56_version}-linux-glibc2.12-${SYS_BIT_b}.tar.gz
+    mv mysql-${mysql56_version}-linux-glibc2.12-${SYS_BIT_b}/* ${mysql_install_dir}
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mysql_install_dir}/bin/mysqld_safe
     sed -i "s@/usr/local/mysql@${mysql_install_dir}@g" ${mysql_install_dir}/bin/mysqld_safe
   elif [ "${dbInstallMethods}" == "2" ]; then

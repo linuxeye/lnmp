@@ -103,7 +103,7 @@ class BaseOp(object):
                 http_resp = self._http_session.get(url, verify=False, **kwargs)
 
             status_code = http_resp.status_code
-            if status_code == 200 or status_code == 400:
+            if status_code < 500:
                 return http_resp.json()
             else:
                 logger.warning("request failed, response message: %s" % http_resp.text)
@@ -371,7 +371,8 @@ class FileOp(BaseOp):
 
         local_path = request.get_local_path()
         file_size = os.path.getsize(local_path)
-        slice_size = control_ret[u'data'][u'slice_size']
+        if u'slice_size' in control_ret[u'data']:
+            slice_size = control_ret[u'data'][u'slice_size']
         offset = 0
         session = control_ret[u'data'][u'session']
         # ?concurrency
@@ -531,10 +532,10 @@ class FileOp(BaseOp):
         else:
             return ret
 
-    def __download_url(self, uri, filename):
+    def __download_url(self, uri, filename, headers):
         session = self._http_session
 
-        with closing(session.get(uri, stream=True, timeout=150)) as ret:
+        with closing(session.get(uri, stream=True, timeout=30, headers=headers)) as ret:
             if ret.status_code in [200, 206]:
 
                 if 'Content-Length' in ret.headers:
@@ -562,7 +563,7 @@ class FileOp(BaseOp):
         url = self.build_download_url(request.get_bucket_name(), request.get_cos_path(), sign)
         logger.info("Uri is %s" % url)
         try:
-            self.__download_url(url, request._local_filename)
+            self.__download_url(url, request._local_filename, request._custom_headers)
             return {u'code': 0, u'message': "download successfully"}
         except Exception as e:
             return {u'code': 1, u'message': "download failed, exception: " + str(e)}

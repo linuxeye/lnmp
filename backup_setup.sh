@@ -172,19 +172,21 @@ if [[ "$DESC_BK" =~ ^[3,5,6]$ ]]; then
   while :; do echo
     echo 'Please select your backup datacenter:'
     echo -e "\t ${CMSG}1${CEND}. 华南(广州)  ${CMSG}2${CEND}. 华北(天津)"
-    echo -e "\t ${CMSG}3${CEND}. 华东(上海)  ${CMSG}4${CEND}. 新加坡"
+    echo -e "\t ${CMSG}3${CEND}. 华东(上海)  ${CMSG}4${CEND}. 西南(成都)"
+    echo -e "\t ${CMSG}5${CEND}. 新加坡"
     read -p "Please input a number:(Default 1 press Enter) " Location
     [ -z "$Location" ] && Location=1
-    if [ ${Location} -ge 1 >/dev/null 2>&1 -a ${Location} -le 4 >/dev/null 2>&1 ]; then
+    if [ ${Location} -ge 1 >/dev/null 2>&1 -a ${Location} -le 5 >/dev/null 2>&1 ]; then
       break
     else
-      echo "${CWARNING}input error! Please only input number 1,2,3,4${CEND}"
+      echo "${CWARNING}input error! Please only input number 1~5${CEND}"
     fi
   done
-  [ "$Location" == '1' ] && region=gz
-  [ "$Location" == '2' ] && region=tj
-  [ "$Location" == '3' ] && region=sh
-  [ "$Location" == '4' ] && region=sgp
+  [ "$Location" == '1' ] && region='gz'
+  [ "$Location" == '2' ] && region='tj'
+  [ "$Location" == '3' ] && region='sh'
+  [ "$Location" == '4' ] && region='cd'
+  [ "$Location" == '5' ] && region='sgp'
   while :; do echo
     read -p "Please enter the Qcloud COS appid: " appid 
     [ -z "$appid" ] && continue

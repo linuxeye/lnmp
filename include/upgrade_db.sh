@@ -21,7 +21,7 @@ Upgrade_DB() {
     DB=Percona
     OLD_DB_version=$OLD_DB_version_tmp
   else
-    [ "$IPADDR_COUNTRY"x == "CN"x ] && DOWN_ADDR=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads || DOWN_ADDR=http://cdn.mysql.com/Downloads
+    [ "$IPADDR_COUNTRY"x == "CN"x ] && DOWN_ADDR=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads || DOWN_ADDR=http://cdn.mysql.com/Downloads
     DB=MySQL
     OLD_DB_version=$OLD_DB_version_tmp
   fi
@@ -63,6 +63,7 @@ Upgrade_DB() {
         DB_name=percona-server-$NEW_DB_version
         DB_URL=http://www.percona.com/redir/downloads/Percona-Server-`echo $NEW_DB_version | awk -F. '{print $1"."$2}'`/LATEST/source/tarball/$DB_name.tar.gz
       elif [ "$DB" == 'MySQL' ]; then
+        DB_name=mysql-${NEW_DB_version}-linux-glibc2.12-${SYS_BIT_b}
         DB_URL=$DOWN_ADDR/MySQL-`echo $NEW_DB_version | awk -F. '{print $1"."$2}'`/$DB_name.tar.gz
       fi
         [ ! -e "$DB_name.tar.gz" ] && wget --no-check-certificate -c $DB_URL > /dev/null 2>&1
@@ -99,7 +100,7 @@ Upgrade_DB() {
       $mariadb_install_dir/bin/mysql -uroot -p${dbrootpwd} -e "reset master;" >/dev/null 2>&1
       [ $? -eq 0 ] &&  echo "You have ${CMSG}successfully${CEND} upgrade from ${CMSG}$OLD_DB_version${CEND} to ${CMSG}$NEW_DB_version${CEND}"
     elif [ "$DB" == 'Percona' ]; then
-      tar zxf $DB_name.tar.gz
+      tar xzf $DB_name.tar.gz
       pushd $DB_name
       make clean
       if [ "`echo $NEW_DB_version | awk -F. '{print $1"."$2}'`" == '5.5' ]; then
@@ -155,7 +156,7 @@ Upgrade_DB() {
       $percona_install_dir/bin/mysql -uroot -p${dbrootpwd} -e "reset master;" >/dev/null 2>&1
       [ $? -eq 0 ] &&  echo "You have ${CMSG}successfully${CEND} upgrade from ${CMSG}$OLD_DB_version${CEND} to ${CMSG}$NEW_DB_version${CEND}"
     elif [ "$DB" == 'MySQL' ]; then
-      tar zxf $DB_name.tar.gz
+      tar xzf $DB_name.tar.gz
       service mysqld stop
       mv ${mysql_install_dir}{,_old_`date +"%Y%m%d_%H%M%S"`}
       mv ${mysql_data_dir}{,_old_`date +"%Y%m%d_%H%M%S"`}

@@ -25,6 +25,10 @@ Install_ionCube() {
 
   [ ! -d "${phpExtensionDir}" ] && mkdir -p ${phpExtensionDir}
   case "${PHP_main_version}" in
+    7.1)
+      /bin/cp ioncube/ioncube_loader_lin_7.1.so ${phpExtensionDir}
+      zend_extension="${phpExtensionDir}/ioncube_loader_lin_7.1.so"
+      ;;
     7.0)
       /bin/cp ioncube/ioncube_loader_lin_7.0.so ${phpExtensionDir}
       zend_extension="${phpExtensionDir}/ioncube_loader_lin_7.0.so"

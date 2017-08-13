@@ -666,13 +666,8 @@ checkDownload() {
     if [ "${Magick}" == '1' ]; then
       echo "Download ImageMagick..."
       src_url=${mirrorLink}/ImageMagick-${ImageMagick_version}.tar.gz && Download_src
-      if [ "${PHP_version}" == '1' ]; then
-        echo "Download image for php 5.3..."
-        src_url=https://pecl.php.net/get/imagick-${imagick_for_php53_version}.tgz && Download_src
-      else
-        echo "Download imagick..."
-        src_url=http://pecl.php.net/get/imagick-${imagick_version}.tgz && Download_src
-      fi
+      echo "Download imagick..."
+      src_url=http://pecl.php.net/get/imagick-${imagick_version}.tgz && Download_src
     else
       echo "Download graphicsmagick..."
       src_url=http://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/${GraphicsMagick_version}/GraphicsMagick-${GraphicsMagick_version}.tar.gz && Download_src
@@ -699,17 +694,11 @@ checkDownload() {
   if [ "${redis_yn}" == 'y' ]; then
     echo "Download redis..."
     src_url=http://download.redis.io/releases/redis-${redis_version}.tar.gz && Download_src
+    echo "Download redis pecl..."
+    src_url=http://pecl.php.net/get/redis-${redis_pecl_version}.tgz && Download_src
     if [ "${OS}" == "CentOS" ]; then
       echo "Download start-stop-daemon.c for CentOS..."
       src_url=${mirrorLink}/start-stop-daemon.c && Download_src
-    fi
-    # redis addon
-    if [[ "$PHP_version" =~ ^[5-6]$ ]]; then
-      echo "Download redis pecl for php 7.x..."
-      src_url=http://pecl.php.net/get/redis-${redis_pecl_for_php7_version}.tgz && Download_src
-    else
-      echo "Download redis pecl..."
-      src_url=http://pecl.php.net/get/redis-${redis_pecl_version}.tgz && Download_src
     fi
   fi
 

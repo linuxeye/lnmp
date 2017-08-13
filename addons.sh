@@ -101,6 +101,7 @@ Uninstall_succ() {
 
 Install_letsencrypt() {
   [ ! -e "${python_install_dir}/bin/python" ] && Install_Python
+  ${python_install_dir}/bin/pip install requests 
   ${python_install_dir}/bin/pip install certbot
   if [ -e "${python_install_dir}/bin/certbot" ]; then
     echo; echo "${CSUCCESS}Let's Encrypt client installed successfully! ${CEND}"

@@ -168,7 +168,9 @@ fi
 
 if [[ "$DESC_BK" =~ ^[3,5,6]$ ]]; then
   [ ! -e "${python_install_dir}/bin/python" ] && Install_Python
-  [ ! -e "${python_install_dir}/lib/python2.7/site-packages/requests" ] && ${python_install_dir}/bin/pip install requests
+  [ ! -e "${python_install_dir}/lib/coscmd" ] && ${python_install_dir}/bin/pip install coscmd==1.6.0 >/dev/null 2>&1 
+  sed -i "/if query_yes_no/{ n; s/^.*/#&/; }" ${python_install_dir}/lib/python2.7/site-packages/coscmd/cos_client.py
+  sed -i "s/if query_yes_no/#if query_yes_no/" ${python_install_dir}/lib/python2.7/site-packages/coscmd/cos_client.py
   while :; do echo
     echo 'Please select your backup datacenter:'
     echo -e "\t ${CMSG}1${CEND}. 华南(广州)  ${CMSG}2${CEND}. 华北(天津)"
@@ -182,11 +184,11 @@ if [[ "$DESC_BK" =~ ^[3,5,6]$ ]]; then
       echo "${CWARNING}input error! Please only input number 1~5${CEND}"
     fi
   done
-  [ "$Location" == '1' ] && region='gz'
-  [ "$Location" == '2' ] && region='tj'
-  [ "$Location" == '3' ] && region='sh'
-  [ "$Location" == '4' ] && region='cd'
-  [ "$Location" == '5' ] && region='sgp'
+  [ "$Location" == '1' ] && region='cn-south'
+  [ "$Location" == '2' ] && region='cn-north'
+  [ "$Location" == '3' ] && region='cn-east'
+  [ "$Location" == '4' ] && region='cn-southwest'
+  [ "$Location" == '5' ] && region='sg'
   while :; do echo
     read -p "Please enter the Qcloud COS appid: " appid 
     [ -z "$appid" ] && continue
@@ -200,8 +202,9 @@ if [[ "$DESC_BK" =~ ^[3,5,6]$ ]]; then
     read -p "Please enter the Qcloud COS bucket: " bucket 
     [ -z "$bucket" ] && continue
     echo
-    $python_install_dir/bin/python ./tools/coscmd config --appid=$appid --id=$secret_id --key=$secret_key --region=$region --bucket=$bucket >/dev/null 2>&1
-    if [ "`$python_install_dir/bin/python ./tools/coscmd ls /`" == 'True' ];then
+    $python_install_dir/bin/coscmd config -u $appid -a $secret_id -s $secret_key -r $region -b $bucket >/dev/null 2>&1
+    $python_install_dir/bin/coscmd delete oneinstack.test >/dev/null 2>&1
+    if [ $? = 0 ];then
       echo "${CMSG}appid/secret_id/secret_key/region/bucket OK${CEND}"
       echo
       break

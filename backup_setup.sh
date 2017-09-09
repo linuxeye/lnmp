@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://blog.linuxeye.com
 #
-# Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -12,7 +12,7 @@ export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 clear
 printf "
 #######################################################################
-#       OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+      #
+#       OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+      #
 #                     Setup the backup parameters                     #
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
@@ -168,7 +168,7 @@ fi
 
 if [[ "$DESC_BK" =~ ^[3,5,6]$ ]]; then
   [ ! -e "${python_install_dir}/bin/python" ] && Install_Python
-  [ ! -e "${python_install_dir}/lib/coscmd" ] && ${python_install_dir}/bin/pip install coscmd==1.6.0 >/dev/null 2>&1 
+  [ ! -e "${python_install_dir}/lib/coscmd" ] && ${python_install_dir}/bin/pip install coscmd==1.7.4 >/dev/null 2>&1 
   sed -i "/if query_yes_no/{ n; s/^.*/#&/; }" ${python_install_dir}/lib/python2.7/site-packages/coscmd/cos_client.py
   sed -i "s/if query_yes_no/#if query_yes_no/" ${python_install_dir}/lib/python2.7/site-packages/coscmd/cos_client.py
   while :; do echo

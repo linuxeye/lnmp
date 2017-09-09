@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://blog.linuxeye.com
 #
-# Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -12,7 +12,7 @@ export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 clear
 printf "
 #######################################################################
-#       OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+      #
+#       OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+      #
 #                    Install/Uninstall Extensions                     #
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
@@ -209,12 +209,13 @@ What Are You Doing?
 \t${CMSG}5${CEND}. Install/Uninstall memcached/memcache
 \t${CMSG}6${CEND}. Install/Uninstall Redis
 \t${CMSG}7${CEND}. Install/Uninstall Let's Encrypt client
-\t${CMSG}8${CEND}. Install/Uninstall fail2ban 
+\t${CMSG}8${CEND}. Install/Uninstall swoole PHP Extension 
+\t${CMSG}9${CEND}. Install/Uninstall fail2ban
 \t${CMSG}q${CEND}. Exit
 "
   read -p "Please input the correct option: " Number
-  if [[ ! "${Number}" =~ ^[1-8,q]$ ]]; then
-    echo "${CFAILURE}input error! Please only input 1 ~ 8 and q${CEND}"
+  if [[ ! "${Number}" =~ ^[1-9,q]$ ]]; then
+    echo "${CFAILURE}input error! Please only input 1 ~ 9 and q${CEND}"
   else
     case "${Number}" in
       1)
@@ -468,6 +469,27 @@ What Are You Doing?
         fi
         ;;
       8)
+        ACTION_FUN
+        PHP_extension=swoole
+        if [ "${ACTION}" = '1' ]; then
+          Check_PHP_Extension
+          pushd ${oneinstack_dir}/src
+          src_url=http://mirrors.linuxeye.com/oneinstack/src/swoole-${swoole_version}.tgz && Download_src
+          tar xzf swoole-${swoole_version}.tgz
+          pushd swoole-${swoole_version}
+          ${php_install_dir}/bin/phpize
+          ./configure --with-php-config=${php_install_dir}/bin/php-config
+          make -j ${THREAD} && make install
+          popd
+          rm -rf swoole-${swoole_version} 
+          popd
+          echo 'extension=swoole.so' > ${php_install_dir}/etc/php.d/ext-swoole.ini
+          Check_succ
+        else
+          Uninstall_succ
+        fi
+        ;;
+      9)
         ACTION_FUN
         if [ "${ACTION}" = '1' ]; then
           Install_fail2ban

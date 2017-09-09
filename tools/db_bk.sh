@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://blog.linuxeye.com
 #
-# Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com

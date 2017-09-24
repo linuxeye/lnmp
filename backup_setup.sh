@@ -168,7 +168,7 @@ fi
 
 if [[ "$DESC_BK" =~ ^[3,5,6]$ ]]; then
   [ ! -e "${python_install_dir}/bin/python" ] && Install_Python
-  [ ! -e "${python_install_dir}/lib/coscmd" ] && ${python_install_dir}/bin/pip install coscmd==1.7.4 >/dev/null 2>&1 
+  [ ! -e "${python_install_dir}/lib/coscmd" ] && ${python_install_dir}/bin/pip install coscmd==1.7.5 >/dev/null 2>&1 
   sed -i "/if query_yes_no/{ n; s/^.*/#&/; }" ${python_install_dir}/lib/python2.7/site-packages/coscmd/cos_client.py
   sed -i "s/if query_yes_no/#if query_yes_no/" ${python_install_dir}/lib/python2.7/site-packages/coscmd/cos_client.py
   while :; do echo

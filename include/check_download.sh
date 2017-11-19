@@ -94,7 +94,7 @@ checkDownload() {
   fi
 
   if [ "${DB_yn}" == 'y' ]; then
-    if [[ "${DB_version}" =~ ^[1,4,7]$ ]] && [ "${dbInstallMethods}" == "2" ]; then
+    if [[ "${DB_version}" =~ ^[1,4,8]$ ]] && [ "${dbInstallMethods}" == "2" ]; then
       echo "Download boost..."
       [ "${IPADDR_COUNTRY}"x == "CN"x ] && DOWN_ADDR_BOOST=${mirrorLink} || DOWN_ADDR_BOOST=http://downloads.sourceforge.net/project/boost/boost/${boost_version}
       boostVersion2=$(echo ${boost_version} | awk -F. '{print $1}')_$(echo ${boost_version} | awk -F. '{print $2}')_$(echo ${boost_version} | awk -F. '{print $3}')

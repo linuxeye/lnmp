@@ -38,8 +38,8 @@ jdk17_version=1.7.0_80
 jdk16_version=1.6.0_45
 
 # PHP
-php71_version=7.1.11
-php70_version=7.0.25
+php71_version=7.1.12
+php70_version=7.0.26
 php56_version=5.6.32
 php55_version=5.5.38
 php54_version=5.4.45
@@ -60,7 +60,7 @@ xcache_version=3.2.0
 apcu_version=4.0.11
 apcu_for_php7_version=5.1.8
 eaccelerator_version=0.9.6.1
-swoole_version=1.9.22
+swoole_version=1.9.23
 
 # Ftp
 pureftpd_version=1.0.47
@@ -73,7 +73,7 @@ redis_pecl_version=3.1.4
 memcached_version=1.5.3
 libmemcached_version=1.0.18
 memcached_pecl_version=2.2.0
-memcached_pecl_php7_version=3.0.3
+memcached_pecl_php7_version=3.0.4
 memcache_pecl_version=3.0.8
 
 # phpMyadmin

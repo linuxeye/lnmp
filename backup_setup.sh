@@ -41,7 +41,7 @@ while :; do echo
   read -p "Please input a number:(Default 1 press Enter) " DESC_BK
   [ -z "$DESC_BK" ] && DESC_BK=1
   if [[ ! $DESC_BK =~ ^[1-6]$ ]]; then
-    echo "${CWARNING}input error! Please only input number 1,2,3,4,5,6${CEND}"
+    echo "${CWARNING}input error! Please only input number 1~6${CEND}"
   else
     break
   fi
@@ -62,7 +62,7 @@ while :; do echo
   read -p "Please input a number:(Default 1 press Enter) " CONTENT_BK
   [ -z "$CONTENT_BK" ] && CONTENT_BK=1
   if [[ ! $CONTENT_BK =~ ^[1-3]$ ]]; then
-    echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
+    echo "${CWARNING}input error! Please only input number 1~3${CEND}"
   else
     break
   fi

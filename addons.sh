@@ -69,7 +69,7 @@ if [ -e "${php_install_dir}/bin/phpize" ]; then
     "5.6")
       PHP_version=4
       ;;
-    "7.0" | "7.1")
+    "7.0" | "7.1" | "7.2" )
       PHP_version=5
       ;;
     *)
@@ -192,7 +192,7 @@ ACTION_FUN() {
     read -p "Please input a number:(Default 1 press Enter) " ACTION
     [ -z "${ACTION}" ] && ACTION=1
     if [[ ! "${ACTION}" =~ ^[1,2]$ ]]; then
-      echo "${CWARNING}input error! Please only input number 1,2${CEND}"
+      echo "${CWARNING}input error! Please only input number 1~2${CEND}"
     else
       break
     fi
@@ -229,7 +229,7 @@ What Are You Doing?
           read -p "Please input a number:(Default 1 press Enter) " PHP_cache
           [ -z "${PHP_cache}" ] && PHP_cache=1
           if [[ ! "${PHP_cache}" =~ ^[1-4]$ ]]; then
-            echo "${CWARNING}input error! Please only input number 1,2,3,4${CEND}"
+            echo "${CWARNING}input error! Please only input number 1~4${CEND}"
           else
             case "${PHP_cache}" in
               1)
@@ -312,7 +312,7 @@ What Are You Doing?
           read -p "Please input a number:(Default 1 press Enter) " Loader
           [ -z "${Loader}" ] && Loader=1
           if [[ ! "${Loader}" =~ ^[1,2]$ ]]; then
-            echo "${CWARNING}input error! Please only input number 1,2${CEND}"
+            echo "${CWARNING}input error! Please only input number 1~2${CEND}"
           else
             [ "${Loader}" = '1' ] && PHP_extension=ZendGuardLoader
             [ "${Loader}" = '2' ] && PHP_extension=0ioncube
@@ -334,7 +334,7 @@ What Are You Doing?
               echo; echo "${CWARNING}Your php ${PHP_detail_version} or platform ${TARGET_ARCH} does not support ${PHP_extension}! ${CEND}";
             fi
           elif [ "${Loader}" = '2' ]; then
-            if [[ "${PHP_main_version}" =~ ^5.[3-6]$|^7.0$ ]] || [ "${TARGET_ARCH}" != "arm64" ]; then
+            if [[ "${PHP_main_version}" =~ ^5.[3-6]$|^7.[0-1]$ ]] || [ "${TARGET_ARCH}" != "arm64" ]; then
               ionCube_yn='y' && checkDownload
               Install_ionCube
               Restart_PHP; echo "${CSUCCESS}PHP ioncube module installed successfully! ${CEND}";
@@ -355,7 +355,7 @@ What Are You Doing?
           read -p "Please input a number:(Default 1 press Enter) " Magick
           [ -z "${Magick}" ] && Magick=1
           if [[ ! "${Magick}" =~ ^[1,2]$ ]]; then
-            echo "${CWARNING}input error! Please only input number 1,2${CEND}"
+            echo "${CWARNING}input error! Please only input number 1~2${CEND}"
           else
             [ "${Magick}" = '1' ] && PHP_extension=imagick
             [ "${Magick}" = '2' ] && PHP_extension=gmagick
@@ -410,7 +410,7 @@ What Are You Doing?
           read -p "Please input a number:(Default 1 press Enter) " Memcache
           [ -z "${Memcache}" ] && Memcache=1
           if [[ ! "${Memcache}" =~ ^[1-3]$ ]]; then
-            echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
+            echo "${CWARNING}input error! Please only input number 1~3${CEND}"
           else
             [ "${Memcache}" = '1' ] && PHP_extension=memcache
             [ "${Memcache}" = '2' ] && PHP_extension=memcached

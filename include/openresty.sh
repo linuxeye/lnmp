@@ -69,6 +69,7 @@ proxy_set_header Cookie \$http_cookie;
 proxy_set_header Host \$host;
 proxy_set_header X-Real-IP \$remote_addr;
 proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto \$scheme;
 EOF
   sed -i "s@/data/wwwroot/default@$wwwroot_dir/default@" $openresty_install_dir/nginx/conf/nginx.conf
   sed -i "s@/data/wwwlogs@$wwwlogs_dir@g" $openresty_install_dir/nginx/conf/nginx.conf

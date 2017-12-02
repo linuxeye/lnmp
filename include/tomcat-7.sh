@@ -94,6 +94,8 @@ EOF
   <Context path="" docBase="${wwwroot_dir}/default" reloadable="false" crossContext="true"/>
   <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
     prefix="localhost_access_log" suffix=".txt" pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+  <Valve className="org.apache.catalina.valves.RemoteIpValve" remoteIpHeader="X-Forwarded-For"
+    protocolHeader="X-Forwarded-Proto" protocolHeaderHttpsValue="https"/>
 </Host>
 EOF
     # logrotate tomcat catalina.out

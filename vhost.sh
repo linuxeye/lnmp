@@ -46,7 +46,7 @@ Choose_env() {
       read -p "Please input a number:(Default 1 press Enter) " Choose_number
       [ -z "${Choose_number}" ] && Choose_number=1
       if [[ ! ${Choose_number} =~ ^[1-3]$ ]]; then
-        echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
+        echo "${CWARNING}input error! Please only input number 1~3${CEND}"
       else
         break
       fi
@@ -71,7 +71,7 @@ Choose_env() {
       read -p "Please input a number:(Default 1 press Enter) " Choose_number
       [ -z "${Choose_number}" ] && Choose_number=1
       if [[ ! ${Choose_number} =~ ^[1-2]$ ]]; then
-        echo "${CWARNING}input error! Please only input number 1,2${CEND}"
+        echo "${CWARNING}input error! Please only input number 1~2${CEND}"
       else
         break
       fi
@@ -90,7 +90,7 @@ Choose_env() {
       read -p "Please input a number:(Default 1 press Enter) " Choose_number
       [ -z "${Choose_number}" ] && Choose_number=1
       if [[ ! ${Choose_number} =~ ^[1-2]$ ]]; then
-        echo "${CWARNING}input error! Please only input number 1,2${CEND}"
+        echo "${CWARNING}input error! Please only input number 1~2${CEND}"
       else
         break
       fi
@@ -106,7 +106,7 @@ Choose_env() {
       read -p "Please input a number:(Default 1 press Enter) " Choose_number
       [ -z "${Choose_number}" ] && Choose_number=1
       if [[ ! ${Choose_number} =~ ^[1-2]$ ]]; then
-        echo "${CWARNING}input error! Please only input number 1,2${CEND}"
+        echo "${CWARNING}input error! Please only input number 1~2${CEND}"
       else
         break
       fi
@@ -508,6 +508,8 @@ EOF
   <Context path="" docBase="${vhostdir}" reloadable="false" crossContext="true"/>
   <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
     prefix="${domain}_access_log" suffix=".txt" pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+  <Valve className="org.apache.catalina.valves.RemoteIpValve" remoteIpHeader="X-Forwarded-For"
+    protocolHeader="X-Forwarded-Proto" protocolHeaderHttpsValue="https"/>
 </Host>
 EOF
   [ -z "$(grep -o "vhost-${domain} SYSTEM" ${tomcat_install_dir}/conf/server.xml)" ] && sed -i "/vhost-localhost SYSTEM/a<\!ENTITY vhost-${domain} SYSTEM \"file://${tomcat_install_dir}/conf/vhost/${domain}.xml\">" ${tomcat_install_dir}/conf/server.xml

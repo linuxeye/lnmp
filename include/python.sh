@@ -78,7 +78,7 @@ EOF
     # get the IP information
     PUBLIC_IPADDR=$(../include/get_public_ipaddr.py)
     IPADDR_COUNTRY=$(../include/get_ipaddr_state.py $PUBLIC_IPADDR | awk '{print $1}')
-    if [ "$IPADDR_COUNTRY"x != "CN"x ]; then
+    if [ "$IPADDR_COUNTRY"x == "CN"x ]; then
       [ ! -d "/root/.pip" ] && mkdir /root/.pip
       echo -e "[global]\nindex-url = https://pypi.tuna.tsinghua.edu.cn/simple" > /root/.pip/pip.conf
     fi

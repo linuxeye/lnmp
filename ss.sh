@@ -98,7 +98,7 @@ Def_parameter() {
       read -p "Please input a number:(Default 1 press Enter) " SS_version
       [ -z "${SS_version}" ] && SS_version=1
       if [[ ! "${SS_version}" =~ ^[1-2]$ ]]; then
-        echo "${CWARNING}input error! Please only input number 1,2${CEND}"
+        echo "${CWARNING}input error! Please only input number 1~2${CEND}"
       else
         break
       fi

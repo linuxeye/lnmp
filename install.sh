@@ -81,7 +81,7 @@ while :; do echo
         read -p "Please input a number:(Default 1 press Enter) " Nginx_version
         [ -z "$Nginx_version" ] && Nginx_version=1
         if [[ ! $Nginx_version =~ ^[1-4]$ ]]; then
-          echo "${CWARNING}input error! Please only input number 1,2,3,4${CEND}"
+          echo "${CWARNING}input error! Please only input number 1~4${CEND}"
         else
           [ "$Nginx_version" != '4' -a -e "$nginx_install_dir/sbin/nginx" ] && { echo "${CWARNING}Nginx already installed! ${CEND}"; Nginx_version=Other; }
           [ "$Nginx_version" != '4' -a -e "$tengine_install_dir/sbin/nginx" ] && { echo "${CWARNING}Tengine already installed! ${CEND}"; Nginx_version=Other; }
@@ -98,7 +98,7 @@ while :; do echo
         read -p "Please input a number:(Default 3 press Enter) " Apache_version
         [ -z "$Apache_version" ] && Apache_version=3
         if [[ ! $Apache_version =~ ^[1-3]$ ]]; then
-          echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
+          echo "${CWARNING}input error! Please only input number 1~3${CEND}"
         else
           [ "$Apache_version" != '3' -a -e "$apache_install_dir/conf/httpd.conf" ] && { echo "${CWARNING}Aapche already installed! ${CEND}"; Apache_version=Other; }
           break
@@ -114,7 +114,7 @@ while :; do echo
       #  read -p "Please input a number:(Default 4 press Enter) " Tomcat_version
       #  [ -z "$Tomcat_version" ] && Tomcat_version=4
       #  if [[ ! $Tomcat_version =~ ^[1-4]$ ]]; then
-      #    echo "${CWARNING}input error! Please only input number 1,2,3,4${CEND}"
+      #    echo "${CWARNING}input error! Please only input number 1~4${CEND}"
       #  else
       #    [ "$Tomcat_version" != '4' -a -e "$tomcat_install_dir/conf/server.xml" ] && { echo "${CWARNING}Tomcat already installed! ${CEND}" ; Tomcat_version=Other; }
       #    if [ "$Tomcat_version" == '1' ]; then
@@ -125,7 +125,7 @@ while :; do echo
       #        read -p "Please input a number:(Default 2 press Enter) " JDK_version
       #        [ -z "$JDK_version" ] && JDK_version=2
       #        if [[ ! $JDK_version =~ ^[1-2]$ ]]; then
-      #          echo "${CWARNING}input error! Please only input number 1,2${CEND}"
+      #          echo "${CWARNING}input error! Please only input number 1~2${CEND}"
       #        else
       #          break
       #        fi
@@ -139,7 +139,7 @@ while :; do echo
       #        read -p "Please input a number:(Default 2 press Enter) " JDK_version
       #        [ -z "$JDK_version" ] && JDK_version=2
       #        if [[ ! $JDK_version =~ ^[1-3]$ ]]; then
-      #          echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
+      #          echo "${CWARNING}input error! Please only input number 1~3${CEND}"
       #        else
       #          break
       #        fi
@@ -152,7 +152,7 @@ while :; do echo
       #        read -p "Please input a number:(Default 2 press Enter) " JDK_version
       #        [ -z "$JDK_version" ] && JDK_version=2
       #        if [[ ! $JDK_version =~ ^[2-3]$ ]]; then
-      #          echo "${CWARNING}input error! Please only input number 2,3${CEND}"
+      #          echo "${CWARNING}input error! Please only input number 2~3${CEND}"
       #        else
       #          break
       #        fi
@@ -204,7 +204,7 @@ while :; do echo
               read -p "Please input a number:(Default 1 press Enter) " dbInstallMethods
               [ -z "$dbInstallMethods" ] && dbInstallMethods=1
               if [[ ! $dbInstallMethods =~ ^[1-2]$ ]]; then
-                echo "${CWARNING}input error! Please only input number 1,2${CEND}"
+                echo "${CWARNING}input error! Please only input number 1~2${CEND}"
               else
                 break
               fi
@@ -236,10 +236,11 @@ while :; do echo
         echo -e "\t${CMSG}4${CEND}. Install php-5.6"
         echo -e "\t${CMSG}5${CEND}. Install php-7.0"
         echo -e "\t${CMSG}6${CEND}. Install php-7.1"
-        read -p "Please input a number:(Default 4 press Enter) " PHP_version
-        [ -z "$PHP_version" ] && PHP_version=4
-        if [[ ! $PHP_version =~ ^[1-6]$ ]]; then
-          echo "${CWARNING}input error! Please only input number 1,2,3,4,5,6${CEND}"
+        echo -e "\t${CMSG}7${CEND}. Install php-7.2"
+        read -p "Please input a number:(Default 5 press Enter) " PHP_version
+        [ -z "$PHP_version" ] && PHP_version=5
+        if [[ ! $PHP_version =~ ^[1-7]$ ]]; then
+          echo "${CWARNING}input error! Please only input number 1~7${CEND}"
         else
           while :; do echo
             read -p "Do you want to install opcode cache of the PHP? [y/n]: " PHP_cache_yn
@@ -257,7 +258,7 @@ while :; do echo
                     read -p "Please input a number:(Default 1 press Enter) " PHP_cache
                     [ -z "$PHP_cache" ] && PHP_cache=1
                     if [[ ! $PHP_cache =~ ^[1-4]$ ]]; then
-                      echo "${CWARNING}input error! Please only input number 1,2,3,4${CEND}"
+                      echo "${CWARNING}input error! Please only input number 1~4${CEND}"
                     else
                       break
                     fi
@@ -273,7 +274,7 @@ while :; do echo
                     read -p "Please input a number:(Default 1 press Enter) " PHP_cache
                     [ -z "$PHP_cache" ] && PHP_cache=1
                     if [[ ! $PHP_cache =~ ^[1-4]$ ]]; then
-                      echo "${CWARNING}input error! Please only input number 1,2,3,4${CEND}"
+                      echo "${CWARNING}input error! Please only input number 1~4${CEND}"
                     else
                       break
                     fi
@@ -288,7 +289,7 @@ while :; do echo
                     read -p "Please input a number:(Default 1 press Enter) " PHP_cache
                     [ -z "$PHP_cache" ] && PHP_cache=1
                     if [[ ! $PHP_cache =~ ^[1-3]$ ]]; then
-                      echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
+                      echo "${CWARNING}input error! Please only input number 1~3${CEND}"
                     else
                       break
                     fi
@@ -303,7 +304,7 @@ while :; do echo
                     read -p "Please input a number:(Default 1 press Enter) " PHP_cache
                     [ -z "$PHP_cache" ] && PHP_cache=1
                     if [[ ! $PHP_cache =~ ^[1-3]$ ]]; then
-                      echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
+                      echo "${CWARNING}input error! Please only input number 1~3${CEND}"
                     else
                       break
                     fi
@@ -323,6 +324,7 @@ while :; do echo
                     fi
                   done
                 fi
+                [ $PHP_version == 7 ] && PHP_cache=1
               fi
               break
             fi
@@ -345,7 +347,7 @@ while :; do echo
           fi
 
           # ionCube
-          if [ "${TARGET_ARCH}" != "arm64" ]; then
+          if [ "${TARGET_ARCH}" != "arm64" ] && [[ $PHP_version =~ ^[1-6]$ ]]; then
             while :; do echo
               read -p "Do you want to install ionCube? [y/n]: " ionCube_yn
               if [[ ! $ionCube_yn =~ ^[y,n]$ ]]; then
@@ -374,7 +376,7 @@ while :; do echo
               read -p "Please input a number:(Default 1 press Enter) " Magick
               [ -z "$Magick" ] && Magick=1
               if [[ ! $Magick =~ ^[1-2]$ ]]; then
-                echo "${CWARNING}input error! Please only input number 1,2${CEND}"
+                echo "${CWARNING}input error! Please only input number 1~2${CEND}"
               else
                 break
               fi
@@ -400,7 +402,7 @@ while :; do echo
 done
 
 # check phpMyAdmin
-if [[ $PHP_version =~ ^[1-6]$ ]] || [ -e "$php_install_dir/bin/phpize" ]; then
+if [[ $PHP_version =~ ^[1-7]$ ]] || [ -e "$php_install_dir/bin/phpize" ]; then
   while :; do echo
     read -p "Do you want to install phpMyAdmin? [y/n]: " phpMyAdmin_yn
     if [[ ! $phpMyAdmin_yn =~ ^[y,n]$ ]]; then
@@ -510,7 +512,7 @@ fi
 
 # openSSL 
 . ./include/openssl.sh
-if [[ $Tomcat_version =~ ^[1-3]$ ]] || [[ $Apache_version =~ ^[1-2]$ ]] || [[ $PHP_version =~ ^[1-6]$ ]]; then
+if [[ $Tomcat_version =~ ^[1-3]$ ]] || [[ $Apache_version =~ ^[1-2]$ ]] || [[ $PHP_version =~ ^[1-7]$ ]]; then
   Install_openSSL102 | tee -a $oneinstack_dir/install.log
 fi
 
@@ -612,6 +614,10 @@ case "${PHP_version}" in
   6)
     . include/php-7.1.sh
     Install_PHP71 2>&1 | tee -a ${oneinstack_dir}/install.log
+    ;;
+  7)
+    . include/php-7.2.sh
+    Install_PHP72 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
 esac
 

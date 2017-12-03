@@ -39,7 +39,7 @@ DB_COS_BK() {
     DB_GREP="DB_${D}_`date +%Y`"
     DB_FILE=`ls -lrt $backup_dir | grep ${DB_GREP} | tail -1 | awk '{print $NF}'`
     ${python_install_dir}/bin/coscmd upload $backup_dir/$DB_FILE /`date +%F`/$DB_FILE
-    [ $? -eq 0 ] && ${python_install_dir}/bin/coscmd delete -r `date +%F --date="$expired_days days ago"` > /dev/null 2>&1
+    [ $? -eq 0 ] && ${python_install_dir}/bin/coscmd delete -r -f `date +%F --date="$expired_days days ago"` > /dev/null 2>&1
   done
 }
 
@@ -76,7 +76,7 @@ WEB_COS_BK() {
       popd
     fi
     ${python_install_dir}/bin/coscmd upload $PUSH_FILE /`date +%F`/Web_${W}_$(date +%Y%m%d_%H).tgz
-    [ $? -eq 0 ] && { [ -e "$PUSH_FILE" ] && rm -rf $PUSH_FILE; ${python_install_dir}/bin/coscmd delete -r `date +%F --date="$expired_days days ago"` > /dev/null 2>&1; }
+    [ $? -eq 0 ] && { [ -e "$PUSH_FILE" ] && rm -rf $PUSH_FILE; ${python_install_dir}/bin/coscmd delete -r -f `date +%F --date="$expired_days days ago"` > /dev/null 2>&1; }
   done
 }
 

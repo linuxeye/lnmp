@@ -169,8 +169,6 @@ fi
 if [[ "$DESC_BK" =~ ^[3,5,6]$ ]]; then
   [ ! -e "${python_install_dir}/bin/python" ] && Install_Python
   [ ! -e "${python_install_dir}/lib/coscmd" ] && ${python_install_dir}/bin/pip install coscmd >/dev/null 2>&1 
-  sed -i "/if query_yes_no/{ n; s/^.*/#&/; }" ${python_install_dir}/lib/python2.7/site-packages/coscmd/cos_client.py
-  sed -i "s/if query_yes_no/#if query_yes_no/" ${python_install_dir}/lib/python2.7/site-packages/coscmd/cos_client.py
   while :; do echo
     echo 'Please select your backup datacenter:'
     echo -e "\t ${CMSG}1${CEND}. 北京一区(华北)  ${CMSG}2${CEND}. 北京"
@@ -196,26 +194,26 @@ if [[ "$DESC_BK" =~ ^[3,5,6]$ ]]; then
   [ "$Location" == '8' ] && region='na-toronto'
   [ "$Location" == '9' ] && region='eu-frankfurt'
   while :; do echo
-    read -p "Please enter the Qcloud COS appid: " appid 
+    read -p "Please enter the Qcloud COS APPID: " appid 
     [ -z "$appid" ] && continue
     echo
-    read -p "Please enter the Qcloud COS secret id: " secret_id
-    [ -z "$secret_id" ] && continue
+    read -p "Please enter the Qcloud COS SecretId: " SecretId
+    [ -z "$SecretId" ] && continue
     echo
-    read -p "Please enter the Qcloud COS secret key: " secret_key
-    [ -z "$secret_key" ] && continue
+    read -p "Please enter the Qcloud COS SecretKey: " SecretKey
+    [ -z "$SecretKey" ] && continue
     echo
     read -p "Please enter the Qcloud COS bucket: " bucket 
     [ -z "$bucket" ] && continue
     echo
-    $python_install_dir/bin/coscmd config -u $appid -a $secret_id -s $secret_key -r $region -b $bucket >/dev/null 2>&1
-    $python_install_dir/bin/coscmd delete oneinstack.test >/dev/null 2>&1
+    $python_install_dir/bin/coscmd config -u $appid -a $SecretId -s $SecretKey -r $region -b $bucket >/dev/null 2>&1
+    $python_install_dir/bin/coscmd list >/dev/null 2>&1
     if [ $? = 0 ];then
-      echo "${CMSG}appid/secret_id/secret_key/region/bucket OK${CEND}"
+      echo "${CMSG}appid/SecretId/SecretKey/region/bucket OK${CEND}"
       echo
       break
     else
-      echo "${CWARNING}input error! appid/secret_id/secret_key/region/bucket invalid${CEND}"
+      echo "${CWARNING}input error! appid/SecretId/SecretKey/region/bucket invalid${CEND}"
     fi
   done
 fi

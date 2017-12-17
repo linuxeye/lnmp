@@ -193,6 +193,7 @@ EOF
 
   ${mariadb_install_dir}/scripts/mysql_install_db --user=mysql --basedir=${mariadb_install_dir} --datadir=${mariadb_data_dir}
 
+  [ "${Wsl}" == true ] && chmod 600 /etc/my.cnf
   chown mysql.mysql -R ${mariadb_data_dir}
   [ -d "/etc/mysql" ] && /bin/mv /etc/mysql{,_bk}
   service mysqld start

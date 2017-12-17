@@ -199,6 +199,7 @@ EOF
 
   ${mysql_install_dir}/scripts/mysql_install_db --user=mysql --basedir=${mysql_install_dir} --datadir=${mysql_data_dir}
 
+  [ "${Wsl}" == true ] && chmod 600 /etc/my.cnf
   chown mysql.mysql -R ${mysql_data_dir}
   [ -d "/etc/mysql" ] && /bin/mv /etc/mysql{,_bk}
   service mysqld start

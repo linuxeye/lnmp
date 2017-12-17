@@ -200,6 +200,7 @@ EOF
 
   ${percona_install_dir}/bin/mysqld --initialize-insecure --user=mysql --basedir=${percona_install_dir} --datadir=${percona_data_dir}
 
+  [ "${Wsl}" == true ] && chmod 600 /etc/my.cnf
   chown mysql.mysql -R ${percona_data_dir}
   [ -d "/etc/mysql" ] && /bin/mv /etc/mysql{,_bk}
   service mysqld start

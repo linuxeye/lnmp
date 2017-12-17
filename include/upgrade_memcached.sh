@@ -12,9 +12,12 @@ Upgrade_Memcached() {
   pushd ${oneinstack_dir}/src > /dev/null
   [ ! -e "${memcached_install_dir}/bin/memcached" ] && echo "${CWARNING}Memcached is not installed on your system! ${CEND}" && exit 1
   OLD_Memcached_version=`$memcached_install_dir/bin/memcached -V | awk '{print $2}'`
+  Latest_Memcached_version=`curl -s http://memcached.org/downloads | awk -F'>|<' '/\/files\/memcached/{print $3}' | grep -oE "[0-9]\.[0-9]\.[0-9]+"`
+  [ -z "$Latest_Memcached_version" ] && Latest_Memcached_version=1.6.8
   echo "Current Memcached Version: ${CMSG}$OLD_Memcached_version${CEND}"
   while :; do echo
-    read -p "Please input upgrade Memcached Version(example: 1.4.39): " NEW_Memcached_version
+    read -p "Please input upgrade Memcached Version(default: $Latest_Memcached_version): " NEW_Memcached_version
+    [ -z "$NEW_Memcached_version" ] && NEW_Memcached_version=$Latest_Memcached_version
     if [ "${NEW_Memcached_version}" != "$OLD_Memcached_version" ]; then
       [ ! -e "memcached-${NEW_Memcached_version}.tar.gz" ] && wget --no-check-certificate -c http://www.memcached.org/files/memcached-${NEW_Memcached_version}.tar.gz > /dev/null 2>&1
       if [ -e "memcached-${NEW_Memcached_version}.tar.gz" ]; then

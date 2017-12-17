@@ -12,10 +12,12 @@ Upgrade_phpMyAdmin() {
   pushd ${oneinstack_dir}/src > /dev/null
   [ ! -e "${wwwroot_dir}/default/phpMyAdmin" ] && echo "${CWARNING}phpMyAdmin is not installed on your system! ${CEND}" && exit 1
   OLD_phpMyAdmin_version=`grep Version ${wwwroot_dir}/default/phpMyAdmin/README | awk '{print $2}'`
+  Latest_phpMyAdmin_version=`curl -s https://www.phpmyadmin.net/files/ | awk -F'>|<' '/\/files\/[0-9]/{print $5}' | head -1`
+  [ -z "$Latest_phpMyAdmin_version" ] && Latest_phpMyAdmin_version=4.8.6
   echo "Current phpMyAdmin Version: ${CMSG}${OLD_phpMyAdmin_version}${CEND}"
-
   while :; do echo
-    read -p "Please input upgrade phpMyAdmin Version(example: 4.4.15): " NEW_phpMyAdmin_version
+    read -p "Please input upgrade phpMyAdmin Version(default: $Latest_phpMyAdmin_version): " NEW_phpMyAdmin_version
+    [ -z "$NEW_phpMyAdmin_version" ] && NEW_phpMyAdmin_version=$Latest_phpMyAdmin_version
     if [ "${NEW_phpMyAdmin_version}" != "${OLD_phpMyAdmin_version}" ]; then
       [ ! -e "phpMyAdmin-${NEW_phpMyAdmin_version}-all-languages.tar.gz" ] && wget --no-check-certificate -c https://files.phpmyadmin.net/phpMyAdmin/${NEW_phpMyAdmin_version}/phpMyAdmin-${NEW_phpMyAdmin_version}-all-languages.tar.gz > /dev/null 2>&1
       if [ -e "phpMyAdmin-${NEW_phpMyAdmin_version}-all-languages.tar.gz" ]; then

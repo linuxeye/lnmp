@@ -16,7 +16,8 @@ DAEMON=/usr/local/redis/bin/redis-server
 DAEMON_ARGS=/usr/local/redis/etc/redis.conf
 NAME=redis-server
 DESC=redis-server
-PIDFILE=/var/run/redis.pid
+PIDFILE=/var/run/redis/redis.pid
+PIDDIR=`dirname $PIDFILE`
 
 test -x $DAEMON || exit 0
 test -x $DAEMONBOOTSTRAP || exit 0
@@ -26,8 +27,10 @@ set -e
 case "$1" in
   start)
     echo -n "Starting $DESC: "
-    touch $PIDFILE
-    chown redis:redis $PIDFILE
+    # Make sure the default pidfile directory exists
+    if [ ! -d $PIDDIR ]; then
+      install -d -m 0755 -o redis -g redis $PIDDIR
+    fi
     if start-stop-daemon --start --quiet --pidfile $PIDFILE --chuid redis:redis --exec $DAEMON -- $DAEMON_ARGS
     then
       echo "[OK]"
@@ -43,7 +46,6 @@ case "$1" in
     else
       echo "failed"
     fi
-    rm -f $PIDFILE
     ;;
   status)
     if [ ! -r $PIDFILE ] ; then

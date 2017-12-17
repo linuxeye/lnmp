@@ -48,6 +48,10 @@ else
   kill -9 $$
 fi
 
+if [ "$(uname -r | awk -F- '{print $3}' 2>/dev/null)" == "Microsoft" ]; then
+  Wsl=true
+fi
+
 if [ "$(getconf WORD_BIT)" == "32" ] && [ "$(getconf LONG_BIT)" == "64" ]; then
   OS_BIT=64
   SYS_BIG_FLAG=x64 #jdk

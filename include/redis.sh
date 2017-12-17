@@ -22,7 +22,7 @@ Install_redis-server() {
     /bin/cp src/{redis-benchmark,redis-check-aof,redis-check-rdb,redis-cli,redis-sentinel,redis-server} ${redis_install_dir}/bin/
     /bin/cp redis.conf ${redis_install_dir}/etc/
     ln -s ${redis_install_dir}/bin/* /usr/local/bin/
-    sed -i 's@pidfile.*@pidfile /var/run/redis.pid@' ${redis_install_dir}/etc/redis.conf
+    sed -i 's@pidfile.*@pidfile /var/run/redis/redis.pid@' ${redis_install_dir}/etc/redis.conf
     sed -i "s@logfile.*@logfile ${redis_install_dir}/var/redis.log@" ${redis_install_dir}/etc/redis.conf
     sed -i "s@^dir.*@dir ${redis_install_dir}/var@" ${redis_install_dir}/etc/redis.conf
     sed -i 's@daemonize no@daemonize yes@' ${redis_install_dir}/etc/redis.conf

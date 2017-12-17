@@ -14,6 +14,8 @@ MAXCONN=1024
 CACHESIZE=256
 OPTIONS="-l 127.0.0.1"
 DAEMON=/usr/local/memcached/bin/memcached
+PIDFILE=/var/run/memcached/memcached.pid
+PIDDIR=`dirname $PIDFILE`
 
 if [ "$NETWORKING" = "no" ]
 then
@@ -25,12 +27,11 @@ prog="memcached"
 
 start () {
   echo -n $"Starting $prog: "
-  # insure that /var/run/memcached has proper permissions
-  mkdir -p /var/run/memcached
-  if [ "$(stat -c %U /var/run/memcached)" != "$USER" ]; then
-    chown $USER /var/run/memcached
+  # Make sure the default pidfile directory exists
+  if [ ! -d $PIDDIR ]; then
+    install -d -m 0755 -o $USER -g $USER $PIDDIR
   fi
-  daemon $DAEMON -d -p $PORT -u $USER  -m $CACHESIZE -c $MAXCONN -P /var/run/memcached/memcached.pid $OPTIONS
+  daemon $DAEMON -d -p $PORT -u $USER  -m $CACHESIZE -c $MAXCONN -P $PIDFILE $OPTIONS
   RETVAL=$?
   echo
   [ $RETVAL -eq 0 ] && touch /var/lock/subsys/memcached
@@ -42,7 +43,7 @@ stop () {
   echo
   if [ $RETVAL -eq 0 ] ; then
     rm -f /var/lock/subsys/memcached
-    rm -f /var/run/memcached/memcached.pid
+    rm -f $PIDFILE 
   fi
 }
 

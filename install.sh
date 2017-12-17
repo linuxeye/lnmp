@@ -173,7 +173,7 @@ while :; do echo
     echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
   else
     if [ "$DB_yn" == 'y' ]; then
-      [ -d "$db_install_dir/support-files" ] && { echo "${CWARNING}Database already installed! ${CEND}"; DB_yn=Other; break; }
+      [ -d "$db_install_dir/support-files" -a -e "${pgsql_install_dir}/bin/psql" ] && { echo "${CWARNING}Database already installed! ${CEND}"; DB_yn=Other; break; }
       while :; do echo
         echo 'Please select a version of the Database:'
         echo -e "\t${CMSG} 1${CEND}. Install MySQL-5.7"
@@ -187,16 +187,37 @@ while :; do echo
         echo -e "\t${CMSG} 9${CEND}. Install Percona-5.6"
         echo -e "\t${CMSG}10${CEND}. Install Percona-5.5"
         echo -e "\t${CMSG}11${CEND}. Install AliSQL-5.6"
+        echo -e "\t${CMSG}12${CEND}. Install PostgreSQL"
+        echo -e "\t${CMSG}13${CEND}. Install MongoDB"
         read -p "Please input a number:(Default 2 press Enter) " DB_version
         [ -z "$DB_version" ] && DB_version=2
-        if [ ${DB_version} -ge 1 >/dev/null 2>&1 -a ${DB_version} -le 11 >/dev/null 2>&1 ]; then
+        [ "$DB_version" == '13' -a "$OS_BIT" == '32' ] && { echo "${CWARNING}By not supporting 32-bit! ${CEND}"; continue; }
+        if [[ "${DB_version}" =~ ^[1-9]$|^1[0-3]$ ]]; then
           while :; do
-            read -p "Please input the root password of database: " dbrootpwd
+            if [ "$DB_version" == '12' ]; then
+              read -p "Please input the postgres password of database: " dbrootpwd
+            else
+              read -p "Please input the root password of database: " dbrootpwd
+            fi
             [ -n "`echo $dbrootpwd | grep '[+|&]'`" ] && { echo "${CWARNING}input error,not contain a plus sign (+) and & ${CEND}"; continue; }
-            (( ${#dbrootpwd} >= 5 )) && sed -i "s+^dbrootpwd.*+dbrootpwd='$dbrootpwd'+" ./options.conf && break || echo "${CWARNING}database root password least 5 characters! ${CEND}"
+            if (( ${#dbrootpwd} >= 5 )); then
+              if [ "$DB_version" == '12' ]; then
+                sed -i "s+^dbpostgrespwd.*+dbpostgrespwd='$dbrootpwd'+" ./options.conf
+                dbpostgrespwd="$dbrootpwd"
+              elif [ "$DB_version" == '13' ]; then
+                sed -i "s+^dbmongopwd.*+dbmongopwd='$dbrootpwd'+" ./options.conf
+                dbmongopwd="$dbrootpwd"
+              else
+                sed -i "s+^dbrootpwd.*+dbrootpwd='$dbrootpwd'+" ./options.conf
+              fi
+              break
+            else
+              echo "${CWARNING}password least 5 characters! ${CEND}"
+            fi
+
           done
           # choose install methods
-          if [ ${DB_version} -ge 1 >/dev/null 2>&1 -a ${DB_version} -le 10 >/dev/null 2>&1 ]; then
+          if [[ "${DB_version}" =~ ^[1-9]$|^10$ ]]; then 
             while :; do echo
               echo "Please choose installation of the database:"
               echo -e "\t${CMSG}1${CEND}. Install database from binary package."
@@ -212,7 +233,7 @@ while :; do echo
           fi
           break
         else
-          echo "${CWARNING}input error! Please only input number 1~11${CEND}"
+          echo "${CWARNING}input error! Please only input number 1~13${CEND}"
         fi
       done
     fi
@@ -347,7 +368,7 @@ while :; do echo
           fi
 
           # ionCube
-          if [ "${TARGET_ARCH}" != "arm64" ] && [[ $PHP_version =~ ^[1-6]$ ]]; then
+          if [ "${TARGET_ARCH}" != "arm64" ]; then
             while :; do echo
               read -p "Do you want to install ionCube? [y/n]: " ionCube_yn
               if [[ ! $ionCube_yn =~ ^[y,n]$ ]]; then
@@ -578,6 +599,14 @@ case "${DB_version}" in
     . include/alisql-5.6.sh
     Install_AliSQL56 2>&1 | tee -a $oneinstack_dir/install.log
     ;;
+  12)
+    . include/postgresql.sh
+    Install_PostgreSQL 2>&1 | tee -a $oneinstack_dir/install.log
+    ;;
+  13)
+    . include/mongodb.sh
+    Install_MongoDB 2>&1 | tee -a $oneinstack_dir/install.log
+    ;;
 esac
 
 # Apache
@@ -620,6 +649,18 @@ case "${PHP_version}" in
     Install_PHP72 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
 esac
+
+# pecl_pgsql
+if [ "${DB_version}" == '12' -a -e "${php_install_dir}/bin/phpize" ]; then
+  . include/pecl_pgsql.sh
+  Install_pecl-pgsql 2>&1 | tee -a $oneinstack_dir/install.log
+fi
+
+# pecl_mongodb
+if [ "${DB_version}" == '13' -a -e "${php_install_dir}/bin/phpize" ]; then
+  . include/pecl_mongodb.sh
+  Install_pecl-mongodb 2>&1 | tee -a $oneinstack_dir/install.log
+fi
 
 # ImageMagick or GraphicsMagick
 if [ "$Magick" == '1' ]; then
@@ -768,26 +809,34 @@ echo "Total OneinStack Install Time: ${CQUESTION}${installTime}${CEND} minutes"
 [ "${Web_yn}" == 'y' -a "${Nginx_version}" != '4' -a "${Apache_version}" != '3' ] && echo -e "\n$(printf "%-32s" "Nginx install dir":)${CMSG}${web_install_dir}${CEND}\n$(printf "%-32s" "Apache install  dir":)${CMSG}${apache_install_dir}${CEND}"
 [ "${Web_yn}" == 'y' -a "${Nginx_version}" == '4' -a "${Apache_version}" != '3' ] && echo -e "\n$(printf "%-32s" "Apache install dir":)${CMSG}${apache_install_dir}${CEND}"
 [[ "${Tomcat_version}" =~ ^[1,2]$ ]] && echo -e "\n$(printf "%-32s" "Tomcat install dir":)${CMSG}${tomcat_install_dir}${CEND}"
-[ "${DB_yn}" == 'y' ] && echo -e "\n$(printf "%-32s" "Database install dir:")${CMSG}${db_install_dir}${CEND}"
-[ "${DB_yn}" == 'y' ] && echo "$(printf "%-32s" "Database data dir:")${CMSG}${db_data_dir}${CEND}"
-[ "${DB_yn}" == 'y' ] && echo "$(printf "%-32s" "Database user:")${CMSG}root${CEND}"
-[ "${DB_yn}" == 'y' ] && echo "$(printf "%-32s" "Database password:")${CMSG}${dbrootpwd}${CEND}"
+[[ "${DB_version}" =~ ^[1-9]$|^1[0-1]$ ]] && echo -e "\n$(printf "%-32s" "Database install dir:")${CMSG}${db_install_dir}${CEND}"
+[[ "${DB_version}" =~ ^[1-9]$|^1[0-1]$ ]] && echo "$(printf "%-32s" "Database data dir:")${CMSG}${db_data_dir}${CEND}"
+[[ "${DB_version}" =~ ^[1-9]$|^1[0-1]$ ]] && echo "$(printf "%-32s" "Database user:")${CMSG}root${CEND}"
+[[ "${DB_version}" =~ ^[1-9]$|^1[0-1]$ ]] && echo "$(printf "%-32s" "Database password:")${CMSG}${dbrootpwd}${CEND}"
+[ "${DB_version}" == '12' ] && echo -e "\n$(printf "%-32s" "PostgreSQL install dir:")${CMSG}${pgsql_install_dir}${CEND}"
+[ "${DB_version}" == '12' ] && echo "$(printf "%-32s" "PostgreSQL data dir:")${CMSG}${pgsql_data_dir}${CEND}"
+[ "${DB_version}" == '12' ] && echo "$(printf "%-32s" "PostgreSQL user:")${CMSG}postgres${CEND}"
+[ "${DB_version}" == '12' ] && echo "$(printf "%-32s" "postgres password:")${CMSG}${dbpostgrespwd}${CEND}"
+[ "${DB_version}" == '13' ] && echo -e "\n$(printf "%-32s" "MongoDB install dir:")${CMSG}${mongo_install_dir}${CEND}"
+[ "${DB_version}" == '13' ] && echo "$(printf "%-32s" "MongoDB data dir:")${CMSG}${mongo_data_dir}${CEND}"
+[ "${DB_version}" == '13' ] && echo "$(printf "%-32s" "MongoDB user:")${CMSG}root${CEND}"
+[ "${DB_version}" == '13' ] && echo "$(printf "%-32s" "MongoDB password:")${CMSG}${dbmongopwd}${CEND}"
 [ "${PHP_yn}" == 'y' ] && echo -e "\n$(printf "%-32s" "PHP install dir:")${CMSG}${php_install_dir}${CEND}"
-[ "${PHP_cache}" == '1' ] && echo "$(printf "%-32s" "Opcache Control Panel url:")${CMSG}http://${IPADDR}/ocp.php${CEND}"
-[ "${PHP_cache}" == '2' ] && echo "$(printf "%-32s" "xcache Control Panel url:")${CMSG}http://${IPADDR}/xcache${CEND}"
+[ "${PHP_cache}" == '1' ] && echo "$(printf "%-32s" "Opcache Control Panel URL:")${CMSG}http://${IPADDR}/ocp.php${CEND}"
+[ "${PHP_cache}" == '2' ] && echo "$(printf "%-32s" "xcache Control Panel URL:")${CMSG}http://${IPADDR}/xcache${CEND}"
 [ "${PHP_cache}" == '2' ] && echo "$(printf "%-32s" "xcache user:")${CMSG}admin${CEND}"
 [ "${PHP_cache}" == '2' ] && echo "$(printf "%-32s" "xcache password:")${CMSG}${xcache_admin_pass}${CEND}"
-[ "${PHP_cache}" == '3' ] && echo "$(printf "%-32s" "APC Control Panel url:")${CMSG}http://${IPADDR}/apc.php${CEND}"
-[ "${PHP_cache}" == '4' ] && echo "$(printf "%-32s" "eAccelerator Control Panel url:")${CMSG}http://${IPADDR}/control.php${CEND}"
+[ "${PHP_cache}" == '3' ] && echo "$(printf "%-32s" "APC Control Panel URL:")${CMSG}http://${IPADDR}/apc.php${CEND}"
+[ "${PHP_cache}" == '4' ] && echo "$(printf "%-32s" "eAccelerator Control Panel URL:")${CMSG}http://${IPADDR}/control.php${CEND}"
 [ "${PHP_cache}" == '4' ] && echo "$(printf "%-32s" "eAccelerator user:")${CMSG}admin${CEND}"
 [ "${PHP_cache}" == '4' ] && echo "$(printf "%-32s" "eAccelerator password:")${CMSG}eAccelerator${CEND}"
 [ "${FTP_yn}" == 'y' ] && echo -e "\n$(printf "%-32s" "Pure-FTPd install dir:")${CMSG}${pureftpd_install_dir}${CEND}"
 [ "${FTP_yn}" == 'y' ] && echo "$(printf "%-32s" "Create FTP virtual script:")${CMSG}./pureftpd_vhost.sh${CEND}"
 [ "${phpMyAdmin_yn}" == 'y' ] && echo -e "\n$(printf "%-32s" "phpMyAdmin dir:")${CMSG}${wwwroot_dir}/default/phpMyAdmin${CEND}"
-[ "${phpMyAdmin_yn}" == 'y' ] && echo "$(printf "%-32s" "phpMyAdmin Control Panel url:")${CMSG}http://${IPADDR}/phpMyAdmin${CEND}"
+[ "${phpMyAdmin_yn}" == 'y' ] && echo "$(printf "%-32s" "phpMyAdmin Control Panel URL:")${CMSG}http://${IPADDR}/phpMyAdmin${CEND}"
 [ "${redis_yn}" == 'y' ] && echo -e "\n$(printf "%-32s" "redis install dir:")${CMSG}${redis_install_dir}${CEND}"
 [ "${memcached_yn}" == 'y' ] && echo -e "\n$(printf "%-32s" "memcached install dir:")${CMSG}${memcached_install_dir}${CEND}"
-[ "${Web_yn}" == 'y' ] && echo -e "\n$(printf "%-32s" "index url:")${CMSG}http://${IPADDR}/${CEND}"
+[ "${Web_yn}" == 'y' ] && echo -e "\n$(printf "%-32s" "Index URL:")${CMSG}http://${IPADDR}/${CEND}"
 while :; do echo
   echo "${CMSG}Please restart the server and see if the services start up fine.${CEND}"
   read -p "Do you want to restart OS ? [y/n]: " restart_yn

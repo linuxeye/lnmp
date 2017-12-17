@@ -84,7 +84,7 @@ What Are You Doing?
 "
   read -p "Please input the correct option: " Number
   if [[ ! $Number =~ ^[1-6,q]$ ]]; then
-    echo "${CFAILURE}input error! Please only input 1 ~ 6 and q${CEND}"
+    echo "${CFAILURE}input error! Please only input 1~6 and q${CEND}"
   else
     case "$Number" in
     1)

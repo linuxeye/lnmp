@@ -155,7 +155,7 @@ if [[ "$DESC_BK" =~ ^[2,4,6]$ ]]; then
       [ -z "`grep $remote_ip tools/iplist.txt`" ] && echo "$remote_ip $remote_port $remote_user $remote_password" >> tools/iplist.txt || echo "${CWARNING}$remote_ip has been added! ${CEND}"
       while :; do
         read -p "Do you want to add more host ? [y/n]: " more_host_yn
-        if [ "$more_host_yn" != 'y' -a "$more_host_yn" != 'n' ]; then
+        if [[ ! $more_host_yn =~ ^[y,n]$ ]]; then
           echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
         else
           break

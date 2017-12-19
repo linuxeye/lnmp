@@ -225,7 +225,6 @@ What Are You Doing?
   else
     case "${Number}" in
       1)
-        [ "$"]
         ACTION_FUN
         while :; do echo
           echo "Please select a opcode cache of the PHP:"

@@ -400,7 +400,7 @@ Nginx_anti_hotlinking() {
     else
       domain_allow_all=${domain_allow}
     fi
-    anti_hotlinking=$(echo -e "location ~ .*\.(wma|wmv|asf|mp3|mmf|zip|rar|jpg|gif|png|swf|flv|mp4)$ {\n    valid_referers none blocked ${domain_allow_all};\n    if (\$invalid_referer) {\n        rewrite ^/ http://www.linuxeye.com/403.html;\n        return 403;\n    }\n  }")
+    anti_hotlinking=$(echo -e "location ~ .*\.(wma|wmv|asf|mp3|mmf|zip|rar|jpg|gif|png|swf|flv|mp4)$ {\n    valid_referers none blocked ${domain_allow_all};\n    if (\$invalid_referer) {\n        return 403;\n    }\n  }")
   else
     anti_hotlinking=
   fi

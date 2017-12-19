@@ -29,10 +29,12 @@ printf "
 
 Usage(){
   printf "
-Usage: $0 [  ${CMSG}all${CEND} | ${CMSG}web${CEND} | ${CMSG}db${CEND} | ${CMSG}php${CEND} | ${CMSG}hhvm${CEND} | ${CMSG}pureftpd${CEND} | ${CMSG}redis${CEND} | ${CMSG}memcached${CEND} ]
+Usage: $0 [  ${CMSG}all${CEND} | ${CMSG}web${CEND} | ${CMSG}mysql${CEND} | ${CMSG}postgresql${CEND} | ${CMSG}mongodb${CEND} | ${CMSG}php${CEND} | ${CMSG}hhvm${CEND} | ${CMSG}pureftpd${CEND} | ${CMSG}redis${CEND} | ${CMSG}memcached${CEND} ]
 ${CMSG}all${CEND}            --->Uninstall All
 ${CMSG}web${CEND}            --->Uninstall Nginx/Tengine/Apache/Tomcat
-${CMSG}db${CEND}             --->Uninstall MySQL/MariaDB/Percona/AliSQL/PostgreSQL/MongoDB
+${CMSG}mysql${CEND}          --->Uninstall MySQL/MariaDB/Percona/AliSQL
+${CMSG}postgresql${CEND}     --->Uninstall PostgreSQL
+${CMSG}mongodb${CEND}        --->Uninstall MongoDB
 ${CMSG}php${CEND}            --->Uninstall PHP
 ${CMSG}hhvm${CEND}           --->Uninstall HHVM
 ${CMSG}pureftpd${CEND}       --->Uninstall PureFtpd
@@ -101,7 +103,7 @@ Print_DB() {
   [ -e "/etc/init.d/mongod" ] && echo "/etc/init.d/mongod"
 }
 
-Uninstall_DB() {
+Uninstall_MySQL() {
   # uninstall mysql,mariadb,percona,alisql 
   if [ -d "${db_install_dir}/support-files" ];then
     service mysqld stop > /dev/null 2>&1
@@ -110,7 +112,12 @@ Uninstall_DB() {
     [ -e "${db_data_dir}" ] && /bin/mv ${db_data_dir}{,$(date +%Y%m%d%H)}
     sed -i 's@^dbrootpwd=.*@dbrootpwd=@' ./options.conf
     sed -i "s@${db_install_dir}/bin:@@" /etc/profile
+  else
+    echo "${CWARNING}MySQL already uninstalled! ${CEND}"
   fi
+}
+
+Uninstall_PostgreSQL() {
   # uninstall postgresql
   if [ -e "${pgsql_install_dir}/bin/psql" ]; then
     service postgresql stop > /dev/null 2>&1
@@ -120,7 +127,12 @@ Uninstall_DB() {
     sed -i 's@^dbpostgrespwd=.*@dbpostgrespwd=@' ./options.conf
     sed -i "s@${pgsql_install_dir}/bin:@@" /etc/profile
     echo "${CMSG}PostgreSQL uninstall completed${CEND}"
+  else
+    echo "${CWARNING}PostgreSQL already uninstalled! ${CEND}"
   fi
+}
+
+Uninstall_MongoDB() {
   # uninstall mongodb 
   if [ -e "${mongo_install_dir}/bin/mongo" ]; then
     service mongod stop > /dev/null 2>&1
@@ -130,6 +142,8 @@ Uninstall_DB() {
     sed -i 's@^dbmongopwd=.*@dbmongopwd=@' ./options.conf
     sed -i "s@${mongo_install_dir}/bin:@@" /etc/profile
     echo "${CMSG}MongoDB uninstall completed${CEND}"
+  else
+    echo "${CWARNING}MongoDB already uninstalled! ${CEND}"
   fi
 }
 
@@ -204,7 +218,7 @@ Print_curlopenssl() {
 
 Uninstall_curlopenssl() {
   [ -e "/usr/local/bin/curl" ] && rm -rf /usr/local/lib/libcurl* /usr/local/bin/curl
-  [ -d "${openssl_install_dir}" ] && { rm -rf ${openssl_install_dir} /etc/ld.so.conf.d/z.openssl.conf; ldconfig; }
+  [ -d "${openssl_install_dir}" ] && { rm -rf ${openssl_install_dir} /etc/ld.so.conf.d/openssl.conf; ldconfig; }
 }
 
 Menu(){
@@ -213,18 +227,20 @@ while :; do
 What Are You Doing?
 \t${CMSG}0${CEND}. Uninstall All
 \t${CMSG}1${CEND}. Uninstall Nginx/Tengine/Apache/Tomcat
-\t${CMSG}2${CEND}. Uninstall MySQL/MariaDB/Percona/AliSQL/PostgreSQL/MongoDB
-\t${CMSG}3${CEND}. Uninstall PHP
-\t${CMSG}4${CEND}. Uninstall HHVM
-\t${CMSG}5${CEND}. Uninstall PureFtpd
-\t${CMSG}6${CEND}. Uninstall Redis
-\t${CMSG}7${CEND}. Uninstall Memcached
+\t${CMSG}2${CEND}. Uninstall MySQL/MariaDB/Percona/AliSQL
+\t${CMSG}3${CEND}. Uninstall PostgreSQL 
+\t${CMSG}4${CEND}. Uninstall MongoDB 
+\t${CMSG}5${CEND}. Uninstall PHP
+\t${CMSG}6${CEND}. Uninstall HHVM
+\t${CMSG}7${CEND}. Uninstall PureFtpd
+\t${CMSG}8${CEND}. Uninstall Redis
+\t${CMSG}9${CEND}. Uninstall Memcached
 \t${CMSG}q${CEND}. Exit
 "
   echo
   read -p "Please input the correct option: " Number
-  if [[ ! $Number =~ ^[0-7,q]$ ]]; then
-    echo "${CWARNING}input error! Please only input 0~7 and q${CEND}"
+  if [[ ! $Number =~ ^[0-9,q]$ ]]; then
+    echo "${CWARNING}input error! Please only input 0~9 and q${CEND}"
   else
     case "$Number" in
     0)
@@ -241,7 +257,9 @@ What Are You Doing?
       Uninstall_status
       if [ "${uninstall_yn}" == 'y' ]; then
         Uninstall_Web
-        Uninstall_DB
+        Uninstall_MySQL
+        Uninstall_PostgreSQL
+        Uninstall_MongoDB 
         Uninstall_PHP
         Uninstall_HHVM
         Uninstall_PureFtpd
@@ -262,29 +280,41 @@ What Are You Doing?
       Print_Warn
       Print_DB
       Uninstall_status
-      [ "${uninstall_yn}" == 'y' ] && Uninstall_DB || exit
+      [ "${uninstall_yn}" == 'y' ] && Uninstall_MySQL || exit
       ;;
     3)
+      Print_Warn
+      Print_DB
+      Uninstall_status
+      [ "${uninstall_yn}" == 'y' ] && Uninstall_PostgreSQL || exit
+      ;;
+    4)
+      Print_Warn
+      Print_DB
+      Uninstall_status
+      [ "${uninstall_yn}" == 'y' ] && Uninstall_MongoDB || exit
+      ;;
+    5)
       Print_PHP
       Uninstall_status
       [ "${uninstall_yn}" == 'y' ] && Uninstall_PHP || exit
       ;;
-    4)
+    6)
       Print_HHVM
       Uninstall_status
       [ "${uninstall_yn}" == 'y' ] && Uninstall_HHVM || exit
       ;;
-    5)
+    7)
       Print_PureFtpd
       Uninstall_status
       [ "${uninstall_yn}" == 'y' ] && Uninstall_PureFtpd || exit
       ;;
-    6)
+    8)
       Print_Redis
       Uninstall_status
       [ "${uninstall_yn}" == 'y' ] && Uninstall_Redis || exit
       ;;
-    7)
+    9)
       Print_Memcached
       Uninstall_status
       [ "${uninstall_yn}" == 'y' ] && Uninstall_Memcached || exit
@@ -315,7 +345,7 @@ elif [ $# == 1 ]; then
     Uninstall_status
     if [ "${uninstall_yn}" == 'y' ]; then
       Uninstall_Web
-      Uninstall_DB
+      Uninstall_MySQL
       Uninstall_PHP
       Uninstall_HHVM
       Uninstall_PureFtpd
@@ -332,11 +362,23 @@ elif [ $# == 1 ]; then
     Uninstall_status
     [ "${uninstall_yn}" == 'y' ] && Uninstall_Web || exit
     ;;
-  db)
+  mysql)
     Print_Warn
     Print_DB
     Uninstall_status
-    [ "${uninstall_yn}" == 'y' ] && Uninstall_DB || exit
+    [ "${uninstall_yn}" == 'y' ] && Uninstall_MySQL || exit
+    ;;
+  postgresql)
+    Print_Warn
+    Print_DB
+    Uninstall_status
+    [ "${uninstall_yn}" == 'y' ] && Uninstall_PostgreSQL || exit
+    ;;
+  mongodb)
+    Print_Warn
+    Print_DB
+    Uninstall_status
+    [ "${uninstall_yn}" == 'y' ] && Uninstall_MongoDB || exit
     ;;
   php)
     Print_PHP

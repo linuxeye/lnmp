@@ -24,7 +24,7 @@ Install_openSSL102() {
     if [ -f "${openssl_install_dir}/lib/libcrypto.a" ]; then
       echo "${CSUCCESS}openssl-1.0.2 module installed successfully! ${CEND}"
       /bin/cp cacert.pem ${openssl_install_dir}/ssl/cert.pem
-      echo "${openssl_install_dir}/lib" > /etc/ld.so.conf.d/z.openssl.conf
+      echo "${openssl_install_dir}/lib" > /etc/ld.so.conf.d/openssl.conf
       ldconfig
       rm -rf openssl-${openssl_version}
     else

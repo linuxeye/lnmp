@@ -93,14 +93,21 @@ Uninstall_Web() {
   echo "${CMSG}Web uninstall completed${CEND}"
 }
 
-Print_DB() {
+Print_MySQL() {
   [ -e "${db_install_dir}" ] && echo "${db_install_dir}"
   [ -e "/etc/init.d/mysqld" ] && echo "/etc/init.d/mysqld"
   [ -e "/etc/my.cnf" ] && echo "/etc/my.cnf"
+}
+
+Print_PostgreSQL() {
   [ -e "${pgsql_install_dir}" ] && echo "${pgsql_install_dir}"
   [ -e "/etc/init.d/postgresql" ] && echo "/etc/init.d/postgresql"
+}
+
+Print_MongoDB() {
   [ -e "${mongo_install_dir}" ] && echo "${mongo_install_dir}"
   [ -e "/etc/init.d/mongod" ] && echo "/etc/init.d/mongod"
+  [ -e "/etc/mongod.conf" ] && echo "/etc/mongod.conf"
 }
 
 Uninstall_MySQL() {
@@ -136,7 +143,7 @@ Uninstall_MongoDB() {
   # uninstall mongodb 
   if [ -e "${mongo_install_dir}/bin/mongo" ]; then
     service mongod stop > /dev/null 2>&1
-    rm -rf ${mongo_install_dir} /etc/mongod.conf /etc/init.d/mongod /var/log/mongodb /tmp/mongo*.sock
+    rm -rf ${mongo_install_dir} /etc/mongod.conf /etc/init.d/mongod /tmp/mongo*.sock
     id -u mongod > /dev/null 2>&1 ; [ $? -eq 0 ] && userdel mongod 
     [ -e "${mongo_data_dir}" ] && /bin/mv ${mongo_data_dir}{,$(date +%Y%m%d%H)}
     sed -i 's@^dbmongopwd=.*@dbmongopwd=@' ./options.conf
@@ -246,7 +253,9 @@ What Are You Doing?
     0)
       Print_Warn
       Print_web
-      Print_DB
+      Print_MySQL
+      Print_PostgreSQL
+      Print_MongoDB
       Print_PHP
       Print_HHVM
       Print_PureFtpd
@@ -278,19 +287,19 @@ What Are You Doing?
       ;;
     2)
       Print_Warn
-      Print_DB
+      Print_MySQL
       Uninstall_status
       [ "${uninstall_yn}" == 'y' ] && Uninstall_MySQL || exit
       ;;
     3)
       Print_Warn
-      Print_DB
+      Print_PostgreSQL
       Uninstall_status
       [ "${uninstall_yn}" == 'y' ] && Uninstall_PostgreSQL || exit
       ;;
     4)
       Print_Warn
-      Print_DB
+      Print_MongoDB
       Uninstall_status
       [ "${uninstall_yn}" == 'y' ] && Uninstall_MongoDB || exit
       ;;
@@ -334,7 +343,9 @@ elif [ $# == 1 ]; then
   all)
     Print_Warn
     Print_web
-    Print_DB
+    Print_MySQL
+    Print_PostgreSQL
+    Print_MongoDB
     Print_PHP
     Print_HHVM
     Print_PureFtpd
@@ -364,19 +375,19 @@ elif [ $# == 1 ]; then
     ;;
   mysql)
     Print_Warn
-    Print_DB
+    Print_MySQL
     Uninstall_status
     [ "${uninstall_yn}" == 'y' ] && Uninstall_MySQL || exit
     ;;
   postgresql)
     Print_Warn
-    Print_DB
+    Print_PostgreSQL
     Uninstall_status
     [ "${uninstall_yn}" == 'y' ] && Uninstall_PostgreSQL || exit
     ;;
   mongodb)
     Print_Warn
-    Print_DB
+    Print_MongoDB
     Uninstall_status
     [ "${uninstall_yn}" == 'y' ] && Uninstall_MongoDB || exit
     ;;

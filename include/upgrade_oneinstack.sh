@@ -28,7 +28,7 @@ Upgrade_OneinStack() {
     [ "$install_flag" == 'n' ] && { /bin/mv /tmp/backup*.sh .; rm -rf install.sh LICENSE README.md; }
     sed -i "s@^oneinstack_md5=.*@oneinstack_md5=${Latest_OneinStack_MD5}@" ./options.conf
     echo
-    echo "${CSUCCESS}Congratulations! OneinStack successful! ${CEND}"
+    echo "${CSUCCESS}Congratulations! OneinStack upgrade successful! ${CEND}"
     echo
   else
     echo "${CWARNING}Your OneinStack already has the latest version or does not need to be upgraded! ${CEND}"

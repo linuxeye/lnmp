@@ -11,11 +11,13 @@ checkDownload() {
   mirrorLink=http://mirrors.linuxeye.com/oneinstack/src
   pushd ${oneinstack_dir}/src
 
+  # General system utils
+  echo "Download openSSL..."
+  src_url=https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && Download_src
+  src_url=http://curl.haxx.se/ca/cacert.pem && Download_src
+
   # Web
   if [ "${Web_yn}" == 'y' ]; then
-    echo "Download openSSL..."
-    src_url=https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && Download_src
-    src_url=http://curl.haxx.se/ca/cacert.pem && Download_src
     case "${Nginx_version}" in
       1)
         echo "Download nginx..."

@@ -21,7 +21,7 @@ installDepsDebian() {
   grep security /etc/apt/sources.list > /tmp/security.sources.list
   apt-get -y upgrade -o Dir::Etc::SourceList=/tmp/security.sources.list
 
-  apt-get autoremove
+  apt-get -y autoremove
 
   # Install needed packages
   case "${Debian_version}" in

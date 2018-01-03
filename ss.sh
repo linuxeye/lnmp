@@ -90,31 +90,28 @@ Iptables_set() {
 }
 
 Def_parameter() {
+  while :; do echo
+    echo "Please select SS server version:"
+    echo -e "\t${CMSG}1${CEND}. Install SS-libev"
+    echo -e "\t${CMSG}2${CEND}. Install SS-python"
+    read -p "Please input a number:(Default 1 press Enter) " SS_version
+    [ -z "${SS_version}" ] && SS_version=1
+    if [[ ! "${SS_version}" =~ ^[1-2]$ ]]; then
+      echo "${CWARNING}input error! Please only input number 1~2${CEND}"
+    else
+      break
+    fi
+  done
+  AddUser_SS
+  Iptables_set
   if [ "${OS}" == "CentOS" ]; then
-    while :; do echo
-      echo "Please select SS server version:"
-      echo -e "\t${CMSG}1${CEND}. Install SS-libev"
-      echo -e "\t${CMSG}2${CEND}. Install SS-python"
-      read -p "Please input a number:(Default 1 press Enter) " SS_version
-      [ -z "${SS_version}" ] && SS_version=1
-      if [[ ! "${SS_version}" =~ ^[1-2]$ ]]; then
-        echo "${CWARNING}input error! Please only input number 1~2${CEND}"
-      else
-        break
-      fi
-    done
-    AddUser_SS
-    Iptables_set
-    pkgList="wget unzip openssl-devel gcc swig autoconf libtool libevent automake make curl curl-devel zlib-devel perl perl-devel cpio expat-devel gettext-devel git asciidoc xmlto pcre-devel mbedtls-devel udns-devel libev-devel libsodium"
+    pkgList="wget unzip openssl-devel gcc swig autoconf libtool libevent automake make curl curl-devel zlib-devel perl perl-devel cpio expat-devel gettext-devel git asciidoc xmlto c-ares-devel pcre-devel mbedtls-devel udns-devel libev-devel libsodium"
     for Package in ${pkgList}; do
       yum -y install ${Package}
     done
   elif [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]]; then
-    SS_version=2
-    AddUser_SS
-    Iptables_set
     apt-get -y update
-    pkgList="curl wget unzip gcc swig automake make perl cpio git libmbedtls-dev libudns-dev libev-dev"
+    pkgList="curl wget unzip gcc swig automake make perl cpio git libmbedtls-dev libudns-dev libev-dev gettext build-essential autoconf libtool libpcre3-dev asciidoc xmlto libc-ares-dev libsodium-dev"
     for Package in ${pkgList}; do
       apt-get -y install $Package
     done
@@ -141,28 +138,40 @@ Install_SS-python() {
 }
 
 Install_SS-libev() {
-  src_url=http://mirrors.linuxeye.com/oneinstack/src/shadowsocks-libev-3.0.4.tar.gz && Download_src
-  src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-1.0.12.tar.gz && Download_src
-  tar xzf shadowsocks-libev-3.0.4.tar.gz
-  tar xzf libsodium-1.0.12.tar.gz
-  pushd libsodium-1.0.12
+  src_url=http://mirrors.linuxeye.com/oneinstack/src/shadowsocks-libev-3.1.1.tar.gz && Download_src
+  src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-1.0.16.tar.gz && Download_src
+  src_url=http://mirrors.linuxeye.com/oneinstack/src/mbedtls-2.6.0-gpl.tgz && Download_src
+  tar xzf shadowsocks-libev-3.1.1.tar.gz
+  tar xzf libsodium-1.0.16.tar.gz
+  tar xzf mbedtls-2.6.0-gpl.tgz 
+  pushd libsodium-1.0.16
   ./configure
   make -j ${THREAD} && make install
   popd
-  pushd shadowsocks-libev-3.0.4
+  pushd mbedtls-2.6.0
+  make SHARED=1 CFLAGS=-fPIC
+  make DESTDIR=/usr install
+  popd
+  pushd shadowsocks-libev-3.1.1
   ./configure
   make -j ${THREAD} && make install
   popd
+  echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
+  ldconfig
   if [ -f /usr/local/bin/ss-server ]; then
-    /bin/cp ../init.d/SS-libev-init /etc/init.d/shadowsocks
-    chmod +x /etc/init.d/shadowsocks
-    [ "${OS}" == "CentOS" ] && { chkconfig --add shadowsocks; chkconfig shadowsocks on; }
+    if [ "${OS}" == "CentOS" ]; then
+      /bin/cp ../init.d/SS-libev-init-CentOS /etc/init.d/shadowsocks
+      chkconfig --add shadowsocks
+      chkconfig shadowsocks on
+    elif [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]];then
+      /bin/cp ../init.d/SS-libev-init-Ubuntu /etc/init.d/shadowsocks
+      update-rc.d shadowsocks defaults
+    fi
   else
     echo
     echo "${CQUESTION}SS-libev install failed! Please visit https://oneinstack.com${CEND}"
     exit 1
   fi
-
 }
 
 Uninstall_SS() {

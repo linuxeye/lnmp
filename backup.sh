@@ -76,7 +76,7 @@ WEB_COS_BK() {
       popd
     fi
     ${python_install_dir}/bin/coscmd upload $PUSH_FILE /`date +%F`/Web_${W}_$(date +%Y%m%d_%H).tgz
-    [ $? -eq 0 ] && { [ -e "$PUSH_FILE" ] && rm -rf $PUSH_FILE; ${python_install_dir}/bin/coscmd delete -r -f `date +%F --date="$expired_days days ago"` > /dev/null 2>&1; }
+    [ $? -eq 0 ] && { [ -e "$PUSH_FILE" -a "$backup_destination" != 'local,cos' ] && rm -rf $PUSH_FILE; ${python_install_dir}/bin/coscmd delete -r -f `date +%F --date="$expired_days days ago"` > /dev/null 2>&1; }
   done
 }
 

@@ -26,17 +26,6 @@ Install_PHP72() {
   popd
   rm -rf curl-$curl_version
   
-  tar xzf libmcrypt-$libmcrypt_version.tar.gz
-  pushd libmcrypt-$libmcrypt_version
-  ./configure
-  make -j ${THREAD} && make install
-  ldconfig
-  pushd libltdl
-  ./configure --enable-ltdl-install
-  make -j ${THREAD} && make install
-  popd;popd
-  rm -rf libmcrypt-$libmcrypt_version
-  
   tar xzf mhash-$mhash_version.tar.gz
   pushd mhash-$mhash_version
   ./configure
@@ -47,14 +36,6 @@ Install_PHP72() {
   echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
   ldconfig
   [ "$OS" == 'CentOS' ] && { ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config; [ "$OS_BIT" == '64' ] && ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1 || ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1; }
-  
-  tar xzf mcrypt-$mcrypt_version.tar.gz
-  pushd mcrypt-$mcrypt_version
-  ldconfig
-  ./configure
-  make -j ${THREAD} && make install
-  popd
-  rm -rf mcrypt-$mcrypt_version
   
   id -u $run_user >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin $run_user
@@ -73,7 +54,7 @@ Install_PHP72() {
     --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
     --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
     --enable-sysvsem --enable-inline-optimization --with-curl=/usr/local --enable-mbregex \
-    --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl=${openssl_install_dir} \
+    --enable-mbstring --with-gd --enable-gd-native-ttf --with-openssl=${openssl_install_dir} \
     --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
     --with-gettext --enable-zip --enable-soap --disable-debug $php_modules_options
   else
@@ -84,7 +65,7 @@ Install_PHP72() {
     --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
     --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
     --enable-sysvsem --enable-inline-optimization --with-curl=/usr/local --enable-mbregex \
-    --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl=${openssl_install_dir} \
+    --enable-mbstring --with-gd --enable-gd-native-ttf --with-openssl=${openssl_install_dir} \
     --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
     --with-gettext --enable-zip --enable-soap --disable-debug $php_modules_options
   fi

@@ -65,7 +65,7 @@ xcache_version=3.2.0
 apcu_version=4.0.11
 apcu_for_php7_version=5.1.8
 eaccelerator_version=0.9.6.1
-swoole_version=1.9.23
+swoole_version=2.0.12
 xdebug_version=2.5.5
 
 # Ftp
@@ -73,7 +73,7 @@ pureftpd_version=1.0.47
 
 # Redis
 redis_version=4.0.6
-redis_pecl_version=3.1.5
+redis_pecl_version=3.1.6
 
 # Memcached
 memcached_version=1.5.4

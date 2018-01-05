@@ -480,9 +480,15 @@ What Are You Doing?
         if [ "${ACTION}" = '1' ]; then
           Check_PHP_Extension
           pushd ${oneinstack_dir}/src
-          src_url=http://mirrors.linuxeye.com/oneinstack/src/swoole-${swoole_version}.tgz && Download_src
-          tar xzf swoole-${swoole_version}.tgz
-          pushd swoole-${swoole_version}
+          if [[ "${PHP_main_version}" =~ ^7\.[0-1]$ ]]; then
+            src_url=https://pecl.php.net/get/swoole-${swoole_version}.tgz && Download_src
+            tar xzf swoole-${swoole_version}.tgz
+            pushd swoole-${swoole_version}
+          else
+            src_url=https://pecl.php.net/get/swoole-1.9.23.tgz && Download_src
+            tar xzf swoole-1.9.23.tgz
+            pushd swoole-1.9.23
+          fi
           ${php_install_dir}/bin/phpize
           ./configure --with-php-config=${php_install_dir}/bin/php-config
           make -j ${THREAD} && make install
@@ -502,7 +508,7 @@ What Are You Doing?
         if [ "${ACTION}" = '1' ]; then
           Check_PHP_Extension
           pushd ${oneinstack_dir}/src
-          src_url=http://mirrors.linuxeye.com/oneinstack/src/xdebug-${xdebug_version}.tgz && Download_src
+          src_url=https://pecl.php.net/get/xdebug-${xdebug_version}.tgz && Download_src
           src_url=http://mirrors.linuxeye.com/oneinstack/src/webgrind-master.zip && Download_src
           tar xzf xdebug-${xdebug_version}.tgz
           unzip -q webgrind-master.zip 

@@ -173,7 +173,7 @@ while :; do echo
     echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
   else
     if [ "$DB_yn" == 'y' ]; then
-      [ -d "$db_install_dir/support-files" -a -e "${pgsql_install_dir}/bin/psql" ] && { echo "${CWARNING}Database already installed! ${CEND}"; DB_yn=Other; break; }
+      [ -d "$db_install_dir/support-files" -a -e "${pgsql_install_dir}/bin/psql" -a -e "${mongo_install_dir}/bin/mongo" ] && { echo "${CWARNING}Database already installed! ${CEND}"; DB_yn=Other; break; }
       while :; do echo
         echo 'Please select a version of the Database:'
         echo -e "\t${CMSG} 1${CEND}. Install MySQL-5.7"

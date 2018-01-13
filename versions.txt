@@ -21,12 +21,12 @@ mysql57_version=5.7.20
 mysql56_version=5.6.38
 mysql55_version=5.5.58
 
-mariadb102_version=10.2.11
+mariadb102_version=10.2.12
 mariadb101_version=10.1.30
 mariadb100_version=10.0.33
 mariadb55_version=5.5.58
 
-percona57_version=5.7.20-18
+percona57_version=5.7.20-19
 percona56_version=5.6.38-83.0
 percona55_version=5.5.58-38.10
 
@@ -55,7 +55,7 @@ curl_version=7.57.0
 libmcrypt_version=2.5.8
 mcrypt_version=2.6.8
 mhash_version=0.9.9.9
-ImageMagick_version=6.9.9-31
+ImageMagick_version=6.9.9-33
 imagick_version=3.4.3
 GraphicsMagick_version=1.3.26
 gmagick_for_php7_version=2.0.4RC1

@@ -638,9 +638,9 @@ checkDownload() {
       # php 5.3 5.4 5.5 5.6 7.0 7.1 7.2
       echo "Download apcu..."
       if [[ "$PHP_version" =~ ^[1-4]$ ]]; then
-        src_url=http://pecl.php.net/get/apcu-${apcu_version}.tgz && Download_src
+        src_url=https://pecl.php.net/get/apcu-${apcu_version}.tgz && Download_src
       else
-        src_url=http://pecl.php.net/get/apcu-${apcu_for_php7_version}.tgz && Download_src
+        src_url=https://pecl.php.net/get/apcu-${apcu_for_php7_version}.tgz && Download_src
       fi
       ;;
     4)
@@ -711,7 +711,7 @@ checkDownload() {
       src_url=https://pecl.php.net/get/mongo-${mongo_pecl_version}.tgz && Download_src
     else
       echo "Download pecl mongodb for php..."
-      src_url=http://pecl.php.net/get/mongodb-${mongodb_pecl_version}.tgz && Download_src
+      src_url=https://pecl.php.net/get/mongodb-${mongodb_pecl_version}.tgz && Download_src
     fi
   fi
 
@@ -733,7 +733,7 @@ checkDownload() {
       echo "Download ImageMagick..."
       src_url=${mirrorLink}/ImageMagick-${ImageMagick_version}.tar.gz && Download_src
       echo "Download imagick..."
-      src_url=http://pecl.php.net/get/imagick-${imagick_version}.tgz && Download_src
+      src_url=https://pecl.php.net/get/imagick-${imagick_version}.tgz && Download_src
     else
       echo "Download graphicsmagick..."
       src_url=http://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/${GraphicsMagick_version}/GraphicsMagick-${GraphicsMagick_version}.tar.gz && Download_src
@@ -742,7 +742,7 @@ checkDownload() {
         src_url=https://pecl.php.net/get/gmagick-${gmagick_for_php7_version}.tgz && Download_src
       else
         echo "Download gmagick for php..."
-        src_url=http://pecl.php.net/get/gmagick-${gmagick_version}.tgz && Download_src
+        src_url=https://pecl.php.net/get/gmagick-${gmagick_version}.tgz && Download_src
       fi
     fi
   fi
@@ -761,7 +761,7 @@ checkDownload() {
     echo "Download redis..."
     src_url=http://download.redis.io/releases/redis-${redis_version}.tar.gz && Download_src
     echo "Download redis pecl..."
-    src_url=http://pecl.php.net/get/redis-${redis_pecl_version}.tgz && Download_src
+    src_url=https://pecl.php.net/get/redis-${redis_pecl_version}.tgz && Download_src
     if [ "${OS}" == "CentOS" ]; then
       echo "Download start-stop-daemon.c for CentOS..."
       src_url=${mirrorLink}/start-stop-daemon.c && Download_src
@@ -779,9 +779,9 @@ checkDownload() {
       src_url=https://pecl.php.net/get/memcached-${memcached_pecl_php7_version}.tgz && Download_src
     else
       echo "Download pecl memcache for php..."
-      src_url=http://pecl.php.net/get/memcache-${memcache_pecl_version}.tgz && Download_src
+      src_url=https://pecl.php.net/get/memcache-${memcache_pecl_version}.tgz && Download_src
       echo "Download pecl memcached for php..."
-      src_url=http://pecl.php.net/get/memcached-${memcached_pecl_version}.tgz && Download_src
+      src_url=https://pecl.php.net/get/memcached-${memcached_pecl_version}.tgz && Download_src
     fi
 
     echo "Download libmemcached..."

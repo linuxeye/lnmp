@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-import re,urllib2
+import re,urllib2,socket
 class Get_public_ip:
+  socket.setdefaulttimeout(5)
   def getip(self):
     try:
-      myip = self.visit("http://ip.chinaz.com/getip.aspx")
+      myip = self.visit("http://ip.taobao.com/ipSearch.php")
     except:
       try:
         myip = self.visit("http://ipv4.icanhazip.com/")

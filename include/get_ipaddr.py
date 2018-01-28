@@ -9,6 +9,7 @@ def Get_local_ip():
   matter much.  No traffic is actually sent.
   """
   try:
+    socket.setdefaulttimeout(5)
     csock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     csock.connect(('8.8.8.8', 80))
     (addr, port) = csock.getsockname()

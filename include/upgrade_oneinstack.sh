@@ -18,10 +18,12 @@ Upgrade_OneinStack() {
     [ -e /tmp/oneinstack.tar.gz ] && rm -rf /tmp/oneinstack.tar.gz
     wget -c http://mirrors.linuxeye.com/oneinstack.tar.gz -O /tmp/oneinstack.tar.gz > /dev/null 2>&1 
     tar xzf /tmp/oneinstack.tar.gz -C ../
+    IFS=$'\n'
     for L in `grep -vE '^#|^$' /tmp/options.conf`
     do
-      Key=`echo $L | awk -F= '{print $1}'`
-      Value=`echo $L | awk -F= '{print $2}'`
+      IFS=$IFS_old
+      Key="`echo ${L%%=*}`"
+      Value="`echo ${L#*=}`"
       sed -i "s@^${Key}=.*@${Key}=${Value}@" ./options.conf
     done
     rm -rf /tmp/{oneinstack.tar.gz,options.conf}

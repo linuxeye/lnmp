@@ -43,6 +43,17 @@ DB_COS_BK() {
   done
 }
 
+DB_UPYUN_BK() {
+  for D in `echo $db_name | tr ',' ' '`
+  do
+    ./db_bk.sh $D
+    DB_GREP="DB_${D}_`date +%Y`"
+    DB_FILE=`ls -lrt $backup_dir | grep ${DB_GREP} | tail -1 | awk '{print $NF}'`
+    /usr/local/bin/upx put $backup_dir/$DB_FILE /`date +%F`/$DB_FILE
+    [ $? -eq 0 ] && /usr/local/bin/upx rm -a `date +%F --date="$expired_days days ago"` > /dev/null 2>&1
+  done
+}
+
 WEB_Local_BK() {
   for W in `echo $website_name | tr ',' ' '`
   do
@@ -76,38 +87,50 @@ WEB_COS_BK() {
       popd
     fi
     ${python_install_dir}/bin/coscmd upload $PUSH_FILE /`date +%F`/Web_${W}_$(date +%Y%m%d_%H).tgz
-    [ $? -eq 0 ] && { [ -e "$PUSH_FILE" -a "$backup_destination" != 'local,cos' ] && rm -rf $PUSH_FILE; ${python_install_dir}/bin/coscmd delete -r -f `date +%F --date="$expired_days days ago"` > /dev/null 2>&1; }
+    if [ $? -eq 0 ]; then
+      ${python_install_dir}/bin/coscmd delete -r -f `date +%F --date="$expired_days days ago"` > /dev/null 2>&1
+      [ -e "$PUSH_FILE" -a -z "`echo $backup_destination | grep -ow 'local'`" ] && rm -rf $PUSH_FILE
+    fi
   done
 }
 
-if [ "$backup_destination" == 'local' ]; then
-  [ -n "`echo $backup_content | grep -ow db`" ] && DB_Local_BK
-  [ -n "`echo $backup_content | grep -ow web`" ] && WEB_Local_BK
-elif [ "$backup_destination" == 'remote' ]; then
-  echo "com:::[ ! -e "$backup_dir" ] && mkdir -p $backup_dir" > config_bakcup.txt
-  [ -n "`echo $backup_content | grep -ow db`" ] && DB_Remote_BK
-  [ -n "`echo $backup_content | grep -ow web`" ] && WEB_Remote_BK
-  ./mabs.sh -c config_bakcup.txt -T -1 | tee mabs.log
-elif [ "$backup_destination" == 'cos' ]; then
-  [ -n "`echo $backup_content | grep -ow db`" ] && DB_COS_BK
-  [ -n "`echo $backup_content | grep -ow web`" ] && WEB_COS_BK
-elif [ "$backup_destination" == 'local,remote' ]; then
-  echo "com:::[ ! -e "$backup_dir" ] && mkdir -p $backup_dir" > config_bakcup.txt
-  [ -n "`echo $backup_content | grep -ow db`" ] && DB_Local_BK
-  [ -n "`echo $backup_content | grep -ow web`" ] && WEB_Local_BK
-  [ -n "`echo $backup_content | grep -ow db`" ] && DB_Remote_BK
-  [ -n "`echo $backup_content | grep -ow web`" ] && WEB_Remote_BK
-  ./mabs.sh -c config_bakcup.txt -T -1 | tee mabs.log	
-elif [ "$backup_destination" == 'local,cos' ]; then
-  [ -n "`echo $backup_content | grep -ow db`" ] && DB_Local_BK
-  [ -n "`echo $backup_content | grep -ow db`" ] && DB_COS_BK
-  [ -n "`echo $backup_content | grep -ow web`" ] && WEB_Local_BK
-  [ -n "`echo $backup_content | grep -ow web`" ] && WEB_COS_BK
-elif [ "$backup_destination" == 'remote,cos' ]; then
-  echo "com:::[ ! -e "$backup_dir" ] && mkdir -p $backup_dir" > config_bakcup.txt
-  [ -n "`echo $backup_content | grep -ow db`" ] && DB_Remote_BK 
-  [ -n "`echo $backup_content | grep -ow db`" ] && DB_COS_BK
-  [ -n "`echo $backup_content | grep -ow web`" ] && WEB_Remote_BK 
-  [ -n "`echo $backup_content | grep -ow web`" ] && WEB_COS_BK
-  ./mabs.sh -c config_bakcup.txt -T -1 | tee mabs.log	
-fi
+WEB_UPYUN_BK() {
+  for W in `echo $website_name | tr ',' ' '`
+  do
+    [ ! -e "$wwwroot_dir/$WebSite" ] && { echo "[$wwwroot_dir/$WebSite] not exist"; break; }
+    [ ! -e "$backup_dir" ] && mkdir -p $backup_dir
+    PUSH_FILE="$backup_dir/Web_${W}_$(date +%Y%m%d_%H).tgz"
+    if [ ! -e "$PUSH_FILE" ]; then
+      pushd $wwwroot_dir
+      tar czf $PUSH_FILE ./$W
+      popd
+    fi
+    /usr/local/bin/upx put $PUSH_FILE /`date +%F`/Web_${W}_$(date +%Y%m%d_%H).tgz
+    if [ $? -eq 0 ]; then
+      /usr/local/bin/upx rm -a `date +%F --date="$expired_days days ago"` > /dev/null 2>&1 
+      [ -e "$PUSH_FILE" -a -z "`echo $backup_destination | grep -ow 'local'`" ] && rm -rf $PUSH_FILE
+    fi
+  done
+}
+
+for DEST in `echo $backup_destination | tr ',' ' '`
+do
+  if [ "$DEST" == 'local' ]; then
+    [ -n "`echo $backup_content | grep -ow db`" ] && DB_Local_BK
+    [ -n "`echo $backup_content | grep -ow web`" ] && WEB_Local_BK
+  fi 
+  if [ "$DEST" == 'remote' ]; then
+    echo "com:::[ ! -e "$backup_dir" ] && mkdir -p $backup_dir" > config_bakcup.txt
+    [ -n "`echo $backup_content | grep -ow db`" ] && DB_Remote_BK
+    [ -n "`echo $backup_content | grep -ow web`" ] && WEB_Remote_BK
+    ./mabs.sh -c config_bakcup.txt -T -1 | tee mabs.log
+  fi 
+  if [ "$DEST" == 'cos' ]; then
+    [ -n "`echo $backup_content | grep -ow db`" ] && DB_COS_BK
+    [ -n "`echo $backup_content | grep -ow web`" ] && WEB_COS_BK
+  fi 
+  if [ "$DEST" == 'upyun' ]; then
+    [ -n "`echo $backup_content | grep -ow db`" ] && DB_UPYUN_BK
+    [ -n "`echo $backup_content | grep -ow web`" ] && WEB_UPYUN_BK
+  fi 
+done

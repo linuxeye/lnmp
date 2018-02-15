@@ -215,7 +215,7 @@ What Are You Doing?
 \t${CMSG} 7${CEND}. Install/Uninstall Let's Encrypt client
 \t${CMSG} 8${CEND}. Install/Uninstall swoole PHP Extension 
 \t${CMSG} 9${CEND}. Install/Uninstall xdebug PHP Extension 
-\t${CMSG}10${CEND}. Install/Uninstall PHP Comeposer
+\t${CMSG}10${CEND}. Install/Uninstall PHP Composer 
 \t${CMSG}11${CEND}. Install/Uninstall fail2ban
 \t${CMSG} q${CEND}. Exit
 "
@@ -485,9 +485,9 @@ What Are You Doing?
             tar xzf swoole-${swoole_version}.tgz
             pushd swoole-${swoole_version}
           else
-            src_url=https://pecl.php.net/get/swoole-1.9.23.tgz && Download_src
-            tar xzf swoole-1.9.23.tgz
-            pushd swoole-1.9.23
+            src_url=https://pecl.php.net/get/swoole-1.10.1.tgz && Download_src
+            tar xzf swoole-1.10.1.tgz
+            pushd swoole-1.10.1
           fi
           ${php_install_dir}/bin/phpize
           ./configure --with-php-config=${php_install_dir}/bin/php-config

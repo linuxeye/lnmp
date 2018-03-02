@@ -531,7 +531,7 @@ checkDownload() {
         if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
           DOWN_ADDR_PGSQL=https://mirrors.tuna.tsinghua.edu.cn/postgresql/source/v${pgsql_version}
           PGSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_PGSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
-          [ -z "${PGSQL_TAR_MD5}" ] && { DOWN_ADDR_PGSQL=https://mirrors.ustc.edu.cn/postgresql/source/vv${pgsql_version}; PGSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_PGSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}'); }
+          [ -z "${PGSQL_TAR_MD5}" ] && { DOWN_ADDR_PGSQL=https://mirrors.ustc.edu.cn/postgresql/source/v${pgsql_version}; PGSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_PGSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}'); }
         else
           DOWN_ADDR_PGSQL=https://ftp.postgresql.org/pub/source/v${pgsql_version}
           PGSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_PGSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')

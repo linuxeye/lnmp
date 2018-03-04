@@ -111,7 +111,7 @@ Def_parameter() {
     done
   elif [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]]; then
     apt-get -y update
-    pkgList="curl wget unzip gcc swig automake make perl cpio git libmbedtls-dev libudns-dev libev-dev gettext build-essential autoconf libtool libpcre3-dev asciidoc xmlto libc-ares-dev libsodium-dev"
+    pkgList="curl wget unzip gcc swig automake make perl cpio git libmbedtls-dev libudns-dev libev-dev gettext build-essential autoconf libtool libpcre3-dev asciidoc xmlto libc-ares-dev"
     for Package in ${pkgList}; do
       apt-get -y install $Package
     done
@@ -140,15 +140,15 @@ Install_SS-python() {
 Install_SS-libev() {
   src_url=http://mirrors.linuxeye.com/oneinstack/src/shadowsocks-libev-3.1.3.tar.gz && Download_src
   src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-1.0.16.tar.gz && Download_src
-  src_url=http://mirrors.linuxeye.com/oneinstack/src/mbedtls-2.7.0-gpl.tgz && Download_src
+  src_url=http://mirrors.linuxeye.com/oneinstack/src/mbedtls-2.7.1.tgz && Download_src
   tar xzf shadowsocks-libev-3.1.3.tar.gz
   tar xzf libsodium-1.0.16.tar.gz
-  tar xzf mbedtls-2.7.0-gpl.tgz 
+  tar xzf mbedtls-2.7.1.tgz 
   pushd libsodium-1.0.16
   ./configure
   make -j ${THREAD} && make install
   popd
-  pushd mbedtls-2.7.0
+  pushd mbedtls-2.7.1
   make SHARED=1 CFLAGS=-fPIC
   make DESTDIR=/usr install
   popd

@@ -9,7 +9,7 @@
 #       https://github.com/lj2007331/oneinstack
 
 Download_src() {
-  [ -s "${src_url##*/}" ] && echo "[${CMSG}${src_url##*/}${CEND}] found" || { wget --tries=6 -c --no-check-certificate $src_url; sleep 1; }
+  [ -s "${src_url##*/}" ] && echo "[${CMSG}${src_url##*/}${CEND}] found" || { wget -4 --tries=6 -c --no-check-certificate $src_url; sleep 1; }
   if [ ! -e "${src_url##*/}" ]; then
     echo "${CFAILURE}${src_url##*/} download failed, Please contact the author! ${CEND}"
     kill -9 $$

@@ -32,7 +32,7 @@ percona55_version=5.5.59-38.11
 
 alisql56_version=5.6.32-8
 
-pgsql_version=10.2
+pgsql_version=10.3
 
 mongodb_version=3.6.3
 

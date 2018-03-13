@@ -1,6 +1,6 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# Blog:  http://blog.linuxeye.com
+# Blog:  http://blog.linuxeye.cn
 
 ######################  proc defination  ########################
 # ignore rule
@@ -26,7 +26,7 @@ ignore_init() {
   fi
 }
 
-show_version() {
+show_ver() {
   echo "version: 1.0"
   echo "updated date: 2014-06-08"
 }
@@ -63,7 +63,7 @@ while :; do
       show_usage; exit 0
       ;;
     -v|-V|--version)
-      show_version; exit 0
+      show_ver; exit 0
       ;;
     -l|--iplist)
       IPLIST=$2; shift 2

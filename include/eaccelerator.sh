@@ -1,22 +1,24 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
 Install_eAccelerator() {
-  pushd ${oneinstack_dir}/src
+  pushd ${oneinstack_dir}/src > /dev/null
+  PHP_detail_ver=$(${php_install_dir}/bin/php -r 'echo PHP_VERSION;')
+  PHP_main_ver=${PHP_detail_ver%.*}
   phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
-  case "${PHP_version}" in
-    1)
-      tar jxf eaccelerator-${eaccelerator_version}.tar.bz2
-      pushd eaccelerator-${eaccelerator_version}
+  case "${PHP_main_ver}" in
+    5.3)
+      tar jxf eaccelerator-${eaccelerator_ver}.tar.bz2
+      pushd eaccelerator-${eaccelerator_ver}
       ;;
-    2)
+    5.4)
       /bin/mv master eaccelerator-eaccelerator-42067ac.tar.gz
       tar xzf eaccelerator-eaccelerator-42067ac.tar.gz
       pushd eaccelerator-eaccelerator-42067ac
@@ -54,7 +56,7 @@ EOF
     echo "${CSUCCESS}Accelerator module installed successfully! ${CEND}"
     [ -z "$(grep 'kernel.shmmax = 67108864' /etc/sysctl.conf)" ] && echo "kernel.shmmax = 67108864" >> /etc/sysctl.conf
     sysctl -p
-    rm -rf eaccelerator-${eaccelerator_version} eaccelerator-eaccelerator-42067ac
+    rm -rf eaccelerator-${eaccelerator_ver} eaccelerator-eaccelerator-42067ac
   else
     echo "${CFAILURE}Accelerator module install failed, Please contact the author! ${CEND}"
   fi

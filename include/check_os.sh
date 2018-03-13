@@ -1,8 +1,8 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -10,26 +10,26 @@
 
 if [ -n "$(grep 'Aliyun Linux release' /etc/issue)" -o -e /etc/redhat-release ]; then
   OS=CentOS
-  [ -n "$(grep ' 7\.' /etc/redhat-release 2> /dev/null)" ] && CentOS_RHEL_version=7
-  [ -n "$(grep ' 6\.' /etc/redhat-release 2> /dev/null)" -o -n "$(grep 'Aliyun Linux release6 15' /etc/issue)" ] && CentOS_RHEL_version=6
-  [ -n "$(grep ' 5\.' /etc/redhat-release 2> /dev/null)" -o -n "$(grep 'Aliyun Linux release5' /etc/issue)" ] && CentOS_RHEL_version=5
+  [ -n "$(grep ' 7\.' /etc/redhat-release 2> /dev/null)" ] && CentOS_RHEL_ver=7
+  [ -n "$(grep ' 6\.' /etc/redhat-release 2> /dev/null)" -o -n "$(grep 'Aliyun Linux release6 15' /etc/issue)" ] && CentOS_RHEL_ver=6
+  [ -n "$(grep ' 5\.' /etc/redhat-release 2> /dev/null)" -o -n "$(grep 'Aliyun Linux release5' /etc/issue)" ] && CentOS_RHEL_ver=5
 elif [ -n "$(grep 'Amazon Linux AMI release' /etc/issue)" -o -e /etc/system-release ]; then
   OS=CentOS
-  CentOS_RHEL_version=6
+  CentOS_RHEL_ver=6
 elif [ -n "$(grep 'bian' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Debian" ]; then
   OS=Debian
   [ ! -e "$(which lsb_release)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
-  Debian_version=$(lsb_release -sr | awk -F. '{print $1}')
+  Debian_ver=$(lsb_release -sr | awk -F. '{print $1}')
 elif [ -n "$(grep 'Deepin' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Deepin" ]; then
   OS=Debian
   [ ! -e "$(which lsb_release)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
-  Debian_version=$(lsb_release -sr | awk -F. '{print $1}')
+  Debian_ver=$(lsb_release -sr | awk -F. '{print $1}')
 # kali rolling
 elif [ -n "$(grep 'Kali GNU/Linux Rolling' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Kali" ]; then
   OS=Debian
   [ ! -e "$(which lsb_release)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
   if [ -n "$(grep 'VERSION="2016.*"' /etc/os-release)" ]; then
-    Debian_version=8
+    Debian_ver=8
   else
     echo "${CFAILURE}Does not support this OS, Please contact the author! ${CEND}"
     kill -9 $$
@@ -37,12 +37,12 @@ elif [ -n "$(grep 'Kali GNU/Linux Rolling' /etc/issue)" -o "$(lsb_release -is 2>
 elif [ -n "$(grep 'Ubuntu' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Ubuntu" -o -n "$(grep 'Linux Mint' /etc/issue)" ]; then
   OS=Ubuntu
   [ ! -e "$(which lsb_release)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
-  Ubuntu_version=$(lsb_release -sr | awk -F. '{print $1}')
-  [ -n "$(grep 'Linux Mint 18' /etc/issue)" ] && Ubuntu_version=16
+  Ubuntu_ver=$(lsb_release -sr | awk -F. '{print $1}')
+  [ -n "$(grep 'Linux Mint 18' /etc/issue)" ] && Ubuntu_ver=16
 elif [ -n "$(grep 'elementary' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == 'elementary' ]; then
   OS=Ubuntu
   [ ! -e "$(which lsb_release)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
-  Ubuntu_version=16
+  Ubuntu_ver=16
 else
   echo "${CFAILURE}Does not support this OS, Please contact the author! ${CEND}"
   kill -9 $$
@@ -66,7 +66,7 @@ LIBC_YN=$(awk -v A=$(getconf -a | grep GNU_LIBC_VERSION | awk '{print $NF}') -v 
 [ $LIBC_YN == '0' ] && GLIBC_FLAG=linux-glibc_214 || GLIBC_FLAG=linux
 
 if uname -m | grep -Eqi "arm"; then
-  armPlatform="y"
+  armplatform="y"
   if uname -m | grep -Eqi "armv7"; then
     TARGET_ARCH="armv7"
   elif uname -m | grep -Eqi "armv8"; then
@@ -80,13 +80,13 @@ THREAD=$(grep 'processor' /proc/cpuinfo | sort -u | wc -l)
 
 # Percona
 if [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]]; then
-  if [ "${Debian_version}" == '6' ]; then
+  if [ "${Debian_ver}" == '6' ]; then
     sslLibVer=ssl098
   else
     sslLibVer=ssl100
   fi
 elif [ "${OS}" == "CentOS" ]; then
-  if [ "${CentOS_RHEL_version}" == '5' ]; then
+  if [ "${CentOS_RHEL_ver}" == '5' ]; then
     sslLibVer=ssl098e
   else
     sslLibVer=ssl101

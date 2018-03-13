@@ -1,6 +1,6 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.cn
 #
 # Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
 #
@@ -17,15 +17,15 @@ printf "
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
+# Check if user is root
+[ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
 
+oneinstack_dir=$(dirname "`readlink -f $0`")
+pushd ${oneinstack_dir} > /dev/null
 . ./options.conf
 . ./include/color.sh
 . ./include/get_char.sh
 . ./include/check_dir.sh
-
-# Check if user is root
-[ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
-
 
 Usage(){
   printf "
@@ -112,7 +112,7 @@ Print_MongoDB() {
 
 Uninstall_MySQL() {
   # uninstall mysql,mariadb,percona,alisql 
-  if [ -d "${db_install_dir}/support-files" ];then
+  if [ -d "${db_install_dir}/support-files" ]; then
     service mysqld stop > /dev/null 2>&1
     rm -rf ${db_install_dir} /etc/init.d/mysqld /etc/my.cnf /etc/ld.so.conf.d/{mysql,mariadb,percona,alisql}*.conf
     id -u mysql >/dev/null 2>&1 ; [ $? -eq 0 ] && userdel mysql
@@ -185,12 +185,12 @@ Uninstall_HHVM() {
 }
 
 Print_PureFtpd() {
-  [ -e "$pureftpd_install_dir" ] && echo "$pureftpd_install_dir"
+  [ -e "${pureftpd_install_dir}" ] && echo "${pureftpd_install_dir}"
   [ -e "/etc/init.d/pureftpd" ] && echo "/etc/init.d/pureftpd"
 }
 
 Uninstall_PureFtpd() {
-  [ -e "$pureftpd_install_dir" ] && { service pureftpd stop > /dev/null 2>&1; rm -rf $pureftpd_install_dir /etc/init.d/pureftpd; }
+  [ -e "${pureftpd_install_dir}" ] && { service pureftpd stop > /dev/null 2>&1; rm -rf ${pureftpd_install_dir} /etc/init.d/pureftpd; }
   echo "${CMSG}Pureftpd uninstall completed${CEND}"
 }
 

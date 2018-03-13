@@ -1,6 +1,6 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.cn
 #
 # Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
 #
@@ -16,15 +16,16 @@ printf "
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
+# Check if user is root
+[ $(id -u) != '0' ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
 
+oneinstack_dir=$(dirname "`readlink -f $0`")
+pushd ${oneinstack_dir} > /dev/null
 . ./options.conf
 . ./include/color.sh
 . ./include/check_dir.sh
 . ./include/check_os.sh
 . ./include/get_char.sh
-
-# Check if user is root
-[ $(id -u) != '0' ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
 
 Usage() {
   printf "

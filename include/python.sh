@@ -1,16 +1,16 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
 Install_Python() {
-  pushd ${oneinstack_dir}/src
-  if [ "${CentOS_RHEL_version}" == '7' ]; then
+  pushd ${oneinstack_dir}/src > /dev/null
+  if [ "${CentOS_RHEL_ver}" == '7' ]; then
     [ ! -e /etc/yum.repos.d/epel.repo ] && cat > /etc/yum.repos.d/epel.repo << EOF
 [epel]
 name=Extra Packages for Enterprise Linux 7 - \$basearch
@@ -20,7 +20,7 @@ failovermethod=priority
 enabled=1
 gpgcheck=0
 EOF
-  elif [ "${CentOS_RHEL_version}" == '6' ]; then
+  elif [ "${CentOS_RHEL_ver}" == '6' ]; then
     [ ! -e /etc/yum.repos.d/epel.repo ] && cat > /etc/yum.repos.d/epel.repo << EOF
 [epel]
 name=Extra Packages for Enterprise Linux 6 - \$basearch
@@ -46,32 +46,32 @@ EOF
 
   # Install Python
   if [ ! -e "${python_install_dir}/bin/python" -a ! -e "${python_install_dir}/bin/python3" ] ;then
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/Python-${python_version}.tgz && Download_src
-    tar xzf Python-${python_version}.tgz
-    pushd Python-${python_version}
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/Python-${python_ver}.tgz && Download_src
+    tar xzf Python-${python_ver}.tgz
+    pushd Python-${python_ver}
     ./configure --prefix=${python_install_dir}
     make && make install
     [ ! -e "${python_install_dir}/bin/python" -a -e "${python_install_dir}/bin/python3" ] && ln -s ${python_install_dir}/bin/python{3,}
     popd
-    rm -rf Python-${python_version}
+    rm -rf Python-${python_ver}
   fi
 
   if [ ! -e "${python_install_dir}/bin/easy_install" ] ;then
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/setuptools-${setuptools_version}.zip && Download_src
-    unzip -q setuptools-${setuptools_version}.zip
-    pushd setuptools-${setuptools_version}
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/setuptools-${setuptools_ver}.zip && Download_src
+    unzip -q setuptools-${setuptools_ver}.zip
+    pushd setuptools-${setuptools_ver}
     ${python_install_dir}/bin/python setup.py install
     popd
-    rm -rf setuptools-${setuptools_version}
+    rm -rf setuptools-${setuptools_ver}
   fi
 
   if [ ! -e "${python_install_dir}/bin/pip" ] ;then
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/pip-${pip_version}.tar.gz && Download_src
-    tar xzf pip-${pip_version}.tar.gz
-    pushd pip-${pip_version}
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/pip-${pip_ver}.tar.gz && Download_src
+    tar xzf pip-${pip_ver}.tar.gz
+    pushd pip-${pip_ver}
     ${python_install_dir}/bin/python setup.py install
     popd
-    rm -rf pip-${pip_version}
+    rm -rf pip-${pip_ver}
   fi
 
   if [ ! -e "/root/.pip/pip.conf" ] ;then

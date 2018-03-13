@@ -1,20 +1,20 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
 Install_MongoDB() {
-  pushd ${oneinstack_dir}/src
+  pushd ${oneinstack_dir}/src > /dev/null
   id -u mongod >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -s /sbin/nologin mongod
   mkdir -p ${mongo_data_dir};chown mongod.mongod -R ${mongo_data_dir}
-  tar xzf mongodb-linux-${SYS_BIT_b}-${mongodb_version}.tgz
-  /bin/mv mongodb-linux-${SYS_BIT_b}-${mongodb_version} ${mongo_install_dir}
+  tar xzf mongodb-linux-${SYS_BIT_b}-${mongodb_ver}.tgz
+  /bin/mv mongodb-linux-${SYS_BIT_b}-${mongodb_ver} ${mongo_install_dir}
   [ "${OS}" == "CentOS" ] && { /bin/cp ../init.d/MongoDB-init-CentOS /etc/init.d/mongod; sed -i "s@/usr/local/mongodb@${mongo_install_dir}@g" /etc/init.d/mongod; chkconfig --add mongod; chkconfig mongod on; }
   [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]] && { /bin/cp ../init.d/MongoDB-init-Ubuntu /etc/init.d/mongod; sed -i "s@/usr/local/mongodb@${mongo_install_dir}@g" /etc/init.d/mongod; update-rc.d mongod defaults; }
   cat > /etc/mongod.conf << EOF
@@ -63,9 +63,9 @@ EOF
   sed -i 's@^#  authorization:@  authorization:@' /etc/mongod.conf 
   if [ -e "${mongo_install_dir}/bin/mongo" ]; then
     echo "${CSUCCESS}MongoDB installed successfully! ${CEND}"
-    rm -rf mongodb-linux-${SYS_BIT_b}-${mongodb_version} 
+    rm -rf mongodb-linux-${SYS_BIT_b}-${mongodb_ver} 
   else
-    rm -rf ${mongo_install_dir} ${mongo_data_dir} mongodb-linux-${SYS_BIT_b}-${mongodb_version} 
+    rm -rf ${mongo_install_dir} ${mongo_data_dir} mongodb-linux-${SYS_BIT_b}-${mongodb_ver} 
     echo "${CFAILURE}MongoDB install failed, Please contact the author! ${CEND}"
     kill -9 $$
   fi

@@ -1,28 +1,28 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
 Install_Apache22() {
-  pushd ${oneinstack_dir}/src
+  pushd ${oneinstack_dir}/src > /dev/null
   id -u ${run_user} >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin ${run_user}
-  tar xzf httpd-${apache22_version}.tar.gz
-  pushd httpd-${apache22_version}
+  tar xzf httpd-${apache22_ver}.tar.gz
+  pushd httpd-${apache22_ver}
   [ ! -d "${apache_install_dir}" ] && mkdir -p ${apache_install_dir}
-  [ "${Ubuntu_version}" == "12" ] && sed -i '@SSL_PROTOCOL_SSLV2@d' modules/ssl/ssl_engine_io.c
+  [ "${Ubuntu_ver}" == "12" ] && sed -i '@SSL_PROTOCOL_SSLV2@d' modules/ssl/ssl_engine_io.c
   LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} --with-mpm=prefork --with-included-apr --enable-headers --enable-deflate --enable-so --enable-rewrite --enable-ssl--with-ssl=${openssl_install_dir} --enable-expires --enable-static-support --enable-suexec --enable-modules=all --enable-mods-shared=all
   make -j ${THREAD} && make install
   unset LDFLAGS
   if [ -e "${apache_install_dir}/conf/httpd.conf" ]; then
     echo "${CSUCCESS}Apache installed successfully! ${CEND}"
     popd
-    rm -rf httpd-${apache22_version}
+    rm -rf httpd-${apache22_ver}
   else
     rm -rf ${apache_install_dir}
     echo "${CFAILURE}Apache install failed, Please contact the author! ${CEND}"
@@ -42,10 +42,10 @@ Install_Apache22() {
   
   sed -i "s@^User daemon@User ${run_user}@" ${apache_install_dir}/conf/httpd.conf
   sed -i "s@^Group daemon@Group ${run_user}@" ${apache_install_dir}/conf/httpd.conf
-  if [ "${Nginx_version}" == '4' -a ! -e "${web_install_dir}/sbin/nginx" ]; then
+  if [ "${nginx_option}" == '4' -a ! -e "${web_install_dir}/sbin/nginx" ]; then
     sed -i 's/^#ServerName www.example.com:80/ServerName 0.0.0.0:80/' ${apache_install_dir}/conf/httpd.conf
     TMP_PORT=80
-  elif [[ ${Nginx_version} =~ ^[1-3]$ ]] || [ -e "${web_install_dir}/sbin/nginx" ]; then
+  elif [[ ${nginx_option} =~ ^[1-3]$ ]] || [ -e "${web_install_dir}/sbin/nginx" ]; then
     sed -i 's/^#ServerName www.example.com:80/ServerName 127.0.0.1:88/' ${apache_install_dir}/conf/httpd.conf
     sed -i 's@^Listen.*@Listen 127.0.0.1:88@' ${apache_install_dir}/conf/httpd.conf
     TMP_PORT=88
@@ -53,13 +53,13 @@ Install_Apache22() {
   sed -i "s@AddType\(.*\)Z@AddType\1Z\n    AddType application/x-httpd-php .php .phtml\n    AddType application/x-httpd-php-source .phps@" ${apache_install_dir}/conf/httpd.conf
   sed -i "s@#AddHandler cgi-script .cgi@AddHandler cgi-script .cgi .pl@" ${apache_install_dir}/conf/httpd.conf
   sed -i 's@DirectoryIndex index.html@DirectoryIndex index.html index.php@' ${apache_install_dir}/conf/httpd.conf
-  sed -i "s@^DocumentRoot.*@DocumentRoot \"$wwwroot_dir/default\"@" ${apache_install_dir}/conf/httpd.conf
-  sed -i "s@^<Directory \"${apache_install_dir}/htdocs\">@<Directory \"$wwwroot_dir/default\">@" ${apache_install_dir}/conf/httpd.conf
+  sed -i "s@^DocumentRoot.*@DocumentRoot \"${wwwroot_dir}/default\"@" ${apache_install_dir}/conf/httpd.conf
+  sed -i "s@^<Directory \"${apache_install_dir}/htdocs\">@<Directory \"${wwwroot_dir}/default\">@" ${apache_install_dir}/conf/httpd.conf
   sed -i "s@^#Include conf/extra/httpd-mpm.conf@Include conf/extra/httpd-mpm.conf@" ${apache_install_dir}/conf/httpd.conf
   
   #logrotate apache log
   cat > /etc/logrotate.d/apache << EOF
-$wwwlogs_dir/*apache.log {
+${wwwlogs_dir}/*apache.log {
   daily
   rotate 5
   missingok
@@ -78,11 +78,11 @@ EOF
 NameVirtualHost *:$TMP_PORT
 <VirtualHost *:$TMP_PORT>
   ServerAdmin admin@example.com
-  DocumentRoot "$wwwroot_dir/default"
+  DocumentRoot "${wwwroot_dir}/default"
   ServerName 127.0.0.1
-  ErrorLog "$wwwlogs_dir/error_apache.log"
-  CustomLog "$wwwlogs_dir/access_apache.log" common
-<Directory "$wwwroot_dir/default">
+  ErrorLog "${wwwlogs_dir}/error_apache.log"
+  CustomLog "${wwwlogs_dir}/access_apache.log" common
+<Directory "${wwwroot_dir}/default">
   SetOutputFilter DEFLATE
   Options FollowSymLinks ExecCGI
   AllowOverride All
@@ -116,7 +116,7 @@ ServerSignature Off
 Include conf/vhost/*.conf
 EOF
 
-  if [ "${Nginx_version}" != '4' -o -e "${web_install_dir}/sbin/nginx" ]; then
+  if [ "${nginx_option}" != '4' -o -e "${web_install_dir}/sbin/nginx" ]; then
     ${apache_install_dir}/bin/apxs -i -c -n mod_remoteip.so mod_remoteip.c
     cat > ${apache_install_dir}/conf/extra/httpd-remoteip.conf << EOF
 LoadModule remoteip_module modules/mod_remoteip.so

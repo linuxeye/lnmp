@@ -1,8 +1,8 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -97,7 +97,7 @@ ntpdate pool.ntp.org
 [ ! -e "/var/spool/cron/crontabs/root" -o -z "$(grep ntpdate /var/spool/cron/crontabs/root 2>/dev/null)" ] && { echo "*/20 * * * * $(which ntpdate) pool.ntp.org > /dev/null 2>&1" >> /var/spool/cron/crontabs/root;chmod 600 /var/spool/cron/crontabs/root; }
 
 # iptables
-if [ "$iptables_yn" == 'y' ]; then
+if [ "${iptables_yn}" == 'y' ]; then
   if [ -e "/etc/iptables.up.rules" ] && [ -n "$(grep '^:INPUT DROP' /etc/iptables.up.rules)" -a -n "$(grep 'NEW -m tcp --dport 22 -j ACCEPT' /etc/iptables.up.rules)" -a -n "$(grep 'NEW -m tcp --dport 80 -j ACCEPT' /etc/iptables.up.rules)" ]; then
     IPTABLES_STATUS=yes
   else
@@ -129,8 +129,8 @@ COMMIT
 EOF
   fi
 
-  FW_PORT_FLAG=$(grep -ow "dport ${SSH_PORT}" /etc/iptables.up.rules)
-  [ -z "${FW_PORT_FLAG}" -a "${SSH_PORT}" != "22" ] && sed -i "s@dport 22 -j ACCEPT@&\n-A INPUT -p tcp -m state --state NEW -m tcp --dport ${SSH_PORT} -j ACCEPT@" /etc/iptables.up.rules
+  FW_PORT_FLAG=$(grep -ow "dport ${ssh_port}" /etc/iptables.up.rules)
+  [ -z "${FW_PORT_FLAG}" -a "${ssh_port}" != "22" ] && sed -i "s@dport 22 -j ACCEPT@&\n-A INPUT -p tcp -m state --state NEW -m tcp --dport ${ssh_port} -j ACCEPT@" /etc/iptables.up.rules
   iptables-restore < /etc/iptables.up.rules
   cat > /etc/network/if-pre-up.d/iptables << EOF
 #!/bin/bash

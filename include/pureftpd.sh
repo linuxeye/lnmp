@@ -1,21 +1,20 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
 Install_PureFTPd() {
-  pushd ${oneinstack_dir}/src
-
+  pushd ${oneinstack_dir}/src > /dev/null
   id -u ${run_user} >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin ${run_user}
 
-  tar xzf pure-ftpd-${pureftpd_version}.tar.gz
-  pushd pure-ftpd-${pureftpd_version}
+  tar xzf pure-ftpd-${pureftpd_ver}.tar.gz
+  pushd pure-ftpd-${pureftpd_ver}
   [ ! -d "${pureftpd_install_dir}" ] && mkdir -p ${pureftpd_install_dir}
   ./configure --prefix=${pureftpd_install_dir} CFLAGS=-O2 --with-puredb --with-quotas --with-cookie --with-virtualhosts --with-virtualchroot --with-diraliases --with-sysquotas --with-ratios --with-altlog --with-paranoidmsg --with-shadow --with-welcomemsg  --with-throttling --with-uploadscript --with-language=english --with-rfc2640
   make -j ${THREAD} && make install
@@ -28,7 +27,7 @@ Install_PureFTPd() {
     chmod +x /etc/init.d/pureftpd
     [ "${OS}" == "CentOS" ] && { chkconfig --add pureftpd; chkconfig pureftpd on; }
     [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]] && { sed -i 's@^. /etc/rc.d/init.d/functions@. /lib/lsb/init-functions@' /etc/init.d/pureftpd; update-rc.d pureftpd defaults; }
-    [ "${Debian_version}" == '7' ] && sed -i 's@/var/lock/subsys/@/var/lock/@g' /etc/init.d/pureftpd
+    [ "${Debian_ver}" == '7' ] && sed -i 's@/var/lock/subsys/@/var/lock/@g' /etc/init.d/pureftpd
 
     sed -i "s@^PureDB.*@PureDB  ${pureftpd_install_dir}/etc/pureftpd.pdb@" ${pureftpd_install_dir}/etc/pure-ftpd.conf
     sed -i "s@^LimitRecursion.*@LimitRecursion  65535 8@" ${pureftpd_install_dir}/etc/pure-ftpd.conf
@@ -36,7 +35,7 @@ Install_PureFTPd() {
     service pureftpd start
 
     # iptables Ftp
-    if [ "$iptables_yn" == 'y' ]; then
+    if [ "${iptables_yn}" == 'y' ]; then
       if [ "${OS}" == "CentOS" ]; then
         if [ -z "$(grep '20000:30000' /etc/sysconfig/iptables)" ]; then
           iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
@@ -53,7 +52,7 @@ Install_PureFTPd() {
     fi
 
     echo "${CSUCCESS}Pure-Ftp installed successfully! ${CEND}"
-    rm -rf pure-ftpd-${pureftpd_version}
+    rm -rf pure-ftpd-${pureftpd_ver}
   else
     rm -rf ${pureftpd_install_dir}
     echo "${CFAILURE}Pure-Ftpd install failed, Please contact the author! ${CEND}"

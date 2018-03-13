@@ -1,7 +1,7 @@
 #!/bin/bash
 # Author:  Alpha Eva <kaneawk AT gmail.com>
 #
-# Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -9,133 +9,129 @@
 
 checkDownload() {
   mirrorLink=http://mirrors.linuxeye.com/oneinstack/src
-  pushd ${oneinstack_dir}/src
-
+  pushd ${oneinstack_dir}/src > /dev/null
   # General system utils
   echo "Download openSSL..."
-  src_url=https://www.openssl.org/source/openssl-${openssl_version}.tar.gz && Download_src
+  src_url=https://www.openssl.org/source/openssl-${openssl_ver}.tar.gz && Download_src
   src_url=http://curl.haxx.se/ca/cacert.pem && Download_src
 
   # Web
-  if [ "${Web_yn}" == 'y' ]; then
-    case "${Nginx_version}" in
+  if [ "${web_yn}" == 'y' ]; then
+    case "${nginx_option}" in
       1)
         echo "Download nginx..."
-        src_url=http://nginx.org/download/nginx-${nginx_version}.tar.gz && Download_src
+        src_url=http://nginx.org/download/nginx-${nginx_ver}.tar.gz && Download_src
         ;;
       2)
         echo "Download tengine..."
-        src_url=http://tengine.taobao.org/download/tengine-${tengine_version}.tar.gz && Download_src
+        src_url=http://tengine.taobao.org/download/tengine-${tengine_ver}.tar.gz && Download_src
         ;;
       3)
         echo "Download openresty..."
-        src_url=https://openresty.org/download/openresty-${openresty_version}.tar.gz && Download_src
+        src_url=https://openresty.org/download/openresty-${openresty_ver}.tar.gz && Download_src
         ;;
     esac
 
-    if [[ "${Nginx_version}" =~ ^[1-3]$ || ${Apache_version} == '1' ]]; then
+    if [[ "${nginx_option}" =~ ^[1-3]$ || ${apache_option} == '1' ]]; then
       echo "Download pcre..."
-      src_url=${mirrorLink}/pcre-${pcre_version}.tar.gz && Download_src
+      src_url=${mirrorLink}/pcre-${pcre_ver}.tar.gz && Download_src
     fi
 
     # apache
-    if [ "${Apache_version}" == '1' ]; then
+    if [ "${apache_option}" == '1' ]; then
       echo "Download apache 2.4..."
-      src_url=http://archive.apache.org/dist/apr/apr-${apr_version}.tar.gz && Download_src
-      src_url=http://archive.apache.org/dist/apr/apr-util-${apr_util_version}.tar.gz && Download_src
-      src_url=http://mirrors.linuxeye.com/apache/httpd/nghttp2-${nghttp2_version}.tar.gz && Download_src
-      src_url=http://mirrors.linuxeye.com/apache/httpd/httpd-${apache24_version}.tar.gz && Download_src
+      src_url=http://archive.apache.org/dist/apr/apr-${apr_ver}.tar.gz && Download_src
+      src_url=http://archive.apache.org/dist/apr/apr-util-${apr_util_ver}.tar.gz && Download_src
+      src_url=http://mirrors.linuxeye.com/apache/httpd/nghttp2-${nghttp2_ver}.tar.gz && Download_src
+      src_url=http://mirrors.linuxeye.com/apache/httpd/httpd-${apache24_ver}.tar.gz && Download_src
     fi
-    if [ "${Apache_version}" == '2' ]; then
+    if [ "${apache_option}" == '2' ]; then
       echo "Download apache 2.2..."
-      src_url=http://mirrors.linuxeye.com/apache/httpd/httpd-${apache22_version}.tar.gz && Download_src
+      src_url=http://mirrors.linuxeye.com/apache/httpd/httpd-${apache22_ver}.tar.gz && Download_src
 
       echo "Download mod_remoteip.c for apache 2.2..."
       src_url=${mirrorLink}/mod_remoteip.c && Download_src
     fi
 
     # tomcat
-    case "${Tomcat_version}" in
+    case "${tomcat_option}" in
       1)
         echo "Download tomcat 8..."
-        src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat8_version}/apache-tomcat-${tomcat8_version}.tar.gz && Download_src
-        src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat8_version}/catalina-jmx-remote.jar && Download_src
+        src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat8_ver}/apache-tomcat-${tomcat8_ver}.tar.gz && Download_src
+        src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat8_ver}/catalina-jmx-remote.jar && Download_src
         ;;
       2)
         echo "Download tomcat 7..."
-        src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat7_version}/apache-tomcat-${tomcat7_version}.tar.gz && Download_src
-        src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat7_version}/catalina-jmx-remote.jar && Download_src
+        src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat7_ver}/apache-tomcat-${tomcat7_ver}.tar.gz && Download_src
+        src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat7_ver}/catalina-jmx-remote.jar && Download_src
         ;;
       3)
         echo "Download tomcat 6..."
-        src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat6_version}/apache-tomcat-${tomcat6_version}.tar.gz && Download_src
-        src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat6_version}/catalina-jmx-remote.jar && Download_src
+        src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat6_ver}/apache-tomcat-${tomcat6_ver}.tar.gz && Download_src
+        src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat6_ver}/catalina-jmx-remote.jar && Download_src
         ;;
     esac
 
-    if [[ "${JDK_version}"  =~ ^[1-3]$ ]]; then
-      case "${JDK_version}" in
+    if [[ "${jdk_option}"  =~ ^[1-3]$ ]]; then
+      case "${jdk_option}" in
         1)
           echo "Download JDK 1.8..."
-          JDK_FILE="jdk-$(echo ${jdk18_version} | awk -F. '{print $2}')u$(echo ${jdk18_version} | awk -F_ '{print $NF}')-linux-${SYS_BIG_FLAG}.tar.gz"
+          JDK_FILE="jdk-$(echo ${jdk18_ver} | awk -F. '{print $2}')u$(echo ${jdk18_ver} | awk -F_ '{print $NF}')-linux-${SYS_BIG_FLAG}.tar.gz"
           ;;
         2)
           echo "Download JDK 1.7..."
-          JDK_FILE="jdk-$(echo ${jdk17_version} | awk -F. '{print $2}')u$(echo ${jdk17_version} | awk -F_ '{print $NF}')-linux-${SYS_BIG_FLAG}.tar.gz"
+          JDK_FILE="jdk-$(echo ${jdk17_ver} | awk -F. '{print $2}')u$(echo ${jdk17_ver} | awk -F_ '{print $NF}')-linux-${SYS_BIG_FLAG}.tar.gz"
           ;;
         3)
           echo "Download JDK 1.6..."
-          JDK_FILE="jdk-$(echo ${jdk16_version} | awk -F. '{print $2}')u$(echo ${jdk16_version} | awk -F_ '{print $NF}')-linux-${SYS_BIG_FLAG}.bin"
+          JDK_FILE="jdk-$(echo ${jdk16_ver} | awk -F. '{print $2}')u$(echo ${jdk16_ver} | awk -F_ '{print $NF}')-linux-${SYS_BIG_FLAG}.bin"
           ;;
       esac
       echo "Download apr..."
-      src_url=http://archive.apache.org/dist/apr/apr-${apr_version}.tar.gz && Download_src
+      src_url=http://archive.apache.org/dist/apr/apr-${apr_ver}.tar.gz && Download_src
       # start download...
       src_url=http://mirrors.linuxeye.com/jdk/${JDK_FILE} && Download_src
     fi
   fi
 
-  if [ "${DB_yn}" == 'y' ]; then
-    if [[ "${DB_version}" =~ ^[1,4,8]$ ]] && [ "${dbInstallMethods}" == "2" ]; then
+  if [ "${db_yn}" == 'y' ]; then
+    if [[ "${db_option}" =~ ^[1,4,8]$ ]] && [ "${dbinstallmethod}" == "2" ]; then
       echo "Download boost..."
-      [ "${IPADDR_COUNTRY}"x == "CN"x ] && DOWN_ADDR_BOOST=${mirrorLink} || DOWN_ADDR_BOOST=http://downloads.sourceforge.net/project/boost/boost/${boost_version}
-      boostVersion2=$(echo ${boost_version} | awk -F. '{print $1}')_$(echo ${boost_version} | awk -F. '{print $2}')_$(echo ${boost_version} | awk -F. '{print $3}')
+      [ "${IPADDR_COUNTRY}"x == "CN"x ] && DOWN_ADDR_BOOST=${mirrorLink} || DOWN_ADDR_BOOST=http://downloads.sourceforge.net/project/boost/boost/${boost_ver}
+      boostVersion2=$(echo ${boost_ver} | awk -F. '{print $1}')_$(echo ${boost_ver} | awk -F. '{print $2}')_$(echo ${boost_ver} | awk -F. '{print $3}')
       src_url=${DOWN_ADDR_BOOST}/boost_${boostVersion2}.tar.gz && Download_src
     fi
 
-    case "${DB_version}" in
+    case "${db_option}" in
       1)
         # MySQL 5.7
-        if [ "${IPADDR_COUNTRY}"x == "CN"x -a "${IPADDR_ISP}" == "aliyun" -a "$(../include/check_port.py aliyun-oss.linuxeye.com 80)" == "True" ]; then
-          DOWN_ADDR_MYSQL=http://aliyun-oss.linuxeye.com/mysql/MySQL-5.7
-        else
-          if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            if [ "$(../include/check_port.py mirrors.tuna.tsinghua.edu.cn 443)" == "True" ]; then
-              DOWN_ADDR_MYSQL=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.7
-              DOWN_ADDR_MYSQL_BK=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.7
-            else
-              DOWN_ADDR_MYSQL=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.7
-              DOWN_ADDR_MYSQL_BK=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.7
-            fi
+        if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
+          if [ "$(../include/check_port.py mirrors.tuna.tsinghua.edu.cn 443)" == "True" ]; then
+            DOWN_ADDR_MYSQL=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.7
+            DOWN_ADDR_MYSQL_BK=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.7
           else
-            if [ "$(../include/check_port.py cdn.mysql.com 80)" == "True" ]; then
-              DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.7
-              DOWN_ADDR_MYSQL_BK=http://mysql.he.net/Downloads/MySQL-5.7
-            else
-              DOWN_ADDR_MYSQL=http://mysql.he.net/Downloads/MySQL-5.7
-              DOWN_ADDR_MYSQL_BK=http://cdn.mysql.com/Downloads/MySQL-5.7
-            fi
+            DOWN_ADDR_MYSQL=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.7
+            DOWN_ADDR_MYSQL_BK=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.7
+          fi
+        else
+          if [ "$(../include/check_port.py cdn.mysql.com 80)" == "True" ]; then
+            DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.7
+            DOWN_ADDR_MYSQL_BK=http://mysql.he.net/Downloads/MySQL-5.7
+          else
+            DOWN_ADDR_MYSQL=http://mysql.he.net/Downloads/MySQL-5.7
+            DOWN_ADDR_MYSQL_BK=http://cdn.mysql.com/Downloads/MySQL-5.7
           fi
         fi
-        if [ "${dbInstallMethods}" == '1' ]; then
+
+        if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download MySQL 5.7 binary package..."
-          FILE_NAME=mysql-${mysql57_version}-linux-glibc2.12-${SYS_BIT_b}.tar.gz
-        elif [ "${dbInstallMethods}" == '2' ]; then
+          FILE_NAME=mysql-${mysql57_ver}-linux-glibc2.12-${SYS_BIT_b}.tar.gz
+        elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download MySQL 5.7 source package..."
-          FILE_NAME=mysql-${mysql57_version}.tar.gz
+          FILE_NAME=mysql-${mysql57_ver}.tar.gz
         fi
         # start download
-        wget --tries=6 -c --no-check-certificate ${DOWN_ADDR_MYSQL}/${FILE_NAME}
+        wget -4 --tries=6 -c --no-check-certificate ${DOWN_ADDR_MYSQL}/${FILE_NAME}
         # verifying download
         MYSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_MYSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
         [ -z "${MYSQL_TAR_MD5}" ] && MYSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_MYSQL_BK}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}') 
@@ -155,35 +151,32 @@ checkDownload() {
 
       2)
         # MySQL 5.6
-        if [ "${IPADDR_COUNTRY}"x == "CN"x -a "${IPADDR_ISP}" == "aliyun" -a "$(../include/check_port.py aliyun-oss.linuxeye.com 80)" == "True" ]; then
-          DOWN_ADDR_MYSQL=http://aliyun-oss.linuxeye.com/mysql/MySQL-5.6
-        else
-          if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            if [ "$(../include/check_port.py mirrors.tuna.tsinghua.edu.cn 443)" == "True" ]; then
-              DOWN_ADDR_MYSQL=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.6
-              DOWN_ADDR_MYSQL_BK=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.6
-            else
-              DOWN_ADDR_MYSQL=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.6
-              DOWN_ADDR_MYSQL_BK=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.6
-            fi
+        if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
+          if [ "$(../include/check_port.py mirrors.tuna.tsinghua.edu.cn 443)" == "True" ]; then
+            DOWN_ADDR_MYSQL=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.6
+            DOWN_ADDR_MYSQL_BK=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.6
           else
-            if [ "$(../include/check_port.py cdn.mysql.com 80)" == "True" ]; then
-              DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.6
-              DOWN_ADDR_MYSQL_BK=http://mysql.he.net/Downloads/MySQL-5.6
-            else
-              DOWN_ADDR_MYSQL=http://mysql.he.net/Downloads/MySQL-5.6
-              DOWN_ADDR_MYSQL_BK=http://cdn.mysql.com/Downloads/MySQL-5.6
-            fi
+            DOWN_ADDR_MYSQL=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.6
+            DOWN_ADDR_MYSQL_BK=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.6
+          fi
+        else
+          if [ "$(../include/check_port.py cdn.mysql.com 80)" == "True" ]; then
+            DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.6
+            DOWN_ADDR_MYSQL_BK=http://mysql.he.net/Downloads/MySQL-5.6
+          else
+            DOWN_ADDR_MYSQL=http://mysql.he.net/Downloads/MySQL-5.6
+            DOWN_ADDR_MYSQL_BK=http://cdn.mysql.com/Downloads/MySQL-5.6
           fi
         fi
-        if [ "${dbInstallMethods}" == '1' ]; then
+
+        if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download MySQL 5.6 binary package..."
-          FILE_NAME=mysql-${mysql56_version}-linux-glibc2.12-${SYS_BIT_b}.tar.gz
-        elif [ "${dbInstallMethods}" == '2' ]; then
+          FILE_NAME=mysql-${mysql56_ver}-linux-glibc2.12-${SYS_BIT_b}.tar.gz
+        elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download MySQL 5.6 source package..."
-          FILE_NAME=mysql-${mysql56_version}.tar.gz
+          FILE_NAME=mysql-${mysql56_ver}.tar.gz
         fi
-        wget --tries=6 -c --no-check-certificate ${DOWN_ADDR_MYSQL}/${FILE_NAME}
+        wget -4 --tries=6 -c --no-check-certificate ${DOWN_ADDR_MYSQL}/${FILE_NAME}
         # verifying download
         MYSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_MYSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
         [ -z "${MYSQL_TAR_MD5}" ] && MYSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_MYSQL_BK}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}') 
@@ -203,36 +196,33 @@ checkDownload() {
 
       3)
         # MySQL 5.5
-        if [ "${IPADDR_COUNTRY}"x == "CN"x -a "${IPADDR_ISP}" == "aliyun" -a "$(../include/check_port.py aliyun-oss.linuxeye.com 80)" == "True" ]; then
-          DOWN_ADDR_MYSQL=http://aliyun-oss.linuxeye.com/mysql/MySQL-5.5
-        else
-          if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            if [ "$(../include/check_port.py mirrors.tuna.tsinghua.edu.cn 443)" == "True" ]; then
-              DOWN_ADDR_MYSQL=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.5
-              DOWN_ADDR_MYSQL_BK=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.5
-            else
-              DOWN_ADDR_MYSQL=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.5
-              DOWN_ADDR_MYSQL_BK=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.5
-            fi
+        if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
+          if [ "$(../include/check_port.py mirrors.tuna.tsinghua.edu.cn 443)" == "True" ]; then
+            DOWN_ADDR_MYSQL=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.5
+            DOWN_ADDR_MYSQL_BK=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.5
           else
-            if [ "$(../include/check_port.py cdn.mysql.com 80)" == "True" ]; then
-              DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.5
-              DOWN_ADDR_MYSQL_BK=http://mysql.he.net/Downloads/MySQL-5.5
-            else
-              DOWN_ADDR_MYSQL=http://mysql.he.net/Downloads/MySQL-5.5
-              DOWN_ADDR_MYSQL_BK=http://cdn.mysql.com/Downloads/MySQL-5.5
-            fi
+            DOWN_ADDR_MYSQL=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.5
+            DOWN_ADDR_MYSQL_BK=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.5
+          fi
+        else
+          if [ "$(../include/check_port.py cdn.mysql.com 80)" == "True" ]; then
+            DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.5
+            DOWN_ADDR_MYSQL_BK=http://mysql.he.net/Downloads/MySQL-5.5
+          else
+            DOWN_ADDR_MYSQL=http://mysql.he.net/Downloads/MySQL-5.5
+            DOWN_ADDR_MYSQL_BK=http://cdn.mysql.com/Downloads/MySQL-5.5
           fi
         fi
-        if [ "${dbInstallMethods}" == '1' ]; then
+
+        if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download MySQL 5.5 binary package..."
-          FILE_NAME=mysql-${mysql55_version}-linux-glibc2.12-${SYS_BIT_b}.tar.gz
-        elif [ "${dbInstallMethods}" == '2' ]; then
+          FILE_NAME=mysql-${mysql55_ver}-linux-glibc2.12-${SYS_BIT_b}.tar.gz
+        elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download MySQL 5.5 source package..."
-          FILE_NAME=mysql-${mysql55_version}.tar.gz
+          FILE_NAME=mysql-${mysql55_ver}.tar.gz
           src_url=${mirrorLink}/mysql-5.5-fix-arm-client_plugin.patch && Download_src
         fi
-        wget --tries=6 -c --no-check-certificate ${DOWN_ADDR_MYSQL}/${FILE_NAME}
+        wget -4 --tries=6 -c --no-check-certificate ${DOWN_ADDR_MYSQL}/${FILE_NAME}
         # verifying download
         MYSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_MYSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
         [ -z "${MYSQL_TAR_MD5}" ] && MYSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_MYSQL_BK}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}') 
@@ -252,27 +242,27 @@ checkDownload() {
 
       4)
         # MariaDB 10.2
-        if [ "${dbInstallMethods}" == '1' ]; then
+        if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download MariaDB 10.2 binary package..."
-          FILE_NAME=mariadb-${mariadb102_version}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
+          FILE_NAME=mariadb-${mariadb102_ver}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb102_version}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
+            DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb102_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
             MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb102_version}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
+            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb102_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
           else
-            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb102_version}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb102_version}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
+            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb102_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
+            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb102_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
           fi
-        elif [ "${dbInstallMethods}" == '2' ]; then
+        elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download MariaDB 10.2 source package..."
-          FILE_NAME=mariadb-${mariadb102_version}.tar.gz
+          FILE_NAME=mariadb-${mariadb102_ver}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb102_version}/source
+            DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb102_ver}/source
             MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb102_version}/source; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
+            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb102_ver}/source; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
           else
-            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb102_version}/source
-            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb102_version}/source/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
+            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb102_ver}/source
+            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb102_ver}/source/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
           fi
         fi
         tryDlCount=0
@@ -291,27 +281,27 @@ checkDownload() {
 
       5)
         # MariaDB 10.1
-        if [ "${dbInstallMethods}" == '1' ]; then
+        if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download MariaDB 10.1 binary package..."
-          FILE_NAME=mariadb-${mariadb101_version}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
+          FILE_NAME=mariadb-${mariadb101_ver}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb101_version}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
+            DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb101_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
             MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb101_version}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
+            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb101_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
           else
-            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb101_version}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb101_version}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
+            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb101_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
+            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb101_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
           fi
-        elif [ "${dbInstallMethods}" == '2' ]; then
+        elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download MariaDB 10.1 source package..."
-          FILE_NAME=mariadb-${mariadb101_version}.tar.gz
+          FILE_NAME=mariadb-${mariadb101_ver}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb101_version}/source
+            DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb101_ver}/source
             MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb101_version}/source; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
+            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb101_ver}/source; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
           else
-            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb101_version}/source
-            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb101_version}/source/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
+            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb101_ver}/source
+            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb101_ver}/source/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
           fi
         fi
         tryDlCount=0
@@ -330,27 +320,27 @@ checkDownload() {
 
       6)
         # MariaDB 10.0
-        if [ "${dbInstallMethods}" == '1' ]; then
+        if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download MariaDB 10.0 binary package..."
-          FILE_NAME=mariadb-${mariadb100_version}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
+          FILE_NAME=mariadb-${mariadb100_ver}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb100_version}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
+            DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb100_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
             MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb100_version}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
+            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb100_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
           else
-            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb100_version}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb100_version}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
+            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb100_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
+            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb100_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
           fi
-        elif [ "${dbInstallMethods}" == '2' ]; then
+        elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download MariaDB 10.0 source package..."
-          FILE_NAME=mariadb-${mariadb100_version}.tar.gz
+          FILE_NAME=mariadb-${mariadb100_ver}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb100_version}/source
+            DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb100_ver}/source
             MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb100_version}/source; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
+            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb100_ver}/source; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
           else
-            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb100_version}/source
-            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb100_version}/source/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
+            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb100_ver}/source
+            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb100_ver}/source/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
           fi
         fi
         tryDlCount=0
@@ -369,27 +359,27 @@ checkDownload() {
 
       7)
         # MariaDB 5.5
-        if [ "${dbInstallMethods}" == '1' ]; then
+        if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download MariaDB 5.5 binary package..."
-          FILE_NAME=mariadb-${mariadb55_version}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
+          FILE_NAME=mariadb-${mariadb55_ver}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb55_version}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
+            DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb55_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
             MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb55_version}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
+            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb55_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
           else
-            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb55_version}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb55_version}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
+            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb55_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
+            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb55_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
           fi
-        elif [ "${dbInstallMethods}" == '2' ]; then
+        elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download MariaDB 5.5 source package..."
-          FILE_NAME=mariadb-${mariadb55_version}.tar.gz
+          FILE_NAME=mariadb-${mariadb55_ver}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb55_version}/source
+            DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb55_ver}/source
             MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb55_version}/source; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
+            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb55_ver}/source; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
           else
-            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb55_version}/source
-            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb55_version}/source/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
+            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb55_ver}/source
+            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb55_ver}/source/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
           fi
         fi
         tryDlCount=0
@@ -408,21 +398,21 @@ checkDownload() {
 
       8)
         # Precona 5.7
-        if [ "${dbInstallMethods}" == '1' ]; then
+        if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download Percona 5.7 binary package..."
-          FILE_NAME=Percona-Server-${percona57_version}-Linux.${SYS_BIT_b}.${sslLibVer}.tar.gz
-          DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_version}/binary/tarball
-          PERCONA_TAR_MD5=$(curl -s https://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_version}/binary/tarball/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
-        elif [ "${dbInstallMethods}" == '2' ]; then
+          FILE_NAME=Percona-Server-${percona57_ver}-Linux.${SYS_BIT_b}.${sslLibVer}.tar.gz
+          DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_ver}/binary/tarball
+          PERCONA_TAR_MD5=$(curl -s https://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_ver}/binary/tarball/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
+        elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download Percona 5.7 source package..."
-          FILE_NAME=percona-server-${percona57_version}.tar.gz
+          FILE_NAME=percona-server-${percona57_ver}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             DOWN_ADDR_PERCONA=${mirrorLink}
-            DOWN_ADDR_PERCONA_BK=https://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_version}/source/tarball
+            DOWN_ADDR_PERCONA_BK=https://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_ver}/source/tarball
             PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}')
             [ -z "${PERCONA_TAR_MD5}" ] && { DOWN_ADDR_PERCONA=${DOWN_ADDR_PERCONA_BK}; PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA_BK}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}'); }
           else
-            DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_version}/source/tarball
+            DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_ver}/source/tarball
             PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
           fi
         fi
@@ -442,22 +432,22 @@ checkDownload() {
 
       9)
         # Precona 5.6
-        if [ "${dbInstallMethods}" == '1' ]; then
+        if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download Percona 5.6 binary package..."
-          perconaVerStr1=$(echo ${percona56_version} | sed "s@-@-rel@")
+          perconaVerStr1=$(echo ${percona56_ver} | sed "s@-@-rel@")
           FILE_NAME=Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.${sslLibVer}.tar.gz
-          DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_version}/binary/tarball
-          PERCONA_TAR_MD5=$(curl -s https://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_version}/binary/tarball/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
-        elif [ "${dbInstallMethods}" == '2' ]; then
+          DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_ver}/binary/tarball
+          PERCONA_TAR_MD5=$(curl -s https://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_ver}/binary/tarball/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
+        elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download Percona 5.6 source package..."
-          FILE_NAME=percona-server-${percona56_version}.tar.gz
+          FILE_NAME=percona-server-${percona56_ver}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             DOWN_ADDR_PERCONA=${mirrorLink}
-            DOWN_ADDR_PERCONA_BK=https://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_version}/source/tarball
+            DOWN_ADDR_PERCONA_BK=https://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_ver}/source/tarball
             PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}')
             [ -z "${PERCONA_TAR_MD5}" ] && { DOWN_ADDR_PERCONA=${DOWN_ADDR_PERCONA_BK}; PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA_BK}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}'); }
           else
-            DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_version}/source/tarball
+            DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_ver}/source/tarball
             PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
           fi
         fi
@@ -477,22 +467,22 @@ checkDownload() {
 
       10)
         # Percona 5.5
-        if [ "${dbInstallMethods}" == '1' ]; then
+        if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download Percona 5.5 binary package..."
-          perconaVerStr1=$(echo ${percona55_version} | sed "s@-@-rel@")
+          perconaVerStr1=$(echo ${percona55_ver} | sed "s@-@-rel@")
           FILE_NAME=Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.${sslLibVer}.tar.gz
-          DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-${percona55_version}/binary/tarball
-          PERCONA_TAR_MD5=$(curl -s https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-${percona55_version}/binary/tarball/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
-        elif [ "${dbInstallMethods}" == '2' ]; then
+          DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-${percona55_ver}/binary/tarball
+          PERCONA_TAR_MD5=$(curl -s https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-${percona55_ver}/binary/tarball/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
+        elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download Percona 5.5 source package..."
-          FILE_NAME=percona-server-${percona55_version}.tar.gz
+          FILE_NAME=percona-server-${percona55_ver}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             DOWN_ADDR_PERCONA=${mirrorLink}
-            DOWN_ADDR_PERCONA_BK=https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-${percona55_version}/source/tarball
+            DOWN_ADDR_PERCONA_BK=https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-${percona55_ver}/source/tarball
             PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}')
             [ -z "${PERCONA_TAR_MD5}" ] && { DOWN_ADDR_PERCONA=${DOWN_ADDR_PERCONA_BK}; PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA_BK}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}'); }
           else
-            DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-${percona55_version}/source/tarball
+            DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-${percona55_ver}/source/tarball
             PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}')
           fi
         fi
@@ -514,9 +504,9 @@ checkDownload() {
         # AliSQL 5.6
         DOWN_ADDR_ALISQL=$mirrorLink
         echo "Download AliSQL 5.6 source package..."
-        FILE_NAME=alisql-${alisql56_version}.tar.gz
-        wget --tries=6 -c --no-check-certificate ${DOWN_ADDR_ALISQL}/${FILE_NAME}
-        wget --tries=6 -c --no-check-certificate ${DOWN_ADDR_ALISQL}/${FILE_NAME}.md5
+        FILE_NAME=alisql-${alisql_ver}.tar.gz
+        wget -4 --tries=6 -c --no-check-certificate ${DOWN_ADDR_ALISQL}/${FILE_NAME}
+        wget -4 --tries=6 -c --no-check-certificate ${DOWN_ADDR_ALISQL}/${FILE_NAME}.md5
         ALISQL_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${ALISQL_TAR_MD5}" ];do
           wget -4c --no-check-certificate ${DOWN_ADDR_ALISQL}/${FILE_NAME};sleep 1
@@ -527,13 +517,13 @@ checkDownload() {
       12) 
         # PostgreSQL 
         echo "Download PostgreSQL source package..."
-        FILE_NAME=postgresql-${pgsql_version}.tar.gz
+        FILE_NAME=postgresql-${pgsql_ver}.tar.gz
         if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-          DOWN_ADDR_PGSQL=https://mirrors.tuna.tsinghua.edu.cn/postgresql/source/v${pgsql_version}
+          DOWN_ADDR_PGSQL=https://mirrors.tuna.tsinghua.edu.cn/postgresql/source/v${pgsql_ver}
           PGSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_PGSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
-          [ -z "${PGSQL_TAR_MD5}" ] && { DOWN_ADDR_PGSQL=https://mirrors.ustc.edu.cn/postgresql/source/v${pgsql_version}; PGSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_PGSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}'); }
+          [ -z "${PGSQL_TAR_MD5}" ] && { DOWN_ADDR_PGSQL=https://mirrors.ustc.edu.cn/postgresql/source/v${pgsql_ver}; PGSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_PGSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}'); }
         else
-          DOWN_ADDR_PGSQL=https://ftp.postgresql.org/pub/source/v${pgsql_version}
+          DOWN_ADDR_PGSQL=https://ftp.postgresql.org/pub/source/v${pgsql_ver}
           PGSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_PGSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
         fi
 
@@ -553,7 +543,7 @@ checkDownload() {
       13) 
         # MongoDB
         echo "Download MongoDB binary package..."
-        FILE_NAME=mongodb-linux-${SYS_BIT_b}-${mongodb_version}.tgz
+        FILE_NAME=mongodb-linux-${SYS_BIT_b}-${mongodb_ver}.tgz
         if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
           DOWN_ADDR_MongoDB=${mirrorLink}
         else
@@ -577,78 +567,78 @@ checkDownload() {
     esac
   fi
   # PHP
-  if [ "${PHP_yn}" == 'y' ]; then
+  if [ "${php_yn}" == 'y' ]; then
     # php 5.3 5.4 5.5 5.6 5.7
     echo "PHP common..."
-    src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-${libiconv_version}.tar.gz && Download_src
-    src_url=https://curl.haxx.se/download/curl-${curl_version}.tar.gz && Download_src
-    src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/${libmcrypt_version}/libmcrypt-${libmcrypt_version}.tar.gz && Download_src
-    src_url=http://downloads.sourceforge.net/project/mhash/mhash/${mhash_version}/mhash-${mhash_version}.tar.gz && Download_src
-    src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/${mcrypt_version}/mcrypt-${mcrypt_version}.tar.gz && Download_src
+    src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-${libiconv_ver}.tar.gz && Download_src
+    src_url=https://curl.haxx.se/download/curl-${curl_ver}.tar.gz && Download_src
+    src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/${libmcrypt_ver}/libmcrypt-${libmcrypt_ver}.tar.gz && Download_src
+    src_url=http://downloads.sourceforge.net/project/mhash/mhash/${mhash_ver}/mhash-${mhash_ver}.tar.gz && Download_src
+    src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/${mcrypt_ver}/mcrypt-${mcrypt_ver}.tar.gz && Download_src
     src_url=${mirrorLink}/libiconv-glibc-2.16.patch && Download_src
 
-    case "${PHP_version}" in
+    case "${php_option}" in
       1)
         # php 5.3
         src_url=${mirrorLink}/debian_patches_disable_SSLv2_for_openssl_1_0_0.patch && Download_src
         src_url=${mirrorLink}/php5.3patch && Download_src
-        src_url=http://www.php.net/distributions/php-${php53_version}.tar.gz && Download_src
+        src_url=http://www.php.net/distributions/php-${php53_ver}.tar.gz && Download_src
         src_url=${mirrorLink}/fpm-race-condition.patch && Download_src
         ;;
       2)
-        src_url=http://www.php.net/distributions/php-${php54_version}.tar.gz && Download_src
+        src_url=http://www.php.net/distributions/php-${php54_ver}.tar.gz && Download_src
         src_url=${mirrorLink}/fpm-race-condition.patch && Download_src
         ;;
       3)
-        src_url=http://www.php.net/distributions/php-${php55_version}.tar.gz && Download_src
+        src_url=http://www.php.net/distributions/php-${php55_ver}.tar.gz && Download_src
         src_url=${mirrorLink}/fpm-race-condition.patch && Download_src
         ;;
       4)
-        src_url=http://www.php.net/distributions/php-${php56_version}.tar.gz && Download_src
+        src_url=http://www.php.net/distributions/php-${php56_ver}.tar.gz && Download_src
         ;;
       5)
-        src_url=http://www.php.net/distributions/php-${php70_version}.tar.gz && Download_src
+        src_url=http://www.php.net/distributions/php-${php70_ver}.tar.gz && Download_src
         ;;
       6)
-        src_url=http://www.php.net/distributions/php-${php71_version}.tar.gz && Download_src
+        src_url=http://www.php.net/distributions/php-${php71_ver}.tar.gz && Download_src
         ;;
       7)
-        src_url=http://www.php.net/distributions/php-${php72_version}.tar.gz && Download_src
+        src_url=http://www.php.net/distributions/php-${php72_ver}.tar.gz && Download_src
         ;;
     esac
   fi
 
   # PHP OPCache
-  case "${PHP_cache}" in
+  case "${phpcache_option}" in
     1)
-      if [[ "$PHP_version" =~ ^[1-2]$ ]]; then
+      if [[ "${php_option}" =~ ^[1-2]$ ]]; then
         # php 5.3 5.4
         echo "Download Zend OPCache..."
-        src_url=https://pecl.php.net/get/zendopcache-${zendopcache_version}.tgz && Download_src
+        src_url=https://pecl.php.net/get/zendopcache-${zendopcache_ver}.tgz && Download_src
       fi
       ;;
     2)
-      if [[ "$PHP_version" =~ ^[1-4]$ ]]; then
+      if [[ "${php_option}" =~ ^[1-4]$ ]]; then
         # php 5.3 5.4 5.5 5.6
         echo "Download xcache..."
-        src_url=http://xcache.lighttpd.net/pub/Releases/${xcache_version}/xcache-${xcache_version}.tar.gz && Download_src
+        src_url=http://xcache.lighttpd.net/pub/Releases/${xcache_ver}/xcache-${xcache_ver}.tar.gz && Download_src
       fi
       ;;
     3)
       # php 5.3 5.4 5.5 5.6 7.0 7.1 7.2
       echo "Download apcu..."
-      if [[ "$PHP_version" =~ ^[1-4]$ ]]; then
-        src_url=https://pecl.php.net/get/apcu-${apcu_version}.tgz && Download_src
+      if [[ "${php_option}" =~ ^[1-4]$ ]]; then
+        src_url=https://pecl.php.net/get/apcu-${apcu_ver}.tgz && Download_src
       else
-        src_url=https://pecl.php.net/get/apcu-${apcu_for_php7_version}.tgz && Download_src
+        src_url=https://pecl.php.net/get/apcu-${apcu_for_php7_ver}.tgz && Download_src
       fi
       ;;
     4)
       # php 5.3 5.4
-      if [ "${PHP_version}" == '1' ]; then
+      if [ "${php_option}" == '1' ]; then
         echo "Download eaccelerator 0.9..."
-        src_url=https://github.com/downloads/eaccelerator/eaccelerator/eaccelerator-${eaccelerator_version}.tar.bz2 && Download_src
-      elif [ "${PHP_version}" == '2' ]; then
+        src_url=https://github.com/downloads/eaccelerator/eaccelerator/eaccelerator-${eaccelerator_ver}.tar.bz2 && Download_src
+      elif [ "${php_option}" == '2' ]; then
         echo "Download eaccelerator 1.0 dev..."
         src_url=https://github.com/eaccelerator/eaccelerator/tarball/master && Download_src
       fi
@@ -656,8 +646,8 @@ checkDownload() {
   esac
 
   # Zend Guard Loader
-  if [ "${ZendGuardLoader_yn}" == 'y' -a "${armPlatform}" != 'y' ]; then
-    case "${PHP_version}" in
+  if [ "${zendguardloader_yn}" == 'y' -a "${armplatform}" != 'y' ]; then
+    case "${php_option}" in
       4)
         if [ "${OS_BIT}" == "64" ]; then
           # 64 bit
@@ -705,17 +695,17 @@ checkDownload() {
     esac
   fi
 
-  if [ "${DB_version}" == '13' ]; then
-    if [[ "$PHP_version" =~ ^[1-2]$ ]]; then
+  if [ "${db_option}" == '13' ]; then
+    if [[ "${php_option}" =~ ^[1-2]$ ]]; then
       echo "Download pecl mongo for php..."
-      src_url=https://pecl.php.net/get/mongo-${mongo_pecl_version}.tgz && Download_src
+      src_url=https://pecl.php.net/get/mongo-${mongo_pecl_ver}.tgz && Download_src
     else
       echo "Download pecl mongodb for php..."
-      src_url=https://pecl.php.net/get/mongodb-${mongodb_pecl_version}.tgz && Download_src
+      src_url=https://pecl.php.net/get/mongodb-${mongodb_pecl_ver}.tgz && Download_src
     fi
   fi
 
-  if [ "${ionCube_yn}" == 'y' ]; then
+  if [ "${ioncube_yn}" == 'y' ]; then
     echo "Download ioncube..."
     if [ "${OS_BIT}" == '64' ]; then
         src_url=http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz && Download_src
@@ -728,40 +718,40 @@ checkDownload() {
     fi
   fi
 
-  if [ "${Magick_yn}" == 'y' ]; then
-    if [ "${Magick}" == '1' ]; then
+  if [ "${magick_yn}" == 'y' ]; then
+    if [ "${magick_option}" == '1' ]; then
       echo "Download ImageMagick..."
-      src_url=${mirrorLink}/ImageMagick-${ImageMagick_version}.tar.gz && Download_src
+      src_url=${mirrorLink}/ImageMagick-${imagemagick_ver}.tar.gz && Download_src
       echo "Download imagick..."
-      src_url=https://pecl.php.net/get/imagick-${imagick_version}.tgz && Download_src
+      src_url=https://pecl.php.net/get/imagick-${imagick_ver}.tgz && Download_src
     else
       echo "Download graphicsmagick..."
-      src_url=http://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/${GraphicsMagick_version}/GraphicsMagick-${GraphicsMagick_version}.tar.gz && Download_src
-      if [[ "$PHP_version" =~ ^[5-7]$ ]]; then
+      src_url=http://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/${graphicsmagick_ver}/GraphicsMagick-${graphicsmagick_ver}.tar.gz && Download_src
+      if [[ "${php_option}" =~ ^[5-7]$ ]]; then
         echo "Download gmagick for php 7.x..."
-        src_url=https://pecl.php.net/get/gmagick-${gmagick_for_php7_version}.tgz && Download_src
+        src_url=https://pecl.php.net/get/gmagick-${gmagick_for_php7_ver}.tgz && Download_src
       else
         echo "Download gmagick for php..."
-        src_url=https://pecl.php.net/get/gmagick-${gmagick_version}.tgz && Download_src
+        src_url=https://pecl.php.net/get/gmagick-${gmagick_ver}.tgz && Download_src
       fi
     fi
   fi
 
-  if [ "${FTP_yn}" == 'y' ]; then
+  if [ "${ftp_yn}" == 'y' ]; then
     echo "Download pureftpd..."
-    src_url=https://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-${pureftpd_version}.tar.gz && Download_src
+    src_url=https://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-${pureftpd_ver}.tar.gz && Download_src
   fi
 
-  if [ "${phpMyAdmin_yn}" == 'y' ]; then
+  if [ "${phpmyadmin_yn}" == 'y' ]; then
     echo "Download phpMyAdmin..."
-    src_url=https://files.phpmyadmin.net/phpMyAdmin/${phpMyAdmin_version}/phpMyAdmin-${phpMyAdmin_version}-all-languages.tar.gz && Download_src
+    src_url=https://files.phpmyadmin.net/phpMyAdmin/${phpmyadmin_ver}/phpMyAdmin-${phpmyadmin_ver}-all-languages.tar.gz && Download_src
   fi
 
   if [ "${redis_yn}" == 'y' ]; then
     echo "Download redis..."
-    src_url=http://download.redis.io/releases/redis-${redis_version}.tar.gz && Download_src
+    src_url=http://download.redis.io/releases/redis-${redis_ver}.tar.gz && Download_src
     echo "Download redis pecl..."
-    src_url=https://pecl.php.net/get/redis-${redis_pecl_version}.tgz && Download_src
+    src_url=https://pecl.php.net/get/redis-${redis_pecl_ver}.tgz && Download_src
     if [ "${OS}" == "CentOS" ]; then
       echo "Download start-stop-daemon.c for CentOS..."
       src_url=${mirrorLink}/start-stop-daemon.c && Download_src
@@ -770,43 +760,44 @@ checkDownload() {
 
   if [ "${memcached_yn}" == 'y' ]; then
     echo "Download memcached..."
-    src_url=http://www.memcached.org/files/memcached-${memcached_version}.tar.gz && Download_src
-    if [[ "$PHP_version" =~ ^[5-7]$ ]]; then
+    [ "$IPADDR_COUNTRY"x == "CN"x ] && DOWN_ADDR=${mirrorLink} || DOWN_ADDR=http://www.memcached.org/files
+    src_url=${DOWN_ADDR}/memcached-${memcached_ver}.tar.gz && Download_src
+    if [[ "${php_option}" =~ ^[5-7]$ ]]; then
       echo "Download pecl memcache for php 7.x..."
       # src_url=https://codeload.github.com/websupport-sk/pecl-memcache/zip/php7 && Download_src
       src_url=${mirrorLink}/pecl-memcache-php7.tgz && Download_src
       echo "Download pecl memcached for php 7.x..."
-      src_url=https://pecl.php.net/get/memcached-${memcached_pecl_php7_version}.tgz && Download_src
+      src_url=https://pecl.php.net/get/memcached-${memcached_pecl_php7_ver}.tgz && Download_src
     else
       echo "Download pecl memcache for php..."
-      src_url=https://pecl.php.net/get/memcache-${memcache_pecl_version}.tgz && Download_src
+      src_url=https://pecl.php.net/get/memcache-${memcache_pecl_ver}.tgz && Download_src
       echo "Download pecl memcached for php..."
-      src_url=https://pecl.php.net/get/memcached-${memcached_pecl_version}.tgz && Download_src
+      src_url=https://pecl.php.net/get/memcached-${memcached_pecl_ver}.tgz && Download_src
     fi
 
     echo "Download libmemcached..."
-    src_url=https://launchpad.net/libmemcached/1.0/${libmemcached_version}/+download/libmemcached-${libmemcached_version}.tar.gz && Download_src
+    src_url=https://launchpad.net/libmemcached/1.0/${libmemcached_ver}/+download/libmemcached-${libmemcached_ver}.tar.gz && Download_src
   fi
 
-  if [[ $Nginx_version =~ ^[1-3]$ ]] || [ "$DB_yn" == 'y' -a "$DB_version" != '10' ]; then
+  if [[ ${nginx_option} =~ ^[1-3]$ ]] || [ "$db_yn" == 'y' -a "${db_option}" != '10' ]; then
     echo "Download jemalloc..."
-    src_url=${mirrorLink}/jemalloc-${jemalloc_version}.tar.bz2 && Download_src
+    src_url=${mirrorLink}/jemalloc-${jemalloc_ver}.tar.bz2 && Download_src
   fi
 
   # others
   if [ "${downloadDepsSrc}" == '1' ]; then
     if [ "${OS}" == "CentOS" ]; then
       echo "Download tmux for CentOS..."
-      src_url=${mirrorLink}/libevent-${libevent_version}.tar.gz && Download_src
-      src_url=https://github.com/tmux/tmux/releases/download/${tmux_version}/tmux-${tmux_version}.tar.gz && Download_src
+      src_url=${mirrorLink}/libevent-${libevent_ver}.tar.gz && Download_src
+      src_url=https://github.com/tmux/tmux/releases/download/${tmux_ver}/tmux-${tmux_ver}.tar.gz && Download_src
 
       echo "Download htop for CentOS..."
-      src_url=http://hisham.hm/htop/releases/${htop_version}/htop-${htop_version}.tar.gz && Download_src
+      src_url=http://hisham.hm/htop/releases/${htop_ver}/htop-${htop_ver}.tar.gz && Download_src
     fi
 
-    if [[ "${Ubuntu_version}" =~ ^14$|^15$ ]]; then
+    if [[ "${Ubuntu_ver}" =~ ^14$|^15$ ]]; then
       echo "Download bison for Ubuntu..."
-      src_url=http://ftp.gnu.org/gnu/bison/bison-${bison_version}.tar.gz && Download_src
+      src_url=http://ftp.gnu.org/gnu/bison/bison-${bison_ver}.tar.gz && Download_src
     fi
   fi
 

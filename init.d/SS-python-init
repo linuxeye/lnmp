@@ -1,6 +1,6 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.cn
 ### BEGIN INIT INFO
 # Provides:          SS 
 # Required-Start:    $local_fs $remote_fs $network $syslog

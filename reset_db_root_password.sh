@@ -1,6 +1,6 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.cn
 #
 # Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
 #
@@ -17,15 +17,14 @@ printf "
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
-
-OIS_FOLDER=$(dirname "`readlink -f $0`")
-pushd $OIS_FOLDER > /dev/null
+oneinstack_dir=$(dirname "`readlink -f $0`")
+pushd ${oneinstack_dir} > /dev/null
 . ./options.conf
 . ./include/color.sh
 . ./include/check_dir.sh
 
 Input_db_root_password() {
-  [ ! -d "$db_install_dir" ] && { echo "${CFAILURE}Database is not installed on your system! ${CEND}"; exit 1; }
+  [ ! -d "${db_install_dir}" ] && { echo "${CFAILURE}Database is not installed on your system! ${CEND}"; exit 1; }
   while :; do echo
     read -p "Please input the root password of database: " New_dbrootpwd
     [ -n "`echo $New_dbrootpwd | grep '[+|&]'`" ] && { echo "${CWARNING}input error,not contain a plus sign (+) and &${CEND}"; continue; }
@@ -34,9 +33,9 @@ Input_db_root_password() {
 }
   
 Reset_db_root_password() {
-  $db_install_dir/bin/mysqladmin -uroot -p"$dbrootpwd" password "$New_dbrootpwd" -h localhost > /dev/null 2>&1
+  ${db_install_dir}/bin/mysqladmin -uroot -p"$dbrootpwd" password "$New_dbrootpwd" -h localhost > /dev/null 2>&1
   status_Localhost=`echo $?`
-  $db_install_dir/bin/mysqladmin -uroot -p"$dbrootpwd" password "$New_dbrootpwd" -h 127.0.0.1 > /dev/null 2>&1
+  ${db_install_dir}/bin/mysqladmin -uroot -p"$dbrootpwd" password "$New_dbrootpwd" -h 127.0.0.1 > /dev/null 2>&1
   status_127=`echo $?`
   if [ $status_Localhost == '0' -a $status_127 == '0' ]; then
     sed -i "s+^dbrootpwd.*+dbrootpwd='$New_dbrootpwd'+" ./options.conf

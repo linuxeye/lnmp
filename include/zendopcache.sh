@@ -1,24 +1,24 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
 Install_ZendOPcache() {
-  pushd ${oneinstack_dir}/src
+  pushd ${oneinstack_dir}/src > /dev/null
   phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
-  PHP_detail_version=$(${php_install_dir}/bin/php -r 'echo PHP_VERSION;')
-  PHP_main_version=${PHP_detail_version%.*}
-  if [[ "${PHP_main_version}" =~ ^5.[3-4]$ ]]; then
-    tar xvf zendopcache-${zendopcache_version}.tgz
-    pushd zendopcache-${zendopcache_version}
+  PHP_detail_ver=$(${php_install_dir}/bin/php -r 'echo PHP_VERSION;')
+  PHP_main_ver=${PHP_detail_ver%.*}
+  if [[ "${PHP_main_ver}" =~ ^5.[3-4]$ ]]; then
+    tar xvf zendopcache-${zendopcache_ver}.tgz
+    pushd zendopcache-${zendopcache_ver}
   else
-    tar xvf php-${PHP_detail_version}.tar.gz
-    pushd php-${PHP_detail_version}/ext/opcache
+    tar xvf php-${PHP_detail_ver}.tar.gz
+    pushd php-${PHP_detail_ver}/ext/opcache
   fi
 
   ${php_install_dir}/bin/phpize
@@ -27,7 +27,7 @@ Install_ZendOPcache() {
   popd
   if [ -f "${phpExtensionDir}/opcache.so" ]; then
     # write opcache configs
-    if [[ "${PHP_main_version}" =~ ^5.[3-4]$ ]]; then
+    if [[ "${PHP_main_ver}" =~ ^5.[3-4]$ ]]; then
       # For php 5.3 5.4
       cat > ${php_install_dir}/etc/php.d/ext-opcache.ini << EOF
 [opcache]
@@ -64,7 +64,7 @@ EOF
     fi
 
     echo "${CSUCCESS}PHP OPcache module installed successfully! ${CEND}"
-    rm -rf zendopcache-${zendopcache_version} php-${PHP_detail_version}
+    rm -rf zendopcache-${zendopcache_ver} php-${PHP_detail_ver}
   else
     echo "${CFAILURE}PHP OPcache module install failed, Please contact the author! ${CEND}"
   fi

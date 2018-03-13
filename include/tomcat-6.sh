@@ -1,33 +1,32 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
 Install_Tomcat6() {
-  pushd ${oneinstack_dir}/src
+  pushd ${oneinstack_dir}/src > /dev/null
   . /etc/profile
-
   id -u ${run_user} >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /bin/bash ${run_user} || { [ -z "$(grep ^${run_user} /etc/passwd | grep '/bin/bash')" ] && usermod -s /bin/bash ${run_user}; }
 
   # install apr
   if [ ! -e "/usr/local/apr/bin/apr-1-config" ]; then
-    tar xzf apr-${apr_version}.tar.gz
-    pushd apr-${apr_version}
+    tar xzf apr-${apr_ver}.tar.gz
+    pushd apr-${apr_ver}
     ./configure
     make -j ${THREAD} && make install
     popd
-    rm -rf apr-${apr_version} 
+    rm -rf apr-${apr_ver} 
   fi
 
-  tar xzf apache-tomcat-${tomcat6_version}.tar.gz
+  tar xzf apache-tomcat-${tomcat6_ver}.tar.gz
   [ ! -d "${tomcat_install_dir}" ] && mkdir -p ${tomcat_install_dir}
-  /bin/cp -R apache-tomcat-${tomcat6_version}/* ${tomcat_install_dir}
+  /bin/cp -R apache-tomcat-${tomcat6_ver}/* ${tomcat_install_dir}
   rm -rf ${tomcat_install_dir}/webapps/{docs,examples,host-manager,manager,ROOT/*}
 
   if [ ! -e "${tomcat_install_dir}/conf/server.xml" ]; then
@@ -68,12 +67,11 @@ EOF
     chmod +x ./*.sh
     /bin/mv ${tomcat_install_dir}/conf/server.xml{,_bk}
     popd # goto ${oneinstack_dir}/src
-
     /bin/cp ${oneinstack_dir}/config/server.xml ${tomcat_install_dir}/conf
     sed -i "s@/usr/local/tomcat@${tomcat_install_dir}@g" ${tomcat_install_dir}/conf/server.xml
     sed -i /ThreadLocalLeakPreventionListener/d ${tomcat_install_dir}/conf/server.xml
     if [ ! -e "${nginx_install_dir}/sbin/nginx" -a ! -e "${tengine_install_dir}/sbin/nginx" -a ! -e "${apache_install_dir}/conf/httpd.conf" ]; then
-      if [ "$iptables_yn" == 'y' ]; then
+      if [ "${iptables_yn}" == 'y' ]; then
         if [ "${OS}" == "CentOS" ]; then
           if [ -z "$(grep -w '8080' /etc/sysconfig/iptables)" ]; then
             iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
@@ -129,7 +127,7 @@ EOF
     [ "${OS}" == "CentOS" ] && { chkconfig --add tomcat; chkconfig tomcat on; }
     [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]] && update-rc.d tomcat defaults
     echo "${CSUCCESS}Tomcat installed successfully! ${CEND}"
-    rm -rf apache-tomcat-${tomcat6_version}
+    rm -rf apache-tomcat-${tomcat6_ver}
   else
     popd
     echo "${CFAILURE}Tomcat install failed, Please contact the author! ${CEND}"

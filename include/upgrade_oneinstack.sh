@@ -1,8 +1,8 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -15,6 +15,7 @@ Upgrade_OneinStack() {
   if [ "$oneinstack_md5" != "$Latest_OneinStack_MD5" ]; then
     /bin/mv options.conf /tmp
     /bin/mv backup*.sh /tmp
+    sed -i '/oneinstack_dir=/d' /tmp/options.conf
     [ -e /tmp/oneinstack.tar.gz ] && rm -rf /tmp/oneinstack.tar.gz
     wget -c http://mirrors.linuxeye.com/oneinstack.tar.gz -O /tmp/oneinstack.tar.gz > /dev/null 2>&1 
     tar xzf /tmp/oneinstack.tar.gz -C ../

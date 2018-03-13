@@ -1,16 +1,15 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
 DEMO() {
-  pushd ${oneinstack_dir}/src
-
+  pushd ${oneinstack_dir}/src > /dev/null
   [ "${IPADDR_COUNTRY}"x == "CN"x ] && /bin/cp ${oneinstack_dir}/config/index_cn.html ${wwwroot_dir}/default/index.html || /bin/cp ${oneinstack_dir}/config/index.html ${wwwroot_dir}/default
 
   if [ -e "${php_install_dir}/bin/php" ]; then
@@ -23,7 +22,7 @@ DEMO() {
     fi
 
     echo "<?php phpinfo() ?>" > ${wwwroot_dir}/default/phpinfo.php
-    case "${PHP_cache}" in
+    case "${phpcache_option}" in
       1)
         src_url=http://mirrors.linuxeye.com/oneinstack/src/ocp.php && Download_src
         /bin/cp ocp.php ${wwwroot_dir}/default

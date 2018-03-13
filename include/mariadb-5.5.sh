@@ -1,31 +1,30 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
 Install_MariaDB55() {
-  pushd ${oneinstack_dir}/src
-
+  pushd ${oneinstack_dir}/src > /dev/null
   id -u mysql >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin mysql
 
   [ ! -d "${mariadb_install_dir}" ] && mkdir -p ${mariadb_install_dir}
   mkdir -p ${mariadb_data_dir};chown mysql.mysql -R ${mariadb_data_dir}
 
-  if [ "${dbInstallMethods}" == "1" ]; then
-    tar zxf mariadb-${mariadb55_version}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
-    mv mariadb-${mariadb55_version}-*-${SYS_BIT_b}/* ${mariadb_install_dir}
+  if [ "${dbinstallmethod}" == "1" ]; then
+    tar zxf mariadb-${mariadb55_ver}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
+    mv mariadb-${mariadb55_ver}-*-${SYS_BIT_b}/* ${mariadb_install_dir}
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mariadb_install_dir}/bin/mysqld_safe
     sed -i "s@/usr/local/mysql@${mariadb_install_dir}@g" ${mariadb_install_dir}/bin/mysqld_safe
-  elif [ "${dbInstallMethods}" == "2" ]; then
-    tar xvf mariadb-${mariadb55_version}.tar.gz
-    pushd mariadb-${mariadb55_version}
-    [ "${armPlatform}" == "y" ] && patch -p1 < ../mysql-5.5-fix-arm-client_plugin.patch
+  elif [ "${dbinstallmethod}" == "2" ]; then
+    tar xvf mariadb-${mariadb55_ver}.tar.gz
+    pushd mariadb-${mariadb55_ver}
+    [ "${armplatform}" == "y" ] && patch -p1 < ../mysql-5.5-fix-arm-client_plugin.patch
     cmake . -DCMAKE_INSTALL_PREFIX=${mariadb_install_dir} \
     -DMYSQL_DATADIR=${mariadb_data_dir} \
     -DSYSCONFDIR=/etc \
@@ -49,14 +48,14 @@ Install_MariaDB55() {
 
   if [ -d "${mariadb_install_dir}/support-files" ]; then
     echo "${CSUCCESS}MariaDB installed successfully! ${CEND}"
-    if [ "${dbInstallMethods}" == "1" ]; then
-      rm -rf mariadb-${mariadb55_version}-*-${SYS_BIT_b}
-    elif [ "${dbInstallMethods}" == "2" ]; then
-      rm -rf mariadb-${mariadb55_version}
+    if [ "${dbinstallmethod}" == "1" ]; then
+      rm -rf mariadb-${mariadb55_ver}-*-${SYS_BIT_b}
+    elif [ "${dbinstallmethod}" == "2" ]; then
+      rm -rf mariadb-${mariadb55_ver}
     fi
   else
     rm -rf ${mariadb_install_dir}
-    rm -rf mariadb-${mariadb55_version}
+    rm -rf mariadb-${mariadb55_ver}
     echo "${CFAILURE}MariaDB install failed, Please contact the author! ${CEND}"
     kill -9 $$
   fi

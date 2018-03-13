@@ -1,8 +1,8 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -13,7 +13,7 @@ Install_hhvm_CentOS() {
   id -u ${run_user} >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin ${run_user}
 
-  if [ "${CentOS_RHEL_version}" == '7' ]; then
+  if [ "${CentOS_RHEL_ver}" == '7' ]; then
     [ ! -e /etc/yum.repos.d/epel.repo ] && cat > /etc/yum.repos.d/epel.repo << EOF
 [epel]
 name=Extra Packages for Enterprise Linux 7 - \$basearch
@@ -34,7 +34,7 @@ EOF
     [ ! -e "/usr/bin/hhvm" -a "/usr/local/bin/hhvm" ] && ln -s /usr/local/bin/hhvm /usr/bin/hhvm
   fi
 
-  if [ "${CentOS_RHEL_version}" == '6' ]; then
+  if [ "${CentOS_RHEL_ver}" == '6' ]; then
     [ ! -e /etc/yum.repos.d/epel.repo ] && cat > /etc/yum.repos.d/epel.repo << EOF
 [epel]
 name=Extra Packages for Enterprise Linux 6 - \$basearch

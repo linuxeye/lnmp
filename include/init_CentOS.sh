@@ -1,15 +1,15 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
 # closed Unnecessary services and remove obsolete rpm package
-[ "${CentOS_RHEL_version}" == '7' ] && [ "$(systemctl is-active NetworkManager.service)" == 'active' ] && NM_flag=1
+[ "${CentOS_RHEL_ver}" == '7' ] && [ "$(systemctl is-active NetworkManager.service)" == 'active' ] && NM_flag=1
 for Service in $(chkconfig --list | grep 3:on | awk '{print $1}' | grep -vE 'nginx|httpd|tomcat|mysqld|php-fpm|pureftpd|redis-server|memcached|supervisord|aegis|NetworkManager|iptables');do chkconfig --level 3 ${Service} off;done
 [ "${NM_flag}" == '1' ] && systemctl enable NetworkManager.service
 for Service in sshd network crond messagebus irqbalance syslog rsyslog;do chkconfig --level 3 ${Service} on;done
@@ -103,15 +103,15 @@ net.netfilter.nf_conntrack_tcp_timeout_established = 3600
 EOF
 sysctl -p
 
-if [ "${CentOS_RHEL_version}" == '5' ]; then
+if [ "${CentOS_RHEL_ver}" == '5' ]; then
   sed -i 's@^[3-6]:2345:respawn@#&@g' /etc/inittab
   sed -i 's@^ca::ctrlaltdel@#&@' /etc/inittab
   sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/sysconfig/i18n
-elif [ "${CentOS_RHEL_version}" == '6' ]; then
+elif [ "${CentOS_RHEL_ver}" == '6' ]; then
   sed -i 's@^ACTIVE_CONSOLES.*@ACTIVE_CONSOLES=/dev/tty[1-2]@' /etc/sysconfig/init
   sed -i 's@^start@#start@' /etc/init/control-alt-delete.conf
   sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/sysconfig/i18n
-elif [ "${CentOS_RHEL_version}" == '7' ]; then
+elif [ "${CentOS_RHEL_ver}" == '7' ]; then
   sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/locale.conf
 fi
 
@@ -120,7 +120,7 @@ ntpdate pool.ntp.org
 [ ! -e "/var/spool/cron/root" -o -z "$(grep 'ntpdate' /var/spool/cron/root)" ] && { echo "*/20 * * * * $(which ntpdate) pool.ntp.org > /dev/null 2>&1" >> /var/spool/cron/root;chmod 600 /var/spool/cron/root; }
 
 # iptables
-if [ "$iptables_yn" == 'y' ]; then
+if [ "${iptables_yn}" == 'y' ]; then
   if [ -e "/etc/sysconfig/iptables" ] && [ -n "$(grep '^:INPUT DROP' /etc/sysconfig/iptables)" -a -n "$(grep 'NEW -m tcp --dport 22 -j ACCEPT' /etc/sysconfig/iptables)" -a -n "$(grep 'NEW -m tcp --dport 80 -j ACCEPT' /etc/sysconfig/iptables)" ]; then
     IPTABLES_STATUS=yes
   else
@@ -152,8 +152,8 @@ COMMIT
 EOF
   fi
 
-  FW_PORT_FLAG=$(grep -ow "dport ${SSH_PORT}" /etc/sysconfig/iptables)
-  [ -z "${FW_PORT_FLAG}" -a "${SSH_PORT}" != "22" ] && sed -i "s@dport 22 -j ACCEPT@&\n-A INPUT -p tcp -m state --state NEW -m tcp --dport ${SSH_PORT} -j ACCEPT@" /etc/sysconfig/iptables
+  FW_PORT_FLAG=$(grep -ow "dport ${ssh_port}" /etc/sysconfig/iptables)
+  [ -z "${FW_PORT_FLAG}" -a "${ssh_port}" != "22" ] && sed -i "s@dport 22 -j ACCEPT@&\n-A INPUT -p tcp -m state --state NEW -m tcp --dport ${ssh_port} -j ACCEPT@" /etc/sysconfig/iptables
   chkconfig --level 3 iptables on
   service iptables restart
 fi

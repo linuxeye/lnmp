@@ -1,20 +1,20 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 5+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
 Install_PostgreSQL() {
-  pushd ${oneinstack_dir}/src
+  pushd ${oneinstack_dir}/src > /dev/null
   id -u postgres >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -d ${pgsql_install_dir} -s /bin/bash postgres 
   mkdir -p ${pgsql_data_dir};chown postgres.postgres -R ${pgsql_data_dir}
-  tar xzf postgresql-${pgsql_version}.tar.gz
-  pushd postgresql-${pgsql_version}
+  tar xzf postgresql-${pgsql_ver}.tar.gz
+  pushd postgresql-${pgsql_ver}
   ./configure --prefix=$pgsql_install_dir
   make -j ${THREAD}
   make install
@@ -39,9 +39,9 @@ Install_PostgreSQL() {
 
   if [ -e "${pgsql_install_dir}/bin/psql" ]; then
     echo "${CSUCCESS}PostgreSQL installed successfully! ${CEND}"
-    rm -rf postgresql-${pgsql_version}
+    rm -rf postgresql-${pgsql_ver}
   else
-    rm -rf ${pgsql_install_dir} ${pgsql_data_dir} postgresql-${pgsql_version}
+    rm -rf ${pgsql_install_dir} ${pgsql_data_dir} postgresql-${pgsql_ver}
     echo "${CFAILURE}PostgreSQL install failed, Please contact the author! ${CEND}"
     kill -9 $$
   fi

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.cn
 #
 # Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
 #
@@ -17,20 +17,21 @@ printf "
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
-
-. ./options.conf
-. ./include/color.sh
-
 # Check if user is root
 [ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
 
-[ ! -d "$pureftpd_install_dir" ] && { echo "${CFAILURE}FTP server does not exist! ${CEND}"; exit 1; }
+oneinstack_dir=$(dirname "`readlink -f $0`")
+pushd ${oneinstack_dir} > /dev/null
+. ./options.conf
+. ./include/color.sh
 
-FTP_conf=$pureftpd_install_dir/etc/pure-ftpd.conf
-FTP_tmp_passfile=$pureftpd_install_dir/etc/pureftpd_psss.tmp
-Puredbfile=$pureftpd_install_dir/etc/pureftpd.pdb
-Passwdfile=$pureftpd_install_dir/etc/pureftpd.passwd
-FTP_bin=$pureftpd_install_dir/bin/pure-pw
+[ ! -d "${pureftpd_install_dir}" ] && { echo "${CFAILURE}FTP server does not exist! ${CEND}"; exit 1; }
+
+FTP_conf=${pureftpd_install_dir}/etc/pure-ftpd.conf
+FTP_tmp_passfile=${pureftpd_install_dir}/etc/pureftpd_psss.tmp
+Puredbfile=${pureftpd_install_dir}/etc/pureftpd.pdb
+Passwdfile=${pureftpd_install_dir}/etc/pureftpd.passwd
+FTP_bin=${pureftpd_install_dir}/bin/pure-pw
 [ -z "`grep ^PureDB $FTP_conf`" ] && { echo "${CFAILURE}pure-ftpd is not own password database${CEND}" ; exit 1; }
 
 USER() {
@@ -59,9 +60,9 @@ done
 
 DIRECTORY() {
 while :; do echo
-  read -p "Please input the directory(Default directory: $wwwroot_dir): " Directory
+  read -p "Please input the directory(Default directory: ${wwwroot_dir}): " Directory
   if [ -z "$Directory" ]; then
-    Directory="$wwwroot_dir"
+    Directory="${wwwroot_dir}"
   fi
   if [ ! -d "$Directory" ]; then
     echo "${CWARNING}The directory does not exist${CEND}"

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.com
+# BLOG:  https://blog.linuxeye.cn
 #
 # Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
 #
@@ -17,9 +17,11 @@ printf "
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
-# get pwd
-sed -i "s@^oneinstack_dir.*@oneinstack_dir=`pwd`@" ./options.conf
+# Check if user is root
+[ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
 
+oneinstack_dir=$(dirname "`readlink -f $0`")
+pushd ${oneinstack_dir} > /dev/null
 . ./versions.txt
 . ./options.conf
 . ./include/color.sh
@@ -34,9 +36,6 @@ sed -i "s@^oneinstack_dir.*@oneinstack_dir=`pwd`@" ./options.conf
 . ./include/upgrade_memcached.sh
 . ./include/upgrade_phpmyadmin.sh
 . ./include/upgrade_oneinstack.sh
-
-# Check if user is root
-[ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
 
 # get the IP information
 PUBLIC_IPADDR=`./include/get_public_ipaddr.py`

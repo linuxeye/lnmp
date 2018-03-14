@@ -189,7 +189,7 @@ while :; do echo
         read -p "Please input a number:(Default 2 press Enter) " db_option
         [ -z "${db_option}" ] && db_option=2
         [ "${db_option}" == '13' -a "$OS_BIT" == '32' ] && { echo "${CWARNING}By not supporting 32-bit! ${CEND}"; continue; }
-        if [ ${db_option} -ge 1 >/dev/null 2>&1 -a ${db_option} -le 13 >/dev/null 2>&1 ]; then
+        if [[ "${db_option}" =~ ^[1-9]$|^1[0-3]$ ]]; then
           if [ "${db_option}" == '12' ]; then
             [ -e "${pgsql_install_dir}/bin/psql" ] && { echo "${CWARNING}PostgreSQL already installed! ${CEND}"; db_yn=Other; break; }
           elif [ "${db_option}" == '13' ]; then
@@ -221,7 +221,7 @@ while :; do echo
 
           done
           # choose install methods
-          if [ ${db_option} -ge 1 >/dev/null 2>&1 -a ${db_option} -le 10 >/dev/null 2>&1 ]; then
+          if [[ "${db_option}" =~ ^[1-9]$|^10$ ]]; then
             while :; do echo
               echo "Please choose installation of the database:"
               echo -e "\t${CMSG}1${CEND}. Install database from binary package."

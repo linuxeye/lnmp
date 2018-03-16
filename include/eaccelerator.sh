@@ -33,7 +33,7 @@ Install_eAccelerator() {
   popd
   if [ -f "${phpExtensionDir}/eaccelerator.so" ]; then
     mkdir /var/eaccelerator_cache;chown -R ${run_user}.${run_user} /var/eaccelerator_cache
-    cat > ${php_install_dir}/etc/php.d/ext-eaccelerator.ini << EOF
+    cat > ${php_install_dir}/etc/php.d/02-eaccelerator.ini << EOF
 [eaccelerator]
 zend_extension=${phpExtensionDir}/eaccelerator.so
 eaccelerator.shm_size=64

@@ -14,67 +14,45 @@ Install_ZendGuardLoader() {
   PHP_main_ver=${PHP_detail_ver%.*}
   phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
   [ ! -d "${phpExtensionDir}" ] && mkdir -p ${phpExtensionDir}
-  if [ "${OS_BIT}" == '64' ]; then
-    if [ "$PHP_main_ver" == '5.6' ]; then
-      tar xzf zend-loader-php5.6-linux-x86_64.tar.gz
-      /bin/cp zend-loader-php5.6-linux-x86_64/ZendGuardLoader.so ${phpExtensionDir}
-      rm -rf zend-loader-php5.6-linux-x86_64
-    fi
-
-    if [ "$PHP_main_ver" == '5.5' ]; then
-      tar xzf zend-loader-php5.5-linux-x86_64.tar.gz
-      /bin/cp zend-loader-php5.5-linux-x86_64/ZendGuardLoader.so ${phpExtensionDir}
-      rm -rf zend-loader-php5.5-linux-x86_64
-    fi
-
-    if [ "$PHP_main_ver" == '5.4' ]; then
-      tar xzf ZendGuardLoader-70429-PHP-5.4-linux-glibc23-x86_64.tar.gz
-      /bin/cp ZendGuardLoader-70429-PHP-5.4-linux-glibc23-x86_64/php-5.4.x/ZendGuardLoader.so ${phpExtensionDir}
-      rm -rf ZendGuardLoader-70429-PHP-5.4-linux-glibc23-x86_64
-    fi
-
-    if [ "$PHP_main_ver" == '5.3' ]; then
-      tar xzf ZendGuardLoader-php-5.3-linux-glibc23-x86_64.tar.gz
-      /bin/cp ZendGuardLoader-php-5.3-linux-glibc23-x86_64/php-5.3.x/ZendGuardLoader.so ${phpExtensionDir}
-      rm -rf ZendGuardLoader-php-5.3-linux-glibc23-x86_64
-    fi
-  else
-    if [ "$PHP_main_ver" == '5.6' ]; then
-      tar xzf zend-loader-php5.6-linux-i386.tar.gz
-      /bin/cp zend-loader-php5.6-linux-i386/ZendGuardLoader.so ${phpExtensionDir}
-      rm -rf zend-loader-php5.6-linux-i386
-    fi
-
-    if [ "$PHP_main_ver" == '5.5' ]; then
-      tar xzf zend-loader-php5.5-linux-i386.tar.gz
-      /bin/cp zend-loader-php5.5-linux-i386/ZendGuardLoader.so ${phpExtensionDir}
-      rm -rf zend-loader-php5.5-linux-x386
-    fi
-
-    if [ "$PHP_main_ver" == '5.4' ]; then
-      tar xzf ZendGuardLoader-70429-PHP-5.4-linux-glibc23-i386.tar.gz
-      /bin/cp ZendGuardLoader-70429-PHP-5.4-linux-glibc23-i386/php-5.4.x/ZendGuardLoader.so ${phpExtensionDir}
-      rm -rf ZendGuardLoader-70429-PHP-5.4-linux-glibc23-i386
-    fi
-
-    if [ "$PHP_main_ver" == '5.3' ]; then
-      tar xzf ZendGuardLoader-php-5.3-linux-glibc23-i386.tar.gz
-      /bin/cp ZendGuardLoader-php-5.3-linux-glibc23-i386/php-5.3.x/ZendGuardLoader.so ${phpExtensionDir}
-      rm -rf ZendGuardLoader-php-5.3-linux-glibc23-i386
-    fi
-  fi
-
-  if [ -f "${phpExtensionDir}/ZendGuardLoader.so" ]; then
-    cat > ${php_install_dir}/etc/php.d/ext-ZendGuardLoader.ini << EOF
+  if [ -n "`echo $phpExtensionDir | grep 'non-zts'`" ]; then
+    case "${PHP_main_ver}" in
+      5.6)
+        tar xzf zend-loader-php5.6-linux-${SYS_BIT_c}.tar.gz
+        /bin/cp zend-loader-php5.6-linux-${SYS_BIT_c}/ZendGuardLoader.so ${phpExtensionDir}
+        rm -rf zend-loader-php5.6-linux-${SYS_BIT_c}
+        ;;
+      5.5)
+        tar xzf zend-loader-php5.5-linux-${SYS_BIT_c}.tar.gz
+        /bin/cp zend-loader-php5.5-linux-${SYS_BIT_c}/ZendGuardLoader.so ${phpExtensionDir}
+        rm -rf zend-loader-php5.5-linux-${SYS_BIT_c}
+        ;;
+      5.4)
+        tar xzf ZendGuardLoader-70429-PHP-5.4-linux-glibc23-${SYS_BIT_c}.tar.gz
+        /bin/cp ZendGuardLoader-70429-PHP-5.4-linux-glibc23-${SYS_BIT_c}/php-5.4.x/ZendGuardLoader.so ${phpExtensionDir}
+        rm -rf ZendGuardLoader-70429-PHP-5.4-linux-glibc23-${SYS_BIT_c}
+        ;;
+      5.3)
+        tar xzf ZendGuardLoader-php-5.3-linux-glibc23-${SYS_BIT_c}.tar.gz
+        /bin/cp ZendGuardLoader-php-5.3-linux-glibc23-${SYS_BIT_c}/php-5.3.x/ZendGuardLoader.so ${phpExtensionDir}
+        rm -rf ZendGuardLoader-php-5.3-linux-glibc23-${SYS_BIT_c}
+        ;;
+      *)
+        echo "Error! Your PHP ${PHP_detail_ver} does not support ZendGuardLoader!"
+        ;;
+    esac
+  
+    if [ -f "${phpExtensionDir}/ZendGuardLoader.so" ]; then
+      cat > ${php_install_dir}/etc/php.d/01-ZendGuardLoader.ini<< EOF
 [Zend Guard Loader]
 zend_extension=${phpExtensionDir}/ZendGuardLoader.so
 zend_loader.enable=1
 zend_loader.disable_licensing=0
 zend_loader.obfuscation_level_support=3
 EOF
-    echo "${CSUCCESS}PHP ZendGuardLoader module installed successfully! ${CEND}"
+      echo "${CSUCCESS}PHP ZendGuardLoader module installed successfully! ${CEND}"
+    fi
   else
-    echo "${CFAILURE}PHP ZendGuardLoader module install failed, Please contact the author! ${CEND}"
+    echo "Error! Your Apache's prefork or PHP already enable thread safety! " 
   fi
   popd
 }

@@ -20,7 +20,7 @@ Install_pecl-mongodb() {
       make -j ${THREAD} && make install
       popd
       if [ -f "${phpExtensionDir}/mongo.so" ]; then
-        echo 'extension=mongo.so' > ${php_install_dir}/etc/php.d/ext-mongo.ini
+        echo 'extension=mongo.so' > ${php_install_dir}/etc/php.d/07-mongo.ini
         rm -rf mongo-${mongo_pecl_ver}
         echo "${CSUCCESS}PHP mongo module installed successfully! ${CEND}"
       else
@@ -34,7 +34,7 @@ Install_pecl-mongodb() {
       make -j ${THREAD} && make install
       popd
       if [ -f "${phpExtensionDir}/mongodb.so" ]; then
-        echo 'extension=mongodb.so' > ${php_install_dir}/etc/php.d/ext-mongodb.ini
+        echo 'extension=mongodb.so' > ${php_install_dir}/etc/php.d/07-mongodb.ini
         rm -rf mongodb-${mongodb_pecl_ver}
         echo "${CSUCCESS}PHP mongodb module installed successfully! ${CEND}"
       else

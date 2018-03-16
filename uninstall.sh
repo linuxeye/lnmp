@@ -90,7 +90,7 @@ Uninstall_Web() {
   sed -i 's@^website_name=.*@website_name=@' ./options.conf
   sed -i 's@^local_bankup_yn=.*@local_bankup_yn=y@' ./options.conf
   sed -i 's@^remote_bankup_yn=.*@remote_bankup_yn=n@' ./options.conf
-  echo "${CMSG}Web uninstall completed${CEND}"
+  echo "${CMSG}Web uninstall completed! ${CEND}"
 }
 
 Print_MySQL() {
@@ -119,6 +119,7 @@ Uninstall_MySQL() {
     [ -e "${db_data_dir}" ] && /bin/mv ${db_data_dir}{,$(date +%Y%m%d%H)}
     sed -i 's@^dbrootpwd=.*@dbrootpwd=@' ./options.conf
     sed -i "s@${db_install_dir}/bin:@@" /etc/profile
+    echo "${CMSG}MySQL uninstall completed! ${CEND}"
   else
     echo "${CWARNING}MySQL already uninstalled! ${CEND}"
   fi
@@ -128,12 +129,13 @@ Uninstall_PostgreSQL() {
   # uninstall postgresql
   if [ -e "${pgsql_install_dir}/bin/psql" ]; then
     service postgresql stop > /dev/null 2>&1
-    rm -rf ${pgsql_install_dir} /etc/init.d/postgresql ${php_install_dir}/etc/php.d/ext-pgsql.ini
+    rm -rf ${pgsql_install_dir} /etc/init.d/postgresql
+    [ -e "${php_install_dir}/etc/php.d/07-pgsql.ini" ] && rm -rf ${php_install_dir}/etc/php.d/07-pgsql.ini 
     id -u postgres >/dev/null 2>&1 ; [ $? -eq 0 ] && userdel postgres 
     [ -e "${pgsql_data_dir}" ] && /bin/mv ${pgsql_data_dir}{,$(date +%Y%m%d%H)}
     sed -i 's@^dbpostgrespwd=.*@dbpostgrespwd=@' ./options.conf
     sed -i "s@${pgsql_install_dir}/bin:@@" /etc/profile
-    echo "${CMSG}PostgreSQL uninstall completed${CEND}"
+    echo "${CMSG}PostgreSQL uninstall completed! ${CEND}"
   else
     echo "${CWARNING}PostgreSQL already uninstalled! ${CEND}"
   fi
@@ -144,11 +146,13 @@ Uninstall_MongoDB() {
   if [ -e "${mongo_install_dir}/bin/mongo" ]; then
     service mongod stop > /dev/null 2>&1
     rm -rf ${mongo_install_dir} /etc/mongod.conf /etc/init.d/mongod /tmp/mongo*.sock
+    [ -e "${php_install_dir}/etc/php.d/07-mongo.ini" ] && rm -rf ${php_install_dir}/etc/php.d/07-mongo.ini 
+    [ -e "${php_install_dir}/etc/php.d/07-mongodb.ini" ] && rm -rf ${php_install_dir}/etc/php.d/07-mongodb.ini 
     id -u mongod > /dev/null 2>&1 ; [ $? -eq 0 ] && userdel mongod 
     [ -e "${mongo_data_dir}" ] && /bin/mv ${mongo_data_dir}{,$(date +%Y%m%d%H)}
     sed -i 's@^dbmongopwd=.*@dbmongopwd=@' ./options.conf
     sed -i "s@${mongo_install_dir}/bin:@@" /etc/profile
-    echo "${CMSG}MongoDB uninstall completed${CEND}"
+    echo "${CMSG}MongoDB uninstall completed! ${CEND}"
   else
     echo "${CWARNING}MongoDB already uninstalled! ${CEND}"
   fi
@@ -167,7 +171,7 @@ Uninstall_PHP() {
   [ -e "/usr/local/imagemagick" ] && rm -rf /usr/local/imagemagick
   [ -e "/usr/local/graphicsmagick" ] && rm -rf /usr/local/graphicsmagick
   sed -i "s@${php_install_dir}/bin:@@" /etc/profile
-  echo "${CMSG}PHP uninstall completed${CEND}"
+  echo "${CMSG}PHP uninstall completed! ${CEND}"
 }
 
 Print_HHVM() {
@@ -181,7 +185,7 @@ Print_HHVM() {
 Uninstall_HHVM() {
   [ -e "/etc/init.d/supervisord" ] && { service supervisord stop > /dev/null 2>&1; rm -rf /etc/supervisord.conf /etc/init.d/supervisord; }
   [ -e "/usr/bin/hhvm" ] && { rpm -e hhvm; rm -rf /etc/hhvm /var/log/hhvm /usr/bin/hhvm; }
-  echo "${CMSG}HHVM uninstall completed${CEND}"
+  echo "${CMSG}HHVM uninstall completed! ${CEND}"
 }
 
 Print_PureFtpd() {
@@ -191,7 +195,7 @@ Print_PureFtpd() {
 
 Uninstall_PureFtpd() {
   [ -e "${pureftpd_install_dir}" ] && { service pureftpd stop > /dev/null 2>&1; rm -rf ${pureftpd_install_dir} /etc/init.d/pureftpd; }
-  echo "${CMSG}Pureftpd uninstall completed${CEND}"
+  echo "${CMSG}Pureftpd uninstall completed! ${CEND}"
 }
 
 Print_Redis() {
@@ -201,8 +205,8 @@ Print_Redis() {
 
 Uninstall_Redis() {
   [ -e "$redis_install_dir" ] && { service redis-server stop > /dev/null 2>&1; rm -rf $redis_install_dir /etc/init.d/redis-server /usr/local/bin/redis-*; }
-  [ -e "${php_install_dir}/etc/php.d/ext-redis.ini" ] && rm -rf ${php_install_dir}/etc/php.d/ext-redis.ini
-  echo "${CMSG}Redis uninstall completed${CEND}"
+  [ -e "${php_install_dir}/etc/php.d/05-redis.ini" ] && rm -rf ${php_install_dir}/etc/php.d/05-redis.ini 
+  echo "${CMSG}Redis uninstall completed! ${CEND}"
 }
 
 Print_Memcached() {
@@ -213,9 +217,9 @@ Print_Memcached() {
 
 Uninstall_Memcached() {
   [ -e "${memcached_install_dir}" ] && { service memcached stop > /dev/null 2>&1; rm -rf ${memcached_install_dir} /etc/init.d/memcached /usr/bin/memcached; }
-  [ -e "${php_install_dir}/etc/php.d/ext-memcache.ini" ] && rm -rf ${php_install_dir}/etc/php.d/ext-memcache.ini
-  [ -e "${php_install_dir}/etc/php.d/ext-memcached.ini" ] && rm -rf ${php_install_dir}/etc/php.d/ext-memcached.ini
-  echo "${CMSG}Memcached uninstall completed${CEND}"
+  [ -e "${php_install_dir}/etc/php.d/05-memcache.ini" ] && rm -rf ${php_install_dir}/etc/php.d/05-memcache.ini 
+  [ -e "${php_install_dir}/etc/php.d/05-memcached.ini" ] && rm -rf ${php_install_dir}/etc/php.d/05-memcached.ini 
+  echo "${CMSG}Memcached uninstall completed! ${CEND}"
 }
 
 Print_curlopenssl() {

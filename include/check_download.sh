@@ -649,48 +649,20 @@ checkDownload() {
   if [ "${zendguardloader_yn}" == 'y' -a "${armplatform}" != 'y' ]; then
     case "${php_option}" in
       4)
-        if [ "${OS_BIT}" == "64" ]; then
-          # 64 bit
-          echo "Download zend loader for php 5.6..."
-          src_url=${mirrorLink}/zend-loader-php5.6-linux-x86_64.tar.gz && Download_src
-        else
-          # 32 bit
-          echo "Download zend loader for php 5.6..."
-          src_url=${mirrorLink}/zend-loader-php5.6-linux-i386.tar.gz && Download_src
-        fi
+        echo "Download zend loader for php 5.6..."
+        src_url=${mirrorLink}/zend-loader-php5.6-linux-${SYS_BIT_c}.tar.gz && Download_src
         ;;
       3)
-        if [ "${OS_BIT}" == "64" ]; then
-          # 64 bit
-          echo "Download zend loader for php 5.5..."
-          src_url=${mirrorLink}/zend-loader-php5.5-linux-x86_64.tar.gz && Download_src
-        else
-          # 32 bit
-          echo "Download zend loader for php 5.5..."
-          src_url=${mirrorLink}/zend-loader-php5.5-linux-i386.tar.gz && Download_src
-        fi
+        echo "Download zend loader for php 5.5..."
+        src_url=${mirrorLink}/zend-loader-php5.5-linux-${SYS_BIT_c}.tar.gz && Download_src
         ;;
       2)
-        if [ "${OS_BIT}" == "64" ]; then
-          # 64 bit
-          echo "Download zend loader for php 5.4..."
-          src_url=${mirrorLink}/ZendGuardLoader-70429-PHP-5.4-linux-glibc23-x86_64.tar.gz && Download_src
-        else
-          # 32 bit
-          echo "Download zend loader for php 5.4..."
-          src_url=${mirrorLink}/ZendGuardLoader-70429-PHP-5.4-linux-glibc23-i386.tar.gz && Download_src
-        fi
+        echo "Download zend loader for php 5.4..."
+        src_url=${mirrorLink}/ZendGuardLoader-70429-PHP-5.4-linux-glibc23-${SYS_BIT_c}.tar.gz && Download_src
         ;;
       1)
-        if [ "${OS_BIT}" == "64" ]; then
-          # 64 bit
-          echo "Download zend loader for php 5.3..."
-          src_url=${mirrorLink}/ZendGuardLoader-php-5.3-linux-glibc23-x86_64.tar.gz && Download_src
-        else
-          # 32 bit
-          echo "Download zend loader for php 5.3..."
-          src_url=${mirrorLink}/ZendGuardLoader-php-5.3-linux-glibc23-i386.tar.gz && Download_src
-        fi
+        echo "Download zend loader for php 5.3..."
+        src_url=${mirrorLink}/ZendGuardLoader-php-5.3-linux-glibc23-${SYS_BIT_c}.tar.gz && Download_src
         ;;
     esac
   fi
@@ -707,14 +679,10 @@ checkDownload() {
 
   if [ "${ioncube_yn}" == 'y' ]; then
     echo "Download ioncube..."
-    if [ "${OS_BIT}" == '64' ]; then
-        src_url=http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz && Download_src
+    if [ "${TARGET_ARCH}" == "armv7" ]; then
+      src_url=http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_armv7l.tar.gz && Download_src
     else
-      if [ "${TARGET_ARCH}" == "armv7" ]; then
-        src_url=http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_armv7l.tar.gz && Download_src
-      else
-        src_url=http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86.tar.gz && Download_src
-      fi
+      src_url=http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_${SYS_BIT_a}.tar.gz && Download_src
     fi
   fi
 

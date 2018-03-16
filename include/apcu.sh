@@ -23,7 +23,7 @@ Install_APCU() {
   ./configure --with-php-config=${php_install_dir}/bin/php-config
   make -j ${THREAD} && make install
   if [ -f "${phpExtensionDir}/apcu.so" ]; then
-    cat > ${php_install_dir}/etc/php.d/ext-apcu.ini << EOF
+    cat > ${php_install_dir}/etc/php.d/02-apcu.ini << EOF
 [apcu]
 extension=apcu.so
 apc.enabled=1

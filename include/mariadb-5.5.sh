@@ -22,7 +22,7 @@ Install_MariaDB55() {
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mariadb_install_dir}/bin/mysqld_safe
     sed -i "s@/usr/local/mysql@${mariadb_install_dir}@g" ${mariadb_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then
-    tar xvf mariadb-${mariadb55_ver}.tar.gz
+    tar xzf mariadb-${mariadb55_ver}.tar.gz
     pushd mariadb-${mariadb55_ver}
     [ "${armplatform}" == "y" ] && patch -p1 < ../mysql-5.5-fix-arm-client_plugin.patch
     cmake . -DCMAKE_INSTALL_PREFIX=${mariadb_install_dir} \

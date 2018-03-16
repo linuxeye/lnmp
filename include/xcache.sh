@@ -23,7 +23,7 @@ Install_XCache() {
     touch /tmp/xcache;chown ${run_user}.${run_user} /tmp/xcache
     let xcacheCount="${CPU}+1"
     let xcacheSize="${Memory_limit}/2"
-    cat > ${php_install_dir}/etc/php.d/ext-xcache.ini << EOF
+    cat > ${php_install_dir}/etc/php.d/04-xcache.ini << EOF
 [xcache-common]
 extension=xcache.so
 [xcache.admin]

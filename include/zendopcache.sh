@@ -14,10 +14,10 @@ Install_ZendOPcache() {
   PHP_detail_ver=$(${php_install_dir}/bin/php -r 'echo PHP_VERSION;')
   PHP_main_ver=${PHP_detail_ver%.*}
   if [[ "${PHP_main_ver}" =~ ^5.[3-4]$ ]]; then
-    tar xvf zendopcache-${zendopcache_ver}.tgz
+    tar xzf zendopcache-${zendopcache_ver}.tgz
     pushd zendopcache-${zendopcache_ver}
   else
-    tar xvf php-${PHP_detail_ver}.tar.gz
+    tar xzf php-${PHP_detail_ver}.tar.gz
     pushd php-${PHP_detail_ver}/ext/opcache
   fi
 
@@ -29,7 +29,7 @@ Install_ZendOPcache() {
     # write opcache configs
     if [[ "${PHP_main_ver}" =~ ^5.[3-4]$ ]]; then
       # For php 5.3 5.4
-      cat > ${php_install_dir}/etc/php.d/ext-opcache.ini << EOF
+      cat > ${php_install_dir}/etc/php.d/02-opcache.ini << EOF
 [opcache]
 zend_extension=${phpExtensionDir}/opcache.so
 opcache.enable=1
@@ -44,7 +44,7 @@ opcache.enable_cli=1
 EOF
     else
       # For php 5.5+
-      cat > ${php_install_dir}/etc/php.d/ext-opcache.ini << EOF
+      cat > ${php_install_dir}/etc/php.d/02-opcache.ini << EOF
 [opcache]
 zend_extension=opcache.so
 opcache.enable=1

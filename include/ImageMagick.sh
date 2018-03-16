@@ -31,7 +31,7 @@ Install_php-imagick() {
     make -j ${THREAD} && make install
     popd
     if [ -f "${phpExtensionDir}/imagick.so" ]; then
-      echo 'extension=imagick.so' > ${php_install_dir}/etc/php.d/ext-imagick.ini
+      echo 'extension=imagick.so' > ${php_install_dir}/etc/php.d/03-imagick.ini
       echo "${CSUCCESS}PHP imagick module installed successfully! ${CEND}"
       rm -rf imagick-${imagick_ver}
     else

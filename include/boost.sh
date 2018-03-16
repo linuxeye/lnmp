@@ -11,7 +11,7 @@ installBoost() {
   pushd ${oneinstack_dir}/src > /dev/null
   if [ ! -e "/usr/local/lib/libboost_system.so" ]; then
     boostVersion2=$(echo ${boost_ver} | awk -F. '{print $1}')_$(echo ${boost_ver} | awk -F. '{print $2}')_$(echo ${boost_ver} | awk -F. '{print $3}')
-    tar xvf boost_${boostVersion2}.tar.gz
+    tar xzf boost_${boostVersion2}.tar.gz
     pushd boost_${boostVersion2}
     ./bootstrap.sh
     ./bjam --prefix=/usr/local

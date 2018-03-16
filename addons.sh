@@ -63,7 +63,7 @@ fi
 # Check PHP Extensions
 Check_PHP_Extension() {
   [ ! -e "${php_install_dir}/bin/phpize" ] && { echo "${CWARNING}PHP was not exist! ${CEND}"; exit 1; } 
-  [ -e "${php_install_dir}/etc/php.d/ext-${PHP_extension}.ini" ] && { echo "${CWARNING}PHP ${PHP_extension} module already installed! ${CEND}"; exit 1; }
+  [ -e "`ls ${php_install_dir}/etc/php.d/0?-${PHP_extension}.ini 2> /dev/null`" ] && { echo "${CWARNING}PHP ${PHP_extension} module already installed! ${CEND}"; exit 1; }
 }
 
 # restart PHP
@@ -78,7 +78,7 @@ Check_succ() {
 
 # Uninstall succ
 Uninstall_succ() {
-  [ -e "${php_install_dir}/etc/php.d/ext-${PHP_extension}.ini" ] && { rm -rf ${php_install_dir}/etc/php.d/ext-${PHP_extension}.ini; Restart_PHP; echo; echo "${CMSG}PHP ${PHP_extension} module uninstall completed${CEND}"; } || { echo; echo "${CWARNING}${PHP_extension} module does not exist! ${CEND}"; }
+  [ -e "`ls ${php_install_dir}/etc/php.d/0?-${PHP_extension}.ini 2> /dev/null`" ] && { rm -rf ${php_install_dir}/etc/php.d/0?-${PHP_extension}.ini; Restart_PHP; echo; echo "${CMSG}PHP ${PHP_extension} module uninstall completed${CEND}"; } || { echo; echo "${CWARNING}${PHP_extension} module does not exist! ${CEND}"; }
 }
 
 Install_letsencrypt() {
@@ -234,55 +234,51 @@ What Are You Doing?
         done
         if [ "${ACTION}" = '1' ]; then
           Check_PHP_Extension
-          if [ -e ${php_install_dir}/etc/php.d/ext-ZendGuardLoader.ini ]; then
-            echo; echo "${CWARNING}You have to install ZendGuardLoader, You need to uninstall it before install ${PHP_extension}! ${CEND}"; echo; exit 1
-          else
-            case "${phpcache_option}" in
-              1)
-                pushd ${oneinstack_dir}/src > /dev/null
-                if [[ "${PHP_main_ver}" =~ ^5.[3-4]$ ]]; then
-                  src_url=https://pecl.php.net/get/zendopcache-${zendopcache_ver}.tgz && Download_src
-                  Install_ZendOPcache
-                else
-                  src_url=http://www.php.net/distributions/php-${PHP_detail_ver}.tar.gz && Download_src
-                  Install_ZendOPcache
-                fi
-                popd
+          case "${phpcache_option}" in
+            1)
+              pushd ${oneinstack_dir}/src > /dev/null
+              if [[ "${PHP_main_ver}" =~ ^5.[3-4]$ ]]; then
+                src_url=https://pecl.php.net/get/zendopcache-${zendopcache_ver}.tgz && Download_src
+                Install_ZendOPcache
+              else
+                src_url=http://www.php.net/distributions/php-${PHP_detail_ver}.tar.gz && Download_src
+                Install_ZendOPcache
+              fi
+              popd
+              Check_succ
+              ;;
+            2)
+              if [[ "${PHP_main_ver}" =~ ^5.[3-6]$ ]]; then
+                while :; do
+                  read -p "Please input xcache admin password: " xcache_admin_pass
+                  (( ${#xcache_admin_pass} >= 5 )) && { xcache_admin_md5_pass=$(echo -n "${xcache_admin_pass}" | md5sum | awk '{print $1}') ; break ; } || echo "${CFAILURE}xcache admin password least 5 characters! ${CEND}"
+                done
+                checkDownload
+                Install_XCache
                 Check_succ
-                ;;
-              2)
-                if [[ "${PHP_main_ver}" =~ ^5.[3-6]$ ]]; then
-                  while :; do
-                    read -p "Please input xcache admin password: " xcache_admin_pass
-                    (( ${#xcache_admin_pass} >= 5 )) && { xcache_admin_md5_pass=$(echo -n "${xcache_admin_pass}" | md5sum | awk '{print $1}') ; break ; } || echo "${CFAILURE}xcache admin password least 5 characters! ${CEND}"
-                  done
-                  checkDownload
-                  Install_XCache
-                  Check_succ
-                else
-                  echo "${CWARNING}Your php does not support XCache! ${CEND}"; exit 1
-                fi
-                ;;
-              3)
-                if [[ "${PHP_main_ver}" =~ ^5.[3-6]$|^7.[0-2]$ ]]; then
-                  checkDownload
-                  Install_APCU
-                  Check_succ
-                else
-                  echo "${CWARNING}Your php does not support APCU! ${CEND}"; exit 1
-                fi
-                ;;
-              4)
-                if [[ "${PHP_main_ver}" =~ ^5.[3-4]$ ]]; then
-                  checkDownload
-                  Install_eAccelerator
-                  Check_succ
-                else
-                  echo "${CWARNING}Your php does not support eAccelerator! ${CEND}"; exit 1
-                fi
-                ;;
-            esac
-          fi
+              else
+                echo "${CWARNING}Your php does not support XCache! ${CEND}"; exit 1
+              fi
+              ;;
+            3)
+              if [[ "${PHP_main_ver}" =~ ^5.[3-6]$|^7.[0-2]$ ]]; then
+                checkDownload
+                Install_APCU
+                Check_succ
+              else
+                echo "${CWARNING}Your php does not support APCU! ${CEND}"; exit 1
+              fi
+              ;;
+            4)
+              if [[ "${PHP_main_ver}" =~ ^5.[3-4]$ ]]; then
+                checkDownload
+                Install_eAccelerator
+                Check_succ
+              else
+                echo "${CWARNING}Your php does not support eAccelerator! ${CEND}"; exit 1
+              fi
+              ;;
+          esac
         else
           Uninstall_succ
         fi
@@ -299,21 +295,17 @@ What Are You Doing?
             echo "${CWARNING}input error! Please only input number 1~2${CEND}"
           else
             [ "${Loader}" = '1' ] && PHP_extension=ZendGuardLoader
-            [ "${Loader}" = '2' ] && PHP_extension=0ioncube
+            [ "${Loader}" = '2' ] && PHP_extension=ioncube
             break
           fi
         done
         if [ "${ACTION}" = '1' ]; then
           Check_PHP_Extension
           if [ "${Loader}" = '1' ]; then
-            if [[ "${PHP_main_ver}" =~ ^5.[3-6]$ ]] || [ "${armplatform}" != 'y' ]; then
-              if [ -e ${php_install_dir}/etc/php.d/ext-opcache.ini ]; then
-                echo; echo "${CWARNING}You have to install OpCache, You need to uninstall it before install ZendGuardLoader! ${CEND}"; echo; exit 1
-              else
-                zendguardloader_yn='y' && checkDownload
-                Install_ZendGuardLoader
-                Check_succ
-              fi
+            if [[ "${PHP_main_ver}" =~ ^5.[3-6]$ ]] && [ "${armplatform}" != 'y' ]; then
+              zendguardloader_yn='y' && checkDownload
+              Install_ZendGuardLoader
+              Check_succ
             else
               echo; echo "${CWARNING}Your php ${PHP_detail_ver} or platform ${TARGET_ARCH} does not support ${PHP_extension}! ${CEND}";
             fi
@@ -378,7 +370,7 @@ What Are You Doing?
           make -j ${THREAD} && make install
           popd;popd
           rm -rf php-${PHP_detail_ver}
-          echo "extension=fileinfo.so" > ${php_install_dir}/etc/php.d/ext-fileinfo.ini
+          echo "extension=fileinfo.so" > ${php_install_dir}/etc/php.d/04-fileinfo.ini
           Check_succ
         else
           Uninstall_succ
@@ -473,7 +465,7 @@ What Are You Doing?
           popd
           rm -rf swoole-${swoole_ver} 
           popd
-          echo 'extension=swoole.so' > ${php_install_dir}/etc/php.d/ext-swoole.ini
+          echo 'extension=swoole.so' > ${php_install_dir}/etc/php.d/06-swoole.ini
           Check_succ
         else
           Uninstall_succ
@@ -514,7 +506,7 @@ What Are You Doing?
           chown -R ${run_user}.${run_user} ${wwwroot_dir}/default/webgrind
           sed -i 's@static $storageDir.*@static $storageDir = "/tmp/webgrind";@' ${wwwroot_dir}/default/webgrind/config.php
           sed -i 's@static $profilerDir.*@static $profilerDir = "/tmp/xdebug";@' ${wwwroot_dir}/default/webgrind/config.php
-          cat > ${php_install_dir}/etc/php.d/ext-xdebug.ini << EOF
+          cat > ${php_install_dir}/etc/php.d/08-xdebug.ini << EOF
 [xdebug]
 zend_extension=xdebug.so
 xdebug.trace_output_dir=/tmp/xdebug

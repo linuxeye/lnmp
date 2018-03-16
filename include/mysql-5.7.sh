@@ -17,12 +17,12 @@ Install_MySQL57() {
   mkdir -p ${mysql_data_dir};chown mysql.mysql -R ${mysql_data_dir}
 
   if [ "${dbinstallmethod}" == "1" ]; then
-    tar xvf mysql-${mysql57_ver}-linux-glibc2.12-${SYS_BIT_b}.tar.gz
+    tar xzf mysql-${mysql57_ver}-linux-glibc2.12-${SYS_BIT_b}.tar.gz
     mv mysql-${mysql57_ver}-linux-glibc2.12-${SYS_BIT_b}/* ${mysql_install_dir}
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mysql_install_dir}/bin/mysqld_safe
     sed -i "s@/usr/local/mysql@${mysql_install_dir}@g" ${mysql_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then
-    tar xvf mysql-${mysql57_ver}.tar.gz
+    tar xzf mysql-${mysql57_ver}.tar.gz
     pushd mysql-${mysql57_ver}
     cmake . -DCMAKE_INSTALL_PREFIX=${mysql_install_dir} \
     -DMYSQL_DATADIR=${mysql_data_dir} \

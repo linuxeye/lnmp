@@ -224,7 +224,9 @@ Upgrade_Apache() {
     if [ "$Apache_flag" == '24' ]; then
       /bin/cp -R ../apr-${apr_ver} ./srclib/apr
       /bin/cp -R ../apr-util-${apr_util_ver} ./srclib/apr-util
-      LDFLAGS=-ldl LD_LIBRARY_PATH=${openssl_install_dir}/lib ./configure --prefix=${apache_install_dir} --with-mpm=prefork --with-included-apr --enable-headers --enable-deflate --enable-so --enable-dav --enable-rewrite --enable-ssl --with-ssl=${openssl_install_dir} --enable-http2 --with-nghttp2=/usr/local --enable-expires --enable-static-support --enable-suexec --enable-modules=all --enable-mods-shared=all
+      [ -e "${php_install_dir}/bin/phpize" ] && { PHP_detail_ver=`${php_install_dir}/bin/php -r 'echo PHP_VERSION;'`; PHP_master_ver=${PHP_detail_ver%%.*}; }
+      [ "${PHP_master_ver}" == '5' ] && Apache_mpm_arg='--with-mpm=prefork'
+      LDFLAGS=-ldl LD_LIBRARY_PATH=${openssl_install_dir}/lib ./configure --prefix=${apache_install_dir} ${Apache_mpm_arg} --enable-mpms-shared=all --with-included-apr --enable-headers --enable-deflate --enable-so --enable-dav --enable-rewrite --enable-ssl --with-ssl=${openssl_install_dir} --enable-http2 --with-nghttp2=/usr/local --enable-expires --enable-static-support --enable-suexec --enable-modules=all --enable-mods-shared=all
     elif [ "$Apache_flag" == '22' ]; then
       [ "${Ubuntu_ver}" == "12" ] && sed -i '@SSL_PROTOCOL_SSLV2@d' modules/ssl/ssl_engine_io.c
       LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} --with-mpm=prefork --with-included-apr --enable-headers --enable-deflate --enable-so --enable-rewrite --enable-ssl--with-ssl=${openssl_install_dir} --enable-expires --enable-static-support --enable-suexec --enable-modules=all --enable-mods-shared=all

@@ -36,7 +36,7 @@ Install_php-gmagick() {
     make -j ${THREAD} && make install
     popd
     if [ -f "${phpExtensionDir}/gmagick.so" ]; then
-      echo 'extension=gmagick.so' > ${php_install_dir}/etc/php.d/ext-gmagick.ini
+      echo 'extension=gmagick.so' > ${php_install_dir}/etc/php.d/03-gmagick.ini
       echo "${CSUCCESS}PHP gmagick module installed successfully! ${CEND}"
       rm -rf gmagick-${gmagick_for_php7_ver} gmagick-${gmagick_ver}
     else

@@ -16,7 +16,7 @@ Install_AliSQL56() {
   [ ! -d "${alisql_install_dir}" ] && mkdir -p ${alisql_install_dir}
   mkdir -p ${alisql_data_dir};chown mysql.mysql -R ${alisql_data_dir}
 
-  tar xvf alisql-${alisql_ver}.tar.gz
+  tar xzf alisql-${alisql_ver}.tar.gz
   pushd alisql-${alisql_ver}
   cmake . -DCMAKE_INSTALL_PREFIX=${alisql_install_dir} \
   -DCMAKE_BUILD_TYPE="Release" \

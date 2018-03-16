@@ -65,7 +65,7 @@ Install_php-redis() {
     ./configure --with-php-config=${php_install_dir}/bin/php-config
     make -j ${THREAD} && make install
     if [ -f "${phpExtensionDir}/redis.so" ]; then
-      echo 'extension=redis.so' > ${php_install_dir}/etc/php.d/ext-redis.ini
+      echo 'extension=redis.so' > ${php_install_dir}/etc/php.d/05-redis.ini
       echo "${CSUCCESS}PHP Redis module installed successfully! ${CEND}"
       popd
       rm -rf redis-$redis_pecl_ver

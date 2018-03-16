@@ -24,8 +24,8 @@ Install_pecl-pgsql() {
   make -j ${THREAD} && make install
   popd
   if [ -f "${phpExtensionDir}/pgsql.so" -a -f "${phpExtensionDir}/pdo_pgsql.so" ]; then
-    echo 'extension=pgsql.so' > ${php_install_dir}/etc/php.d/ext-pgsql.ini
-    echo 'extension=pdo_pgsql.so' >> ${php_install_dir}/etc/php.d/ext-pgsql.ini
+    echo 'extension=pgsql.so' > ${php_install_dir}/etc/php.d/07-pgsql.ini
+    echo 'extension=pdo_pgsql.so' >> ${php_install_dir}/etc/php.d/07-pgsql.ini
     echo "${CSUCCESS}PHP pgsql module installed successfully! ${CEND}"
     popd
     rm -rf php-${PHP_detail_ver} 

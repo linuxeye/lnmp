@@ -120,7 +120,7 @@ Install_PHP56() {
   sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,stream_socket_server,fsocket,popen@' ${php_install_dir}/etc/php.ini
   [ -e /usr/sbin/sendmail ] && sed -i 's@^;sendmail_path.*@sendmail_path = /usr/sbin/sendmail -t -i@' ${php_install_dir}/etc/php.ini
   
-  [ "${phpcache_option}" == '1' ] && cat > ${php_install_dir}/etc/php.d/ext-opcache.ini << EOF
+  [ "${phpcache_option}" == '1' ] && cat > ${php_install_dir}/etc/php.d/02-opcache.ini << EOF
 [opcache]
 zend_extension=opcache.so
 opcache.enable=1

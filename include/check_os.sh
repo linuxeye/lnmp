@@ -55,11 +55,15 @@ fi
 if [ "$(getconf WORD_BIT)" == "32" ] && [ "$(getconf LONG_BIT)" == "64" ]; then
   OS_BIT=64
   SYS_BIG_FLAG=x64 #jdk
-  SYS_BIT_a=x86_64;SYS_BIT_b=x86_64; #mariadb
+  SYS_BIT_a=x86_64 #mariadb
+  SYS_BIT_b=x86_64 #mariadb
+  SYS_BIT_c=x86_64 #ZendGuardLoader
 else
   OS_BIT=32
   SYS_BIG_FLAG=i586
-  SYS_BIT_a=x86;SYS_BIT_b=i686;
+  SYS_BIT_a=x86
+  SYS_BIT_b=i686
+  SYS_BIT_c=i386
 fi
 
 LIBC_YN=$(awk -v A=$(getconf -a | grep GNU_LIBC_VERSION | awk '{print $NF}') -v B=2.14 'BEGIN{print(A>=B)?"0":"1"}')

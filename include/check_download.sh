@@ -680,9 +680,9 @@ checkDownload() {
   if [ "${ioncube_yn}" == 'y' ]; then
     echo "Download ioncube..."
     if [ "${TARGET_ARCH}" == "armv7" ]; then
-      src_url=http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_armv7l.tar.gz && Download_src
+      src_url=https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_armv7l.tar.gz && Download_src
     else
-      src_url=http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_${SYS_BIT_a}.tar.gz && Download_src
+      src_url=https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_${SYS_BIT_d}.tar.gz && Download_src
     fi
   fi
 

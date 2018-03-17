@@ -16,7 +16,7 @@ Install_ionCube() {
   if  [ "${TARGET_ARCH}" == "armv7" ]; then
     tar xzf ioncube_loaders_lin_armv7l.tar.gz
   else
-    tar xzf ioncube_loaders_lin_${SYS_BIT_a}.tar.gz
+    tar xzf ioncube_loaders_lin_${SYS_BIT_d}.tar.gz
   fi
 
   [ ! -d "${phpExtensionDir}" ] && mkdir -p ${phpExtensionDir}

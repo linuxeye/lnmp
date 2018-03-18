@@ -81,25 +81,6 @@ Uninstall_succ() {
   [ -e "`ls ${php_install_dir}/etc/php.d/0?-${PHP_extension}.ini 2> /dev/null`" ] && { rm -rf ${php_install_dir}/etc/php.d/0?-${PHP_extension}.ini; Restart_PHP; echo; echo "${CMSG}PHP ${PHP_extension} module uninstall completed${CEND}"; } || { echo; echo "${CWARNING}${PHP_extension} module does not exist! ${CEND}"; }
 }
 
-Install_letsencrypt() {
-  [ ! -e "${python_install_dir}/bin/python" ] && Install_Python
-  ${python_install_dir}/bin/pip install requests 
-  ${python_install_dir}/bin/pip install certbot
-  if [ -e "${python_install_dir}/bin/certbot" ]; then
-    echo; echo "${CSUCCESS}Let's Encrypt client installed successfully! ${CEND}"
-  else
-    echo; echo "${CFAILURE}Let's Encrypt client install failed, Please try again! ${CEND}"
-  fi
-}
-
-Uninstall_letsencrypt() {
-  ${python_install_dir}/bin/pip uninstall -y certbot > /dev/null 2>&1
-  rm -rf /etc/letsencrypt /var/log/letsencrypt /var/lib/letsencrypt ${python_install_dir}
-  [ "${OS}" == "CentOS" ] && Cron_file=/var/spool/cron/root || Cron_file=/var/spool/cron/crontabs/root
-  [ -e "$Cron_file" ] && sed -i '/certbot/d' ${Cron_file}
-  echo; echo "${CMSG}Let's Encrypt client uninstall completed${CEND}";
-}
-
 Install_fail2ban() {
   [ ! -e "${python_install_dir}/bin/python" ] && Install_Python
   pushd ${oneinstack_dir}/src > /dev/null
@@ -190,16 +171,15 @@ What Are You Doing?
 \t${CMSG} 4${CEND}. Install/Uninstall fileinfo PHP Extension
 \t${CMSG} 5${CEND}. Install/Uninstall memcached/memcache
 \t${CMSG} 6${CEND}. Install/Uninstall Redis
-\t${CMSG} 7${CEND}. Install/Uninstall Let's Encrypt client
-\t${CMSG} 8${CEND}. Install/Uninstall swoole PHP Extension 
-\t${CMSG} 9${CEND}. Install/Uninstall xdebug PHP Extension 
-\t${CMSG}10${CEND}. Install/Uninstall PHP Composer 
-\t${CMSG}11${CEND}. Install/Uninstall fail2ban
+\t${CMSG} 7${CEND}. Install/Uninstall swoole PHP Extension 
+\t${CMSG} 8${CEND}. Install/Uninstall xdebug PHP Extension 
+\t${CMSG} 9${CEND}. Install/Uninstall PHP Composer 
+\t${CMSG}10${CEND}. Install/Uninstall fail2ban
 \t${CMSG} q${CEND}. Exit
 "
   read -p "Please input the correct option: " Number
-  if [[ ! "${Number}" =~ ^[1-9,q]$|^1[0-1]$ ]]; then
-    echo "${CFAILURE}input error! Please only input 1~11 and q${CEND}"
+  if [[ ! "${Number}" =~ ^[1-9,q]$|^10]$ ]]; then
+    echo "${CFAILURE}input error! Please only input 1~10 and q${CEND}"
   else
     case "${Number}" in
       1)
@@ -438,14 +418,6 @@ What Are You Doing?
         ;;
       7)
         ACTION_FUN
-        if [ "${ACTION}" = '1' ]; then
-          Install_letsencrypt
-        else
-          Uninstall_letsencrypt
-        fi
-        ;;
-      8)
-        ACTION_FUN
         PHP_extension=swoole
         if [ "${ACTION}" = '1' ]; then
           Check_PHP_Extension
@@ -455,9 +427,9 @@ What Are You Doing?
             tar xzf swoole-${swoole_ver}.tgz
             pushd swoole-${swoole_ver}
           else
-            src_url=https://pecl.php.net/get/swoole-1.10.2.tgz && Download_src
-            tar xzf swoole-1.10.2.tgz
-            pushd swoole-1.10.2
+            src_url=https://pecl.php.net/get/swoole-1.10.1.tgz && Download_src
+            tar xzf swoole-1.10.1.tgz
+            pushd swoole-1.10.1
           fi
           ${php_install_dir}/bin/phpize
           ./configure --with-php-config=${php_install_dir}/bin/php-config
@@ -471,7 +443,7 @@ What Are You Doing?
           Uninstall_succ
         fi
         ;;
-      9)
+      8)
         ACTION_FUN
         PHP_extension=xdebug
         if [ "${ACTION}" = '1' ]; then
@@ -521,7 +493,7 @@ EOF
           Uninstall_succ
         fi
         ;;
-      10)
+      9)
         ACTION_FUN
         if [ "${ACTION}" = '1' ]; then
           [ -e "/usr/local/bin/composer" ] && { echo "${CWARNING}PHP Composer already installed! ${CEND}"; exit 1; }
@@ -542,7 +514,7 @@ EOF
           echo; echo "${CMSG}composer uninstall completed${CEND}";
         fi
         ;;
-      11)
+      10)
         ACTION_FUN
         if [ "${ACTION}" = '1' ]; then
           Install_fail2ban
@@ -551,8 +523,8 @@ EOF
         fi
         ;;
       q)
-      exit
-      ;;
+        exit
+        ;;
     esac
   fi
 done

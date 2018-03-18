@@ -16,8 +16,14 @@ Upgrade_OneinStack() {
     /bin/mv options.conf /tmp
     sed -i '/oneinstack_dir=/d' /tmp/options.conf
     [ -e /tmp/oneinstack.tar.gz ] && rm -rf /tmp/oneinstack.tar.gz
-    wget -c http://mirrors.linuxeye.com/oneinstack.tar.gz -O /tmp/oneinstack.tar.gz > /dev/null 2>&1 
-    tar xzf /tmp/oneinstack.tar.gz -C ../
+    wget -qc http://mirrors.linuxeye.com/oneinstack.tar.gz -O /tmp/oneinstack.tar.gz
+    if [ -n "`echo ${oneinstack_dir} | grep lnmp`" ]; then
+      tar xzf /tmp/oneinstack.tar.gz -C /tmp
+      /bin/cp -R /tmp/oneinstack/* ${oneinstack_dir}/
+      /bin/rm -rf /tmp/oneinstack
+    else
+      tar xzf /tmp/oneinstack.tar.gz -C ../
+    fi
     IFS=$'\n'
     for L in `grep -vE '^#|^$' /tmp/options.conf`
     do

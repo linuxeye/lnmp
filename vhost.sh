@@ -168,22 +168,13 @@ If you enter '.', the field will be left blank.
     openssl req -new -newkey rsa:2048 -sha256 -nodes -out ${PATH_SSL}/${domain}.csr -keyout ${PATH_SSL}/${domain}.key -subj "/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${domain}" > /dev/null 2>&1
     openssl x509 -req -days 36500 -sha256 -in ${PATH_SSL}/${domain}.csr -signkey ${PATH_SSL}/${domain}.key -out ${PATH_SSL}/${domain}.crt > /dev/null 2>&1   
   elif [ "${Domian_Mode}" == '3' ]; then
-    while :; do echo
-      read -p "Please enter Administrator Email(example: admin@example.com): " Admin_Email
-      if [ -z "$(echo ${Admin_Email} | grep '.*@.*\..*')" ]; then
-        echo "${CWARNING}Your email address is invalid! ${CEND}"
-      else
-        break
-      fi
-    done
-
     [ "${moredomainame_flag}" == 'y' ] && moredomainame_D="$(for D in ${moredomainame}; do echo -d ${D}; done)"
-    if [ "${nginx_ssl_flag}" == 'y' ]; then 
+    if [ "${nginx_ssl_flag}" == 'y' ] && [ "${moredomain}" != "*.${domain}" ]; then 
       [ ! -d ${web_install_dir}/conf/vhost ] && mkdir ${web_install_dir}/conf/vhost
       echo "server {  server_name ${domain}${moredomainame};  root ${vhostdir};  access_log off; }" > ${web_install_dir}/conf/vhost/${domain}.conf
       ${web_install_dir}/sbin/nginx -s reload
     fi
-    if [ "${apache_ssl_flag}" == 'y' ]; then
+    if [ "${apache_ssl_flag}" == 'y' ] && [ "${moredomain}" != "*.${domain}" ]; then
       [ ! -d ${apache_install_dir}/conf/vhost ] && mkdir ${apache_install_dir}/conf/vhost
       cat > ${apache_install_dir}/conf/vhost/${domain}.conf << EOF
 <VirtualHost *:80>
@@ -204,21 +195,41 @@ If you enter '.', the field will be left blank.
 EOF
       /etc/init.d/httpd restart > /dev/null
     fi
-
-    ${python_install_dir}/bin/certbot certonly --webroot --agree-tos --quiet --email ${Admin_Email} -w ${vhostdir} -d ${domain} ${moredomainame_D}
-    if [ -s "/etc/letsencrypt/live/${domain}/cert.pem" ]; then
+    if [ "${moredomain}" == "*.${domain}" ]; then
+      while :; do echo
+        read -p "Please enter your DNS provider: " DNS_PRO
+        echo "${CMSG}dp${CEND},${CMSG}cx${CEND},${CMSG}ali${CEND},${CMSG}cf${CEND},${CMSG}aws${CEND},${CMSG}linode${CEND},${CMSG}he${CEND},${CMSG}namesilo${CEND},${CMSG}dgon${CEND},${CMSG}freedns${CEND},${CMSG}gd${CEND},${CMSG}namecom${CEND} and so on."
+        if [ -e ~/.acme.sh/dnsapi/dns_${DNS_PRO}.sh ]; then
+          break
+        else
+          echo "${CWARNING}You DNS api mode is not supported${CEND}"
+        fi
+      done
+      while :; do echo
+        echo "Syntax: export Key1=Value1 ; export Key2=Value1"
+        read -p "Please enter your dnsapi parameters: " DNS_PAR
+        echo
+        eval $DNS_PAR
+        if [ $? == 0 ]; then
+          break
+        else
+          echo "${CWARNING}Syntax error! PS: export Ali_Key=LTq ; export Ali_Secret=0q5E${CEND}"
+        fi
+      done
+      ~/.acme.sh/acme.sh --issue --dns dns_${DNS_PRO} -d ${domain} -d ${moredomain}
+    else
+      ~/.acme.sh/acme.sh --issue -d ${domain} ${moredomainame_D} -w ${vhostdir} > /dev/null
+    fi
+    if [ -s ~/.acme.sh/${domain}/fullchain.cer ]; then
       [ -e "${PATH_SSL}/${domain}.crt" ] && rm -rf ${PATH_SSL}/${domain}.{crt,key}
-      ln -s /etc/letsencrypt/live/${domain}/fullchain.pem ${PATH_SSL}/${domain}.crt
-      ln -s /etc/letsencrypt/live/${domain}/privkey.pem ${PATH_SSL}/${domain}.key
       if [ -e "${web_install_dir}/sbin/nginx" -a -e "${apache_install_dir}/conf/httpd.conf" ]; then
-        Cron_Command="/etc/init.d/nginx reload;/etc/init.d/httpd graceful"
+        Command="/etc/init.d/nginx force-reload;/etc/init.d/httpd graceful"
       elif [ -e "${web_install_dir}/sbin/nginx" -a ! -e "${apache_install_dir}/conf/httpd.conf" ]; then
-        Cron_Command="/etc/init.d/nginx reload"
+        Command="/etc/init.d/nginx force-reload"
       elif [ ! -e "${web_install_dir}/sbin/nginx" -a -e "${apache_install_dir}/conf/httpd.conf" ]; then
-        Cron_Command="/etc/init.d/httpd graceful"
+        Command="/etc/init.d/httpd graceful"
       fi
-      [ "${OS}" == "CentOS" ] && Cron_file=/var/spool/cron/root || Cron_file=/var/spool/cron/crontabs/root
-      [ -z "$(grep 'certbot renew' ${Cron_file})" ] && echo "30 2 * * 1 ${python_install_dir}/bin/certbot renew --disable-hook-validation --force-renew --renew-hook \"${Cron_Command}\"" >> $Cron_file
+      ~/.acme.sh/acme.sh --install-cert -d ${domain} --fullchain-file ${PATH_SSL}/${domain}.crt --key-file ${PATH_SSL}/${domain}.key --reloadcmd "${Command}" > /dev/null
     else
       echo "${CFAILURE}Error: Create Let's Encrypt SSL Certificate failed! ${CEND}"
       exit 1
@@ -232,8 +243,8 @@ Print_ssl() {
     echo "$(printf "%-30s" "SSL Private Key:")${CMSG}${PATH_SSL}/${domain}.key${CEND}"
     echo "$(printf "%-30s" "SSL CSR File:")${CMSG}${PATH_SSL}/${domain}.csr${CEND}"
   elif [ "${Domian_Mode}" == '3' ]; then
-    echo "$(printf "%-30s" "Let's Encrypt SSL Certificate:")${CMSG}/etc/letsencrypt/live/${domain}/fullchain.pem${CEND}"
-    echo "$(printf "%-30s" "SSL Private Key:")${CMSG}/etc/letsencrypt/live/${domain}/privkey.pem${CEND}"
+    echo "$(printf "%-30s" "Let's Encrypt SSL Certificate:")${CMSG}${PATH_SSL}/${domain}.crt${CEND}"
+    echo "$(printf "%-30s" "SSL Private Key:")${CMSG}${PATH_SSL}/${domain}.key${CEND}"
   fi
 }
 
@@ -250,7 +261,15 @@ What Are You Doing?
     if [[ ! "${Domian_Mode}" =~ ^[1-3,q]$ ]]; then
       echo "${CFAILURE}input error! Please only input 1~3 and q${CEND}"
     else
-      [ "${Domian_Mode}" == '3' ] && [ ! -e "${python_install_dir}/bin/certbot" ] && { echo "${CWARNING}You must to install Let's Encrypt client! Try running: ./addons.sh${CEND}"; exit 1; }
+      if [ "${Domian_Mode}" == '3' ] && [ ! -e ~/.acme.sh/acme.sh ]; then
+        pushd ${oneinstack_dir}/src > /dev/null
+        [ ! -e acme.sh-master.tar.gz ] && wget -qc http://mirrors.linuxeye.com/oneinstack/src/acme.sh-master.tar.gz
+        tar xzf acme.sh-master.tar.gz
+        pushd acme.sh-master > /dev/null
+        ./acme.sh --install > /dev/null 2>&1
+        popd > /dev/null
+        popd > /dev/null
+      fi
       if [[ "${Domian_Mode}" =~ ^[2-3]$ ]]; then
         if [ -e "${web_install_dir}/sbin/nginx" ]; then
           nginx_ssl_flag=y
@@ -329,7 +348,7 @@ What Are You Doing?
     Apache_Domain_alias=ServerAlias${moredomainame}
     Tomcat_Domain_alias=$(for D in $(echo ${moredomainame}); do echo "<Alias>${D}</Alias>"; done)
 
-    if [ "${Domian_Mode}" == '3' ]; then
+    if [ "${Domian_Mode}" == '3' ] && [ "${moredomain}" != "*.${domain}" ]; then
       PUBLIC_IPADDR=$(./include/get_public_ipaddr.py)
       for D in ${domain} ${moredomainame}
       do

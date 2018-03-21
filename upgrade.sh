@@ -106,7 +106,7 @@ What Are You Doing?
           Upgrade_OneinStack 
           ;;
         8)
-          [ -e ~/.acme.sh/acme.sh ] && ~/.acme.sh/acme.sh --upgrade
+          [ -e ~/.acme.sh/acme.sh ] && { ~/.acme.sh/acme.sh --upgrade; ~/.acme.sh/acme.sh --version; }
           ;;
         q)
           exit
@@ -150,7 +150,7 @@ elif [ $# == 1 ]; then
       Upgrade_OneinStack 
       ;;
     acme.sh)
-      [ -e ~/.acme.sh/acme.sh ] && ~/.acme.sh/acme.sh --upgrade
+      [ -e ~/.acme.sh/acme.sh ] && { ~/.acme.sh/acme.sh --upgrade; ~/.acme.sh/acme.sh --version; }
       ;;
     *)
       Usage

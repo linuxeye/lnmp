@@ -55,7 +55,7 @@ curl_ver=7.58.0
 libmcrypt_ver=2.5.8
 mcrypt_ver=2.6.8
 mhash_ver=0.9.9.9
-imagemagick_ver=6.9.9-38
+imagemagick_ver=6.9.9-39
 imagick_ver=3.4.3
 graphicsmagick_ver=1.3.28
 gmagick_for_php7_ver=2.0.5RC1
@@ -73,7 +73,7 @@ pureftpd_ver=1.0.47
 
 # Redis
 redis_ver=4.0.8
-redis_pecl_ver=3.1.6
+redis_pecl_ver=4.0.0
 
 # Memcached
 memcached_ver=1.5.6

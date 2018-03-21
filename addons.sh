@@ -178,7 +178,7 @@ What Are You Doing?
 \t${CMSG} q${CEND}. Exit
 "
   read -p "Please input the correct option: " Number
-  if [[ ! "${Number}" =~ ^[1-9,q]$|^10]$ ]]; then
+  if [[ ! "${Number}" =~ ^[1-9,q]$|^10$ ]]; then
     echo "${CFAILURE}input error! Please only input 1~10 and q${CEND}"
   else
     case "${Number}" in

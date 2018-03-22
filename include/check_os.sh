@@ -10,12 +10,12 @@
 
 if [ -n "$(grep 'Aliyun Linux release' /etc/issue)" -o -e /etc/redhat-release ]; then
   OS=CentOS
-  [ -n "$(grep ' 7\.' /etc/redhat-release 2> /dev/null)" ] && CentOS_RHEL_ver=7
-  [ -n "$(grep ' 6\.' /etc/redhat-release 2> /dev/null)" -o -n "$(grep 'Aliyun Linux release6 15' /etc/issue)" ] && CentOS_RHEL_ver=6
-  [ -n "$(grep ' 5\.' /etc/redhat-release 2> /dev/null)" -o -n "$(grep 'Aliyun Linux release5' /etc/issue)" ] && CentOS_RHEL_ver=5
+  [ -n "$(grep ' 7\.' /etc/redhat-release 2> /dev/null)" ] && CentOS_ver=7
+  [ -n "$(grep ' 6\.' /etc/redhat-release 2> /dev/null)" -o -n "$(grep 'Aliyun Linux release6 15' /etc/issue)" ] && CentOS_ver=6
+  [ -n "$(grep ' 5\.' /etc/redhat-release 2> /dev/null)" -o -n "$(grep 'Aliyun Linux release5' /etc/issue)" ] && CentOS_ver=5
 elif [ -n "$(grep 'Amazon Linux AMI release' /etc/issue)" -o -e /etc/system-release ]; then
   OS=CentOS
-  CentOS_RHEL_ver=6
+  CentOS_ver=6
 elif [ -n "$(grep 'bian' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Debian" ]; then
   OS=Debian
   [ ! -e "$(which lsb_release)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
@@ -92,7 +92,7 @@ if [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]]; then
     sslLibVer=ssl100
   fi
 elif [ "${OS}" == "CentOS" ]; then
-  if [ "${CentOS_RHEL_ver}" == '5' ]; then
+  if [ "${CentOS_ver}" == '5' ]; then
     sslLibVer=ssl098e
   else
     sslLibVer=ssl101

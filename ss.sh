@@ -9,7 +9,7 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 clear
 printf "
 #######################################################################
@@ -32,7 +32,7 @@ pushd ${oneinstack_dir}/src > /dev/null
 
 PUBLIC_IPADDR=$(../include/get_public_ipaddr.py)
 
-[ "${CentOS_RHEL_ver}" == '5' ] && { echo "${CWARNING}SS only support CentOS6,7 or Debian or Ubuntu! ${CEND}"; exit 1; }
+[ "${CentOS_ver}" == '5' ] && { echo "${CWARNING}SS only support CentOS6,7 or Debian or Ubuntu! ${CEND}"; exit 1; }
 
 Check_SS() {
   [ -f /usr/local/bin/ss-server ] && ss_option=1

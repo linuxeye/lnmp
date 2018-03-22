@@ -29,7 +29,7 @@ extension=xcache.so
 [xcache.admin]
 xcache.admin.enable_auth=On
 xcache.admin.user=admin
-xcache.admin.pass="${xcache_admin_md5_pass}"
+xcache.admin.pass="${xcachepwd_md5}"
 
 [xcache]
 xcache.size=${xcacheSize}M

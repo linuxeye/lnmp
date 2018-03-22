@@ -9,7 +9,7 @@
 #       https://github.com/lj2007331/oneinstack
 
 # closed Unnecessary services and remove obsolete rpm package
-[ "${CentOS_RHEL_ver}" == '7' ] && [ "$(systemctl is-active NetworkManager.service)" == 'active' ] && NM_flag=1
+[ "${CentOS_ver}" == '7' ] && [ "$(systemctl is-active NetworkManager.service)" == 'active' ] && NM_flag=1
 for Service in $(chkconfig --list | grep 3:on | awk '{print $1}' | grep -vE 'nginx|httpd|tomcat|mysqld|php-fpm|pureftpd|redis-server|memcached|supervisord|aegis|NetworkManager|iptables');do chkconfig --level 3 ${Service} off;done
 [ "${NM_flag}" == '1' ] && systemctl enable NetworkManager.service
 for Service in sshd network crond messagebus irqbalance syslog rsyslog;do chkconfig --level 3 ${Service} on;done
@@ -103,15 +103,15 @@ net.netfilter.nf_conntrack_tcp_timeout_established = 3600
 EOF
 sysctl -p
 
-if [ "${CentOS_RHEL_ver}" == '5' ]; then
+if [ "${CentOS_ver}" == '5' ]; then
   sed -i 's@^[3-6]:2345:respawn@#&@g' /etc/inittab
   sed -i 's@^ca::ctrlaltdel@#&@' /etc/inittab
   sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/sysconfig/i18n
-elif [ "${CentOS_RHEL_ver}" == '6' ]; then
+elif [ "${CentOS_ver}" == '6' ]; then
   sed -i 's@^ACTIVE_CONSOLES.*@ACTIVE_CONSOLES=/dev/tty[1-2]@' /etc/sysconfig/init
   sed -i 's@^start@#start@' /etc/init/control-alt-delete.conf
   sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/sysconfig/i18n
-elif [ "${CentOS_RHEL_ver}" == '7' ]; then
+elif [ "${CentOS_ver}" == '7' ]; then
   sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/locale.conf
 fi
 

@@ -10,7 +10,7 @@
 
 Install_Python() {
   pushd ${oneinstack_dir}/src > /dev/null
-  if [ "${CentOS_RHEL_ver}" == '7' ]; then
+  if [ "${CentOS_ver}" == '7' ]; then
     [ ! -e /etc/yum.repos.d/epel.repo ] && cat > /etc/yum.repos.d/epel.repo << EOF
 [epel]
 name=Extra Packages for Enterprise Linux 7 - \$basearch
@@ -20,7 +20,7 @@ failovermethod=priority
 enabled=1
 gpgcheck=0
 EOF
-  elif [ "${CentOS_RHEL_ver}" == '6' ]; then
+  elif [ "${CentOS_ver}" == '6' ]; then
     [ ! -e /etc/yum.repos.d/epel.repo ] && cat > /etc/yum.repos.d/epel.repo << EOF
 [epel]
 name=Extra Packages for Enterprise Linux 6 - \$basearch

@@ -140,7 +140,7 @@ Choose_env() {
 }
 
 Create_SSL() {
-  if [ "${Domian_Mode}" == '2' ]; then 
+  if [ "${Domian_Mode}" == '2' ]; then
     printf "
 You are about to be asked to enter information that will be incorporated
 into your certificate request.
@@ -166,10 +166,10 @@ If you enter '.', the field will be left blank.
     [ -z "${SELFSIGNEDSSL_OU}" ] && SELFSIGNEDSSL_OU="IT Dept."
 
     openssl req -new -newkey rsa:2048 -sha256 -nodes -out ${PATH_SSL}/${domain}.csr -keyout ${PATH_SSL}/${domain}.key -subj "/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${domain}" > /dev/null 2>&1
-    openssl x509 -req -days 36500 -sha256 -in ${PATH_SSL}/${domain}.csr -signkey ${PATH_SSL}/${domain}.key -out ${PATH_SSL}/${domain}.crt > /dev/null 2>&1   
+    openssl x509 -req -days 36500 -sha256 -in ${PATH_SSL}/${domain}.csr -signkey ${PATH_SSL}/${domain}.key -out ${PATH_SSL}/${domain}.crt > /dev/null 2>&1
   elif [ "${Domian_Mode}" == '3' ]; then
     [ "${moredomainame_flag}" == 'y' ] && moredomainame_D="$(for D in ${moredomainame}; do echo -d ${D}; done)"
-    if [ "${nginx_ssl_flag}" == 'y' ] && [ "${moredomain}" != "*.${domain}" ]; then 
+    if [ "${nginx_ssl_flag}" == 'y' ] && [ "${moredomain}" != "*.${domain}" ]; then
       [ ! -d ${web_install_dir}/conf/vhost ] && mkdir ${web_install_dir}/conf/vhost
       echo "server {  server_name ${domain}${moredomainame};  root ${vhostdir};  access_log off; }" > ${web_install_dir}/conf/vhost/${domain}.conf
       ${web_install_dir}/sbin/nginx -s reload
@@ -349,12 +349,14 @@ What Are You Doing?
     Tomcat_Domain_alias=$(for D in $(echo ${moredomainame}); do echo "<Alias>${D}</Alias>"; done)
 
     if [ "${Domian_Mode}" == '3' ] && [ "${moredomain}" != "*.${domain}" ]; then
-      PUBLIC_IPADDR=$(./include/get_public_ipaddr.py)
+      auth_file=${vhostdir}/"`< /dev/urandom tr -dc A-Za-z0-9 | head -c8`".html
+      auth_str='oneinstack'; echo ${auth_str} > ${auth_file}
       for D in ${domain} ${moredomainame}
       do
-        Domain_IPADDR=$(ping ${D} -c1 2> /dev/null | sed '1{s/[^(]*(//;s/).*//;q}')
-        [ "${PUBLIC_IPADDR%.*}" != "${Domain_IPADDR%.*}" ] && { echo; echo "${CFAILURE}DNS problem: NXDOMAIN looking up A for ${D}${CEND}"; echo; exit 1; }
+        curl_str=`curl --connect-timeout 10 -4 -s $D/${auth_file} 2>&1`
+        [ "${curl_str}" != "${auth_str}" ] && { echo; echo "${CFAILURE}Let's Encrypt Verify error! DNS problem: NXDOMAIN looking up A for ${D}${CEND}"; echo; rm -f ${auth_file}; exit 1; }
       done
+      rm -f ${auth_file}
     fi
 
     if [ -e "${web_install_dir}/sbin/nginx" ]; then
@@ -366,7 +368,7 @@ What Are You Doing?
           break
         fi
       done
-      [ "${redirect_flag}" == 'y' ] && Nginx_redirect="if (\$host != $domain) {  return 301 \$scheme://${domain}\$request_uri;  }"
+      [ "${redirect_flag}" == 'y' ] && Nginx_redirect="if (\$host != ${domain}) {  return 301 \$scheme://${domain}\$request_uri;  }"
     fi
   fi
 
@@ -617,8 +619,8 @@ EOF
       sed -i "s@^  root.*;@&\n  location ~ .*\.(wma|wmv|asf|mp3|mmf|zip|rar|jpg|gif|png|swf|flv|mp4)\$ {@" ${web_install_dir}/conf/vhost/${domain}.conf
     fi
 
-    [ "${redirect_flag}" == 'y' ] && sed -i "s@^  root.*;@&\n  if (\$host != $domain) {  return 301 \$scheme://${domain}\$request_uri;  }@" ${web_install_dir}/conf/vhost/${domain}.conf
-    
+    [ "${redirect_flag}" == 'y' ] && sed -i "s@^  root.*;@&\n  if (\$host != ${domain}) {  return 301 \$scheme://${domain}\$request_uri;  }@" ${web_install_dir}/conf/vhost/${domain}.conf
+
     if [ "${nginx_ssl_flag}" == 'y' ]; then
       sed -i "s@^  listen 80;@&\n  listen ${LISTENOPT};@" ${web_install_dir}/conf/vhost/${domain}.conf
       sed -i "s@^  server_name.*;@&\n  ssl_stapling_verify on;@" ${web_install_dir}/conf/vhost/${domain}.conf

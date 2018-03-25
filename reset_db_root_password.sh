@@ -31,7 +31,7 @@ Input_db_root_password() {
     (( ${#New_dbrootpwd} >= 5 )) && break || echo "${CWARNING}database root password least 5 characters! ${CEND}"
   done
 }
-  
+
 Reset_db_root_password() {
   ${db_install_dir}/bin/mysqladmin -uroot -p"$dbrootpwd" password "$New_dbrootpwd" -h localhost > /dev/null 2>&1
   status_Localhost=`echo $?`

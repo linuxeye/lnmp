@@ -45,6 +45,7 @@ Install_MariaDB101() {
   fi
 
   if [ -d "${mariadb_install_dir}/support-files" ]; then
+    sed -i "s+^dbrootpwd.*+dbrootpwd='${dbrootpwd}'+" ../options.conf
     echo "${CSUCCESS}MariaDB installed successfully! ${CEND}"
     if [ "${dbinstallmethod}" == "1" ]; then
       rm -rf mariadb-${mariadb101_ver}-*-${SYS_BIT_b}

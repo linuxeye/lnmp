@@ -47,6 +47,7 @@ Install_MariaDB55() {
   fi
 
   if [ -d "${mariadb_install_dir}/support-files" ]; then
+    sed -i "s+^dbrootpwd.*+dbrootpwd='${dbrootpwd}'+" ../options.conf
     echo "${CSUCCESS}MariaDB installed successfully! ${CEND}"
     if [ "${dbinstallmethod}" == "1" ]; then
       rm -rf mariadb-${mariadb55_ver}-*-${SYS_BIT_b}

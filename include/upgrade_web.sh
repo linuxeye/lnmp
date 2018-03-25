@@ -188,23 +188,23 @@ Upgrade_Apache() {
   pushd ${oneinstack_dir}/src > /dev/null
   [ ! -e "${apache_install_dir}/bin/httpd" ] && echo "${CWARNING}Apache is not installed on your system! ${CEND}" && exit 1
   OLD_apache_ver="`/usr/local/apache/bin/httpd -v | grep version | awk -F'/| ' '{print $4}'`"
-  Apache_flag="`echo $OLD_apache_ver | awk -F. '{print $1 $2}'`"
+  Apache_flag="`echo ${OLD_apache_ver} | awk -F. '{print $1 $2}'`"
   Latest_apache_ver=`curl -s http://httpd.apache.org/download.cgi | awk "/#apache$Apache_flag/{print $2}" | head -1 | grep -oE "2\.[24]\.[0-9]+"`
   echo
-  echo "Current Apache Version: ${CMSG}$OLD_apache_ver${CEND}"
+  echo "Current Apache Version: ${CMSG}${OLD_apache_ver}${CEND}"
   while :; do echo
     read -p "Please input upgrade Apache Version(Default: $Latest_apache_ver): " NEW_apache_ver
-    [ -z "$NEW_apache_ver" ] && NEW_apache_ver=$Latest_apache_ver
-    if [ "$NEW_apache_ver" != "$OLD_apache_ver" ]; then
+    [ -z "${NEW_apache_ver}" ] && NEW_apache_ver=$Latest_apache_ver
+    if [ "${NEW_apache_ver}" != "${OLD_apache_ver}" ]; then
       if [ "$Apache_flag" == '24' ]; then
         src_url=http://archive.apache.org/dist/apr/apr-${apr_ver}.tar.gz && Download_src
         src_url=http://archive.apache.org/dist/apr/apr-util-${apr_util_ver}.tar.gz && Download_src
         tar xzf apr-${apr_ver}.tar.gz
         tar xzf apr-util-${apr_util_ver}.tar.gz
       fi
-      [ ! -e "httpd-$NEW_apache_ver.tar.gz" ] && wget --no-check-certificate -c http://mirrors.linuxeye.com/apache/httpd/httpd-$NEW_apache_ver.tar.gz > /dev/null 2>&1
-      if [ -e "httpd-$NEW_apache_ver.tar.gz" ]; then
-        echo "Download [${CMSG}apache-$NEW_apache_ver.tar.gz${CEND}] successfully! "
+      [ ! -e "httpd-${NEW_apache_ver}.tar.gz" ] && wget --no-check-certificate -c http://archive.apache.org/dist/httpd/httpd-${NEW_apache_ver}.tar.gz > /dev/null 2>&1
+      if [ -e "httpd-${NEW_apache_ver}.tar.gz" ]; then
+        echo "Download [${CMSG}apache-${NEW_apache_ver}.tar.gz${CEND}] successfully! "
         break
       else
         echo "${CWARNING}Apache version does not exist! ${CEND}"
@@ -214,12 +214,12 @@ Upgrade_Apache() {
     fi
   done
 
-  if [ -e "httpd-$NEW_apache_ver.tar.gz" ]; then
-    echo "[${CMSG}httpd-$NEW_apache_ver.tar.gz${CEND}] found"
+  if [ -e "httpd-${NEW_apache_ver}.tar.gz" ]; then
+    echo "[${CMSG}httpd-${NEW_apache_ver}.tar.gz${CEND}] found"
     echo "Press Ctrl+c to cancel or Press any key to continue..."
     char=`get_char`
-    tar xzf httpd-$NEW_apache_ver.tar.gz
-    pushd httpd-$NEW_apache_ver
+    tar xzf httpd-${NEW_apache_ver}.tar.gz
+    pushd httpd-${NEW_apache_ver}
     make clean
     if [ "$Apache_flag" == '24' ]; then
       /bin/cp -R ../apr-${apr_ver} ./srclib/apr
@@ -239,8 +239,8 @@ Upgrade_Apache() {
       make install && unset LDFLAGS
       /etc/init.d/httpd start
       popd > /dev/null
-      echo "You have ${CMSG}successfully${CEND} upgrade from ${CWARNING}$OLD_apache_ver${CEND} to ${CWARNING}$NEW_apache_ver${CEND}"
-      rm -rf httpd-$NEW_apache_ver apr-${apr_ver} apr-util-${apr_util_ver}
+      echo "You have ${CMSG}successfully${CEND} upgrade from ${CWARNING}${OLD_apache_ver}${CEND} to ${CWARNING}${NEW_apache_ver}${CEND}"
+      rm -rf httpd-${NEW_apache_ver} apr-${apr_ver} apr-util-${apr_util_ver}
     else
       echo "${CFAILURE}Upgrade Apache failed! ${CEND}"
     fi

@@ -45,6 +45,7 @@ Install_MySQL57() {
   fi
 
   if [ -d "${mysql_install_dir}/support-files" ]; then
+    sed -i "s+^dbrootpwd.*+dbrootpwd='${dbrootpwd}'+" ../options.conf
     echo "${CSUCCESS}MySQL installed successfully! ${CEND}"
     if [ "${dbinstallmethod}" == "1" ]; then
       rm -rf mysql-${mysql57_ver}-*-${SYS_BIT_b}

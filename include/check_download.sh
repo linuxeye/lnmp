@@ -43,11 +43,11 @@ checkDownload() {
       src_url=http://archive.apache.org/dist/apr/apr-${apr_ver}.tar.gz && Download_src
       src_url=http://archive.apache.org/dist/apr/apr-util-${apr_util_ver}.tar.gz && Download_src
       src_url=http://mirrors.linuxeye.com/apache/httpd/nghttp2-${nghttp2_ver}.tar.gz && Download_src
-      src_url=http://mirrors.linuxeye.com/apache/httpd/httpd-${apache24_ver}.tar.gz && Download_src
+      src_url=http://archive.apache.org/dist/httpd/httpd-${apache24_ver}.tar.gz && Download_src
     fi
     if [ "${apache_option}" == '2' ]; then
       echo "Download apache 2.2..."
-      src_url=http://mirrors.linuxeye.com/apache/httpd/httpd-${apache22_ver}.tar.gz && Download_src
+      src_url=http://archive.apache.org/dist/httpd/httpd-${apache22_ver}.tar.gz && Download_src
 
       echo "Download mod_remoteip.c for apache 2.2..."
       src_url=${mirrorLink}/mod_remoteip.c && Download_src
@@ -106,21 +106,11 @@ checkDownload() {
       1)
         # MySQL 5.7
         if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-          if [ "$(../include/check_port.py mirrors.tuna.tsinghua.edu.cn 443)" == "True" ]; then
-            DOWN_ADDR_MYSQL=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.7
-            DOWN_ADDR_MYSQL_BK=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.7
-          else
-            DOWN_ADDR_MYSQL=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.7
-            DOWN_ADDR_MYSQL_BK=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.7
-          fi
+          DOWN_ADDR_MYSQL=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.7
+          DOWN_ADDR_MYSQL_BK=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.7
         else
-          if [ "$(../include/check_port.py cdn.mysql.com 80)" == "True" ]; then
-            DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.7
-            DOWN_ADDR_MYSQL_BK=http://mysql.he.net/Downloads/MySQL-5.7
-          else
-            DOWN_ADDR_MYSQL=http://mysql.he.net/Downloads/MySQL-5.7
-            DOWN_ADDR_MYSQL_BK=http://cdn.mysql.com/Downloads/MySQL-5.7
-          fi
+          DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.7
+          DOWN_ADDR_MYSQL_BK=http://mysql.he.net/Downloads/MySQL-5.7
         fi
 
         if [ "${dbinstallmethod}" == '1' ]; then
@@ -131,10 +121,11 @@ checkDownload() {
           FILE_NAME=mysql-${mysql57_ver}.tar.gz
         fi
         # start download
-        wget -4 --tries=6 -c --no-check-certificate ${DOWN_ADDR_MYSQL}/${FILE_NAME}
+        src_url=${DOWN_ADDR_MYSQL}/${FILE_NAME} && Download_src
+        src_url=${DOWN_ADDR_MYSQL}/${FILE_NAME}.md5 && Download_src
         # verifying download
-        MYSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_MYSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
-        [ -z "${MYSQL_TAR_MD5}" ] && MYSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_MYSQL_BK}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}') 
+        MYSQL_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
+        [ -z "${MYSQL_TAR_MD5}" ] && MYSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_MYSQL_BK}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${MYSQL_TAR_MD5}" ]; do
           wget -c --no-check-certificate ${DOWN_ADDR_MYSQL_BK}/${FILE_NAME};sleep 1
@@ -148,25 +139,14 @@ checkDownload() {
           echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
-
       2)
         # MySQL 5.6
         if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-          if [ "$(../include/check_port.py mirrors.tuna.tsinghua.edu.cn 443)" == "True" ]; then
-            DOWN_ADDR_MYSQL=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.6
-            DOWN_ADDR_MYSQL_BK=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.6
-          else
-            DOWN_ADDR_MYSQL=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.6
-            DOWN_ADDR_MYSQL_BK=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.6
-          fi
+          DOWN_ADDR_MYSQL=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.6
+          DOWN_ADDR_MYSQL_BK=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.6
         else
-          if [ "$(../include/check_port.py cdn.mysql.com 80)" == "True" ]; then
-            DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.6
-            DOWN_ADDR_MYSQL_BK=http://mysql.he.net/Downloads/MySQL-5.6
-          else
-            DOWN_ADDR_MYSQL=http://mysql.he.net/Downloads/MySQL-5.6
-            DOWN_ADDR_MYSQL_BK=http://cdn.mysql.com/Downloads/MySQL-5.6
-          fi
+          DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.6
+          DOWN_ADDR_MYSQL_BK=http://mysql.he.net/Downloads/MySQL-5.6
         fi
 
         if [ "${dbinstallmethod}" == '1' ]; then
@@ -176,10 +156,12 @@ checkDownload() {
           echo "Download MySQL 5.6 source package..."
           FILE_NAME=mysql-${mysql56_ver}.tar.gz
         fi
-        wget -4 --tries=6 -c --no-check-certificate ${DOWN_ADDR_MYSQL}/${FILE_NAME}
+        # start download
+        src_url=${DOWN_ADDR_MYSQL}/${FILE_NAME} && Download_src
+        src_url=${DOWN_ADDR_MYSQL}/${FILE_NAME}.md5 && Download_src
         # verifying download
-        MYSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_MYSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
-        [ -z "${MYSQL_TAR_MD5}" ] && MYSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_MYSQL_BK}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}') 
+        MYSQL_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
+        [ -z "${MYSQL_TAR_MD5}" ] && MYSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_MYSQL_BK}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${MYSQL_TAR_MD5}" ]; do
           wget -c --no-check-certificate ${DOWN_ADDR_MYSQL_BK}/${FILE_NAME};sleep 1
@@ -193,25 +175,14 @@ checkDownload() {
           echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
-
       3)
         # MySQL 5.5
         if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-          if [ "$(../include/check_port.py mirrors.tuna.tsinghua.edu.cn 443)" == "True" ]; then
-            DOWN_ADDR_MYSQL=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.5
-            DOWN_ADDR_MYSQL_BK=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.5
-          else
-            DOWN_ADDR_MYSQL=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.5
-            DOWN_ADDR_MYSQL_BK=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.5
-          fi
+          DOWN_ADDR_MYSQL=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.5
+          DOWN_ADDR_MYSQL_BK=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.5
         else
-          if [ "$(../include/check_port.py cdn.mysql.com 80)" == "True" ]; then
-            DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.5
-            DOWN_ADDR_MYSQL_BK=http://mysql.he.net/Downloads/MySQL-5.5
-          else
-            DOWN_ADDR_MYSQL=http://mysql.he.net/Downloads/MySQL-5.5
-            DOWN_ADDR_MYSQL_BK=http://cdn.mysql.com/Downloads/MySQL-5.5
-          fi
+          DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.5
+          DOWN_ADDR_MYSQL_BK=http://mysql.he.net/Downloads/MySQL-5.5
         fi
 
         if [ "${dbinstallmethod}" == '1' ]; then
@@ -222,10 +193,12 @@ checkDownload() {
           FILE_NAME=mysql-${mysql55_ver}.tar.gz
           src_url=${mirrorLink}/mysql-5.5-fix-arm-client_plugin.patch && Download_src
         fi
-        wget -4 --tries=6 -c --no-check-certificate ${DOWN_ADDR_MYSQL}/${FILE_NAME}
+        # start download
+        src_url=${DOWN_ADDR_MYSQL}/${FILE_NAME} && Download_src
+        src_url=${DOWN_ADDR_MYSQL}/${FILE_NAME}.md5 && Download_src
         # verifying download
-        MYSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_MYSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
-        [ -z "${MYSQL_TAR_MD5}" ] && MYSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_MYSQL_BK}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}') 
+        MYSQL_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
+        [ -z "${MYSQL_TAR_MD5}" ] && MYSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_MYSQL_BK}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${MYSQL_TAR_MD5}" ]; do
           wget -c --no-check-certificate ${DOWN_ADDR_MYSQL_BK}/${FILE_NAME};sleep 1
@@ -239,7 +212,6 @@ checkDownload() {
           echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
-
       4)
         # MariaDB 10.2
         if [ "${dbinstallmethod}" == '1' ]; then
@@ -247,27 +219,29 @@ checkDownload() {
           FILE_NAME=mariadb-${mariadb102_ver}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb102_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb102_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
+            DOWN_ADDR_MARIADB_BK=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb102_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
           else
-            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb102_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb102_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
+            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb102_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
+            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb102_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
           fi
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download MariaDB 10.2 source package..."
           FILE_NAME=mariadb-${mariadb102_ver}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb102_ver}/source
-            MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb102_ver}/source; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
+            DOWN_ADDR_MARIADB_BK=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb102_ver}/source
           else
-            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb102_ver}/source
-            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb102_ver}/source/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
+            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb102_ver}/source
+            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb102_ver}/source
           fi
         fi
+        src_url=${DOWN_ADDR_MARIADB}/${FILE_NAME} && Download_src
+        wget -4 --tries=6 -c --no-check-certificate ${DOWN_ADDR_MARIADB}/md5sums.txt -O ${FILE_NAME}.md5
+        MARAIDB_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
+        [ -z "${MARAIDB_TAR_MD5}" ] && MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB_BK}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${MARAIDB_TAR_MD5}" ]; do
-          wget -c --no-check-certificate ${DOWN_ADDR_MARIADB}/${FILE_NAME};sleep 1
+          wget -c --no-check-certificate ${DOWN_ADDR_MARIADB_BK}/${FILE_NAME};sleep 1
           let "tryDlCount++"
           [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${MARAIDB_TAR_MD5}" -o "${tryDlCount}" == '6' ] && break || continue
         done
@@ -278,7 +252,6 @@ checkDownload() {
           echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
-
       5)
         # MariaDB 10.1
         if [ "${dbinstallmethod}" == '1' ]; then
@@ -286,27 +259,29 @@ checkDownload() {
           FILE_NAME=mariadb-${mariadb101_ver}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb101_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb101_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
+            DOWN_ADDR_MARIADB_BK=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb101_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
           else
-            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb101_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb101_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
+            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb101_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
+            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb101_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
           fi
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download MariaDB 10.1 source package..."
           FILE_NAME=mariadb-${mariadb101_ver}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb101_ver}/source
-            MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb101_ver}/source; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
+            DOWN_ADDR_MARIADB_BK=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb101_ver}/source
           else
-            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb101_ver}/source
-            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb101_ver}/source/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
+            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb101_ver}/source
+            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb101_ver}/source
           fi
         fi
+        src_url=${DOWN_ADDR_MARIADB}/${FILE_NAME} && Download_src
+        wget -4 --tries=6 -c --no-check-certificate ${DOWN_ADDR_MARIADB}/md5sums.txt -O ${FILE_NAME}.md5
+        MARAIDB_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
+        [ -z "${MARAIDB_TAR_MD5}" ] && MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB_BK}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${MARAIDB_TAR_MD5}" ]; do
-          wget -c --no-check-certificate ${DOWN_ADDR_MARIADB}/${FILE_NAME};sleep 1
+          wget -c --no-check-certificate ${DOWN_ADDR_MARIADB_BK}/${FILE_NAME};sleep 1
           let "tryDlCount++"
           [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${MARAIDB_TAR_MD5}" -o "${tryDlCount}" == '6' ] && break || continue
         done
@@ -317,7 +292,6 @@ checkDownload() {
           echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
-
       6)
         # MariaDB 10.0
         if [ "${dbinstallmethod}" == '1' ]; then
@@ -325,27 +299,29 @@ checkDownload() {
           FILE_NAME=mariadb-${mariadb100_ver}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb100_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb100_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
+            DOWN_ADDR_MARIADB_BK=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb100_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
           else
-            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb100_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb100_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
+            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb100_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
+            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb100_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
           fi
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download MariaDB 10.0 source package..."
           FILE_NAME=mariadb-${mariadb100_ver}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb100_ver}/source
-            MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb100_ver}/source; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
+            DOWN_ADDR_MARIADB_BK=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb100_ver}/source
           else
-            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb100_ver}/source
-            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb100_ver}/source/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
+            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb100_ver}/source
+            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb100_ver}/source
           fi
         fi
+        src_url=${DOWN_ADDR_MARIADB}/${FILE_NAME} && Download_src
+        wget -4 --tries=6 -c --no-check-certificate ${DOWN_ADDR_MARIADB}/md5sums.txt -O ${FILE_NAME}.md5
+        MARAIDB_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
+        [ -z "${MARAIDB_TAR_MD5}" ] && MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB_BK}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${MARAIDB_TAR_MD5}" ]; do
-          wget -c --no-check-certificate ${DOWN_ADDR_MARIADB}/${FILE_NAME};sleep 1
+          wget -c --no-check-certificate ${DOWN_ADDR_MARIADB_BK}/${FILE_NAME};sleep 1
           let "tryDlCount++"
           [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${MARAIDB_TAR_MD5}" -o "${tryDlCount}" == '6' ] && break || continue
         done
@@ -356,7 +332,6 @@ checkDownload() {
           echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
-
       7)
         # MariaDB 5.5
         if [ "${dbinstallmethod}" == '1' ]; then
@@ -364,27 +339,29 @@ checkDownload() {
           FILE_NAME=mariadb-${mariadb55_ver}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb55_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb55_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
+            DOWN_ADDR_MARIADB_BK=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb55_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
           else
-            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb55_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb55_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
+            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb55_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
+            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb55_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
           fi
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download MariaDB 5.5 source package..."
           FILE_NAME=mariadb-${mariadb55_ver}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             DOWN_ADDR_MARIADB=https://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb55_ver}/source
-            MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${MARAIDB_TAR_MD5}" ] && { DOWN_ADDR_MARIADB=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb55_ver}/source; MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}'); }
+            DOWN_ADDR_MARIADB_BK=https://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb55_ver}/source
           else
-            DOWN_ADDR_MARIADB=https://downloads.mariadb.org/interstitial/mariadb-${mariadb55_ver}/source
-            MARAIDB_TAR_MD5=$(curl -s http://archive.mariadb.org/mariadb-${mariadb55_ver}/source/md5sums.txt |  grep ${FILE_NAME} | awk '{print $1}')
+            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb55_ver}/source
+            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb55_ver}/source
           fi
         fi
+        src_url=${DOWN_ADDR_MARIADB}/${FILE_NAME} && Download_src
+        wget -4 --tries=6 -c --no-check-certificate ${DOWN_ADDR_MARIADB}/md5sums.txt -O ${FILE_NAME}.md5
+        MARAIDB_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
+        [ -z "${MARAIDB_TAR_MD5}" ] && MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB_BK}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${MARAIDB_TAR_MD5}" ]; do
-          wget -c --no-check-certificate ${DOWN_ADDR_MARIADB}/${FILE_NAME};sleep 1
+          wget -c --no-check-certificate ${DOWN_ADDR_MARIADB_BK}/${FILE_NAME};sleep 1
           let "tryDlCount++"
           [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${MARAIDB_TAR_MD5}" -o "${tryDlCount}" == '6' ] && break || continue
         done
@@ -395,27 +372,27 @@ checkDownload() {
           echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
-
       8)
         # Precona 5.7
         if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download Percona 5.7 binary package..."
           FILE_NAME=Percona-Server-${percona57_ver}-Linux.${SYS_BIT_b}.${sslLibVer}.tar.gz
           DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_ver}/binary/tarball
-          PERCONA_TAR_MD5=$(curl -s https://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_ver}/binary/tarball/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download Percona 5.7 source package..."
           FILE_NAME=percona-server-${percona57_ver}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             DOWN_ADDR_PERCONA=${mirrorLink}
-            DOWN_ADDR_PERCONA_BK=https://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_ver}/source/tarball
-            PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${PERCONA_TAR_MD5}" ] && { DOWN_ADDR_PERCONA=${DOWN_ADDR_PERCONA_BK}; PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA_BK}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}'); }
           else
             DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_ver}/source/tarball
-            PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
           fi
         fi
+        # start download
+        src_url=${DOWN_ADDR_PERCONA}/${FILE_NAME} && Download_src
+        src_url=${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5 && Download_src
+        # verifying download
+        PERCONA_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
+        [ -z "${PERCONA_TAR_MD5}" ] && PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${PERCONA_TAR_MD5}" ]; do
           wget -c --no-check-certificate ${DOWN_ADDR_PERCONA}/${FILE_NAME}; sleep 1
@@ -429,7 +406,6 @@ checkDownload() {
           echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
-
       9)
         # Precona 5.6
         if [ "${dbinstallmethod}" == '1' ]; then
@@ -437,20 +413,21 @@ checkDownload() {
           perconaVerStr1=$(echo ${percona56_ver} | sed "s@-@-rel@")
           FILE_NAME=Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.${sslLibVer}.tar.gz
           DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_ver}/binary/tarball
-          PERCONA_TAR_MD5=$(curl -s https://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_ver}/binary/tarball/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download Percona 5.6 source package..."
           FILE_NAME=percona-server-${percona56_ver}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             DOWN_ADDR_PERCONA=${mirrorLink}
-            DOWN_ADDR_PERCONA_BK=https://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_ver}/source/tarball
-            PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${PERCONA_TAR_MD5}" ] && { DOWN_ADDR_PERCONA=${DOWN_ADDR_PERCONA_BK}; PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA_BK}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}'); }
           else
             DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_ver}/source/tarball
-            PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
           fi
         fi
+        # start download
+        src_url=${DOWN_ADDR_PERCONA}/${FILE_NAME} && Download_src
+        src_url=${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5 && Download_src
+        # verifying download
+        PERCONA_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
+        [ -z "${PERCONA_TAR_MD5}" ] && PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${PERCONA_TAR_MD5}" ]; do
           wget -c --no-check-certificate ${DOWN_ADDR_PERCONA}/${FILE_NAME}; sleep 1
@@ -464,7 +441,6 @@ checkDownload() {
           echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
-
       10)
         # Percona 5.5
         if [ "${dbinstallmethod}" == '1' ]; then
@@ -472,20 +448,21 @@ checkDownload() {
           perconaVerStr1=$(echo ${percona55_ver} | sed "s@-@-rel@")
           FILE_NAME=Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.${sslLibVer}.tar.gz
           DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-${percona55_ver}/binary/tarball
-          PERCONA_TAR_MD5=$(curl -s https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-${percona55_ver}/binary/tarball/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download Percona 5.5 source package..."
           FILE_NAME=percona-server-${percona55_ver}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             DOWN_ADDR_PERCONA=${mirrorLink}
-            DOWN_ADDR_PERCONA_BK=https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-${percona55_ver}/source/tarball
-            PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}')
-            [ -z "${PERCONA_TAR_MD5}" ] && { DOWN_ADDR_PERCONA=${DOWN_ADDR_PERCONA_BK}; PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA_BK}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}'); }
           else
             DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-${percona55_ver}/source/tarball
-            PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}')
           fi
         fi
+        # start download
+        src_url=${DOWN_ADDR_PERCONA}/${FILE_NAME} && Download_src
+        src_url=${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5 && Download_src
+        # verifying download
+        PERCONA_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
+        [ -z "${PERCONA_TAR_MD5}" ] && PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${PERCONA_TAR_MD5}" ]; do
           wget -c --no-check-certificate ${DOWN_ADDR_PERCONA}/${FILE_NAME}; sleep 1
@@ -499,37 +476,37 @@ checkDownload() {
           echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
-
       11)
         # AliSQL 5.6
         DOWN_ADDR_ALISQL=$mirrorLink
         echo "Download AliSQL 5.6 source package..."
         FILE_NAME=alisql-${alisql_ver}.tar.gz
-        wget -4 --tries=6 -c --no-check-certificate ${DOWN_ADDR_ALISQL}/${FILE_NAME}
-        wget -4 --tries=6 -c --no-check-certificate ${DOWN_ADDR_ALISQL}/${FILE_NAME}.md5
+        src_url=${DOWN_ADDR_ALISQL}/${FILE_NAME} && Download_src
+        src_url=${DOWN_ADDR_ALISQL}/${FILE_NAME}.md5 && Download_src
         ALISQL_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${ALISQL_TAR_MD5}" ];do
           wget -4c --no-check-certificate ${DOWN_ADDR_ALISQL}/${FILE_NAME};sleep 1
           [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${ALISQL_TAR_MD5}" ] && break || continue
         done
         ;;
-
-      12) 
-        # PostgreSQL 
+      12)
+        # PostgreSQL
         echo "Download PostgreSQL source package..."
         FILE_NAME=postgresql-${pgsql_ver}.tar.gz
         if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
           DOWN_ADDR_PGSQL=https://mirrors.tuna.tsinghua.edu.cn/postgresql/source/v${pgsql_ver}
-          PGSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_PGSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
-          [ -z "${PGSQL_TAR_MD5}" ] && { DOWN_ADDR_PGSQL=https://mirrors.ustc.edu.cn/postgresql/source/v${pgsql_ver}; PGSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_PGSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}'); }
+          DOWN_ADDR_PGSQL_BK=https://mirrors.ustc.edu.cn/postgresql/source/v${pgsql_ver}
         else
           DOWN_ADDR_PGSQL=https://ftp.postgresql.org/pub/source/v${pgsql_ver}
-          PGSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_PGSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
+          DOWN_ADDR_PGSQL_BK=https://ftp.heanet.ie/mirrors/postgresql/source/v${pgsql_ver}
         fi
-
+        src_url=${DOWN_ADDR_PGSQL}/${FILE_NAME} && Download_src
+        src_url=${DOWN_ADDR_PGSQL}/${FILE_NAME}.md5 && Download_src
+        PGSQL_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
+        [ -z "${PGSQL_TAR_MD5}" ] && PGSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_PGSQL_BK}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${PGSQL_TAR_MD5}" ]; do
-          wget -c --no-check-certificate ${DOWN_ADDR_PGSQL}/${FILE_NAME};sleep 1
+          wget -c --no-check-certificate ${DOWN_ADDR_PGSQL_BK}/${FILE_NAME};sleep 1
           let "tryDlCount++"
           [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${PGSQL_TAR_MD5}" -o "${tryDlCount}" == '6' ] && break || continue
         done
@@ -540,7 +517,7 @@ checkDownload() {
           echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
-      13) 
+      13)
         # MongoDB
         echo "Download MongoDB binary package..."
         FILE_NAME=mongodb-linux-${SYS_BIT_b}-${mongodb_ver}.tgz
@@ -549,8 +526,10 @@ checkDownload() {
         else
           DOWN_ADDR_MongoDB=https://fastdl.mongodb.org/linux
         fi
-        MongoDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MongoDB}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
-
+        src_url=${DOWN_ADDR_MongoDB}/${FILE_NAME} && Download_src
+        src_url=${DOWN_ADDR_MongoDB}/${FILE_NAME}.md5 && Download_src
+        MongoDB_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
+        [ -z "${MongoDB_TAR_MD5}" ] && MongoDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MongoDB}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${MongoDB_TAR_MD5}" ]; do
           wget -c --no-check-certificate ${DOWN_ADDR_MongoDB}/${FILE_NAME};sleep 1

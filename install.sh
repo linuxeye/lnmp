@@ -32,12 +32,14 @@ pushd ${oneinstack_dir} > /dev/null
 ssh_port=22
 phpcache_option=1
 dbrootpwd=`< /dev/urandom tr -dc A-Za-z0-9 | head -c8`
+dbpostgrespwd=`< /dev/urandom tr -dc A-Za-z0-9 | head -c8`
+dbmongopwd=`< /dev/urandom tr -dc A-Za-z0-9 | head -c8`
 xcachepwd=`< /dev/urandom tr -dc A-Za-z0-9 | head -c8`
 dbinstallmethod=1
 
 version() {
   echo "version: 1.7"
-  echo "updated date: 2018-03-22"
+  echo "updated date: 2018-03-25"
 }
 
 showhelp() {
@@ -58,7 +60,7 @@ showhelp() {
   --pureftpd                  Install Pure-Ftpd
   --redis                     Install Redis
   --memcached                 Install Memcached
-  --phpmyadmin                Install phpMyAdmin 
+  --phpmyadmin                Install phpMyAdmin
   --hhvm                      Install HHVM
   --ssh_port [22]             SSH port, default: 22
   --iptables                  Enable iptables
@@ -121,50 +123,43 @@ while :; do
       ;;
     --db_option)
       db_option=$2; shift 2
-      [[ ! "${db_option}" =~ ^[1-9]$|^1[0-3]$ ]] && { echo "${CWARNING}db_option input error! Please only input number 1~13${CEND}"; exit 1; }
       db_yn=y
-      if [ "${db_option}" == '12' ]; then
+      if [[ "${db_option}" =~ ^[1-9]$|^1[0-1]$ ]]; then
+        [ -d "${db_install_dir}/support-files" ] && { echo "${CWARNING}MySQL already installed! ${CEND}"; db_yn=Other; }
+      elif [ "${db_option}" == '12' ]; then
         [ -e "${pgsql_install_dir}/bin/psql" ] && { echo "${CWARNING}PostgreSQL already installed! ${CEND}"; db_yn=Other; }
       elif [ "${db_option}" == '13' ]; then
         [ -e "${mongo_install_dir}/bin/mongo" ] && { echo "${CWARNING}MongoDB already installed! ${CEND}"; db_yn=Other; }
       else
-        [ -d "${db_install_dir}/support-files" ] && { echo "${CWARNING}MySQL already installed! ${CEND}"; db_yn=Other; }
+        echo "${CWARNING}db_option input error! Please only input number 1~13${CEND}"
+        exit 1
       fi
       ;;
     --dbrootpwd)
       dbrootpwd=$2; shift 2
-      if [ "${db_yn}" == 'y' ]; then
-        if [ "${db_option}" == '12' ]; then
-          sed -i "s+^dbpostgrespwd.*+dbpostgrespwd='$dbrootpwd'+" ./options.conf
-          dbpostgrespwd="$dbrootpwd"
-        elif [ "${db_option}" == '13' ]; then
-          sed -i "s+^dbmongopwd.*+dbmongopwd='$dbrootpwd'+" ./options.conf
-          dbmongopwd="$dbrootpwd"
-        else
-          sed -i "s+^dbrootpwd.*+dbrootpwd='$dbrootpwd'+" ./options.conf
-        fi
-      fi
+      dbpostgrespwd="${dbrootpwd}"
+      dbmongopwd="${dbrootpwd}"
       ;;
     --dbinstallmethod)
       dbinstallmethod=$2; shift 2
       [[ ! ${dbinstallmethod} =~ ^[1-2]$ ]] && { echo "${CWARNING}dbinstallmethod input error! Please only input number 1~2${CEND}"; exit 1; }
       ;;
     --pureftpd)
-      ftp_yn=y; shift 1 
+      ftp_yn=y; shift 1
       [ -e "${pureftpd_install_dir}/sbin/pure-ftpwho" ] && { echo "${CWARNING}Pure-FTPd already installed! ${CEND}"; ftp_yn=Other; }
       ;;
     --redis)
-      redis_yn=y; shift 1 
+      redis_yn=y; shift 1
       ;;
     --memcached)
-      memcached_yn=y; shift 1 
+      memcached_yn=y; shift 1
       ;;
     --phpmyadmin)
-      phpmyadmin_yn=y; shift 1 
+      phpmyadmin_yn=y; shift 1
       [ -d "${wwwroot_dir}/default/phpMyAdmin" ] && { echo "${CWARNING}phpMyAdmin already installed! ${CEND}"; phpmyadmin_yn=Other; }
       ;;
     --hhvm)
-      hhvm_yn=y; shift 1 
+      hhvm_yn=y; shift 1
       [ -e "/usr/bin/hhvm" ] && { echo "${CWARNING}HHVM already installed! ${CEND}"; hhvm_yn=Other; }
       ;;
     --ssh_port)
@@ -172,10 +167,10 @@ while :; do
       [ ${ssh_port} -ne 22 >/dev/null 2>&1 -o ${ssh_port} -lt 1024 >/dev/null 2>&1 -a ${ssh_port} -gt 65535 >/dev/null 2>&1 ] && { echo "${CWARNING}ssh_port input error! Input range: 22,1025~65534${CEND}"; exit 1; }
       ;;
     --iptables)
-      iptables_yn=y; shift 1 
+      iptables_yn=y; shift 1
       ;;
     --reboot)
-      reboot_yn=y; shift 1 
+      reboot_yn=y; shift 1
       ;;
     --)
       shift
@@ -190,7 +185,7 @@ mkdir -p ${wwwroot_dir}/default ${wwwlogs_dir}
 [ -d /data ] && chmod 755 /data
 # Use default SSH port 22. If you use another SSH port on your server
 if [ -e "/etc/ssh/sshd_config" ]; then
-  if [ ${ARG_NUM} == 0 ]; then 
+  if [ ${ARG_NUM} == 0 ]; then
     [ -z "`grep ^Port /etc/ssh/sshd_config`" ] && now_ssh_port=22 || now_ssh_port=`grep ^Port /etc/ssh/sshd_config | awk '{print $2}'`
     while :; do echo
       read -p "Please input SSH port(Default: ${now_ssh_port}): " ssh_port
@@ -210,7 +205,7 @@ if [ -e "/etc/ssh/sshd_config" ]; then
   fi
 fi
 
-if [ ${ARG_NUM} == 0 ]; then 
+if [ ${ARG_NUM} == 0 ]; then
   # check iptables
   while :; do echo
     read -p "Do you want to enable iptables? [y/n]: " iptables_yn
@@ -220,7 +215,7 @@ if [ ${ARG_NUM} == 0 ]; then
       break
     fi
   done
-  
+
   # check Web server
   while :; do echo
     read -p "Do you want to install Web server? [y/n]: " web_yn
@@ -322,7 +317,7 @@ if [ ${ARG_NUM} == 0 ]; then
       break
     fi
   done
-  
+
   # choice database
   while :; do echo
     read -p "Do you want to install Database? [y/n]: " db_yn
@@ -358,27 +353,28 @@ if [ ${ARG_NUM} == 0 ]; then
             fi
             while :; do
               if [ "${db_option}" == '12' ]; then
-                read -p "Please input the postgres password of database(default: ${dbrootpwd}): " dbrootpwd
+                read -p "Please input the postgres password of PostgreSQL(default: ${dbpostgrespwd}): " dbpwd
+                [ -z "${dbpwd}" ] && dbpwd=${dbpostgrespwd}
+              elif [ "${db_option}" == '13' ]; then
+                read -p "Please input the root password of MongoDB(default: ${dbmongopwd}): " dbpwd
+                [ -z "${dbpwd}" ] && dbpwd=${dbmongopwd}
               else
-                read -p "Please input the root password of database(default: ${dbrootpwd}): " dbrootpwd
+                read -p "Please input the root password of MySQL(default: ${dbrootpwd}): " dbpwd
+                [ -z "${dbpwd}" ] && dbpwd=${dbrootpwd}
               fi
-              [ -z "${dbrootpwd}" ] && dbrootpwd=${dbrootpwd}
-              [ -n "`echo $dbrootpwd | grep '[+|&]'`" ] && { echo "${CWARNING}input error,not contain a plus sign (+) and & ${CEND}"; continue; }
-              if (( ${#dbrootpwd} >= 5 )); then
+              [ -n "`echo ${dbpwd} | grep '[+|&]'`" ] && { echo "${CWARNING}input error,not contain a plus sign (+) and & ${CEND}"; continue; }
+              if (( ${#dbpwd} >= 5 )); then
                 if [ "${db_option}" == '12' ]; then
-                  sed -i "s+^dbpostgrespwd.*+dbpostgrespwd='$dbrootpwd'+" ./options.conf
-                  dbpostgrespwd="$dbrootpwd"
+                  dbpostgrespwd=${dbpwd}
                 elif [ "${db_option}" == '13' ]; then
-                  sed -i "s+^dbmongopwd.*+dbmongopwd='$dbrootpwd'+" ./options.conf
-                  dbmongopwd="$dbrootpwd"
+                  dbmongopwd=${dbpwd}
                 else
-                  sed -i "s+^dbrootpwd.*+dbrootpwd='$dbrootpwd'+" ./options.conf
+                  dbrootpwd=${dbpwd}
                 fi
                 break
               else
                 echo "${CWARNING}password least 5 characters! ${CEND}"
               fi
-  
             done
             # choose install methods
             if [[ "${db_option}" =~ ^[1-9]$|^10$ ]]; then
@@ -404,7 +400,7 @@ if [ ${ARG_NUM} == 0 ]; then
       break
     fi
   done
-  
+
   # check PHP
   while :; do echo
     read -p "Do you want to install PHP? [y/n]: " php_yn
@@ -495,7 +491,7 @@ if [ ${ARG_NUM} == 0 ]; then
                       fi
                     done
                   fi
-                  if [[ ${php_option} =~ ^[5-6]$ ]]; then 
+                  if [[ ${php_option} =~ ^[5-6]$ ]]; then
                     while :; do
                       echo 'Please select a opcode cache of the PHP:'
                       echo -e "\t${CMSG}1${CEND}. Install Zend OPcache"
@@ -516,9 +512,8 @@ if [ ${ARG_NUM} == 0 ]; then
             done
             if [ "${phpcache_option}" == '2' ]; then
               while :; do
-                read -p "Please input xcache admin password(default: ${xcachepwd}): " xcachepwd
-                [ -z "${xcachepwd}" ] && xcachepwd=${xcachepwd}
-                (( ${#xcachepwd} >= 5 )) && { xcachepwd_md5=`echo -n "${xcachepwd}" | md5sum | awk '{print $1}'` ; break ; } || echo "${CFAILURE}xcache admin password least 5 characters! ${CEND}"
+                read -p "Please input xcache admin password: " xcachepwd
+                (( ${#xcachepwd} >= 5 )) && { xcachepwd_md5=$(echo -n "${xcachepwd}" | md5sum | awk '{print $1}') ; break ; } || echo "${CFAILURE}xcache admin password least 5 characters! ${CEND}"
               done
             fi
             if [[ ${php_option} =~ ^[1-4]$ ]] && [ "${phpcache_option}" != '1' -a "${armplatform}" != "y" ]; then
@@ -531,7 +526,7 @@ if [ ${ARG_NUM} == 0 ]; then
                 fi
               done
             fi
-  
+
             # ionCube
             if [ "${TARGET_ARCH}" != "arm64" ]; then
               while :; do echo
@@ -543,7 +538,7 @@ if [ ${ARG_NUM} == 0 ]; then
                 fi
               done
             fi
-  
+
             # ImageMagick or GraphicsMagick
             while :; do echo
               read -p "Do you want to install ImageMagick or GraphicsMagick? [y/n]: " magick_yn
@@ -553,7 +548,7 @@ if [ ${ARG_NUM} == 0 ]; then
                 break
               fi
             done
-  
+
             if [ "${magick_yn}" == 'y' ]; then
               while :; do
                 echo 'Please select ImageMagick or GraphicsMagick:'
@@ -575,7 +570,7 @@ if [ ${ARG_NUM} == 0 ]; then
       break
     fi
   done
-  
+
   # check Pureftpd
   while :; do echo
     read -p "Do you want to install Pure-FTPd? [y/n]: " ftp_yn
@@ -586,7 +581,7 @@ if [ ${ARG_NUM} == 0 ]; then
       break
     fi
   done
-  
+
   # check phpMyAdmin
   if [[ ${php_option} =~ ^[1-7]$ ]] || [ -e "${php_install_dir}/bin/phpize" ]; then
     while :; do echo
@@ -599,7 +594,7 @@ if [ ${ARG_NUM} == 0 ]; then
       fi
     done
   fi
-  
+
   # check redis
   while :; do echo
     read -p "Do you want to install redis? [y/n]: " redis_yn
@@ -609,7 +604,7 @@ if [ ${ARG_NUM} == 0 ]; then
       break
     fi
   done
-  
+
   # check memcached
   while :; do echo
     read -p "Do you want to install memcached? [y/n]: " memcached_yn
@@ -619,7 +614,7 @@ if [ ${ARG_NUM} == 0 ]; then
       break
     fi
   done
-  
+
   while :; do echo
     read -p "Do you want to install HHVM? [y/n]: " hhvm_yn
     if [[ ! ${hhvm_yn} =~ ^[y,n]$ ]]; then
@@ -696,7 +691,7 @@ if [[ ${nginx_option} =~ ^[1-3]$ ]] || [ "${db_yn}" == 'y' ]; then
   Install_Jemalloc | tee -a ${oneinstack_dir}/install.log
 fi
 
-# openSSL 
+# openSSL
 . ./include/openssl.sh
 if [[ ${tomcat_option} =~ ^[1-3]$ ]] || [[ ${apache_option} =~ ^[1-2]$ ]] || [[ ${php_option} =~ ^[1-7]$ ]]; then
   Install_openSSL102 | tee -a ${oneinstack_dir}/install.log
@@ -987,7 +982,7 @@ echo "Total OneinStack Install Time: ${CQUESTION}${installTime}${CEND} minutes"
 [ "${db_option}" == '13' ] && echo "$(printf "%-32s" "MongoDB user:")${CMSG}root${CEND}"
 [ "${db_option}" == '13' ] && echo "$(printf "%-32s" "MongoDB password:")${CMSG}${dbmongopwd}${CEND}"
 [ "${php_yn}" == 'y' ] && echo -e "\n$(printf "%-32s" "PHP install dir:")${CMSG}${php_install_dir}${CEND}"
-[ "${phpcache_option}" == '1' ] && echo "$(printf "%-32s" "Opcache Control Panel URL:")${CMSG}http://${IPADDR}/ocp.php${CEND}"
+[ "${php_yn}" == 'y' -a "${phpcache_option}" == '1' ] && echo "$(printf "%-32s" "Opcache Control Panel URL:")${CMSG}http://${IPADDR}/ocp.php${CEND}"
 [ "${phpcache_option}" == '2' ] && echo "$(printf "%-32s" "xcache Control Panel URL:")${CMSG}http://${IPADDR}/xcache${CEND}"
 [ "${phpcache_option}" == '2' ] && echo "$(printf "%-32s" "xcache user:")${CMSG}admin${CEND}"
 [ "${phpcache_option}" == '2' ] && echo "$(printf "%-32s" "xcache password:")${CMSG}${xcachepwd}${CEND}"
@@ -1002,7 +997,7 @@ echo "Total OneinStack Install Time: ${CQUESTION}${installTime}${CEND} minutes"
 [ "${redis_yn}" == 'y' ] && echo -e "\n$(printf "%-32s" "redis install dir:")${CMSG}${redis_install_dir}${CEND}"
 [ "${memcached_yn}" == 'y' ] && echo -e "\n$(printf "%-32s" "memcached install dir:")${CMSG}${memcached_install_dir}${CEND}"
 [ "${web_yn}" == 'y' ] && echo -e "\n$(printf "%-32s" "Index URL:")${CMSG}http://${IPADDR}/${CEND}"
-if [ ${ARG_NUM} == 0 ]; then 
+if [ ${ARG_NUM} == 0 ]; then
   while :; do echo
     echo "${CMSG}Please restart the server and see if the services start up fine.${CEND}"
     read -p "Do you want to restart OS ? [y/n]: " restart_yn

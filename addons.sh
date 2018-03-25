@@ -62,7 +62,7 @@ fi
 
 # Check PHP Extensions
 Check_PHP_Extension() {
-  [ ! -e "${php_install_dir}/bin/phpize" ] && { echo "${CWARNING}PHP was not exist! ${CEND}"; exit 1; } 
+  [ ! -e "${php_install_dir}/bin/phpize" ] && { echo "${CWARNING}PHP was not exist! ${CEND}"; exit 1; }
   [ -e "`ls ${php_install_dir}/etc/php.d/0?-${PHP_extension}.ini 2> /dev/null`" ] && { echo "${CWARNING}PHP ${PHP_extension} module already installed! ${CEND}"; exit 1; }
 }
 
@@ -90,7 +90,7 @@ Install_fail2ban() {
   ${python_install_dir}/bin/python setup.py install
   if [ "${OS}" == "CentOS" ]; then
     LOGPATH=/var/log/secure
-    /bin/cp files/redhat-initd /etc/init.d/fail2ban 
+    /bin/cp files/redhat-initd /etc/init.d/fail2ban
     sed -i "s@^FAIL2BAN=.*@FAIL2BAN=${python_install_dir}/bin/fail2ban-client@" /etc/init.d/fail2ban
     sed -i 's@Starting fail2ban.*@&\n    [ ! -e "/var/run/fail2ban" ] \&\& mkdir /var/run/fail2ban@' /etc/init.d/fail2ban
     chmod +x /etc/init.d/fail2ban
@@ -99,7 +99,7 @@ Install_fail2ban() {
   fi
   if [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]]; then
     LOGPATH=/var/log/auth.log
-    /bin/cp files/debian-initd /etc/init.d/fail2ban 
+    /bin/cp files/debian-initd /etc/init.d/fail2ban
     sed -i 's@2 3 4 5@3 4 5@' /etc/init.d/fail2ban
     sed -i "s@^DAEMON=.*@DAEMON=${python_install_dir}/bin/\$NAME-client@" /etc/init.d/fail2ban
     chmod +x /etc/init.d/fail2ban
@@ -116,9 +116,9 @@ maxretry = 5
 enabled = true
 filter  = sshd
 action  = iptables[name=SSH, port=$now_ssh_port, protocol=tcp]
-logpath = $LOGPATH 
+logpath = $LOGPATH
 EOF
-  cat > /etc/logrotate.d/fail2ban << EOF 
+  cat > /etc/logrotate.d/fail2ban << EOF
 /var/log/fail2ban.log {
     missingok
     notifempty
@@ -142,7 +142,7 @@ EOF
 Uninstall_fail2ban() {
   /etc/init.d/fail2ban stop
   ${python_install_dir}/bin/pip uninstall -y fail2ban > /dev/null 2>&1
-  rm -rf /etc/init.d/fail2ban /etc/fail2ban /etc/logrotate.d/fail2ban /var/log/fail2ban.* /var/run/fail2ban 
+  rm -rf /etc/init.d/fail2ban /etc/fail2ban /etc/logrotate.d/fail2ban /var/log/fail2ban.* /var/run/fail2ban
   echo; echo "${CMSG}fail2ban uninstall completed${CEND}";
 }
 
@@ -171,9 +171,9 @@ What Are You Doing?
 \t${CMSG} 4${CEND}. Install/Uninstall fileinfo PHP Extension
 \t${CMSG} 5${CEND}. Install/Uninstall memcached/memcache
 \t${CMSG} 6${CEND}. Install/Uninstall Redis
-\t${CMSG} 7${CEND}. Install/Uninstall swoole PHP Extension 
-\t${CMSG} 8${CEND}. Install/Uninstall xdebug PHP Extension 
-\t${CMSG} 9${CEND}. Install/Uninstall PHP Composer 
+\t${CMSG} 7${CEND}. Install/Uninstall swoole PHP Extension
+\t${CMSG} 8${CEND}. Install/Uninstall xdebug PHP Extension
+\t${CMSG} 9${CEND}. Install/Uninstall PHP Composer
 \t${CMSG}10${CEND}. Install/Uninstall fail2ban
 \t${CMSG} q${CEND}. Exit
 "
@@ -435,7 +435,7 @@ What Are You Doing?
           ./configure --with-php-config=${php_install_dir}/bin/php-config
           make -j ${THREAD} && make install
           popd
-          rm -rf swoole-${swoole_ver} 
+          rm -rf swoole-${swoole_ver}
           popd
           echo 'extension=swoole.so' > ${php_install_dir}/etc/php.d/06-swoole.ini
           Check_succ
@@ -452,17 +452,17 @@ What Are You Doing?
           if [[ "${PHP_main_ver}" =~ ^7\.[0-2]$ ]]; then
             src_url=https://pecl.php.net/get/xdebug-${xdebug_ver}.tgz && Download_src
             src_url=http://mirrors.linuxeye.com/oneinstack/src/webgrind-master.zip && Download_src
-            tar xzf xdebug-${xdebug_ver}.tgz 
+            tar xzf xdebug-${xdebug_ver}.tgz
             unzip -q webgrind-master.zip
-            /bin/mv webgrind-master ${wwwroot_dir}/default/webgrind 
-            pushd xdebug-${xdebug_ver} 
+            /bin/mv webgrind-master ${wwwroot_dir}/default/webgrind
+            pushd xdebug-${xdebug_ver}
           elif [[ "${PHP_main_ver}" =~ ^5\.[5-6]$ ]]; then
             src_url=https://pecl.php.net/get/xdebug-2.5.5.tgz && Download_src
             src_url=http://mirrors.linuxeye.com/oneinstack/src/webgrind-master.zip && Download_src
-            tar xzf xdebug-2.5.5.tgz 
+            tar xzf xdebug-2.5.5.tgz
             unzip -q webgrind-master.zip
-            /bin/mv webgrind-master ${wwwroot_dir}/default/webgrind 
-            pushd xdebug-2.5.5 
+            /bin/mv webgrind-master ${wwwroot_dir}/default/webgrind
+            pushd xdebug-2.5.5
           else
             echo "${CWARNING}Need a PHP version >= 5.5.0 and <= 7.2.0${CEND}"
             exit 1
@@ -471,7 +471,7 @@ What Are You Doing?
           ./configure --with-php-config=${php_install_dir}/bin/php-config
           make -j ${THREAD} && make install
           popd
-          rm -rf xdebug-${xdebug_ver} 
+          rm -rf xdebug-${xdebug_ver}
           popd
           [ ! -e /tmp/xdebug ] && { mkdir /tmp/xdebug; chown ${run_user}.${run_user} /tmp/xdebug; }
           [ ! -e /tmp/webgrind ] && { mkdir /tmp/webgrind; chown ${run_user}.${run_user} /tmp/webgrind; }

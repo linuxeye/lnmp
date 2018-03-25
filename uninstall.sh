@@ -67,11 +67,11 @@ Print_web() {
   [ -d "${openresty_install_dir}" ] && echo "${openresty_install_dir}"
   [ -e "/etc/init.d/nginx" ] && echo '/etc/init.d/nginx'
   [ -e "/etc/logrotate.d/nginx" ] && echo '/etc/logrotate.d/nginx'
-  
+
   [ -d "${apache_install_dir}" ] && echo "${apache_install_dir}"
   [ -e "/etc/init.d/httpd" ] && echo "/etc/init.d/httpd"
   [ -e "/etc/logrotate.d/apache" ] && echo "/etc/logrotate.d/apache"
-  
+
   [ -d "${tomcat_install_dir}" ] && echo "${tomcat_install_dir}"
   [ -e "/etc/init.d/tomcat" ] && echo "/etc/init.d/tomcat"
   [ -e "/etc/logrotate.d/tomcat" ] && echo "/etc/logrotate.d/tomcat"
@@ -111,7 +111,7 @@ Print_MongoDB() {
 }
 
 Uninstall_MySQL() {
-  # uninstall mysql,mariadb,percona,alisql 
+  # uninstall mysql,mariadb,percona,alisql
   if [ -d "${db_install_dir}/support-files" ]; then
     service mysqld stop > /dev/null 2>&1
     rm -rf ${db_install_dir} /etc/init.d/mysqld /etc/my.cnf /etc/ld.so.conf.d/{mysql,mariadb,percona,alisql}*.conf
@@ -130,8 +130,8 @@ Uninstall_PostgreSQL() {
   if [ -e "${pgsql_install_dir}/bin/psql" ]; then
     service postgresql stop > /dev/null 2>&1
     rm -rf ${pgsql_install_dir} /etc/init.d/postgresql
-    [ -e "${php_install_dir}/etc/php.d/07-pgsql.ini" ] && rm -rf ${php_install_dir}/etc/php.d/07-pgsql.ini 
-    id -u postgres >/dev/null 2>&1 ; [ $? -eq 0 ] && userdel postgres 
+    [ -e "${php_install_dir}/etc/php.d/07-pgsql.ini" ] && rm -rf ${php_install_dir}/etc/php.d/07-pgsql.ini
+    id -u postgres >/dev/null 2>&1 ; [ $? -eq 0 ] && userdel postgres
     [ -e "${pgsql_data_dir}" ] && /bin/mv ${pgsql_data_dir}{,$(date +%Y%m%d%H)}
     sed -i 's@^dbpostgrespwd=.*@dbpostgrespwd=@' ./options.conf
     sed -i "s@${pgsql_install_dir}/bin:@@" /etc/profile
@@ -142,13 +142,13 @@ Uninstall_PostgreSQL() {
 }
 
 Uninstall_MongoDB() {
-  # uninstall mongodb 
+  # uninstall mongodb
   if [ -e "${mongo_install_dir}/bin/mongo" ]; then
     service mongod stop > /dev/null 2>&1
     rm -rf ${mongo_install_dir} /etc/mongod.conf /etc/init.d/mongod /tmp/mongo*.sock
-    [ -e "${php_install_dir}/etc/php.d/07-mongo.ini" ] && rm -rf ${php_install_dir}/etc/php.d/07-mongo.ini 
-    [ -e "${php_install_dir}/etc/php.d/07-mongodb.ini" ] && rm -rf ${php_install_dir}/etc/php.d/07-mongodb.ini 
-    id -u mongod > /dev/null 2>&1 ; [ $? -eq 0 ] && userdel mongod 
+    [ -e "${php_install_dir}/etc/php.d/07-mongo.ini" ] && rm -rf ${php_install_dir}/etc/php.d/07-mongo.ini
+    [ -e "${php_install_dir}/etc/php.d/07-mongodb.ini" ] && rm -rf ${php_install_dir}/etc/php.d/07-mongodb.ini
+    id -u mongod > /dev/null 2>&1 ; [ $? -eq 0 ] && userdel mongod
     [ -e "${mongo_data_dir}" ] && /bin/mv ${mongo_data_dir}{,$(date +%Y%m%d%H)}
     sed -i 's@^dbmongopwd=.*@dbmongopwd=@' ./options.conf
     sed -i "s@${mongo_install_dir}/bin:@@" /etc/profile
@@ -205,7 +205,7 @@ Print_Redis() {
 
 Uninstall_Redis() {
   [ -e "$redis_install_dir" ] && { service redis-server stop > /dev/null 2>&1; rm -rf $redis_install_dir /etc/init.d/redis-server /usr/local/bin/redis-*; }
-  [ -e "${php_install_dir}/etc/php.d/05-redis.ini" ] && rm -rf ${php_install_dir}/etc/php.d/05-redis.ini 
+  [ -e "${php_install_dir}/etc/php.d/05-redis.ini" ] && rm -rf ${php_install_dir}/etc/php.d/05-redis.ini
   echo "${CMSG}Redis uninstall completed! ${CEND}"
 }
 
@@ -217,8 +217,8 @@ Print_Memcached() {
 
 Uninstall_Memcached() {
   [ -e "${memcached_install_dir}" ] && { service memcached stop > /dev/null 2>&1; rm -rf ${memcached_install_dir} /etc/init.d/memcached /usr/bin/memcached; }
-  [ -e "${php_install_dir}/etc/php.d/05-memcache.ini" ] && rm -rf ${php_install_dir}/etc/php.d/05-memcache.ini 
-  [ -e "${php_install_dir}/etc/php.d/05-memcached.ini" ] && rm -rf ${php_install_dir}/etc/php.d/05-memcached.ini 
+  [ -e "${php_install_dir}/etc/php.d/05-memcache.ini" ] && rm -rf ${php_install_dir}/etc/php.d/05-memcache.ini
+  [ -e "${php_install_dir}/etc/php.d/05-memcached.ini" ] && rm -rf ${php_install_dir}/etc/php.d/05-memcached.ini
   echo "${CMSG}Memcached uninstall completed! ${CEND}"
 }
 
@@ -239,8 +239,8 @@ What Are You Doing?
 \t${CMSG}0${CEND}. Uninstall All
 \t${CMSG}1${CEND}. Uninstall Nginx/Tengine/Apache/Tomcat
 \t${CMSG}2${CEND}. Uninstall MySQL/MariaDB/Percona/AliSQL
-\t${CMSG}3${CEND}. Uninstall PostgreSQL 
-\t${CMSG}4${CEND}. Uninstall MongoDB 
+\t${CMSG}3${CEND}. Uninstall PostgreSQL
+\t${CMSG}4${CEND}. Uninstall MongoDB
 \t${CMSG}5${CEND}. Uninstall PHP
 \t${CMSG}6${CEND}. Uninstall HHVM
 \t${CMSG}7${CEND}. Uninstall PureFtpd
@@ -272,7 +272,7 @@ What Are You Doing?
         Uninstall_Web
         Uninstall_MySQL
         Uninstall_PostgreSQL
-        Uninstall_MongoDB 
+        Uninstall_MongoDB
         Uninstall_PHP
         Uninstall_HHVM
         Uninstall_PureFtpd

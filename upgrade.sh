@@ -13,7 +13,7 @@ clear
 printf "
 #######################################################################
 #       OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+      #
-#              Upgrade Software versions for OneinStack               # 
+#              Upgrade Software versions for OneinStack               #
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
@@ -48,9 +48,9 @@ ${CMSG}web${CEND}            --->Upgrade Nginx/Tengine/OpenResty/Apache
 ${CMSG}db${CEND}             --->Upgrade MySQL/MariaDB/Percona
 ${CMSG}php${CEND}            --->Upgrade PHP
 ${CMSG}redis${CEND}          --->Upgrade Redis
-${CMSG}memcached${CEND}      --->Upgrade Memcached 
+${CMSG}memcached${CEND}      --->Upgrade Memcached
 ${CMSG}phpmyadmin${CEND}     --->Upgrade phpMyAdmin
-${CMSG}oneinstack${CEND}     --->Upgrade OneinStack 
+${CMSG}oneinstack${CEND}     --->Upgrade OneinStack
 ${CMSG}acme.sh${CEND}        --->Upgrade acme.sh
 
 "
@@ -64,10 +64,10 @@ What Are You Doing?
 \t${CMSG}2${CEND}. Upgrade MySQL/MariaDB/Percona
 \t${CMSG}3${CEND}. Upgrade PHP
 \t${CMSG}4${CEND}. Upgrade Redis
-\t${CMSG}5${CEND}. Upgrade Memcached 
+\t${CMSG}5${CEND}. Upgrade Memcached
 \t${CMSG}6${CEND}. Upgrade phpMyAdmin
 \t${CMSG}7${CEND}. Upgrade OneinStack
-\t${CMSG}8${CEND}. Upgrade acme.sh 
+\t${CMSG}8${CEND}. Upgrade acme.sh
 \t${CMSG}q${CEND}. Exit
 "
     echo
@@ -84,7 +84,7 @@ What Are You Doing?
           elif [ -e "$openresty_install_dir/nginx/sbin/nginx" ]; then
             Upgrade_OpenResty
           elif [ -e "${apache_install_dir}/conf/httpd.conf" ]; then
-            Upgrade_Apache 
+            Upgrade_Apache
           fi
           ;;
         2)
@@ -103,7 +103,7 @@ What Are You Doing?
           Upgrade_phpMyAdmin
           ;;
         7)
-          Upgrade_OneinStack 
+          Upgrade_OneinStack
           ;;
         8)
           [ -e ~/.acme.sh/acme.sh ] && { ~/.acme.sh/acme.sh --upgrade; ~/.acme.sh/acme.sh --version; }
@@ -128,7 +128,7 @@ elif [ $# == 1 ]; then
       elif [ -e "$openresty_install_dir/nginx/sbin/nginx" ]; then
         Upgrade_OpenResty
       elif [ -e "${apache_install_dir}/conf/httpd.conf" ]; then
-        Upgrade_Apache 
+        Upgrade_Apache
       fi
       ;;
     db)
@@ -147,7 +147,7 @@ elif [ $# == 1 ]; then
       Upgrade_phpMyAdmin
       ;;
     oneinstack)
-      Upgrade_OneinStack 
+      Upgrade_OneinStack
       ;;
     acme.sh)
       [ -e ~/.acme.sh/acme.sh ] && { ~/.acme.sh/acme.sh --upgrade; ~/.acme.sh/acme.sh --version; }

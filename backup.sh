@@ -134,7 +134,7 @@ WEB_UPYUN_BK() {
     fi
     /usr/local/bin/upx put $PUSH_FILE /`date +%F`/Web_${W}_$(date +%Y%m%d_%H).tgz
     if [ $? -eq 0 ]; then
-      /usr/local/bin/upx rm -a `date +%F --date="${expired_days} days ago"` > /dev/null 2>&1 
+      /usr/local/bin/upx rm -a `date +%F --date="${expired_days} days ago"` > /dev/null 2>&1
       [ -e "$PUSH_FILE" -a -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -rf $PUSH_FILE
     fi
   done
@@ -145,23 +145,23 @@ do
   if [ "${DEST}" == 'local' ]; then
     [ -n "`echo ${backup_content} | grep -ow db`" ] && DB_Local_BK
     [ -n "`echo ${backup_content} | grep -ow web`" ] && WEB_Local_BK
-  fi 
+  fi
   if [ "${DEST}" == 'remote' ]; then
     echo "com:::[ ! -e "${backup_dir}" ] && mkdir -p ${backup_dir}" > config_bakcup.txt
     [ -n "`echo ${backup_content} | grep -ow db`" ] && DB_Remote_BK
     [ -n "`echo ${backup_content} | grep -ow web`" ] && WEB_Remote_BK
     ./mabs.sh -c config_bakcup.txt -T -1 | tee mabs.log
-  fi 
+  fi
   if [ "${DEST}" == 'oss' ]; then
-    [ -n "`echo ${backup_content} | grep -ow db`" ] && DB_OSS_BK 
+    [ -n "`echo ${backup_content} | grep -ow db`" ] && DB_OSS_BK
     [ -n "`echo ${backup_content} | grep -ow web`" ] && WEB_OSS_BK
-  fi 
+  fi
   if [ "${DEST}" == 'cos' ]; then
     [ -n "`echo ${backup_content} | grep -ow db`" ] && DB_COS_BK
     [ -n "`echo ${backup_content} | grep -ow web`" ] && WEB_COS_BK
-  fi 
+  fi
   if [ "${DEST}" == 'upyun' ]; then
     [ -n "`echo ${backup_content} | grep -ow db`" ] && DB_UPYUN_BK
     [ -n "`echo ${backup_content} | grep -ow web`" ] && WEB_UPYUN_BK
-  fi 
+  fi
 done

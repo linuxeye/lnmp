@@ -33,7 +33,7 @@ Upgrade_OneinStack() {
       sed -i "s@^${Key}=.*@${Key}=${Value}@" ./options.conf
     done
     rm -rf /tmp/{oneinstack.tar.gz,options.conf}
-    [ "$install_flag" == 'n' ] && rm -rf install.sh LICENSE README.md
+    [ "${install_flag}" == 'n' ] && rm -rf install.sh LICENSE README.md
     sed -i "s@^oneinstack_md5=.*@oneinstack_md5=${Latest_OneinStack_MD5}@" ./options.conf
     echo
     echo "${CSUCCESS}Congratulations! OneinStack upgrade successful! ${CEND}"

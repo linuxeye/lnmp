@@ -121,7 +121,7 @@ Install_SS-python() {
   ${python_install_dir}/bin/pip install greenlet
   ${python_install_dir}/bin/pip install gevent
   ${python_install_dir}/bin/pip install shadowsocks
-  if [ -f ${python_install_dir}/bin/ssserver ]; then 
+  if [ -f ${python_install_dir}/bin/ssserver ]; then
     /bin/cp ../init.d/SS-python-init /etc/init.d/shadowsocks
     chmod +x /etc/init.d/shadowsocks
     sed -i "s@SS_bin=.*@SS_bin=${python_install_dir}/bin/ssserver@" /etc/init.d/shadowsocks
@@ -140,7 +140,7 @@ Install_SS-libev() {
   src_url=http://mirrors.linuxeye.com/oneinstack/src/mbedtls-2.7.0-apache.tgz && Download_src
   tar xzf shadowsocks-libev-3.1.3.tar.gz
   tar xzf libsodium-1.0.16.tar.gz
-  tar xzf mbedtls-2.7.0-apache.tgz 
+  tar xzf mbedtls-2.7.0-apache.tgz
   pushd libsodium-1.0.16
   ./configure
   make -j ${THREAD} && make install

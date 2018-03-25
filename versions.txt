@@ -9,7 +9,7 @@ tomcat8_ver=8.5.28
 tomcat7_ver=7.0.85
 tomcat6_ver=6.0.53
 
-apache24_ver=2.4.32
+apache24_ver=2.4.33
 apache22_ver=2.2.34
 pcre_ver=8.41
 apr_ver=1.6.3
@@ -51,7 +51,7 @@ php54_ver=5.4.45
 php53_ver=5.3.29
 
 libiconv_ver=1.15
-curl_ver=7.58.0
+curl_ver=7.59.0
 libmcrypt_ver=2.5.8
 mcrypt_ver=2.6.8
 mhash_ver=0.9.9.9

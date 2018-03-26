@@ -349,14 +349,14 @@ What Are You Doing?
     Tomcat_Domain_alias=$(for D in $(echo ${moredomainame}); do echo "<Alias>${D}</Alias>"; done)
 
     if [ "${Domian_Mode}" == '3' ] && [ "${moredomain}" != "*.${domain}" ]; then
-      auth_file=${vhostdir}/"`< /dev/urandom tr -dc A-Za-z0-9 | head -c8`".html
-      auth_str='oneinstack'; echo ${auth_str} > ${auth_file}
+      auth_file="`< /dev/urandom tr -dc A-Za-z0-9 | head -c8`".html
+      auth_str='oneinstack'; echo ${auth_str} > ${vhostdir}/${auth_file}
       for D in ${domain} ${moredomainame}
       do
         curl_str=`curl --connect-timeout 10 -4 -s $D/${auth_file} 2>&1`
         [ "${curl_str}" != "${auth_str}" ] && { echo; echo "${CFAILURE}Let's Encrypt Verify error! DNS problem: NXDOMAIN looking up A for ${D}${CEND}"; echo; rm -f ${auth_file}; exit 1; }
       done
-      rm -f ${auth_file}
+      rm -f ${vhostdir}/${auth_file}
     fi
 
     if [ -e "${web_install_dir}/sbin/nginx" ]; then

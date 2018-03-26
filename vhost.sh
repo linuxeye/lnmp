@@ -168,34 +168,7 @@ If you enter '.', the field will be left blank.
     openssl req -new -newkey rsa:2048 -sha256 -nodes -out ${PATH_SSL}/${domain}.csr -keyout ${PATH_SSL}/${domain}.key -subj "/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${domain}" > /dev/null 2>&1
     openssl x509 -req -days 36500 -sha256 -in ${PATH_SSL}/${domain}.csr -signkey ${PATH_SSL}/${domain}.key -out ${PATH_SSL}/${domain}.crt > /dev/null 2>&1
   elif [ "${Domian_Mode}" == '3' ]; then
-    [ "${moredomainame_flag}" == 'y' ] && moredomainame_D="$(for D in ${moredomainame}; do echo -d ${D}; done)"
-    if [ "${nginx_ssl_flag}" == 'y' ] && [ "${moredomain}" != "*.${domain}" ]; then
-      [ ! -d ${web_install_dir}/conf/vhost ] && mkdir ${web_install_dir}/conf/vhost
-      echo "server {  server_name ${domain}${moredomainame};  root ${vhostdir};  access_log off; }" > ${web_install_dir}/conf/vhost/${domain}.conf
-      ${web_install_dir}/sbin/nginx -s reload
-    fi
-    if [ "${apache_ssl_flag}" == 'y' ] && [ "${moredomain}" != "*.${domain}" ]; then
-      [ ! -d ${apache_install_dir}/conf/vhost ] && mkdir ${apache_install_dir}/conf/vhost
-      cat > ${apache_install_dir}/conf/vhost/${domain}.conf << EOF
-<VirtualHost *:80>
-  ServerAdmin admin@example.com
-  DocumentRoot "${vhostdir}"
-  ServerName ${domain}
-  ${Apache_Domain_alias}
-<Directory "${vhostdir}">
-  SetOutputFilter DEFLATE
-  Options FollowSymLinks ExecCGI
-  Require all granted
-  AllowOverride All
-  Order allow,deny
-  Allow from all
-  DirectoryIndex index.html index.php
-</Directory>
-</VirtualHost>
-EOF
-      /etc/init.d/httpd restart > /dev/null
-    fi
-    if [ "${moredomain}" == "*.${domain}" ]; then
+    if [ "${moredomain}" == "\*.${domain}" ]; then
       while :; do echo
         read -p "Please enter your DNS provider: " DNS_PRO
         echo "${CMSG}dp${CEND},${CMSG}cx${CEND},${CMSG}ali${CEND},${CMSG}cf${CEND},${CMSG}aws${CEND},${CMSG}linode${CEND},${CMSG}he${CEND},${CMSG}namesilo${CEND},${CMSG}dgon${CEND},${CMSG}freedns${CEND},${CMSG}gd${CEND},${CMSG}namecom${CEND} and so on."
@@ -217,8 +190,43 @@ EOF
         fi
       done
       ~/.acme.sh/acme.sh --issue --dns dns_${DNS_PRO} -d ${domain} -d ${moredomain}
-    else
-      ~/.acme.sh/acme.sh --issue -d ${domain} ${moredomainame_D} -w ${vhostdir} > /dev/null
+    else 
+      if [ "${nginx_ssl_flag}" == 'y' ]; then
+        [ ! -d ${web_install_dir}/conf/vhost ] && mkdir ${web_install_dir}/conf/vhost
+        echo "server {  server_name ${domain}${moredomainame};  root ${vhostdir};  access_log off; }" > ${web_install_dir}/conf/vhost/${domain}.conf
+        ${web_install_dir}/sbin/nginx -s reload
+      fi
+      if [ "${apache_ssl_flag}" == 'y' ]; then 
+        [ ! -d ${apache_install_dir}/conf/vhost ] && mkdir ${apache_install_dir}/conf/vhost
+        cat > ${apache_install_dir}/conf/vhost/${domain}.conf << EOF
+<VirtualHost *:80>
+  ServerAdmin admin@example.com
+  DocumentRoot "${vhostdir}"
+  ServerName ${domain}
+  ${Apache_Domain_alias}
+<Directory "${vhostdir}">
+  SetOutputFilter DEFLATE
+  Options FollowSymLinks ExecCGI
+  Require all granted
+  AllowOverride All
+  Order allow,deny
+  Allow from all
+  DirectoryIndex index.html index.php
+</Directory>
+</VirtualHost>
+EOF
+        /etc/init.d/httpd restart > /dev/null
+      fi
+      auth_file="`< /dev/urandom tr -dc A-Za-z0-9 | head -c8`".html
+      auth_str='oneinstack'; echo ${auth_str} > ${vhostdir}/${auth_file}
+      for D in ${domain} ${moredomainame}
+      do
+        curl_str=`curl --connect-timeout 10 -4 -s $D/${auth_file} 2>&1`
+        [ "${curl_str}" != "${auth_str}" ] && { echo; echo "${CFAILURE}Let's Encrypt Verify error! DNS problem: NXDOMAIN looking up A for ${D}${CEND}"; echo; rm -f ${auth_file}; exit 1; }
+      done
+      rm -f ${vhostdir}/${auth_file}
+      [ "${moredomainame_flag}" == 'y' ] && moredomainame_D="$(for D in ${moredomainame}; do echo -d ${D}; done)"
+      ~/.acme.sh/acme.sh --issue -d ${domain} ${moredomainame_D} -w ${vhostdir}
     fi
     if [ -s ~/.acme.sh/${domain}/fullchain.cer ]; then
       [ -e "${PATH_SSL}/${domain}.crt" ] && rm -rf ${PATH_SSL}/${domain}.{crt,key}
@@ -348,16 +356,6 @@ What Are You Doing?
     Apache_Domain_alias=ServerAlias${moredomainame}
     Tomcat_Domain_alias=$(for D in $(echo ${moredomainame}); do echo "<Alias>${D}</Alias>"; done)
 
-    if [ "${Domian_Mode}" == '3' ] && [ "${moredomain}" != "*.${domain}" ]; then
-      auth_file="`< /dev/urandom tr -dc A-Za-z0-9 | head -c8`".html
-      auth_str='oneinstack'; echo ${auth_str} > ${vhostdir}/${auth_file}
-      for D in ${domain} ${moredomainame}
-      do
-        curl_str=`curl --connect-timeout 10 -4 -s $D/${auth_file} 2>&1`
-        [ "${curl_str}" != "${auth_str}" ] && { echo; echo "${CFAILURE}Let's Encrypt Verify error! DNS problem: NXDOMAIN looking up A for ${D}${CEND}"; echo; rm -f ${auth_file}; exit 1; }
-      done
-      rm -f ${vhostdir}/${auth_file}
-    fi
 
     if [ -e "${web_install_dir}/sbin/nginx" ]; then
       while :; do echo

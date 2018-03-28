@@ -322,18 +322,18 @@ What Are You Doing?
           Check_PHP_Extension
           magick_yn=y && checkDownload
           if [ "${magick_option}" = '1' ]; then
-            [ ! -d "/usr/local/imagemagick" ] && Install_ImageMagick
+            [ ! -d "${imagick_install_dir}" ] && Install_ImageMagick
             Install_php-imagick
             Check_succ
           elif [ "${magick_option}" = '2' ]; then
-            [ ! -d "/usr/local/graphicsmagick" ] && Install_GraphicsMagick
+            [ ! -d "${gmagick_install_dir}" ] && Install_GraphicsMagick
             Install_php-gmagick
             Check_succ
           fi
         else
           Uninstall_succ
-          [ -d "/usr/local/imagemagick" ] && rm -rf /usr/local/imagemagick
-          [ -d "/usr/local/graphicsmagick" ] && rm -rf /usr/local/graphicsmagick
+          [ -d "${imagick_install_dir}" ] && rm -rf ${imagick_install_dir}
+          [ -d "${gmagick_install_dir}" ] && rm -rf ${gmagick_install_dir}
         fi
         ;;
       4)
@@ -427,9 +427,9 @@ What Are You Doing?
             tar xzf swoole-${swoole_ver}.tgz
             pushd swoole-${swoole_ver}
           else
-            src_url=https://pecl.php.net/get/swoole-1.10.1.tgz && Download_src
-            tar xzf swoole-1.10.1.tgz
-            pushd swoole-1.10.1
+            src_url=https://pecl.php.net/get/swoole-1.10.2.tgz && Download_src
+            tar xzf swoole-1.10.2.tgz
+            pushd swoole-1.10.2
           fi
           ${php_install_dir}/bin/phpize
           ./configure --with-php-config=${php_install_dir}/bin/php-config

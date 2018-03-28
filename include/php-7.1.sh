@@ -10,43 +10,51 @@
 
 Install_PHP71() {
   pushd ${oneinstack_dir}/src > /dev/null
-  tar xzf libiconv-${libiconv_ver}.tar.gz
-  patch -d libiconv-${libiconv_ver} -p0 < libiconv-glibc-2.16.patch
-  pushd libiconv-${libiconv_ver}
-  ./configure --prefix=/usr/local
-  make -j ${THREAD} && make install
-  popd
-  rm -rf libiconv-${libiconv_ver}
-  
-  tar xzf curl-${curl_ver}.tar.gz
-  pushd curl-${curl_ver}
-  ./configure --prefix=/usr/local --with-ssl=${openssl_install_dir}
-  make -j ${THREAD} && make install
-  popd
-  rm -rf curl-${curl_ver}
-  
-  tar xzf libmcrypt-${libmcrypt_ver}.tar.gz
-  pushd libmcrypt-${libmcrypt_ver}
-  ./configure
-  make -j ${THREAD} && make install
-  ldconfig
-  pushd libltdl
-  ./configure --enable-ltdl-install
-  make -j ${THREAD} && make install
-  popd;popd
-  rm -rf libmcrypt-${libmcrypt_ver}
-  
-  tar xzf mhash-${mhash_ver}.tar.gz
-  pushd mhash-${mhash_ver}
-  ./configure
-  make -j ${THREAD} && make install
-  popd
-  rm -rf mhash-${mhash_ver}
-  
+  if [ ! -e "/usr/local/lib/libiconv.la" ]; then
+    tar xzf libiconv-${libiconv_ver}.tar.gz
+    patch -d libiconv-${libiconv_ver} -p0 < libiconv-glibc-2.16.patch
+    pushd libiconv-${libiconv_ver}
+    ./configure --prefix=/usr/local
+    make -j ${THREAD} && make install
+    popd
+    rm -rf libiconv-${libiconv_ver}
+  fi
+
+  if [ ! -e "${curl_install_dir}/lib/libcurl.la" ]; then
+    tar xzf curl-${curl_ver}.tar.gz
+    pushd curl-${curl_ver}
+    ./configure --prefix=${curl_install_dir} --with-ssl=${openssl_install_dir}
+    make -j ${THREAD} && make install
+    popd
+    rm -rf curl-${curl_ver}
+  fi
+
+  if [ ! -e "/usr/local/lib/libmcrypt.la" ]; then
+    tar xzf libmcrypt-${libmcrypt_ver}.tar.gz
+    pushd libmcrypt-${libmcrypt_ver}
+    ./configure
+    make -j ${THREAD} && make install
+    ldconfig
+    pushd libltdl
+    ./configure --enable-ltdl-install
+    make -j ${THREAD} && make install
+    popd;popd
+    rm -rf libmcrypt-${libmcrypt_ver}
+  fi
+
+  if [ ! -e "/usr/local/lib/libmhash.la" ]; then
+    tar xzf mhash-${mhash_ver}.tar.gz
+    pushd mhash-${mhash_ver}
+    ./configure
+    make -j ${THREAD} && make install
+    popd
+    rm -rf mhash-${mhash_ver}
+  fi
+
   echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
   ldconfig
   [ "$OS" == 'CentOS' ] && { ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config; [ "${OS_BIT}" == '64' ] && ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1 || ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1; }
-  
+
   tar xzf mcrypt-$mcrypt_ver.tar.gz
   pushd mcrypt-$mcrypt_ver
   ldconfig
@@ -54,10 +62,10 @@ Install_PHP71() {
   make -j ${THREAD} && make install
   popd
   rm -rf mcrypt-$mcrypt_ver
-  
+
   id -u ${run_user} >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin ${run_user}
-  
+
   tar xzf php-${php71_ver}.tar.gz
   pushd php-${php71_ver}
   make clean
@@ -71,7 +79,7 @@ Install_PHP71() {
     --enable-mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
     --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
     --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
-    --enable-sysvsem --enable-inline-optimization --with-curl=/usr/local --enable-mbregex \
+    --enable-sysvsem --enable-inline-optimization --with-curl=${curl_install_dir} --enable-mbregex \
     --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl=${openssl_install_dir} \
     --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
     --with-gettext --enable-zip --enable-soap --disable-debug $php_modules_options
@@ -82,14 +90,14 @@ Install_PHP71() {
     --enable-mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
     --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
     --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
-    --enable-sysvsem --enable-inline-optimization --with-curl=/usr/local --enable-mbregex \
+    --enable-sysvsem --enable-inline-optimization --with-curl=${curl_install_dir} --enable-mbregex \
     --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl=${openssl_install_dir} \
     --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
     --with-gettext --enable-zip --enable-soap --disable-debug $php_modules_options
   fi
   make ZEND_EXTRA_LIBS='-liconv' -j ${THREAD}
   make install
-  
+
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     echo "${CSUCCESS}PHP installed successfully! ${CEND}"
   else
@@ -97,17 +105,17 @@ Install_PHP71() {
     echo "${CFAILURE}PHP install failed, Please Contact the author! ${CEND}"
     kill -9 $$
   fi
-  
+
   [ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=${php_install_dir}/bin:\$PATH" >> /etc/profile
   [ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep ${php_install_dir} /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=${php_install_dir}/bin:\1@" /etc/profile
   . /etc/profile
-  
+
   # wget -c http://pear.php.net/go-pear.phar
   # ${php_install_dir}/bin/php go-pear.phar
-  
+
   [ ! -e "${php_install_dir}/etc/php.d" ] && mkdir -p ${php_install_dir}/etc/php.d
   /bin/cp php.ini-production ${php_install_dir}/etc/php.ini
-  
+
   sed -i "s@^memory_limit.*@memory_limit = ${Memory_limit}M@" ${php_install_dir}/etc/php.ini
   sed -i 's@^output_buffering =@output_buffering = On\noutput_buffering =@' ${php_install_dir}/etc/php.ini
   sed -i 's@^;cgi.fix_pathinfo.*@cgi.fix_pathinfo=0@' ${php_install_dir}/etc/php.ini
@@ -121,7 +129,7 @@ Install_PHP71() {
   sed -i 's@^;realpath_cache_size.*@realpath_cache_size = 2M@' ${php_install_dir}/etc/php.ini
   sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,stream_socket_server,fsocket,popen@' ${php_install_dir}/etc/php.ini
   [ -e /usr/sbin/sendmail ] && sed -i 's@^;sendmail_path.*@sendmail_path = /usr/sbin/sendmail -t -i@' ${php_install_dir}/etc/php.ini
-  
+
   [ "${phpcache_option}" == '1' ] && cat > ${php_install_dir}/etc/php.d/02-opcache.ini << EOF
 [opcache]
 zend_extension=opcache.so

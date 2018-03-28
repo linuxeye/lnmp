@@ -221,8 +221,8 @@ EOF
       auth_str='oneinstack'; echo ${auth_str} > ${vhostdir}/${auth_file}
       for D in ${domain} ${moredomainame}
       do
-        curl_str=`curl --connect-timeout 10 -4 -s $D/${auth_file} 2>&1`
-        [ "${curl_str}" != "${auth_str}" ] && { echo; echo "${CFAILURE}Let's Encrypt Verify error! DNS problem: NXDOMAIN looking up A for ${D}${CEND}"; echo; rm -f ${auth_file}; exit 1; }
+        curl_str=`curl --connect-timeout 30 -4 -s $D/${auth_file} 2>&1`
+        [ "${curl_str}" != "${auth_str}" ] && { echo; echo "${CFAILURE}Let's Encrypt Verify error! DNS problem: NXDOMAIN looking up A for ${D}${CEND}"; }
       done
       rm -f ${vhostdir}/${auth_file}
       [ "${moredomainame_flag}" == 'y' ] && moredomainame_D="$(for D in ${moredomainame}; do echo -d ${D}; done)"

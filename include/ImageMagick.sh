@@ -12,7 +12,7 @@ Install_ImageMagick() {
   pushd ${oneinstack_dir}/src > /dev/null
   tar xzf ImageMagick-${imagemagick_ver}.tar.gz
   pushd ImageMagick-${imagemagick_ver}
-  ./configure --prefix=/usr/local/imagemagick --enable-shared --enable-static
+  ./configure --prefix=${imagick_install_dir} --enable-shared --enable-static
   make -j ${THREAD} && make install
   popd
   rm -rf ImageMagick-${imagemagick_ver}
@@ -27,7 +27,7 @@ Install_php-imagick() {
     pushd imagick-${imagick_ver}
     export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
     ${php_install_dir}/bin/phpize
-    ./configure --with-php-config=${php_install_dir}/bin/php-config --with-imagick=/usr/local/imagemagick
+    ./configure --with-php-config=${php_install_dir}/bin/php-config --with-imagick=${imagick_install_dir}
     make -j ${THREAD} && make install
     popd
     if [ -f "${phpExtensionDir}/imagick.so" ]; then

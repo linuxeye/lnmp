@@ -21,8 +21,8 @@ mysql57_ver=5.7.21
 mysql56_ver=5.6.39
 mysql55_ver=5.5.59
 
-mariadb102_ver=10.2.13
-mariadb101_ver=10.1.31
+mariadb102_ver=10.2.14
+mariadb101_ver=10.1.32
 mariadb100_ver=10.0.34
 mariadb55_ver=5.5.59
 
@@ -42,9 +42,9 @@ jdk17_ver=1.7.0_80
 jdk16_ver=1.6.0_45
 
 # PHP
-php72_ver=7.2.3
-php71_ver=7.1.15
-php70_ver=7.0.28
+php72_ver=7.2.4
+php71_ver=7.1.16
+php70_ver=7.0.29
 php56_ver=5.6.34
 php55_ver=5.5.38
 php54_ver=5.4.45
@@ -76,7 +76,7 @@ redis_ver=4.0.9
 redis_pecl_ver=4.0.0
 
 # Memcached
-memcached_ver=1.5.6
+memcached_ver=1.5.7
 libmemcached_ver=1.0.18
 memcached_pecl_ver=2.2.0
 memcached_pecl_php7_ver=3.0.4

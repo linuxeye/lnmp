@@ -3,7 +3,7 @@
 This script is written using the shell, in order to quickly deploy `LEMP`/`LAMP`/`LNMP`/`LNMPA`(Linux, Nginx/Tengine/OpenResty, MySQL in a production environment/MariaDB/Percona, PHP), applicable to CentOS 6~7(including redhat), Debian 6~9, Ubuntu 12~16 of 32 and 64. 
 
 Script properties:
-- Continually updated
+- Continually updated, Provide Shell Interaction and Autoinstall
 - Source compiler installation, most stable source is the latest version, and download from the official site
 - Some security optimization
 - Providing a plurality of database versions (MySQL-5.7, MySQL-5.6, MySQL-5.5, MariaDB-10.1, MariaDB-10.0, MariaDB-5.5, Percona-5.7, Percona-5.6, Percona-5.5, AliSQL-5.6, PostgreSQL, MongoDB)

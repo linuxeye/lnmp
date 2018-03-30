@@ -39,7 +39,7 @@ dbinstallmethod=1
 
 version() {
   echo "version: 1.7"
-  echo "updated date: 2018-03-25"
+  echo "updated date: 2018-03-30"
 }
 
 showhelp() {
@@ -965,9 +965,8 @@ endTime=`date +%s`
 ((installTime=($endTime-$startTime)/60))
 echo "####################Congratulations########################"
 echo "Total OneinStack Install Time: ${CQUESTION}${installTime}${CEND} minutes"
-[ "${web_yn}" == 'y' -a "${nginx_option}" != '4' -a "${apache_option}" == '3' ] && echo -e "\n$(printf "%-32s" "Nginx install dir":)${CMSG}${web_install_dir}${CEND}"
-[ "${web_yn}" == 'y' -a "${nginx_option}" != '4' -a "${apache_option}" != '3' ] && echo -e "\n$(printf "%-32s" "Nginx install dir":)${CMSG}${web_install_dir}${CEND}\n$(printf "%-32s" "Apache install  dir":)${CMSG}${apache_install_dir}${CEND}"
-[ "${web_yn}" == 'y' -a "${nginx_option}" == '4' -a "${apache_option}" != '3' ] && echo -e "\n$(printf "%-32s" "Apache install dir":)${CMSG}${apache_install_dir}${CEND}"
+[ "${web_yn}" == 'y' ] && [[ "${nginx_option}" =~ ^[1-3]$ ]] && echo -e "\n$(printf "%-32s" "Nginx install dir":)${CMSG}${web_install_dir}${CEND}"
+[ "${web_yn}" == 'y' ] && [[ "${apache_option}" =~ ^[1,2]$ ]] && echo -e "\n$(printf "%-32s" "Apache install dir":)${CMSG}${apache_install_dir}${CEND}"
 [[ "${tomcat_option}" =~ ^[1,2]$ ]] && echo -e "\n$(printf "%-32s" "Tomcat install dir":)${CMSG}${tomcat_install_dir}${CEND}"
 [[ "${db_option}" =~ ^[1-9]$|^1[0-1]$ ]] && echo -e "\n$(printf "%-32s" "Database install dir:")${CMSG}${db_install_dir}${CEND}"
 [[ "${db_option}" =~ ^[1-9]$|^1[0-1]$ ]] && echo "$(printf "%-32s" "Database data dir:")${CMSG}${db_data_dir}${CEND}"
@@ -1000,12 +999,12 @@ echo "Total OneinStack Install Time: ${CQUESTION}${installTime}${CEND} minutes"
 if [ ${ARG_NUM} == 0 ]; then
   while :; do echo
     echo "${CMSG}Please restart the server and see if the services start up fine.${CEND}"
-    read -p "Do you want to restart OS ? [y/n]: " restart_yn
-    if [[ ! "${restart_yn}" =~ ^[y,n]$ ]]; then
+    read -p "Do you want to restart OS ? [y/n]: " reboot_yn
+    if [[ ! "${reboot_yn}" =~ ^[y,n]$ ]]; then
       echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
       break
     fi
   done
 fi
-[ "${restart_yn}" == 'y' ] && reboot
+[ "${reboot_yn}" == 'y' ] && reboot

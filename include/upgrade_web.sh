@@ -166,7 +166,7 @@ Upgrade_OpenResty() {
     openresty_ver_tmp=${NEW_openresy_ver%.*}
     sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' bundle/nginx-$openresty_ver_tmp/auto/cc/gcc # close debug
     $openresty_install_dir/nginx/sbin/nginx -V &> $$
-    ./configure --prefix=$openresty_install_dir --user=${run_user} --group=${run_user} --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-openssl=../openssl-$openssl_ver --with-pcre=../pcre-$pcre_ver --with-pcre-jit --with-ld-opt='-ljemalloc' $nginx_modules_options 
+    ./configure --prefix=$openresty_install_dir --user=${run_user} --group=${run_user} --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-openssl=../openssl-$openssl_ver --with-pcre=../pcre-$pcre_ver --with-pcre-jit --with-ld-opt='-ljemalloc' $nginx_modules_options
     make -j ${THREAD}
     if [ -f "build/nginx-$openresty_ver_tmp/objs/nginx" ]; then
       /bin/mv $openresty_install_dir/nginx/sbin/nginx{,`date +%m%d`}
@@ -181,7 +181,7 @@ Upgrade_OpenResty() {
       echo "${CFAILURE}Upgrade OpenResty failed! ${CEND}"
     fi
   fi
-  popd > /dev/null 
+  popd > /dev/null
 }
 
 Upgrade_Apache() {
@@ -189,28 +189,33 @@ Upgrade_Apache() {
   [ ! -e "${apache_install_dir}/bin/httpd" ] && echo "${CWARNING}Apache is not installed on your system! ${CEND}" && exit 1
   OLD_apache_ver="`/usr/local/apache/bin/httpd -v | grep version | awk -F'/| ' '{print $4}'`"
   Apache_flag="`echo ${OLD_apache_ver} | awk -F. '{print $1 $2}'`"
-  Latest_apache_ver=`curl -s http://httpd.apache.org/download.cgi | awk "/#apache$Apache_flag/{print $2}" | head -1 | grep -oE "2\.[24]\.[0-9]+"`
+  Latest_apache_ver=`curl -s http://httpd.apache.org/download.cgi | awk "/#apache${Apache_flag}/{print $2}" | head -1 | grep -oE "2\.[24]\.[0-9]+"`
+  [ -z "${Latest_apache_ver}" ] && Latest_apache_ver=${apache22_ver}
   echo
   echo "Current Apache Version: ${CMSG}${OLD_apache_ver}${CEND}"
   while :; do echo
-    read -p "Please input upgrade Apache Version(Default: $Latest_apache_ver): " NEW_apache_ver
-    [ -z "${NEW_apache_ver}" ] && NEW_apache_ver=$Latest_apache_ver
-    if [ "${NEW_apache_ver}" != "${OLD_apache_ver}" ]; then
-      if [ "$Apache_flag" == '24' ]; then
-        src_url=http://archive.apache.org/dist/apr/apr-${apr_ver}.tar.gz && Download_src
-        src_url=http://archive.apache.org/dist/apr/apr-util-${apr_util_ver}.tar.gz && Download_src
-        tar xzf apr-${apr_ver}.tar.gz
-        tar xzf apr-util-${apr_util_ver}.tar.gz
-      fi
-      [ ! -e "httpd-${NEW_apache_ver}.tar.gz" ] && wget --no-check-certificate -c http://archive.apache.org/dist/httpd/httpd-${NEW_apache_ver}.tar.gz > /dev/null 2>&1
-      if [ -e "httpd-${NEW_apache_ver}.tar.gz" ]; then
-        echo "Download [${CMSG}apache-${NEW_apache_ver}.tar.gz${CEND}] successfully! "
-        break
+    read -p "Please input upgrade Apache Version(Default: ${Latest_apache_ver}): " NEW_apache_ver
+    if [ `echo ${NEW_apache_ver} | awk -F. '{print $1$2}'` == "${Apache_flag}" ]; then
+      [ -z "${NEW_apache_ver}" ] && NEW_apache_ver=${Latest_apache_ver}
+      if [ "${NEW_apache_ver}" != "${OLD_apache_ver}" ]; then
+        if [ "${Apache_flag}" == '24' ]; then
+          src_url=http://archive.apache.org/dist/apr/apr-${apr_ver}.tar.gz && Download_src
+          src_url=http://archive.apache.org/dist/apr/apr-util-${apr_util_ver}.tar.gz && Download_src
+          tar xzf apr-${apr_ver}.tar.gz
+          tar xzf apr-util-${apr_util_ver}.tar.gz
+        fi
+        [ ! -e "httpd-${NEW_apache_ver}.tar.gz" ] && wget --no-check-certificate -c http://archive.apache.org/dist/httpd/httpd-${NEW_apache_ver}.tar.gz > /dev/null 2>&1
+        if [ -e "httpd-${NEW_apache_ver}.tar.gz" ]; then
+          echo "Download [${CMSG}apache-${NEW_apache_ver}.tar.gz${CEND}] successfully! "
+          break
+        else
+          echo "${CWARNING}Apache version does not exist! ${CEND}"
+        fi
       else
-        echo "${CWARNING}Apache version does not exist! ${CEND}"
+        echo "${CWARNING}input error! Upgrade Apache version is the same as the old version${CEND}"
       fi
     else
-      echo "${CWARNING}input error! Upgrade Apache version is the same as the old version${CEND}"
+      echo "${CWARNING}input error! ${CEND}Please only input '${CMSG}${OLD_apache_ver%.*}.xx${CEND}'"
     fi
   done
 
@@ -221,13 +226,13 @@ Upgrade_Apache() {
     tar xzf httpd-${NEW_apache_ver}.tar.gz
     pushd httpd-${NEW_apache_ver}
     make clean
-    if [ "$Apache_flag" == '24' ]; then
+    if [ "${Apache_flag}" == '24' ]; then
       /bin/cp -R ../apr-${apr_ver} ./srclib/apr
       /bin/cp -R ../apr-util-${apr_util_ver} ./srclib/apr-util
       [ -e "${php_install_dir}/bin/phpize" ] && { PHP_detail_ver=`${php_install_dir}/bin/php -r 'echo PHP_VERSION;'`; PHP_master_ver=${PHP_detail_ver%%.*}; }
       [ "${PHP_master_ver}" == '5' ] && Apache_mpm_arg='--with-mpm=prefork'
       LDFLAGS=-ldl LD_LIBRARY_PATH=${openssl_install_dir}/lib ./configure --prefix=${apache_install_dir} ${Apache_mpm_arg} --enable-mpms-shared=all --with-included-apr --enable-headers --enable-deflate --enable-so --enable-dav --enable-rewrite --enable-ssl --with-ssl=${openssl_install_dir} --enable-http2 --with-nghttp2=/usr/local --enable-expires --enable-static-support --enable-suexec --enable-modules=all --enable-mods-shared=all
-    elif [ "$Apache_flag" == '22' ]; then
+    elif [ "${Apache_flag}" == '22' ]; then
       [ "${Ubuntu_ver}" == "12" ] && sed -i '@SSL_PROTOCOL_SSLV2@d' modules/ssl/ssl_engine_io.c
       LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} --with-mpm=prefork --with-included-apr --enable-headers --enable-deflate --enable-so --enable-rewrite --enable-ssl--with-ssl=${openssl_install_dir} --enable-expires --enable-static-support --enable-suexec --enable-modules=all --enable-mods-shared=all
     fi

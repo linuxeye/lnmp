@@ -10,16 +10,16 @@
 
 Install-JDK16() {
   pushd ${oneinstack_dir}/src > /dev/null
-  JDK_FILE="jdk-`echo $jdk16_ver | awk -F. '{print $2}'`u`echo $jdk16_ver | awk -F_ '{print $NF}'`-linux-$SYS_BIG_FLAG.bin"
+  JDK_FILE="jdk-`echo ${jdk16_ver} | awk -F. '{print $2}'`u`echo ${jdk16_ver} | awk -F_ '{print $NF}'`-linux-${SYS_BIT_j}.bin"
   JAVA_dir=/usr/java
-  JDK_NAME="jdk$jdk16_ver"
+  JDK_NAME="jdk${jdk16_ver}"
   JDK_PATH=$JAVA_dir/$JDK_NAME
-  
+
   [ "$OS" == 'CentOS' ] && [ -n "`rpm -qa | grep jdk`" ] && rpm -e `rpm -qa | grep jdk`
-  
+
   chmod +x $JDK_FILE
   ./$JDK_FILE
-  
+
   if [ -d "$JDK_NAME" ]; then
     rm -rf $JAVA_dir; mkdir -p $JAVA_dir
     mv $JDK_NAME $JAVA_dir

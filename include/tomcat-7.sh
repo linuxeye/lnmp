@@ -21,7 +21,7 @@ Install_Tomcat7() {
     ./configure
     make -j ${THREAD} && make install
     popd
-    rm -rf apr-${apr_ver} 
+    rm -rf apr-${apr_ver}
   fi
 
   tar xzf apache-tomcat-${tomcat7_ver}.tar.gz

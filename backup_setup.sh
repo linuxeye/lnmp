@@ -39,7 +39,7 @@ while :; do echo
   echo -e "\t${CMSG}5${CEND}. UPYUN(又拍云)"
   read -p "Please input a number:(Default 1 press Enter) " desc_bk
   [ -z "${desc_bk}" ] && desc_bk=1
-  ary=(1 2 3 4 5 12 13 14 15 23 24 25 34 35 45 123 124 125 234 235 345 1234 1235 2345 12345)
+  ary=(1 2 3 4 5 12 13 14 15 23 24 25 34 35 45 123 124 125 134 135 145 234 235 245 345 1234 1235 2345 12345)
   if [[ "${ary[@]}" =~ "${desc_bk}" ]]; then
     break
   else

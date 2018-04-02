@@ -102,13 +102,13 @@ Def_parameter() {
   AddUser_SS
   Iptables_set
   if [ "${OS}" == "CentOS" ]; then
-    pkgList="wget unzip openssl-devel gcc swig autoconf libtool libevent automake make curl curl-devel zlib-devel perl perl-devel cpio expat-devel gettext-devel git asciidoc xmlto c-ares-devel pcre-devel mbedtls-devel udns-devel libev-devel libsodium"
+    pkgList="wget unzip openssl-devel gcc swig autoconf libtool libevent automake make curl curl-devel zlib-devel perl perl-devel cpio expat-devel gettext-devel git asciidoc xmlto c-ares-devel pcre-devel udns-devel libev-devel"
     for Package in ${pkgList}; do
       yum -y install ${Package}
     done
   elif [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]]; then
     apt-get -y update
-    pkgList="curl wget unzip gcc swig automake make perl cpio git libmbedtls-dev libudns-dev libev-dev gettext build-essential autoconf libtool libpcre3-dev asciidoc xmlto libc-ares-dev"
+    pkgList="curl wget unzip gcc swig automake make perl cpio git libudns-dev libev-dev gettext build-essential autoconf libtool libpcre3-dev asciidoc xmlto libc-ares-dev"
     for Package in ${pkgList}; do
       apt-get -y install $Package
     done
@@ -136,19 +136,22 @@ Install_SS-python() {
 
 Install_SS-libev() {
   src_url=http://mirrors.linuxeye.com/oneinstack/src/shadowsocks-libev-3.1.3.tar.gz && Download_src
-  src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-1.0.16.tar.gz && Download_src
-  src_url=http://mirrors.linuxeye.com/oneinstack/src/mbedtls-2.7.0-apache.tgz && Download_src
-  tar xzf shadowsocks-libev-3.1.3.tar.gz
-  tar xzf libsodium-1.0.16.tar.gz
-  tar xzf mbedtls-2.7.0-apache.tgz
-  pushd libsodium-1.0.16
-  ./configure
-  make -j ${THREAD} && make install
-  popd
-  pushd mbedtls-2.7.0
+  src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
+  src_url=http://mirrors.linuxeye.com/oneinstack/src/mbedtls-2.8.0-apache.tgz && Download_src
+  if [ ! -e "/usr/local/lib/libsodium.la" ]; then
+    tar xzf libsodium-${libsodium_ver}.tar.gz
+    pushd libsodium-${libsodium_ver}
+    ./configure
+    make -j ${THREAD} && make install
+    popd
+    rm -rf libsodium-${libsodium_ver}
+  fi
+  tar xzf mbedtls-2.8.0-apache.tgz
+  pushd mbedtls-2.8.0
   make SHARED=1 CFLAGS=-fPIC
   make DESTDIR=/usr install
   popd
+  tar xzf shadowsocks-libev-3.1.3.tar.gz
   pushd shadowsocks-libev-3.1.3
   make clean
   ./configure

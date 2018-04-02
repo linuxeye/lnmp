@@ -10,15 +10,15 @@
 
 Install-JDK17() {
   pushd ${oneinstack_dir}/src > /dev/null
-  JDK_FILE="jdk-`echo $jdk17_ver | awk -F. '{print $2}'`u`echo $jdk17_ver | awk -F_ '{print $NF}'`-linux-$SYS_BIG_FLAG.tar.gz"
+  JDK_FILE="jdk-`echo ${jdk17_ver} | awk -F. '{print $2}'`u`echo ${jdk17_ver} | awk -F_ '{print $NF}'`-linux-${SYS_BIT_j}.tar.gz"
   JAVA_dir=/usr/java
-  JDK_NAME="jdk$jdk17_ver"
+  JDK_NAME="jdk${jdk17_ver}"
   JDK_PATH=$JAVA_dir/$JDK_NAME
-  
+
   [ "$OS" == 'CentOS' ] && [ -n "`rpm -qa | grep jdk`" ] && rpm -e `rpm -qa | grep jdk`
-  
+
   tar xzf $JDK_FILE
-  
+
   if [ -d "$JDK_NAME" ]; then
     rm -rf $JAVA_dir; mkdir -p $JAVA_dir
     mv $JDK_NAME $JAVA_dir

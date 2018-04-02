@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_Tomcat6() {
+Install_Tomcat9() {
   pushd ${oneinstack_dir}/src > /dev/null
   . /etc/profile
   id -u ${run_user} >/dev/null 2>&1
@@ -24,9 +24,9 @@ Install_Tomcat6() {
     rm -rf apr-${apr_ver}
   fi
 
-  tar xzf apache-tomcat-${tomcat6_ver}.tar.gz
+  tar xzf apache-tomcat-${tomcat9_ver}.tar.gz
   [ ! -d "${tomcat_install_dir}" ] && mkdir -p ${tomcat_install_dir}
-  /bin/cp -R apache-tomcat-${tomcat6_ver}/* ${tomcat_install_dir}
+  /bin/cp -R apache-tomcat-${tomcat9_ver}/* ${tomcat_install_dir}
   rm -rf ${tomcat_install_dir}/webapps/{docs,examples,host-manager,manager,ROOT/*}
 
   if [ ! -e "${tomcat_install_dir}/conf/server.xml" ]; then
@@ -40,7 +40,7 @@ Install_Tomcat6() {
   pushd ${tomcat_install_dir}/lib/catalina
   jar xf ../catalina.jar
   sed -i 's@^server.info=.*@server.info=Tomcat@' org/apache/catalina/util/ServerInfo.properties
-  sed -i 's@^server.number=.*@server.number=6@' org/apache/catalina/util/ServerInfo.properties
+  sed -i 's@^server.number=.*@server.number=8@' org/apache/catalina/util/ServerInfo.properties
   sed -i "s@^server.built=.*@server.built=$(date)@" org/apache/catalina/util/ServerInfo.properties
   jar cf ../catalina.jar ./*
   popd
@@ -69,7 +69,7 @@ EOF
     popd # goto ${oneinstack_dir}/src
     /bin/cp ${oneinstack_dir}/config/server.xml ${tomcat_install_dir}/conf
     sed -i "s@/usr/local/tomcat@${tomcat_install_dir}@g" ${tomcat_install_dir}/conf/server.xml
-    sed -i /ThreadLocalLeakPreventionListener/d ${tomcat_install_dir}/conf/server.xml
+
     if [ ! -e "${nginx_install_dir}/sbin/nginx" -a ! -e "${tengine_install_dir}/sbin/nginx" -a ! -e "${apache_install_dir}/conf/httpd.conf" ]; then
       if [ "${iptables_yn}" == 'y' ]; then
         if [ "${OS}" == "CentOS" ]; then
@@ -127,7 +127,7 @@ EOF
     [ "${OS}" == "CentOS" ] && { chkconfig --add tomcat; chkconfig tomcat on; }
     [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]] && update-rc.d tomcat defaults
     echo "${CSUCCESS}Tomcat installed successfully! ${CEND}"
-    rm -rf apache-tomcat-${tomcat6_ver}
+    rm -rf apache-tomcat-${tomcat9_ver}
   else
     popd
     echo "${CFAILURE}Tomcat install failed, Please contact the author! ${CEND}"

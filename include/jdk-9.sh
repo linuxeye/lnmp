@@ -8,11 +8,11 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install-JDK18() {
+Install-JDK9() {
   pushd ${oneinstack_dir}/src > /dev/null
-  JDK_FILE="jdk-`echo ${jdk18_ver} | awk -F. '{print $2}'`u`echo ${jdk18_ver} | awk -F_ '{print $NF}'`-linux-${SYS_BIT_j}.tar.gz"
+  JDK_FILE="jdk-${jdk9_ver}_linux-${SYS_BIT_j}_bin.tar.gz"
   JAVA_dir=/usr/java
-  JDK_NAME="jdk${jdk18_ver}"
+  JDK_NAME="jdk-${jdk9_ver}"
   JDK_PATH=$JAVA_dir/$JDK_NAME
 
   [ "$OS" == 'CentOS' ] && [ -n "`rpm -qa | grep jdk`" ] && rpm -e `rpm -qa | grep jdk`

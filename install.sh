@@ -39,21 +39,21 @@ dbinstallmethod=1
 
 version() {
   echo "version: 1.7"
-  echo "updated date: 2018-03-30"
+  echo "updated date: 2018-04-02"
 }
 
 showhelp() {
   version
   echo "Usage: $0  command ...[parameters]....
-  --help, -h                  Show this help message
+  --help, -h                  Show this help message, More: https://oneinstack.com/autoinstall
   --version, -v               Show version info
   --nginx_option [1-3]        Install Nginx server version
   --apache_option [1-2]       Install Apache server version
   --php_option [1-7]          Install PHP version
   --phpcache_option [1-4]     Install PHP opcode cache, default: 1 opcache
   --php_extensions [ext name] Install PHP extension, include zendguardloader,ioncube,imagick,gmagick
-  --tomcat_option [1-2]       Install Tomcat version
-  --jdk_option [1-2]          Install JDK version
+  --tomcat_option [1-4]       Install Tomcat version
+  --jdk_option [1-4]          Install JDK version
   --db_option [1-13]          Install DB version
   --dbinstallmethod [1-2]     DB install method, default: 1 binary install
   --dbrootpwd [password]      DB super password
@@ -113,13 +113,24 @@ while :; do
       ;;
     --tomcat_option)
       tomcat_option=$2; shift 2
-      [[ ! ${tomcat_option} =~ ^[1-3]$ ]] && { echo "${CWARNING}tomcat_option input error! Please only input number 1~3${CEND}"; exit 1; }
+      [[ ! ${tomcat_option} =~ ^[1-4]$ ]] && { echo "${CWARNING}tomcat_option input error! Please only input number 1~4${CEND}"; exit 1; }
       web_yn=y
       [ -e "$tomcat_install_dir/conf/server.xml" ] && { echo "${CWARNING}Tomcat already installed! ${CEND}" ; tomcat_option=Other; }
       ;;
     --jdk_option)
       jdk_option=$2; shift 2
-      [[ ! ${jdk_option} =~ ^[1-2]$ ]] && { echo "${CWARNING}jdk_option input error! Please only input number 1~2${CEND}"; exit 1; }
+      if [ "${tomcat_option}" == '1' ]; then
+        [[ ! ${jdk_option} =~ ^[1-2]$ ]] && { echo "${CWARNING}jdk_option input error! Please only input number 1~2${CEND}"; exit 1; }
+      elif [ "${tomcat_option}" == '2' ]; then
+        [[ ! ${jdk_option} =~ ^[1-3]$ ]] && { echo "${CWARNING}jdk_option input error! Please only input number 1~3${CEND}"; exit 1; }
+      elif [ "${tomcat_option}" == '3' ]; then
+        [[ ! ${jdk_option} =~ ^[2-4]$ ]] && { echo "${CWARNING}jdk_option input error! Please only input number 2~4${CEND}"; exit 1; }
+      elif [ "${tomcat_option}" == '4' ]; then
+        [[ ! ${jdk_option} =~ ^[3-4]$ ]] && { echo "${CWARNING}jdk_option input error! Please only input number 3~4${CEND}"; exit 1; }
+      else
+        echo "${CWARNING}tomcat_option or jdk_option input error! More: http://tomcat.apache.org/whichversion.html${CEND}"
+        exit 1
+      fi
       ;;
     --db_option)
       db_option=$2; shift 2
@@ -259,23 +270,24 @@ if [ ${ARG_NUM} == 0 ]; then
         # Tomcat
         #while :; do echo
         #  echo 'Please select tomcat server:'
-        #  echo -e "\t${CMSG}1${CEND}. Install Tomcat-8"
-        #  echo -e "\t${CMSG}2${CEND}. Install Tomcat-7"
-        #  echo -e "\t${CMSG}3${CEND}. Install Tomcat-6"
-        #  echo -e "\t${CMSG}4${CEND}. Do not install"
-        #  read -p "Please input a number:(Default 4 press Enter) " tomcat_option
-        #  [ -z "${tomcat_option}" ] && tomcat_option=4
-        #  if [[ ! ${tomcat_option} =~ ^[1-4]$ ]]; then
-        #    echo "${CWARNING}input error! Please only input number 1~4${CEND}"
+        #  echo -e "\t${CMSG}1${CEND}. Install Tomcat-9"
+        #  echo -e "\t${CMSG}2${CEND}. Install Tomcat-8"
+        #  echo -e "\t${CMSG}3${CEND}. Install Tomcat-7"
+        #  echo -e "\t${CMSG}4${CEND}. Install Tomcat-6"
+        #  echo -e "\t${CMSG}5${CEND}. Do not install"
+        #  read -p "Please input a number:(Default 5 press Enter) " tomcat_option
+        #  [ -z "${tomcat_option}" ] && tomcat_option=5
+        #  if [[ ! ${tomcat_option} =~ ^[1-5]$ ]]; then
+        #    echo "${CWARNING}input error! Please only input number 1~5${CEND}"
         #  else
-        #    [ "${tomcat_option}" != '4' -a -e "$tomcat_install_dir/conf/server.xml" ] && { echo "${CWARNING}Tomcat already installed! ${CEND}" ; tomcat_option=Other; }
+        #    [ "${tomcat_option}" != '5' -a -e "$tomcat_install_dir/conf/server.xml" ] && { echo "${CWARNING}Tomcat already installed! ${CEND}" ; tomcat_option=Other; }
         #    if [ "${tomcat_option}" == '1' ]; then
         #      while :; do echo
         #        echo 'Please select JDK version:'
-        #        echo -e "\t${CMSG}1${CEND}. Install JDK-1.8"
-        #        echo -e "\t${CMSG}2${CEND}. Install JDK-1.7"
-        #        read -p "Please input a number:(Default 2 press Enter) " jdk_option
-        #        [ -z "${jdk_option}" ] && jdk_option=2
+        #        echo -e "\t${CMSG}1${CEND}. Install JDK-9"
+        #        echo -e "\t${CMSG}2${CEND}. Install JDK-1.8"
+        #        read -p "Please input a number:(Default 1 press Enter) " jdk_option
+        #        [ -z "${jdk_option}" ] && jdk_option=1
         #        if [[ ! ${jdk_option} =~ ^[1-2]$ ]]; then
         #          echo "${CWARNING}input error! Please only input number 1~2${CEND}"
         #        else
@@ -285,9 +297,9 @@ if [ ${ARG_NUM} == 0 ]; then
         #    elif [ "${tomcat_option}" == '2' ]; then
         #      while :; do echo
         #        echo 'Please select JDK version:'
-        #        echo -e "\t${CMSG}1${CEND}. Install JDK-1.8"
-        #        echo -e "\t${CMSG}2${CEND}. Install JDK-1.7"
-        #        echo -e "\t${CMSG}3${CEND}. Install JDK-1.6"
+        #        echo -e "\t${CMSG}1${CEND}. Install JDK-9"
+        #        echo -e "\t${CMSG}2${CEND}. Install JDK-1.8"
+        #        echo -e "\t${CMSG}3${CEND}. Install JDK-1.7"
         #        read -p "Please input a number:(Default 2 press Enter) " jdk_option
         #        [ -z "${jdk_option}" ] && jdk_option=2
         #        if [[ ! ${jdk_option} =~ ^[1-3]$ ]]; then
@@ -299,12 +311,26 @@ if [ ${ARG_NUM} == 0 ]; then
         #    elif [ "${tomcat_option}" == '3' ]; then
         #      while :; do echo
         #        echo 'Please select JDK version:'
-        #        echo -e "\t${CMSG}2${CEND}. Install JDK-1.7"
-        #        echo -e "\t${CMSG}3${CEND}. Install JDK-1.6"
-        #        read -p "Please input a number:(Default 2 press Enter) " jdk_option
-        #        [ -z "${jdk_option}" ] && jdk_option=2
-        #        if [[ ! ${jdk_option} =~ ^[2-3]$ ]]; then
-        #          echo "${CWARNING}input error! Please only input number 2~3${CEND}"
+        #        echo -e "\t${CMSG}2${CEND}. Install JDK-1.8"
+        #        echo -e "\t${CMSG}3${CEND}. Install JDK-1.7"
+        #        echo -e "\t${CMSG}4${CEND}. Install JDK-1.6"
+        #        read -p "Please input a number:(Default 3 press Enter) " jdk_option
+        #        [ -z "${jdk_option}" ] && jdk_option=3
+        #        if [[ ! ${jdk_option} =~ ^[2-4]$ ]]; then
+        #          echo "${CWARNING}input error! Please only input number 2~4${CEND}"
+        #        else
+        #          break
+        #        fi
+        #      done
+        #    elif [ "${tomcat_option}" == '4' ]; then
+        #      while :; do echo
+        #        echo 'Please select JDK version:'
+        #        echo -e "\t${CMSG}3${CEND}. Install JDK-1.7"
+        #        echo -e "\t${CMSG}4${CEND}. Install JDK-1.6"
+        #        read -p "Please input a number:(Default 4 press Enter) " jdk_option
+        #        [ -z "${jdk_option}" ] && jdk_option=4
+        #        if [[ ! ${jdk_option} =~ ^[3-4]$ ]]; then
+        #          echo "${CWARNING}input error! Please only input number 3~4${CEND}"
         #        else
         #          break
         #        fi
@@ -652,38 +678,33 @@ checkDownload 2>&1 | tee -a ${oneinstack_dir}/install.log
 [ -e "/usr/local/bin/openssl" ] && rm -rf /usr/local/bin/openssl
 [ -e "/usr/local/include/openssl" ] && rm -rf /usr/local/include/openssl
 
-# Check binary dependencies packages
-. ./include/check_sw.sh
-case "${OS}" in
-  "CentOS")
-    installDepsCentOS 2>&1 | tee ${oneinstack_dir}/install.log
-    ;;
-  "Debian")
-    installDepsDebian 2>&1 | tee ${oneinstack_dir}/install.log
-    ;;
-  "Ubuntu")
-    installDepsUbuntu 2>&1 | tee ${oneinstack_dir}/install.log
-    ;;
-esac
-
-# init
-startTime=`date +%s`
+# get OS Memory
 . ./include/memory.sh
-case "${OS}" in
-  "CentOS")
-    . include/init_CentOS.sh 2>&1 | tee -a ${oneinstack_dir}/install.log
-    [ -n "$(gcc --version | head -n1 | grep '4\.1\.')" ] && export CC="gcc44" CXX="g++44"
-    ;;
-  "Debian")
-    . include/init_Debian.sh 2>&1 | tee -a ${oneinstack_dir}/install.log
-    ;;
-  "Ubuntu")
-    . include/init_Ubuntu.sh 2>&1 | tee -a ${oneinstack_dir}/install.log
-    ;;
-esac
 
-# Install dependencies from source package
-installDepsBySrc 2>&1 | tee -a ${oneinstack_dir}/install.log
+if [ ! -e ~/.oneinstack ]; then
+  # Check binary dependencies packages
+  . ./include/check_sw.sh
+  case "${OS}" in
+    "CentOS")
+      installDepsCentOS 2>&1 | tee ${oneinstack_dir}/install.log
+      . include/init_CentOS.sh 2>&1 | tee -a ${oneinstack_dir}/install.log
+      [ -n "$(gcc --version | head -n1 | grep '4\.1\.')" ] && export CC="gcc44" CXX="g++44"
+      ;;
+    "Debian")
+      installDepsDebian 2>&1 | tee ${oneinstack_dir}/install.log
+      . include/init_Debian.sh 2>&1 | tee -a ${oneinstack_dir}/install.log
+      ;;
+    "Ubuntu")
+      installDepsUbuntu 2>&1 | tee ${oneinstack_dir}/install.log
+      . include/init_Ubuntu.sh 2>&1 | tee -a ${oneinstack_dir}/install.log
+      ;;
+  esac
+  # Install dependencies from source package
+  installDepsBySrc 2>&1 | tee -a ${oneinstack_dir}/install.log
+fi
+
+# start Time
+startTime=`date +%s`
 
 # Jemalloc
 if [[ ${nginx_option} =~ ^[1-3]$ ]] || [ "${db_yn}" == 'y' ]; then
@@ -693,7 +714,7 @@ fi
 
 # openSSL
 . ./include/openssl.sh
-if [[ ${tomcat_option} =~ ^[1-3]$ ]] || [[ ${apache_option} =~ ^[1-2]$ ]] || [[ ${php_option} =~ ^[1-7]$ ]]; then
+if [[ ${tomcat_option} =~ ^[1-4]$ ]] || [[ ${apache_option} =~ ^[1-2]$ ]] || [[ ${php_option} =~ ^[1-7]$ ]]; then
   Install_openSSL102 | tee -a ${oneinstack_dir}/install.log
 fi
 
@@ -888,14 +909,18 @@ esac
 # JDK
 case "${jdk_option}" in
   1)
+    . include/jdk-9.sh
+    Install-JDK9 2>&1 | tee -a ${oneinstack_dir}/install.log
+    ;;
+  2)
     . include/jdk-1.8.sh
     Install-JDK18 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
-  2)
+  3)
     . include/jdk-1.7.sh
     Install-JDK17 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
-  3)
+  4)
     . include/jdk-1.6.sh
     Install-JDK16 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
@@ -903,14 +928,18 @@ esac
 
 case "${tomcat_option}" in
   1)
+    . include/tomcat-9.sh
+    Install_Tomcat9 2>&1 | tee -a ${oneinstack_dir}/install.log
+    ;;
+  2)
     . include/tomcat-8.sh
     Install_Tomcat8 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
-  2)
+  3)
     . include/tomcat-7.sh
     Install_Tomcat7 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
-  3)
+  4)
     . include/tomcat-6.sh
     Install_Tomcat6 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;

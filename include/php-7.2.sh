@@ -29,6 +29,23 @@ Install_PHP72() {
     rm -rf curl-${curl_ver}
   fi
 
+  if [ ! -e "/usr/lib/libargon2.a" ]; then
+    tar xzf argon2-${argon2_ver}.tar.gz
+    pushd argon2-${argon2_ver}
+    make -j ${THREAD} && make install
+    popd
+    rm -rf argon2-${argon2_ver}
+  fi
+
+  if [ ! -e "/usr/local/lib/libsodium.la" ]; then
+    tar xzf libsodium-${libsodium_ver}.tar.gz
+    pushd libsodium-${libsodium_ver}
+    ./configure
+    make -j ${THREAD} && make install
+    popd
+    rm -rf libsodium-${libsodium_ver}
+  fi
+
   if [ ! -e "/usr/local/lib/libmhash.la" ]; then
     tar xzf mhash-${mhash_ver}.tar.gz
     pushd mhash-${mhash_ver}
@@ -40,7 +57,7 @@ Install_PHP72() {
 
   echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
   ldconfig
-  [ "$OS" == 'CentOS' ] && { ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config; [ "${OS_BIT}" == '64' ] && ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1 || ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1; }
+  [ "$OS" == 'CentOS' ] && { [ "${OS_BIT}" == '64' ] && ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1 || ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1; }
 
   id -u ${run_user} >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin ${run_user}
@@ -59,7 +76,7 @@ Install_PHP72() {
     --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
     --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
     --enable-sysvsem --enable-inline-optimization --with-curl=${curl_install_dir} --enable-mbregex \
-    --enable-mbstring --with-gd --with-openssl=${openssl_install_dir} \
+    --enable-mbstring --with-password-argon2 --with-sodium=/usr/local --with-gd --with-openssl=${openssl_install_dir} \
     --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
     --with-gettext --enable-zip --enable-soap --disable-debug $php_modules_options
   else
@@ -70,7 +87,7 @@ Install_PHP72() {
     --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
     --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
     --enable-sysvsem --enable-inline-optimization --with-curl=${curl_install_dir} --enable-mbregex \
-    --enable-mbstring --with-gd --with-openssl=${openssl_install_dir} \
+    --enable-mbstring --with-password-argon2 --with-sodium=/usr/local --with-gd --with-openssl=${openssl_install_dir} \
     --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
     --with-gettext --enable-zip --enable-soap --disable-debug $php_modules_options
   fi

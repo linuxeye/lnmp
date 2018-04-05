@@ -40,7 +40,7 @@ Install_ZendGuardLoader() {
         echo "Error! Your PHP ${PHP_detail_ver} does not support ZendGuardLoader!"
         ;;
     esac
-  
+
     if [ -f "${phpExtensionDir}/ZendGuardLoader.so" ]; then
       cat > ${php_install_dir}/etc/php.d/01-ZendGuardLoader.ini<< EOF
 [Zend Guard Loader]
@@ -52,7 +52,7 @@ EOF
       echo "${CSUCCESS}PHP ZendGuardLoader module installed successfully! ${CEND}"
     fi
   else
-    echo "Error! Your Apache's prefork or PHP already enable thread safety! " 
+    echo "Error! Your Apache's prefork or PHP already enable thread safety! "
   fi
   popd
 }

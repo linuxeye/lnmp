@@ -24,8 +24,8 @@ Install_php-gmagick() {
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
     if [ "`${php_install_dir}/bin/php -r 'echo PHP_VERSION;' | awk -F. '{print $1}'`" == '7' ]; then
-      tar xzf gmagick-${gmagick_for_php7_ver}.tgz 
-      pushd gmagick-${gmagick_for_php7_ver} 
+      tar xzf gmagick-${gmagick_for_php7_ver}.tgz
+      pushd gmagick-${gmagick_for_php7_ver}
     else
       tar xzf gmagick-${gmagick_ver}.tgz
       pushd gmagick-${gmagick_ver}

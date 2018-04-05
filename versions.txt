@@ -3,7 +3,7 @@
 nginx_ver=1.12.2
 tengine_ver=2.2.2
 openresty_ver=1.13.6.1
-openssl_ver=1.0.2n
+openssl_ver=1.0.2o
 
 tomcat9_ver=9.0.6
 tomcat8_ver=8.5.29

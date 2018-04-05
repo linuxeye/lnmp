@@ -86,8 +86,8 @@ Install_php-memcached() {
     rm -rf libmemcached-${libmemcached_ver}
 
     if [ "$(${php_install_dir}/bin/php -r 'echo PHP_VERSION;' | awk -F. '{print $1}')" == '7' ]; then
-      tar xzf memcached-${memcached_pecl_php7_ver}.tgz 
-      pushd memcached-${memcached_pecl_php7_ver} 
+      tar xzf memcached-${memcached_pecl_php7_ver}.tgz
+      pushd memcached-${memcached_pecl_php7_ver}
     else
       tar xzf memcached-${memcached_pecl_ver}.tgz
       pushd memcached-${memcached_pecl_ver}

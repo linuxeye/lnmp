@@ -49,7 +49,7 @@ Upgrade_DB() {
   echo "${CSUCCESS}Starting $DB backup${CEND}......"
   ${db_install_dir}/bin/mysqldump -uroot -p${dbrootpwd} --opt --all-databases > DB_all_backup_$(date +"%Y%m%d").sql
   [ -f "DB_all_backup_$(date +"%Y%m%d").sql" ] && echo "$DB backup success, Backup file: ${MSG}`pwd`/DB_all_backup_$(date +"%Y%m%d").sql${CEND}"
-  
+
   #upgrade
   echo
   echo "Current $DB Version: ${CMSG}$OLD_db_ver${CEND}"
@@ -142,7 +142,7 @@ Upgrade_DB() {
       [ ! -d "${percona_install_dir}" ] && mkdir -p ${percona_install_dir}
       mkdir -p ${percona_data_dir};chown mysql.mysql -R ${percona_data_dir}
       make install
-      popd 
+      popd
       if [ "`echo $NEW_db_ver | awk -F. '{print $1"."$2}'`" == '5.7' ]; then
         ${percona_install_dir}/bin/mysqld --initialize-insecure --user=mysql --basedir=${percona_install_dir} --datadir=${percona_data_dir}
       else

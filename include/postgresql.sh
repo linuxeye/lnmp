@@ -11,7 +11,7 @@
 Install_PostgreSQL() {
   pushd ${oneinstack_dir}/src > /dev/null
   id -u postgres >/dev/null 2>&1
-  [ $? -ne 0 ] && useradd -d ${pgsql_install_dir} -s /bin/bash postgres 
+  [ $? -ne 0 ] && useradd -d ${pgsql_install_dir} -s /bin/bash postgres
   mkdir -p ${pgsql_data_dir};chown postgres.postgres -R ${pgsql_data_dir}
   tar xzf postgresql-${pgsql_ver}.tar.gz
   pushd postgresql-${pgsql_ver}

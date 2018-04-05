@@ -20,7 +20,7 @@ Install_Percona57() {
     tar xzf Percona-Server-${percona57_ver}-Linux.${SYS_BIT_b}.${sslLibVer}.tar.gz
     mv Percona-Server-${percona57_ver}-Linux.${SYS_BIT_b}.${sslLibVer}/* ${percona_install_dir}
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${percona_install_dir}/bin/mysqld_safe
-    sed -i "s@/usr/local/Percona-Server-${percona57_ver}-Linux.${SYS_BIT_b}.${sslLibVer}@${percona_install_dir}@g" ${percona_install_dir}/bin/mysqld_safe 
+    sed -i "s@/usr/local/Percona-Server-${percona57_ver}-Linux.${SYS_BIT_b}.${sslLibVer}@${percona_install_dir}@g" ${percona_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then
     tar xzf percona-server-${percona57_ver}.tar.gz
     pushd percona-server-${percona57_ver}

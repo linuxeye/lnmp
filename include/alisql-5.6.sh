@@ -47,7 +47,7 @@ Install_AliSQL56() {
     kill -9 $$
   fi
   /bin/cp ${alisql_install_dir}/support-files/mysql.server /etc/init.d/mysqld
-  [ -z "`grep transparent_hugepage /etc/init.d/mysqld`" ] && sed -i "s@^basedir=.*@echo never > /sys/kernel/mm/transparent_hugepage/enabled\n&@" /etc/init.d/mysqld 
+  [ -z "`grep transparent_hugepage /etc/init.d/mysqld`" ] && sed -i "s@^basedir=.*@echo never > /sys/kernel/mm/transparent_hugepage/enabled\n&@" /etc/init.d/mysqld
   sed -i "s@^basedir=.*@basedir=${alisql_install_dir}@" /etc/init.d/mysqld
   sed -i "s@^datadir=.*@datadir=${alisql_data_dir}@" /etc/init.d/mysqld
   chmod +x /etc/init.d/mysqld

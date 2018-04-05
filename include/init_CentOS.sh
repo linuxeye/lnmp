@@ -77,14 +77,14 @@ net.ipv4.tcp_sack = 1
 net.ipv4.tcp_window_scaling = 1
 net.ipv4.tcp_rmem = 4096 87380 4194304
 net.ipv4.tcp_wmem = 4096 16384 4194304
-net.ipv4.tcp_max_syn_backlog = 16384 
+net.ipv4.tcp_max_syn_backlog = 16384
 net.core.netdev_max_backlog = 32768
 net.core.somaxconn = 32768
 net.core.wmem_default = 8388608
 net.core.rmem_default = 8388608
 net.core.rmem_max = 16777216
 net.core.wmem_max = 16777216
-net.ipv4.tcp_timestamps = 1 
+net.ipv4.tcp_timestamps = 1
 net.ipv4.tcp_fin_timeout = 20
 net.ipv4.tcp_synack_retries = 2
 net.ipv4.tcp_syn_retries = 2
@@ -126,7 +126,7 @@ if [ "${iptables_yn}" == 'y' ]; then
   else
     IPTABLES_STATUS=no
   fi
-  
+
   if [ "$IPTABLES_STATUS" == "no" ]; then
     [ -e "/etc/sysconfig/iptables" ] && /bin/mv /etc/sysconfig/iptables{,_bk}
     cat > /etc/sysconfig/iptables << EOF

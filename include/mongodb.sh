@@ -31,7 +31,7 @@ systemLog:
 
 # Where and how to store data.
 storage:
-  dbPath: ${mongo_data_dir} 
+  dbPath: ${mongo_data_dir}
   journal:
     enabled: true
 #  engine:
@@ -46,9 +46,9 @@ processManagement:
 # network interfaces
 net:
   port: 27017
-  bindIp: 0.0.0.0 
+  bindIp: 0.0.0.0
   unixDomainSocket:
-    enabled: false 
+    enabled: false
 
 #security:
 #  authorization: enabled
@@ -59,14 +59,14 @@ net:
 EOF
   service mongod start
   echo ${mongo_install_dir}/bin/mongo 127.0.0.1/admin --eval \"db.createUser\(\{user:\'root\',pwd:\'$dbmongopwd\',roles:[\'userAdminAnyDatabase\']\}\)\" | bash
-  sed -i 's@^#security:@security:@' /etc/mongod.conf 
-  sed -i 's@^#  authorization:@  authorization:@' /etc/mongod.conf 
+  sed -i 's@^#security:@security:@' /etc/mongod.conf
+  sed -i 's@^#  authorization:@  authorization:@' /etc/mongod.conf
   if [ -e "${mongo_install_dir}/bin/mongo" ]; then
     sed -i "s+^dbmongopwd.*+dbmongopwd='$dbmongopwd'+" ../options.conf
     echo "${CSUCCESS}MongoDB installed successfully! ${CEND}"
-    rm -rf mongodb-linux-${SYS_BIT_b}-${mongodb_ver} 
+    rm -rf mongodb-linux-${SYS_BIT_b}-${mongodb_ver}
   else
-    rm -rf ${mongo_install_dir} ${mongo_data_dir} mongodb-linux-${SYS_BIT_b}-${mongodb_ver} 
+    rm -rf ${mongo_install_dir} ${mongo_data_dir} mongodb-linux-${SYS_BIT_b}-${mongodb_ver}
     echo "${CFAILURE}MongoDB install failed, Please contact the author! ${CEND}"
     kill -9 $$
   fi

@@ -29,10 +29,11 @@ pushd ${oneinstack_dir} > /dev/null
 
 Usage() {
   printf "
-Usage: $0 [ ${CMSG}add${CEND} | ${CMSG}del${CEND} | ${CMSG}list${CEND} ]
-${CMSG}add${CEND}    --->Add Virtualhost
-${CMSG}del${CEND}    --->Delete Virtualhost
-${CMSG}list${CEND}   --->List Virtualhost
+Usage: $0 [ ${CMSG}add${CEND} | ${CMSG}del${CEND} | ${CMSG}list${CEND} | ${CMSG}dnsapi${CEND} ]
+${CMSG}add${CEND}      --->Add Virtualhost
+${CMSG}del${CEND}      --->Delete Virtualhost
+${CMSG}list${CEND}     --->List Virtualhost
+${CMSG}dnsapi${CEND}   --->Use dns API to automatically issue Let's Encrypt Cert
 
 "
 }
@@ -167,7 +168,7 @@ If you enter '.', the field will be left blank.
 
     openssl req -new -newkey rsa:2048 -sha256 -nodes -out ${PATH_SSL}/${domain}.csr -keyout ${PATH_SSL}/${domain}.key -subj "/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${domain}" > /dev/null 2>&1
     openssl x509 -req -days 36500 -sha256 -in ${PATH_SSL}/${domain}.csr -signkey ${PATH_SSL}/${domain}.key -out ${PATH_SSL}/${domain}.crt > /dev/null 2>&1
-  elif [ "${Domian_Mode}" == '3' ]; then
+  elif [ "${Domian_Mode}" == '3' -o "$1" == 'dnsapi' ]; then
     echo "${CMSG}More: https://oneinstack.com/faq/letsencrypt${CEND}"
     if [ "${moredomain}" == "*.${domain}" ]; then
       while :; do echo
@@ -191,13 +192,13 @@ If you enter '.', the field will be left blank.
         fi
       done
       ~/.acme.sh/acme.sh --issue --dns dns_${DNS_PRO} -d ${domain} -d ${moredomain}
-    else 
+    else
       if [ "${nginx_ssl_flag}" == 'y' ]; then
         [ ! -d ${web_install_dir}/conf/vhost ] && mkdir ${web_install_dir}/conf/vhost
         echo "server {  server_name ${domain}${moredomainame};  root ${vhostdir};  access_log off; }" > ${web_install_dir}/conf/vhost/${domain}.conf
         ${web_install_dir}/sbin/nginx -s reload
       fi
-      if [ "${apache_ssl_flag}" == 'y' ]; then 
+      if [ "${apache_ssl_flag}" == 'y' ]; then
         [ ! -d ${apache_install_dir}/conf/vhost ] && mkdir ${apache_install_dir}/conf/vhost
         cat > ${apache_install_dir}/conf/vhost/${domain}.conf << EOF
 <VirtualHost *:80>
@@ -251,50 +252,52 @@ Print_ssl() {
     echo "$(printf "%-30s" "Self-signed SSL Certificate:")${CMSG}${PATH_SSL}/${domain}.crt${CEND}"
     echo "$(printf "%-30s" "SSL Private Key:")${CMSG}${PATH_SSL}/${domain}.key${CEND}"
     echo "$(printf "%-30s" "SSL CSR File:")${CMSG}${PATH_SSL}/${domain}.csr${CEND}"
-  elif [ "${Domian_Mode}" == '3' ]; then
+  elif [ "${Domian_Mode}" == '3' -o "$1" == 'dnsapi' ]; then
     echo "$(printf "%-30s" "Let's Encrypt SSL Certificate:")${CMSG}${PATH_SSL}/${domain}.crt${CEND}"
     echo "$(printf "%-30s" "SSL Private Key:")${CMSG}${PATH_SSL}/${domain}.key${CEND}"
   fi
 }
 
 Input_Add_domain() {
-  while :;do
-    printf "
+  if [ "$1" != 'dnsapi' ]; then
+    while :;do
+      printf "
 What Are You Doing?
 \t${CMSG}1${CEND}. Use HTTP Only
 \t${CMSG}2${CEND}. Use your own SSL Certificate and Key
 \t${CMSG}3${CEND}. Use Let's Encrypt to Create SSL Certificate and Key
 \t${CMSG}q${CEND}. Exit
 "
-    read -p "Please input the correct option: " Domian_Mode
-    if [[ ! "${Domian_Mode}" =~ ^[1-3,q]$ ]]; then
-      echo "${CFAILURE}input error! Please only input 1~3 and q${CEND}"
-    else
-      if [ "${Domian_Mode}" == '3' ] && [ ! -e ~/.acme.sh/acme.sh ]; then
-        pushd ${oneinstack_dir}/src > /dev/null
-        [ ! -e acme.sh-master.tar.gz ] && wget -qc http://mirrors.linuxeye.com/oneinstack/src/acme.sh-master.tar.gz
-        tar xzf acme.sh-master.tar.gz
-        pushd acme.sh-master > /dev/null
-        ./acme.sh --install > /dev/null 2>&1
-        popd > /dev/null
-        popd > /dev/null
+      read -p "Please input the correct option: " Domian_Mode
+      if [[ ! "${Domian_Mode}" =~ ^[1-3,q]$ ]]; then
+        echo "${CFAILURE}input error! Please only input 1~3 and q${CEND}"
+      else
+        break
       fi
-      if [[ "${Domian_Mode}" =~ ^[2-3]$ ]]; then
-        if [ -e "${web_install_dir}/sbin/nginx" ]; then
-          nginx_ssl_flag=y
-          PATH_SSL=${web_install_dir}/conf/ssl
-          [ ! -d "${PATH_SSL}" ] && mkdir ${PATH_SSL};
-        elif [ ! -e "${web_install_dir}/sbin/nginx" -a -e "${apache_install_dir}/bin/apachectl" ]; then
-          apache_ssl_flag=y
-          PATH_SSL=${apache_install_dir}/conf/ssl
-          [ ! -d "${PATH_SSL}" ] && mkdir ${PATH_SSL};
-        fi
-      elif [ "${Domian_Mode}" == 'q' ]; then
-        exit 1
-      fi
-      break
+    done
+  fi
+  if [ "${Domian_Mode}" == '3' -o "$1" == 'dnsapi' ] && [ ! -e ~/.acme.sh/acme.sh ]; then
+    pushd ${oneinstack_dir}/src > /dev/null
+    [ ! -e acme.sh-master.tar.gz ] && wget -qc http://mirrors.linuxeye.com/oneinstack/src/acme.sh-master.tar.gz
+    tar xzf acme.sh-master.tar.gz
+    pushd acme.sh-master > /dev/null
+    ./acme.sh --install > /dev/null 2>&1
+    popd > /dev/null
+    popd > /dev/null
+  fi
+  if [[ "${Domian_Mode}" =~ ^[2-3]$ ]] || [ "$1" == 'dnsapi' ]; then
+    if [ -e "${web_install_dir}/sbin/nginx" ]; then
+      nginx_ssl_flag=y
+      PATH_SSL=${web_install_dir}/conf/ssl
+      [ ! -d "${PATH_SSL}" ] && mkdir ${PATH_SSL};
+    elif [ ! -e "${web_install_dir}/sbin/nginx" -a -e "${apache_install_dir}/bin/apachectl" ]; then
+      apache_ssl_flag=y
+      PATH_SSL=${apache_install_dir}/conf/ssl
+      [ ! -d "${PATH_SSL}" ] && mkdir ${PATH_SSL};
     fi
-  done
+  elif [ "${Domian_Mode}" == 'q' ]; then
+    exit 1
+  fi
 
   while :; do echo
     read -p "Please input domain(example: www.example.com): " domain
@@ -356,7 +359,6 @@ What Are You Doing?
     done
     Apache_Domain_alias=ServerAlias${moredomainame}
     Tomcat_Domain_alias=$(for D in $(echo ${moredomainame}); do echo "<Alias>${D}</Alias>"; done)
-
 
     if [ -e "${web_install_dir}/sbin/nginx" ]; then
       while :; do echo
@@ -924,7 +926,6 @@ Del_NGX_Vhost() {
             break
           fi
         done
-
     else
       echo "${CWARNING}Virtualhost was not exist! ${CEND}"
     fi
@@ -1049,7 +1050,7 @@ if [ $# == 0 ]; then
   Add_Vhost
 elif [ $# == 1 ]; then
   case $1 in
-  add)
+  add|dnsapi)
     Add_Vhost
     ;;
   del)

@@ -28,7 +28,7 @@ Install_pecl-pgsql() {
     echo 'extension=pdo_pgsql.so' >> ${php_install_dir}/etc/php.d/07-pgsql.ini
     echo "${CSUCCESS}PHP pgsql module installed successfully! ${CEND}"
     popd
-    rm -rf php-${PHP_detail_ver} 
+    rm -rf php-${PHP_detail_ver}
   else
     echo "${CFAILURE}PHP pgsql module install failed, Please contact the author! ${CEND}"
   fi

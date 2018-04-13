@@ -10,7 +10,7 @@
 
 # closed Unnecessary services and remove obsolete rpm package
 [ "${CentOS_ver}" == '7' ] && [ "$(systemctl is-active NetworkManager.service)" == 'active' ] && NM_flag=1
-for Service in $(chkconfig --list | grep 3:on | awk '{print $1}' | grep -vE 'nginx|httpd|tomcat|mysqld|php-fpm|pureftpd|redis-server|memcached|supervisord|aegis|NetworkManager|iptables');do chkconfig --level 3 ${Service} off;done
+for Service in $(chkconfig --list | grep 3:on | awk '{print $1}' | grep -viE 'nginx|httpd|tomcat|mysqld|php-fpm|pureftpd|redis-server|memcached|supervisord|aegis|agentwatch|NetworkManager|iptables|cloud');do chkconfig --level 3 ${Service} off;done
 [ "${NM_flag}" == '1' ] && systemctl enable NetworkManager.service
 for Service in sshd network crond messagebus irqbalance syslog rsyslog;do chkconfig --level 3 ${Service} on;done
 
@@ -43,10 +43,10 @@ EOF
 sed -i '/^# End of file/,$d' /etc/security/limits.conf
 cat >> /etc/security/limits.conf <<EOF
 # End of file
-* soft nproc 65535
-* hard nproc 65535
-* soft nofile 65535
-* hard nofile 65535
+* soft nproc 1000000 
+* hard nproc 1000000 
+* soft nofile 1000000 
+* hard nofile 1000000 
 EOF
 
 # /etc/hosts
@@ -71,7 +71,7 @@ echo options nf_conntrack hashsize=131072 > /etc/modprobe.d/nf_conntrack.conf
 # /etc/sysctl.conf
 [ ! -e "/etc/sysctl.conf_bk" ] && /bin/mv /etc/sysctl.conf{,_bk}
 cat > /etc/sysctl.conf << EOF
-fs.file-max=65535
+fs.file-max=1000000
 net.ipv4.tcp_max_tw_buckets = 6000
 net.ipv4.tcp_sack = 1
 net.ipv4.tcp_window_scaling = 1

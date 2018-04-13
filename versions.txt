@@ -5,8 +5,8 @@ tengine_ver=2.2.2
 openresty_ver=1.13.6.1
 openssl_ver=1.0.2o
 
-tomcat9_ver=9.0.6
-tomcat8_ver=8.5.29
+tomcat9_ver=9.0.7
+tomcat8_ver=8.5.30
 tomcat7_ver=7.0.85
 tomcat6_ver=6.0.53
 
@@ -47,7 +47,7 @@ jdk16_ver=1.6.0_45
 php72_ver=7.2.4
 php71_ver=7.1.16
 php70_ver=7.0.29
-php56_ver=5.6.34
+php56_ver=5.6.35
 php55_ver=5.5.38
 php54_ver=5.4.45
 php53_ver=5.3.29
@@ -69,7 +69,7 @@ xcache_ver=3.2.0
 apcu_ver=4.0.11
 apcu_for_php7_ver=5.1.11
 eaccelerator_ver=0.9.6.1
-swoole_ver=2.1.1
+swoole_ver=2.1.2
 xdebug_ver=2.6.0
 
 # Ftp

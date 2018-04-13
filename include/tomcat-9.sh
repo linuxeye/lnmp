@@ -40,7 +40,7 @@ Install_Tomcat9() {
   pushd ${tomcat_install_dir}/lib/catalina
   jar xf ../catalina.jar
   sed -i 's@^server.info=.*@server.info=Tomcat@' org/apache/catalina/util/ServerInfo.properties
-  sed -i 's@^server.number=.*@server.number=8@' org/apache/catalina/util/ServerInfo.properties
+  sed -i 's@^server.number=.*@server.number=9@' org/apache/catalina/util/ServerInfo.properties
   sed -i "s@^server.built=.*@server.built=$(date)@" org/apache/catalina/util/ServerInfo.properties
   jar cf ../catalina.jar ./*
   popd

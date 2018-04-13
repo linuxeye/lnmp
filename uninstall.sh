@@ -229,7 +229,7 @@ Print_openssl() {
 }
 
 Uninstall_openssl() {
-  [ -d "${openssl_install_dir}" ] && { rm -rf ${openssl_install_dir} /etc/ld.so.conf.d/openssl.conf; ldconfig; }
+  [ -d "${openssl_install_dir}" ] && { rm -rf ${openssl_install_dir} /etc/ld.so.conf.d/*openssl.conf; ldconfig; }
 }
 
 Menu(){

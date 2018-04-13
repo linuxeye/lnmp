@@ -17,9 +17,6 @@ Install_openSSL102() {
     make clean
     ./config --prefix=${openssl_install_dir} -fPIC shared zlib-dynamic
     make -j ${THREAD} && make install
-    [ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=${openssl_install_dir}/bin:\$PATH" >> /etc/profile
-    [ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep ${openssl_install_dir} /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=${openssl_install_dir}/bin:\1@" /etc/profile
-    . /etc/profile
     popd
     if [ -f "${openssl_install_dir}/lib/libcrypto.a" ]; then
       echo "${CSUCCESS}openssl-1.0.2 module installed successfully! ${CEND}"

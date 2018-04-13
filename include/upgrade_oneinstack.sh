@@ -12,6 +12,7 @@ Upgrade_OneinStack() {
   pushd ${oneinstack_dir} > /dev/null
   Latest_OneinStack_MD5=$(curl -s http://mirrors.linuxeye.com/md5sum.txt | grep oneinstack.tar.gz | awk '{print $1}')
   [ ! -e install.sh ] && install_flag=n
+  #[ -e /etc/ld.so.conf.d/*openssl.conf ] && { /bin/mv /etc/ld.so.conf.d/{openssl.conf,z_openssl.conf}; ldconfig; }
   if [ "$oneinstack_md5" != "$Latest_OneinStack_MD5" ]; then
     /bin/mv options.conf /tmp
     sed -i '/oneinstack_dir=/d' /tmp/options.conf

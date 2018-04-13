@@ -672,6 +672,8 @@ IPADDR_COUNTRY=`echo $IPADDR_COUNTRY_ISP | awk '{print $1}'`
 # Check download source packages
 . ./include/check_download.sh
 downloadDepsSrc=1
+[ "$OS" == 'CentOS' ] && yum -y -q install wget
+[[ "${OS}" =~ ^Ubuntu$|^Debian$ ]] &&  apt -y -q install wget
 checkDownload 2>&1 | tee -a ${oneinstack_dir}/install.log
 
 # del openssl for jcloud

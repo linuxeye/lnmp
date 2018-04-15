@@ -8,9 +8,9 @@ index b3f94ec..7613119 100644
  #include "ext/standard/php_string.h"
 +#include "ext/standard/php_smart_str.h"
 +
- 
+
  #define DEBUG_FILE_UPLOAD ZEND_DEBUG
- 
+
 @@ -462,6 +464,66 @@ static int find_boundary(multipart_buffer *self, char *boundary TSRMLS_DC)
  static int multipart_buffer_headers(multipart_buffer *self, zend_llist *header TSRMLS_DC)
  {
@@ -77,4 +77,4 @@ index b3f94ec..7613119 100644
 +	char *line;
  	mime_header_entry prev_entry, entry;
  	int prev_len, cur_len;
- 
+

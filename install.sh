@@ -119,18 +119,7 @@ while :; do
       ;;
     --jdk_option)
       jdk_option=$2; shift 2
-      if [ "${tomcat_option}" == '1' ]; then
-        [[ ! ${jdk_option} =~ ^[1-2]$ ]] && { echo "${CWARNING}jdk_option input error! Please only input number 1~2${CEND}"; exit 1; }
-      elif [ "${tomcat_option}" == '2' ]; then
-        [[ ! ${jdk_option} =~ ^[1-3]$ ]] && { echo "${CWARNING}jdk_option input error! Please only input number 1~3${CEND}"; exit 1; }
-      elif [ "${tomcat_option}" == '3' ]; then
-        [[ ! ${jdk_option} =~ ^[2-4]$ ]] && { echo "${CWARNING}jdk_option input error! Please only input number 2~4${CEND}"; exit 1; }
-      elif [ "${tomcat_option}" == '4' ]; then
-        [[ ! ${jdk_option} =~ ^[3-4]$ ]] && { echo "${CWARNING}jdk_option input error! Please only input number 3~4${CEND}"; exit 1; }
-      else
-        echo "${CWARNING}tomcat_option or jdk_option input error! More: http://tomcat.apache.org/whichversion.html${CEND}"
-        exit 1
-      fi
+      [[ ! ${jdk_option} =~ ^[1-4]$ ]] && { echo "${CWARNING}jdk_option input error! Please only input number 1~4${CEND}"; exit 1; }
       ;;
     --db_option)
       db_option=$2; shift 2

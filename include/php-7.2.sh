@@ -55,7 +55,7 @@ Install_PHP72() {
     rm -rf mhash-${mhash_ver}
   fi
 
-  echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
+  [ -z "`grep /usr/local/lib /etc/ld.so.conf.d/*.conf`" ] && echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
   ldconfig
   [ "$OS" == 'CentOS' ] && { [ "${OS_BIT}" == '64' ] && ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1 || ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1; }
 

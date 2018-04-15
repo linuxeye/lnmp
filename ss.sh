@@ -157,7 +157,7 @@ Install_SS-libev() {
   ./configure
   make -j ${THREAD} && make install
   popd
-  echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
+  [ -z "`grep /usr/local/lib /etc/ld.so.conf.d/*.conf`" ] && echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
   ldconfig
   if [ -f /usr/local/bin/ss-server ]; then
     if [ "${OS}" == "CentOS" ]; then

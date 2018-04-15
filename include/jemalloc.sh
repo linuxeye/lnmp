@@ -23,7 +23,7 @@ Install_Jemalloc() {
       else
         ln -s /usr/local/lib/libjemalloc.so.2 /usr/lib/libjemalloc.so.1
       fi
-      echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
+      [ -z "`grep /usr/local/lib /etc/ld.so.conf.d/*.conf`" ] && echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
       ldconfig
       echo "${CSUCCESS}jemalloc module installed successfully! ${CEND}"
       rm -rf jemalloc-${jemalloc_ver}

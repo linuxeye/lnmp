@@ -28,7 +28,8 @@ Install_Apache24() {
     ./configure
     make -j ${THREAD} && make install
     popd
-    echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf; ldconfig
+    [ -z "`grep /usr/local/lib /etc/ld.so.conf.d/*.conf`" ] && echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
+    ldconfig
     rm -rf nghttp2-${nghttp2_ver}
   fi
 
@@ -37,7 +38,7 @@ Install_Apache24() {
   /bin/cp -R ../apr-${apr_ver} ./srclib/apr
   /bin/cp -R ../apr-util-${apr_util_ver} ./srclib/apr-util
   [[ "${php_option}" =~ ^[1-4]$ ]] && Apache_mpm_arg='--with-mpm=prefork'
-  LDFLAGS=-ldl LD_LIBRARY_PATH=${openssl_install_dir}/lib ./configure --prefix=${apache_install_dir} ${Apache_mpm_arg} --enable-mpms-shared=all --with-included-apr --enable-headers --enable-deflate --enable-so --enable-dav --enable-rewrite --enable-ssl --with-ssl=${openssl_install_dir} --enable-http2 --with-nghttp2=/usr/local --enable-expires --enable-static-support --enable-suexec --enable-modules=all --enable-mods-shared=all
+  LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} ${Apache_mpm_arg} --enable-mpms-shared=all --with-included-apr --enable-headers --enable-deflate --enable-so --enable-dav --enable-rewrite --enable-ssl --with-ssl=${openssl_install_dir} --enable-http2 --with-nghttp2=/usr/local --enable-expires --enable-static-support --enable-suexec --enable-modules=all --enable-mods-shared=all
   make -j ${THREAD} && make install
   unset LDFLAGS
   if [ -e "${apache_install_dir}/conf/httpd.conf" ]; then
@@ -54,7 +55,6 @@ Install_Apache24() {
   [ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep ${apache_install_dir} /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=${apache_install_dir}/bin:\1@" /etc/profile
   . /etc/profile
 
-  sed -i "s@^export LD_LIBRARY_PATH.*@export LD_LIBRARY_PATH=${openssl_install_dir}/lib:\$LD_LIBRARY_PATH@" ${apache_install_dir}/bin/envvars
   /bin/cp ${apache_install_dir}/bin/apachectl /etc/init.d/httpd
   sed -i '2a # chkconfig: - 85 15' /etc/init.d/httpd
   sed -i '3a # description: Apache is a World Wide Web server. It is used to serve' /etc/init.d/httpd

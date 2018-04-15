@@ -43,10 +43,10 @@ EOF
 sed -i '/^# End of file/,$d' /etc/security/limits.conf
 cat >> /etc/security/limits.conf <<EOF
 # End of file
-* soft nproc 1000000 
-* hard nproc 1000000 
-* soft nofile 1000000 
-* hard nofile 1000000 
+* soft nproc 1000000
+* hard nproc 1000000
+* soft nofile 1000000
+* hard nofile 1000000
 EOF
 
 # /etc/hosts

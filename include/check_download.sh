@@ -702,7 +702,11 @@ checkDownload() {
 
   if [ "${phpmyadmin_yn}" == 'y' ]; then
     echo "Download phpMyAdmin..."
-    src_url=https://files.phpmyadmin.net/phpMyAdmin/${phpmyadmin_ver}/phpMyAdmin-${phpmyadmin_ver}-all-languages.tar.gz && Download_src
+    if [[ "${php_option}" =~ ^[1-2]$ ]]; then
+      src_url=https://files.phpmyadmin.net/phpMyAdmin/${phpmyadmin_oldver}/phpMyAdmin-${phpmyadmin_oldver}-all-languages.tar.gz && Download_src
+    else
+      src_url=https://files.phpmyadmin.net/phpMyAdmin/${phpmyadmin_ver}/phpMyAdmin-${phpmyadmin_ver}-all-languages.tar.gz && Download_src
+    fi
   fi
 
   if [ "${redis_yn}" == 'y' ]; then

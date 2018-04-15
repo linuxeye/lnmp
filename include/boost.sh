@@ -19,7 +19,7 @@ installBoost() {
     popd
   fi
   if [ -e "/usr/local/lib/libboost_system.so" ]; then
-    echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
+    [ -z "`grep /usr/local/lib /etc/ld.so.conf.d/*.conf`" ] && echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
     ldconfig
     echo "${CSUCCESS}Boost installed successfully! ${CEND}"
     rm -rf boost_${boostVersion2}

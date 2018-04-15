@@ -43,7 +43,7 @@ stop () {
   echo
   if [ $RETVAL -eq 0 ] ; then
     rm -f /var/lock/subsys/memcached
-    rm -f $PIDFILE 
+    rm -f $PIDFILE
   fi
 }
 

@@ -80,7 +80,7 @@ start() {
 }
 
 
-# Stop SS. 
+# Stop SS.
 #
 stop() {
   echo -n $"Shutting down ${NAME}: "

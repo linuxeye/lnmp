@@ -1,5 +1,5 @@
 #! /bin/sh
- 
+
 ### BEGIN INIT INFO
 # Provides:          nginx
 # Required-Start:    $all
@@ -9,22 +9,22 @@
 # Short-Description: starts the nginx web server
 # Description:       starts nginx using start-stop-daemon
 ### END INIT INFO
- 
+
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 DAEMON=/usr/local/nginx/sbin/nginx
 DAEMON_OPTS='-c /usr/local/nginx/conf/nginx.conf'
 NAME=nginx
 DESC=nginx
- 
+
 test -x $DAEMON || exit 0
- 
+
 # Include nginx defaults if available
 if [ -f /etc/default/nginx ] ; then
   . /etc/default/nginx
 fi
- 
+
 set -e
- 
+
 case "$1" in
   start)
     echo -n "Starting $DESC: "
@@ -50,7 +50,7 @@ case "$1" in
     echo "$NAME."
     ;;
   configtest)
-    $DAEMON -t $DAEMON_OPTS 
+    $DAEMON -t $DAEMON_OPTS
     ;;
   *)
     N=/etc/init.d/$NAME
@@ -58,5 +58,5 @@ case "$1" in
     exit 1
     ;;
 esac
- 
+
 exit 0

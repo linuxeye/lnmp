@@ -13,7 +13,7 @@ Upgrade_Nginx() {
   [ ! -e "${nginx_install_dir}/sbin/nginx" ] && echo "${CWARNING}Nginx is not installed on your system! ${CEND}" && exit 1
   OLD_nginx_ver_tmp=`${nginx_install_dir}/sbin/nginx -v 2>&1`
   OLD_nginx_ver=${OLD_nginx_ver_tmp##*/}
-  Latest_nginx_ver=`curl -s http://nginx.org/en/CHANGES-1.12 | awk '/Changes with nginx/{print$0}' | awk '{print $4}' | head -1`
+  Latest_nginx_ver=`curl -s http://nginx.org/en/CHANGES-1.14 | awk '/Changes with nginx/{print$0}' | awk '{print $4}' | head -1`
   [ -z "${Latest_nginx_ver}" ] && Latest_nginx_ver=`curl -s http://nginx.org/en/CHANGES | awk '/Changes with nginx/{print$0}' | awk '{print $4}' | head -1`
   echo
   echo "Current Nginx Version: ${CMSG}${OLD_nginx_ver}${CEND}"
@@ -46,9 +46,10 @@ Upgrade_Nginx() {
     make clean
     sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc # close debug
     ${nginx_install_dir}/sbin/nginx -V &> $$
-    nginx_configure_arguments=`cat $$ | grep 'configure arguments:' | awk -F: '{print $2}'`
+    nginx_configure_args_tmp=`cat $$ | grep 'configure arguments:' | awk -F: '{print $2}'`
     rm -rf $$
-    ./configure ${nginx_configure_arguments}
+    nginx_configure_args=`echo ${nginx_configure_args_tmp} | sed "s@--with-openssl=../openssl-...... @--with-openssl=../openssl-${openssl_ver} @" | sed "s@--with-pcre=../pcre-.... @--with-pcre=../pcre-${pcre_ver} @"`
+    ./configure ${nginx_configure_args}
     make -j ${THREAD}
     if [ -f "objs/nginx" ]; then
       /bin/mv ${nginx_install_dir}/sbin/nginx{,`date +%m%d`}
@@ -103,9 +104,10 @@ Upgrade_Tengine() {
     make clean
     sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc # close debug
     ${tengine_install_dir}/sbin/nginx -V &> $$
-    tengine_configure_arguments=`cat $$ | grep 'configure arguments:' | awk -F: '{print $2}'`
+    tengine_configure_args_tmp=`cat $$ | grep 'configure arguments:' | awk -F: '{print $2}'`
     rm -rf $$
-    ./configure ${tengine_configure_arguments}
+    tengine_configure_args=`echo ${tengine_configure_args_tmp} | sed "s@--with-openssl=../openssl-...... @--with-openssl=../openssl-${openssl_ver} @" | sed "s@--with-pcre=../pcre-.... @--with-pcre=../pcre-${pcre_ver} @"`
+    ./configure ${tengine_configure_args}
     make -j ${THREAD}
     if [ -f "objs/nginx" ]; then
       /bin/mv ${tengine_install_dir}/sbin/nginx{,`date +%m%d`}

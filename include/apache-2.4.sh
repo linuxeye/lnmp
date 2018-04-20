@@ -18,12 +18,12 @@ Install_Apache24() {
   id -u ${run_user} >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin ${run_user}
   tar xzf httpd-${apache24_ver}.tar.gz
-  tar xzf nghttp2-${nghttp2_ver}.tar.gz
   tar xzf apr-${apr_ver}.tar.gz
   tar xzf apr-util-${apr_util_ver}.tar.gz
 
   # install nghttp2
   if [ ! -e "/usr/local/lib/libnghttp2.so" ]; then
+    tar xzf nghttp2-${nghttp2_ver}.tar.gz
     pushd nghttp2-${nghttp2_ver}
     ./configure
     make -j ${THREAD} && make install
@@ -44,7 +44,7 @@ Install_Apache24() {
   if [ -e "${apache_install_dir}/conf/httpd.conf" ]; then
     echo "${CSUCCESS}Apache installed successfully! ${CEND}"
     popd
-    rm -rf httpd-${apache24_ver}
+    rm -rf httpd-${apache24_ver} pcre-${pcre_ver} apr-${apr_ver} apr-util-${apr_util_ver}
   else
     rm -rf ${apache_install_dir}
     echo "${CFAILURE}Apache install failed, Please contact the author! ${CEND}"
@@ -59,8 +59,8 @@ Install_Apache24() {
   sed -i '2a # chkconfig: - 85 15' /etc/init.d/httpd
   sed -i '3a # description: Apache is a World Wide Web server. It is used to serve' /etc/init.d/httpd
   chmod +x /etc/init.d/httpd
-  [ "$OS" == 'CentOS' ] && { chkconfig --add httpd; chkconfig httpd on; }
-  [[ $OS =~ ^Ubuntu$|^Debian$ ]] && update-rc.d httpd defaults
+  [ "${OS}" == 'CentOS' ] && { chkconfig --add httpd; chkconfig httpd on; }
+  [[ ${OS} =~ ^Ubuntu$|^Debian$ ]] && update-rc.d httpd defaults
 
   sed -i "s@^User daemon@User ${run_user}@" ${apache_install_dir}/conf/httpd.conf
   sed -i "s@^Group daemon@Group ${run_user}@" ${apache_install_dir}/conf/httpd.conf

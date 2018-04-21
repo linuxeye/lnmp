@@ -39,13 +39,13 @@ dbinstallmethod=1
 
 version() {
   echo "version: 1.7"
-  echo "updated date: 2018-04-02"
+  echo "updated date: 2018-04-20"
 }
 
 showhelp() {
   version
   echo "Usage: $0  command ...[parameters]....
-  --help, -h                  Show this help message, More: https://oneinstack.com/autoinstall
+  --help, -h                  Show this help message, More: https://oneinstack.com/auto
   --version, -v               Show version info
   --nginx_option [1-3]        Install Nginx server version
   --apache_option [1-2]       Install Apache server version
@@ -54,7 +54,7 @@ showhelp() {
   --php_extensions [ext name] Install PHP extension, include zendguardloader,ioncube,imagick,gmagick
   --tomcat_option [1-4]       Install Tomcat version
   --jdk_option [1-4]          Install JDK version
-  --db_option [1-13]          Install DB version
+  --db_option [1-14]          Install DB version
   --dbinstallmethod [1-2]     DB install method, default: 1 binary install
   --dbrootpwd [password]      DB super password
   --pureftpd                  Install Pure-Ftpd
@@ -124,14 +124,14 @@ while :; do
     --db_option)
       db_option=$2; shift 2
       db_yn=y
-      if [[ "${db_option}" =~ ^[1-9]$|^1[0-1]$ ]]; then
+      if [[ "${db_option}" =~ ^[1-9]$|^1[0-2]$ ]]; then
         [ -d "${db_install_dir}/support-files" ] && { echo "${CWARNING}MySQL already installed! ${CEND}"; db_yn=Other; }
-      elif [ "${db_option}" == '12' ]; then
-        [ -e "${pgsql_install_dir}/bin/psql" ] && { echo "${CWARNING}PostgreSQL already installed! ${CEND}"; db_yn=Other; }
       elif [ "${db_option}" == '13' ]; then
+        [ -e "${pgsql_install_dir}/bin/psql" ] && { echo "${CWARNING}PostgreSQL already installed! ${CEND}"; db_yn=Other; }
+      elif [ "${db_option}" == '14' ]; then
         [ -e "${mongo_install_dir}/bin/mongo" ] && { echo "${CWARNING}MongoDB already installed! ${CEND}"; db_yn=Other; }
       else
-        echo "${CWARNING}db_option input error! Please only input number 1~13${CEND}"
+        echo "${CWARNING}db_option input error! Please only input number 1~14${CEND}"
         exit 1
       fi
       ;;
@@ -342,35 +342,36 @@ if [ ${ARG_NUM} == 0 ]; then
       if [ "${db_yn}" == 'y' ]; then
         while :; do echo
           echo 'Please select a version of the Database:'
-          echo -e "\t${CMSG} 1${CEND}. Install MySQL-5.7"
-          echo -e "\t${CMSG} 2${CEND}. Install MySQL-5.6"
-          echo -e "\t${CMSG} 3${CEND}. Install MySQL-5.5"
-          echo -e "\t${CMSG} 4${CEND}. Install MariaDB-10.2"
-          echo -e "\t${CMSG} 5${CEND}. Install MariaDB-10.1"
-          echo -e "\t${CMSG} 6${CEND}. Install MariaDB-10.0"
-          echo -e "\t${CMSG} 7${CEND}. Install MariaDB-5.5"
-          echo -e "\t${CMSG} 8${CEND}. Install Percona-5.7"
-          echo -e "\t${CMSG} 9${CEND}. Install Percona-5.6"
-          echo -e "\t${CMSG}10${CEND}. Install Percona-5.5"
-          echo -e "\t${CMSG}11${CEND}. Install AliSQL-5.6"
-          echo -e "\t${CMSG}12${CEND}. Install PostgreSQL"
-          echo -e "\t${CMSG}13${CEND}. Install MongoDB"
+          echo -e "\t${CMSG} 1${CEND}. Install MySQL-8.0"
+          echo -e "\t${CMSG} 2${CEND}. Install MySQL-5.7"
+          echo -e "\t${CMSG} 3${CEND}. Install MySQL-5.6"
+          echo -e "\t${CMSG} 4${CEND}. Install MySQL-5.5"
+          echo -e "\t${CMSG} 5${CEND}. Install MariaDB-10.2"
+          echo -e "\t${CMSG} 6${CEND}. Install MariaDB-10.1"
+          echo -e "\t${CMSG} 7${CEND}. Install MariaDB-10.0"
+          echo -e "\t${CMSG} 8${CEND}. Install MariaDB-5.5"
+          echo -e "\t${CMSG} 9${CEND}. Install Percona-5.7"
+          echo -e "\t${CMSG}10${CEND}. Install Percona-5.6"
+          echo -e "\t${CMSG}11${CEND}. Install Percona-5.5"
+          echo -e "\t${CMSG}12${CEND}. Install AliSQL-5.6"
+          echo -e "\t${CMSG}13${CEND}. Install PostgreSQL"
+          echo -e "\t${CMSG}14${CEND}. Install MongoDB"
           read -p "Please input a number:(Default 2 press Enter) " db_option
           [ -z "${db_option}" ] && db_option=2
-          [ "${db_option}" == '13' -a "$OS_BIT" == '32' ] && { echo "${CWARNING}By not supporting 32-bit! ${CEND}"; continue; }
-          if [[ "${db_option}" =~ ^[1-9]$|^1[0-3]$ ]]; then
-            if [ "${db_option}" == '12' ]; then
+          [ "${db_option}" == '14' -a "${OS_BIT}" == '32' ] && { echo "${CWARNING}By not supporting 32-bit! ${CEND}"; continue; }
+          if [[ "${db_option}" =~ ^[1-9]$|^1[0-4]$ ]]; then
+            if [ "${db_option}" == '13' ]; then
               [ -e "${pgsql_install_dir}/bin/psql" ] && { echo "${CWARNING}PostgreSQL already installed! ${CEND}"; db_yn=Other; break; }
-            elif [ "${db_option}" == '13' ]; then
+            elif [ "${db_option}" == '14' ]; then
               [ -e "${mongo_install_dir}/bin/mongo" ] && { echo "${CWARNING}MongoDB already installed! ${CEND}"; db_yn=Other; break; }
             else
               [ -d "${db_install_dir}/support-files" ] && { echo "${CWARNING}MySQL already installed! ${CEND}"; db_yn=Other; break; }
             fi
             while :; do
-              if [ "${db_option}" == '12' ]; then
+              if [ "${db_option}" == '13' ]; then
                 read -p "Please input the postgres password of PostgreSQL(default: ${dbpostgrespwd}): " dbpwd
                 [ -z "${dbpwd}" ] && dbpwd=${dbpostgrespwd}
-              elif [ "${db_option}" == '13' ]; then
+              elif [ "${db_option}" == '14' ]; then
                 read -p "Please input the root password of MongoDB(default: ${dbmongopwd}): " dbpwd
                 [ -z "${dbpwd}" ] && dbpwd=${dbmongopwd}
               else
@@ -379,9 +380,9 @@ if [ ${ARG_NUM} == 0 ]; then
               fi
               [ -n "`echo ${dbpwd} | grep '[+|&]'`" ] && { echo "${CWARNING}input error,not contain a plus sign (+) and & ${CEND}"; continue; }
               if (( ${#dbpwd} >= 5 )); then
-                if [ "${db_option}" == '12' ]; then
+                if [ "${db_option}" == '13' ]; then
                   dbpostgrespwd=${dbpwd}
-                elif [ "${db_option}" == '13' ]; then
+                elif [ "${db_option}" == '14' ]; then
                   dbmongopwd=${dbpwd}
                 else
                   dbrootpwd=${dbpwd}
@@ -392,7 +393,7 @@ if [ ${ARG_NUM} == 0 ]; then
               fi
             done
             # choose install methods
-            if [[ "${db_option}" =~ ^[1-9]$|^10$ ]]; then
+            if [[ "${db_option}" =~ ^[1-9]$|^1[0-1]$ ]]; then
               while :; do echo
                 echo "Please choose installation of the database:"
                 echo -e "\t${CMSG}1${CEND}. Install database from binary package."
@@ -408,7 +409,7 @@ if [ ${ARG_NUM} == 0 ]; then
             fi
             break
           else
-            echo "${CWARNING}input error! Please only input number 1~13${CEND}"
+            echo "${CWARNING}input error! Please only input number 1~14${CEND}"
           fi
         done
       fi
@@ -637,7 +638,7 @@ if [ ${ARG_NUM} == 0 ]; then
     else
       if [ "${hhvm_yn}" == 'y' ]; then
         [ -e "/usr/bin/hhvm" ] && { echo "${CWARNING}HHVM already installed! ${CEND}"; hhvm_yn=Other; break; }
-        if [ "$OS" == 'CentOS' -a "$OS_BIT" == '64' ] && [ -n "`grep -E ' 7\.| 6\.[5-9]' /etc/redhat-release`" ]; then
+        if [ "${OS}" == 'CentOS' -a "${OS_BIT}" == '64' ] && [ -n "`grep -E ' 7\.| 6\.[5-9]' /etc/redhat-release`" ]; then
           break
         else
           echo
@@ -661,7 +662,7 @@ IPADDR_COUNTRY=`echo $IPADDR_COUNTRY_ISP | awk '{print $1}'`
 # Check download source packages
 . ./include/check_download.sh
 downloadDepsSrc=1
-[ "$OS" == 'CentOS' ] && yum -y -q install wget
+[ "${OS}" == 'CentOS' ] && yum -y -q install wget
 [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]] &&  apt -y -q install wget
 checkDownload 2>&1 | tee -a ${oneinstack_dir}/install.log
 
@@ -712,70 +713,79 @@ fi
 # Database
 case "${db_option}" in
   1)
+    [ "${OS}" == 'CentOS' -a ${CentOS_ver} != '7' ] && dbinstallmethod=1
     if [ "${dbinstallmethod}" == "2" ]; then
       . include/boost.sh
       installBoost 2>&1 | tee -a ${oneinstack_dir}/install.log
+    fi
+    . include/mysql-8.0.sh
+    Install_MySQL80 2>&1 | tee -a ${oneinstack_dir}/install.log
+    ;;
+  2)
+    if [ "${dbinstallmethod}" == "2" ]; then
+      . include/boost.sh
+      installBoostold 2>&1 | tee -a ${oneinstack_dir}/install.log
     fi
     . include/mysql-5.7.sh
     Install_MySQL57 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
-  2)
+  3)
     . include/mysql-5.6.sh
     Install_MySQL56 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
-  3)
+  4)
     . include/mysql-5.5.sh
     Install_MySQL55 2>&1 | tee -a ${oneinstack_dir}/install.log
-    ;;
-  4)
-    if [ "${dbinstallmethod}" == "2" ]; then
-      . include/boost.sh
-      installBoost 2>&1 | tee -a ${oneinstack_dir}/install.log
-    fi
-    . include/mariadb-10.2.sh
-    Install_MariaDB102 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   5)
     if [ "${dbinstallmethod}" == "2" ]; then
       . include/boost.sh
-      installBoost 2>&1 | tee -a ${oneinstack_dir}/install.log
+      installBoostold 2>&1 | tee -a ${oneinstack_dir}/install.log
+    fi
+    . include/mariadb-10.2.sh
+    Install_MariaDB102 2>&1 | tee -a ${oneinstack_dir}/install.log
+    ;;
+  6)
+    if [ "${dbinstallmethod}" == "2" ]; then
+      . include/boost.sh
+      installBoostold 2>&1 | tee -a ${oneinstack_dir}/install.log
     fi
     . include/mariadb-10.1.sh
     Install_MariaDB101 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
-  6)
+  7)
     . include/mariadb-10.0.sh
     Install_MariaDB100 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
-  7)
+  8)
     . include/mariadb-5.5.sh
     Install_MariaDB55 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
-  8)
+  9)
     if [ "${dbinstallmethod}" == "2" ]; then
       . include/boost.sh
-      installBoost 2>&1 | tee -a ${oneinstack_dir}/install.log
+      installBoostold 2>&1 | tee -a ${oneinstack_dir}/install.log
     fi
     . include/percona-5.7.sh
     Install_Percona57 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
-  9)
+  10)
     . include/percona-5.6.sh
     Install_Percona56 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
-  10)
+  11)
     . include/percona-5.5.sh
     Install_Percona55 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
-  11)
+  12)
     . include/alisql-5.6.sh
     Install_AliSQL56 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
-  12)
+  13)
     . include/postgresql.sh
     Install_PostgreSQL 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
-  13)
+  14)
     . include/mongodb.sh
     Install_MongoDB 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
@@ -823,13 +833,13 @@ case "${php_option}" in
 esac
 
 # pecl_pgsql
-if [ "${db_option}" == '12' -a -e "${php_install_dir}/bin/phpize" ]; then
+if [ "${db_option}" == '13' -a -e "${php_install_dir}/bin/phpize" ]; then
   . include/pecl_pgsql.sh
   Install_pecl-pgsql 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # pecl_mongodb
-if [ "${db_option}" == '13' -a -e "${php_install_dir}/bin/phpize" ]; then
+if [ "${db_option}" == '14' -a -e "${php_install_dir}/bin/phpize" ]; then
   . include/pecl_mongodb.sh
   Install_pecl-mongodb 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
@@ -973,7 +983,7 @@ fi
 . include/check_dir.sh
 
 # HHVM
-if [ "${hhvm_yn}" == 'y' ] && [ "$OS" == 'CentOS' -a "$OS_BIT" == '64' ] && [ -n "`grep -E ' 7\.| 6\.[5-9]' /etc/redhat-release`" ]; then
+if [ "${hhvm_yn}" == 'y' ] && [ "${OS}" == 'CentOS' -a "${OS_BIT}" == '64' ] && [ -n "`grep -E ' 7\.| 6\.[5-9]' /etc/redhat-release`" ]; then
   . include/hhvm_CentOS.sh
   Install_hhvm_CentOS 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
@@ -988,18 +998,18 @@ echo "Total OneinStack Install Time: ${CQUESTION}${installTime}${CEND} minutes"
 [ "${web_yn}" == 'y' ] && [[ "${nginx_option}" =~ ^[1-3]$ ]] && echo -e "\n$(printf "%-32s" "Nginx install dir":)${CMSG}${web_install_dir}${CEND}"
 [ "${web_yn}" == 'y' ] && [[ "${apache_option}" =~ ^[1,2]$ ]] && echo -e "\n$(printf "%-32s" "Apache install dir":)${CMSG}${apache_install_dir}${CEND}"
 [[ "${tomcat_option}" =~ ^[1,2]$ ]] && echo -e "\n$(printf "%-32s" "Tomcat install dir":)${CMSG}${tomcat_install_dir}${CEND}"
-[[ "${db_option}" =~ ^[1-9]$|^1[0-1]$ ]] && echo -e "\n$(printf "%-32s" "Database install dir:")${CMSG}${db_install_dir}${CEND}"
-[[ "${db_option}" =~ ^[1-9]$|^1[0-1]$ ]] && echo "$(printf "%-32s" "Database data dir:")${CMSG}${db_data_dir}${CEND}"
-[[ "${db_option}" =~ ^[1-9]$|^1[0-1]$ ]] && echo "$(printf "%-32s" "Database user:")${CMSG}root${CEND}"
-[[ "${db_option}" =~ ^[1-9]$|^1[0-1]$ ]] && echo "$(printf "%-32s" "Database password:")${CMSG}${dbrootpwd}${CEND}"
-[ "${db_option}" == '12' ] && echo -e "\n$(printf "%-32s" "PostgreSQL install dir:")${CMSG}${pgsql_install_dir}${CEND}"
-[ "${db_option}" == '12' ] && echo "$(printf "%-32s" "PostgreSQL data dir:")${CMSG}${pgsql_data_dir}${CEND}"
-[ "${db_option}" == '12' ] && echo "$(printf "%-32s" "PostgreSQL user:")${CMSG}postgres${CEND}"
-[ "${db_option}" == '12' ] && echo "$(printf "%-32s" "postgres password:")${CMSG}${dbpostgrespwd}${CEND}"
-[ "${db_option}" == '13' ] && echo -e "\n$(printf "%-32s" "MongoDB install dir:")${CMSG}${mongo_install_dir}${CEND}"
-[ "${db_option}" == '13' ] && echo "$(printf "%-32s" "MongoDB data dir:")${CMSG}${mongo_data_dir}${CEND}"
-[ "${db_option}" == '13' ] && echo "$(printf "%-32s" "MongoDB user:")${CMSG}root${CEND}"
-[ "${db_option}" == '13' ] && echo "$(printf "%-32s" "MongoDB password:")${CMSG}${dbmongopwd}${CEND}"
+[[ "${db_option}" =~ ^[1-9]$|^1[0-2]$ ]] && echo -e "\n$(printf "%-32s" "Database install dir:")${CMSG}${db_install_dir}${CEND}"
+[[ "${db_option}" =~ ^[1-9]$|^1[0-2]$ ]] && echo "$(printf "%-32s" "Database data dir:")${CMSG}${db_data_dir}${CEND}"
+[[ "${db_option}" =~ ^[1-9]$|^1[0-2]$ ]] && echo "$(printf "%-32s" "Database user:")${CMSG}root${CEND}"
+[[ "${db_option}" =~ ^[1-9]$|^1[0-2]$ ]] && echo "$(printf "%-32s" "Database password:")${CMSG}${dbrootpwd}${CEND}"
+[ "${db_option}" == '13' ] && echo -e "\n$(printf "%-32s" "PostgreSQL install dir:")${CMSG}${pgsql_install_dir}${CEND}"
+[ "${db_option}" == '13' ] && echo "$(printf "%-32s" "PostgreSQL data dir:")${CMSG}${pgsql_data_dir}${CEND}"
+[ "${db_option}" == '13' ] && echo "$(printf "%-32s" "PostgreSQL user:")${CMSG}postgres${CEND}"
+[ "${db_option}" == '13' ] && echo "$(printf "%-32s" "postgres password:")${CMSG}${dbpostgrespwd}${CEND}"
+[ "${db_option}" == '14' ] && echo -e "\n$(printf "%-32s" "MongoDB install dir:")${CMSG}${mongo_install_dir}${CEND}"
+[ "${db_option}" == '14' ] && echo "$(printf "%-32s" "MongoDB data dir:")${CMSG}${mongo_data_dir}${CEND}"
+[ "${db_option}" == '14' ] && echo "$(printf "%-32s" "MongoDB user:")${CMSG}root${CEND}"
+[ "${db_option}" == '14' ] && echo "$(printf "%-32s" "MongoDB password:")${CMSG}${dbmongopwd}${CEND}"
 [ "${php_yn}" == 'y' ] && echo -e "\n$(printf "%-32s" "PHP install dir:")${CMSG}${php_install_dir}${CEND}"
 [ "${php_yn}" == 'y' -a "${phpcache_option}" == '1' ] && echo "$(printf "%-32s" "Opcache Control Panel URL:")${CMSG}http://${IPADDR}/ocp.php${CEND}"
 [ "${phpcache_option}" == '2' ] && echo "$(printf "%-32s" "xcache Control Panel URL:")${CMSG}http://${IPADDR}/xcache${CEND}"

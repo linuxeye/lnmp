@@ -19,7 +19,6 @@ Install_MySQL80() {
   if [ "${dbinstallmethod}" == "1" ]; then
     tar xzf mysql-${mysql80_ver}-linux-glibc2.12-${SYS_BIT_b}.tar.gz
     mv mysql-${mysql80_ver}-linux-glibc2.12-${SYS_BIT_b}/* ${mysql_install_dir}
-    sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mysql_install_dir}/bin/mysqld_safe
     sed -i "s@/usr/local/mysql@${mysql_install_dir}@g" ${mysql_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then
     tar xzf mysql-${mysql80_ver}.tar.gz
@@ -37,14 +36,14 @@ Install_MySQL80() {
     -DENABLED_LOCAL_INFILE=1 \
     -DDEFAULT_CHARSET=utf8mb4 \
     -DDEFAULT_COLLATION=utf8mb4_general_ci \
-    -DEXTRA_CHARSETS=all \
-    -DCMAKE_EXE_LINKER_FLAGS='-ljemalloc'
+    -DEXTRA_CHARSETS=all
     make -j ${THREAD}
     make install
     popd
   fi
 
   if [ -d "${mysql_install_dir}/support-files" ]; then
+    sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mysql_install_dir}/bin/mysqld_safe
     sed -i "s+^dbrootpwd.*+dbrootpwd='${dbrootpwd}'+" ../options.conf
     echo "${CSUCCESS}MySQL installed successfully! ${CEND}"
     if [ "${dbinstallmethod}" == "1" ]; then
@@ -54,7 +53,6 @@ Install_MySQL80() {
     fi
   else
     rm -rf ${mysql_install_dir}
-    rm -rf mysql-${mysql80_ver}
     echo "${CFAILURE}MySQL install failed, Please contact the author! ${CEND}"
     kill -9 $$
   fi
@@ -113,15 +111,11 @@ key_buffer_size = 4M
 
 thread_cache_size = 8
 
-query_cache_type = 1
-query_cache_size = 8M
-query_cache_limit = 2M
-
 ft_min_word_len = 4
 
 log_bin = mysql-bin
 binlog_format = mixed
-expire_logs_days = 7
+binlog_expire_logs_seconds = 604800
 
 log_error = ${mysql_data_dir}/mysql-error.log
 slow_query_log = 1
@@ -173,7 +167,6 @@ EOF
   sed -i "s@max_connections.*@max_connections = $((${Mem}/3))@" /etc/my.cnf
   if [ ${Mem} -gt 1500 -a ${Mem} -le 2500 ]; then
     sed -i 's@^thread_cache_size.*@thread_cache_size = 16@' /etc/my.cnf
-    sed -i 's@^query_cache_size.*@query_cache_size = 16M@' /etc/my.cnf
     sed -i 's@^myisam_sort_buffer_size.*@myisam_sort_buffer_size = 16M@' /etc/my.cnf
     sed -i 's@^key_buffer_size.*@key_buffer_size = 16M@' /etc/my.cnf
     sed -i 's@^innodb_buffer_pool_size.*@innodb_buffer_pool_size = 128M@' /etc/my.cnf
@@ -181,7 +174,6 @@ EOF
     sed -i 's@^table_open_cache.*@table_open_cache = 256@' /etc/my.cnf
   elif [ ${Mem} -gt 2500 -a ${Mem} -le 3500 ]; then
     sed -i 's@^thread_cache_size.*@thread_cache_size = 32@' /etc/my.cnf
-    sed -i 's@^query_cache_size.*@query_cache_size = 32M@' /etc/my.cnf
     sed -i 's@^myisam_sort_buffer_size.*@myisam_sort_buffer_size = 32M@' /etc/my.cnf
     sed -i 's@^key_buffer_size.*@key_buffer_size = 64M@' /etc/my.cnf
     sed -i 's@^innodb_buffer_pool_size.*@innodb_buffer_pool_size = 512M@' /etc/my.cnf
@@ -189,7 +181,6 @@ EOF
     sed -i 's@^table_open_cache.*@table_open_cache = 512@' /etc/my.cnf
   elif [ ${Mem} -gt 3500 ]; then
     sed -i 's@^thread_cache_size.*@thread_cache_size = 64@' /etc/my.cnf
-    sed -i 's@^query_cache_size.*@query_cache_size = 64M@' /etc/my.cnf
     sed -i 's@^myisam_sort_buffer_size.*@myisam_sort_buffer_size = 64M@' /etc/my.cnf
     sed -i 's@^key_buffer_size.*@key_buffer_size = 256M@' /etc/my.cnf
     sed -i 's@^innodb_buffer_pool_size.*@innodb_buffer_pool_size = 1024M@' /etc/my.cnf
@@ -207,11 +198,13 @@ EOF
   [ -n "$(grep ^'export PATH=' /etc/profile)" -a -z "$(grep ${mysql_install_dir} /etc/profile)" ] && sed -i "s@^export PATH=\(.*\)@export PATH=${mysql_install_dir}/bin:\1@" /etc/profile
   . /etc/profile
 
-  ${mysql_install_dir}/bin/mysql -e "grant all privileges on *.* to root@'127.0.0.1' identified by \"${dbrootpwd}\" with grant option;"
-  ${mysql_install_dir}/bin/mysql -e "grant all privileges on *.* to root@'localhost' identified by \"${dbrootpwd}\" with grant option;"
+  ${mysql_install_dir}/bin/mysql -uroot -hlocalhost -e "create user root@'127.0.0.1' identified by \"${dbrootpwd}\";"
+  ${mysql_install_dir}/bin/mysql -uroot -hlocalhost -e "grant all privileges on *.* to root@'127.0.0.1' with grant option;"
+  ${mysql_install_dir}/bin/mysql -uroot -hlocalhost -e "grant all privileges on *.* to root@'localhost' with grant option;"
+  ${mysql_install_dir}/bin/mysql -uroot -hlocalhost -e "alter user root@'localhost' identified by \"${dbrootpwd}\";"
   ${mysql_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "reset master;"
   rm -rf /etc/ld.so.conf.d/{mysql,mariadb,percona,alisql}*.conf
-  [ -e "${mysql_install_dir}/my.cnf" ] && rm -rf ${mysql_install_dir}/my.cnf
+  [ -e "${mysql_install_dir}/my.cnf" ] && rm -f ${mysql_install_dir}/my.cnf
   echo "${mysql_install_dir}/lib" > /etc/ld.so.conf.d/mysql.conf
   ldconfig
   service mysqld stop

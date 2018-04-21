@@ -42,7 +42,7 @@ Install_PostgreSQL() {
     echo "${CSUCCESS}PostgreSQL installed successfully! ${CEND}"
     rm -rf postgresql-${pgsql_ver}
   else
-    rm -rf ${pgsql_install_dir} ${pgsql_data_dir} postgresql-${pgsql_ver}
+    rm -rf ${pgsql_install_dir} ${pgsql_data_dir}
     echo "${CFAILURE}PostgreSQL install failed, Please contact the author! ${CEND}"
     kill -9 $$
   fi

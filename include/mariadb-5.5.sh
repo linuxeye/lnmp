@@ -56,7 +56,6 @@ Install_MariaDB55() {
     fi
   else
     rm -rf ${mariadb_install_dir}
-    rm -rf mariadb-${mariadb55_ver}
     echo "${CFAILURE}MariaDB install failed, Please contact the author! ${CEND}"
     kill -9 $$
   fi

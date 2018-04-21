@@ -100,7 +100,8 @@ phpmyadmin_oldver=4.4.15.10
 jemalloc_ver=5.0.1
 
 # boost
-boost_ver=1.59.0
+boost_ver=1.66.0
+boost_oldver=1.59.0
 
 # Others
 libevent_ver=2.0.22-stable

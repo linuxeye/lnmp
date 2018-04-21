@@ -80,17 +80,16 @@ Print_web() {
 }
 
 Uninstall_Web() {
-  [ -d "${nginx_install_dir}" ] && { killall nginx > /dev/null 2>&1; rm -rf ${nginx_install_dir} /etc/init.d/nginx /etc/logrotate.d/nginx; sed -i "s@${nginx_install_dir}/sbin:@@" /etc/profile; }
-  [ -d "${tengine_install_dir}" ] && { killall nginx > /dev/null 2>&1; rm -rf ${tengine_install_dir} /etc/init.d/nginx /etc/logrotate.d/nginx; sed -i "s@${tengine_install_dir}/sbin:@@" /etc/profile; }
-  [ -d "${openresty_install_dir}" ] && { killall nginx > /dev/null 2>&1; rm -rf ${openresty_install_dir} /etc/init.d/nginx /etc/logrotate.d/nginx; sed -i "s@${openresty_install_dir}/nginx/sbin:@@" /etc/profile; }
-  [ -d "${apache_install_dir}" ] && { service httpd stop > /dev/null 2>&1; rm -rf ${apache_install_dir} /etc/init.d/httpd /etc/logrotate.d/apache; sed -i "s@${apache_install_dir}/bin:@@" /etc/profile; }
-  [ -d "${tomcat_install_dir}" ] && { killall java > /dev/null 2>&1; chmod +x /etc/logrotate.d/tomcat; rm -rf ${tomcat_install_dir} /etc/init.d/tomcat /etc/logrotate.d/tomcat /usr/local/apr; }
+  [ -d "${nginx_install_dir}" ] && { killall nginx > /dev/null 2>&1; rm -rf ${nginx_install_dir} /etc/init.d/nginx /etc/logrotate.d/nginx; sed -i "s@${nginx_install_dir}/sbin:@@" /etc/profile; echo "${CMSG}Nginx uninstall completed! ${CEND}"; }
+  [ -d "${tengine_install_dir}" ] && { killall nginx > /dev/null 2>&1; rm -rf ${tengine_install_dir} /etc/init.d/nginx /etc/logrotate.d/nginx; sed -i "s@${tengine_install_dir}/sbin:@@" /etc/profile; echo "${CMSG}Tengine uninstall completed! ${CEND}"; }
+  [ -d "${openresty_install_dir}" ] && { killall nginx > /dev/null 2>&1; rm -rf ${openresty_install_dir} /etc/init.d/nginx /etc/logrotate.d/nginx; sed -i "s@${openresty_install_dir}/nginx/sbin:@@" /etc/profile; echo "${CMSG}OpenResty uninstall completed! ${CEND}"; }
+  [ -d "${apache_install_dir}" ] && { service httpd stop > /dev/null 2>&1; rm -rf ${apache_install_dir} /etc/init.d/httpd /etc/logrotate.d/apache; sed -i "s@${apache_install_dir}/bin:@@" /etc/profile; echo "${CMSG}Apache uninstall completed! ${CEND}"; }
+  [ -d "${tomcat_install_dir}" ] && { killall java > /dev/null 2>&1; chmod +x /etc/logrotate.d/tomcat; rm -rf ${tomcat_install_dir} /etc/init.d/tomcat /etc/logrotate.d/tomcat /usr/local/apr; echo "${CMSG}Tomcat uninstall completed! ${CEND}"; }
   [ -d "/usr/java" ] && { rm -rf /usr/java; sed -i '/export JAVA_HOME=/d' /etc/profile; sed -i '/export CLASSPATH=/d' /etc/profile; sed -i 's@\$JAVA_HOME/bin:@@' /etc/profile; }
   [ -e "${wwwroot_dir}" ] && /bin/mv ${wwwroot_dir}{,$(date +%Y%m%d%H)}
   sed -i 's@^website_name=.*@website_name=@' ./options.conf
   sed -i 's@^local_bankup_yn=.*@local_bankup_yn=y@' ./options.conf
   sed -i 's@^remote_bankup_yn=.*@remote_bankup_yn=n@' ./options.conf
-  echo "${CMSG}Web uninstall completed! ${CEND}"
 }
 
 Print_MySQL() {
@@ -120,8 +119,6 @@ Uninstall_MySQL() {
     sed -i 's@^dbrootpwd=.*@dbrootpwd=@' ./options.conf
     sed -i "s@${db_install_dir}/bin:@@" /etc/profile
     echo "${CMSG}MySQL uninstall completed! ${CEND}"
-  else
-    echo "${CWARNING}MySQL already uninstalled! ${CEND}"
   fi
 }
 
@@ -136,8 +133,6 @@ Uninstall_PostgreSQL() {
     sed -i 's@^dbpostgrespwd=.*@dbpostgrespwd=@' ./options.conf
     sed -i "s@${pgsql_install_dir}/bin:@@" /etc/profile
     echo "${CMSG}PostgreSQL uninstall completed! ${CEND}"
-  else
-    echo "${CWARNING}PostgreSQL already uninstalled! ${CEND}"
   fi
 }
 
@@ -153,8 +148,6 @@ Uninstall_MongoDB() {
     sed -i 's@^dbmongopwd=.*@dbmongopwd=@' ./options.conf
     sed -i "s@${mongo_install_dir}/bin:@@" /etc/profile
     echo "${CMSG}MongoDB uninstall completed! ${CEND}"
-  else
-    echo "${CWARNING}MongoDB already uninstalled! ${CEND}"
   fi
 }
 
@@ -167,13 +160,12 @@ Print_PHP() {
 }
 
 Uninstall_PHP() {
-  [ -e "${php_install_dir}/bin/phpize" -a -e "${php_install_dir}/etc/php-fpm.conf" ] && { service php-fpm stop > /dev/null 2>&1; rm -rf ${php_install_dir} /etc/init.d/php-fpm; }
-  [ -e "${php_install_dir}/bin/phpize" -a ! -e "${php_install_dir}/etc/php-fpm.conf" ] && rm -rf ${php_install_dir}
+  [ -e "${php_install_dir}/bin/phpize" -a -e "${php_install_dir}/etc/php-fpm.conf" ] && { service php-fpm stop > /dev/null 2>&1; rm -rf ${php_install_dir} /etc/init.d/php-fpm; echo "${CMSG}PHP uninstall completed! ${CEND}"; }
+  [ -e "${php_install_dir}/bin/phpize" -a ! -e "${php_install_dir}/etc/php-fpm.conf" ] && { rm -rf ${php_install_dir}; echo "${CMSG}PHP uninstall completed! ${CEND}"; }
   [ -e "${imagick_install_dir}" ] && rm -rf ${imagick_install_dir}
   [ -e "${gmagick_install_dir}" ] && rm -rf ${gmagick_install_dir}
   [ -e "${curl_install_dir}" ] && rm -rf "${curl_install_dir}"
   sed -i "s@${php_install_dir}/bin:@@" /etc/profile
-  echo "${CMSG}PHP uninstall completed! ${CEND}"
 }
 
 Print_HHVM() {
@@ -186,8 +178,7 @@ Print_HHVM() {
 
 Uninstall_HHVM() {
   [ -e "/etc/init.d/supervisord" ] && { service supervisord stop > /dev/null 2>&1; rm -rf /etc/supervisord.conf /etc/init.d/supervisord; }
-  [ -e "/usr/bin/hhvm" ] && { rpm -e hhvm; rm -rf /etc/hhvm /var/log/hhvm /usr/bin/hhvm; }
-  echo "${CMSG}HHVM uninstall completed! ${CEND}"
+  [ -e "/usr/bin/hhvm" ] && { rpm -e hhvm; rm -rf /etc/hhvm /var/log/hhvm /usr/bin/hhvm; echo "${CMSG}HHVM uninstall completed! ${CEND}"; }
 }
 
 Print_PureFtpd() {
@@ -196,8 +187,7 @@ Print_PureFtpd() {
 }
 
 Uninstall_PureFtpd() {
-  [ -e "${pureftpd_install_dir}" ] && { service pureftpd stop > /dev/null 2>&1; rm -rf ${pureftpd_install_dir} /etc/init.d/pureftpd; }
-  echo "${CMSG}Pureftpd uninstall completed! ${CEND}"
+  [ -e "${pureftpd_install_dir}" ] && { service pureftpd stop > /dev/null 2>&1; rm -rf ${pureftpd_install_dir} /etc/init.d/pureftpd; echo "${CMSG}Pureftpd uninstall completed! ${CEND}"; }
 }
 
 Print_Redis() {
@@ -206,9 +196,8 @@ Print_Redis() {
 }
 
 Uninstall_Redis() {
-  [ -e "$redis_install_dir" ] && { service redis-server stop > /dev/null 2>&1; rm -rf $redis_install_dir /etc/init.d/redis-server /usr/local/bin/redis-*; }
-  [ -e "${php_install_dir}/etc/php.d/05-redis.ini" ] && rm -rf ${php_install_dir}/etc/php.d/05-redis.ini
-  echo "${CMSG}Redis uninstall completed! ${CEND}"
+  [ -e "$redis_install_dir" ] && { service redis-server stop > /dev/null 2>&1; rm -rf $redis_install_dir /etc/init.d/redis-server /usr/local/bin/redis-*; echo "${CMSG}Redis uninstall completed! ${CEND}"; }
+  [ -e "${php_install_dir}/etc/php.d/05-redis.ini" ] && { rm -rf ${php_install_dir}/etc/php.d/05-redis.ini; echo "${CMSG}Pecl_redis uninstall completed! ${CEND}"; }
 }
 
 Print_Memcached() {
@@ -218,10 +207,9 @@ Print_Memcached() {
 }
 
 Uninstall_Memcached() {
-  [ -e "${memcached_install_dir}" ] && { service memcached stop > /dev/null 2>&1; rm -rf ${memcached_install_dir} /etc/init.d/memcached /usr/bin/memcached; }
+  [ -e "${memcached_install_dir}" ] && { service memcached stop > /dev/null 2>&1; rm -rf ${memcached_install_dir} /etc/init.d/memcached /usr/bin/memcached; echo "${CMSG}Memcached uninstall completed! ${CEND}"; }
   [ -e "${php_install_dir}/etc/php.d/05-memcache.ini" ] && rm -rf ${php_install_dir}/etc/php.d/05-memcache.ini
   [ -e "${php_install_dir}/etc/php.d/05-memcached.ini" ] && rm -rf ${php_install_dir}/etc/php.d/05-memcached.ini
-  echo "${CMSG}Memcached uninstall completed! ${CEND}"
 }
 
 Print_openssl() {

@@ -28,3 +28,8 @@ installBoost() {
   fi
   popd
 }
+
+installBoostold() {
+  boost_ver=${boost_oldver}
+  installBoost
+}

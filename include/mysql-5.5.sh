@@ -56,7 +56,6 @@ Install_MySQL55() {
     fi
   else
     rm -rf ${mysql_install_dir}
-    rm -rf mysql-${mysql55_ver}
     echo "${CFAILURE}MySQL install failed, Please contact the author! ${CEND}"
     kill -9 $$
   fi
@@ -215,7 +214,7 @@ EOF
   ${mysql_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "drop database test;"
   ${mysql_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "reset master;"
   rm -rf /etc/ld.so.conf.d/{mysql,mariadb,percona,alisql}*.conf
-  [ -e "${mysql_install_dir}/my.cnf" ] && rm -rf ${mysql_install_dir}/my.cnf
+  [ -e "${mysql_install_dir}/my.cnf" ] && rm -f ${mysql_install_dir}/my.cnf
   echo "${mysql_install_dir}/lib" > /etc/ld.so.conf.d/mysql.conf
   ldconfig
   service mysqld stop

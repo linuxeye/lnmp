@@ -66,7 +66,7 @@ EOF
     echo "${CSUCCESS}MongoDB installed successfully! ${CEND}"
     rm -rf mongodb-linux-${SYS_BIT_b}-${mongodb_ver}
   else
-    rm -rf ${mongo_install_dir} ${mongo_data_dir} mongodb-linux-${SYS_BIT_b}-${mongodb_ver}
+    rm -rf ${mongo_install_dir} ${mongo_data_dir}
     echo "${CFAILURE}MongoDB install failed, Please contact the author! ${CEND}"
     kill -9 $$
   fi

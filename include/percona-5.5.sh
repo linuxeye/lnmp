@@ -57,7 +57,6 @@ Install_Percona55() {
     fi
   else
     rm -rf ${percona_install_dir}
-    rm -rf percona-server-${percona55_ver}
     echo "${CFAILURE}Percona install failed, Please contact the author! ${CEND}"
     kill -9 $$
   fi

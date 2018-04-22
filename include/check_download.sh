@@ -146,8 +146,6 @@ checkDownload() {
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
           kill -9 $$
-        else
-          echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
       2)
@@ -183,8 +181,6 @@ checkDownload() {
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
           kill -9 $$
-        else
-          echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
       3)
@@ -220,8 +216,6 @@ checkDownload() {
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
           kill -9 $$
-        else
-          echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
       4)
@@ -258,8 +252,6 @@ checkDownload() {
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
           kill -9 $$
-        else
-          echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
       5)
@@ -298,8 +290,6 @@ checkDownload() {
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
           kill -9 $$
-        else
-          echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
       6)
@@ -338,8 +328,6 @@ checkDownload() {
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
           kill -9 $$
-        else
-          echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
       7)
@@ -378,8 +366,6 @@ checkDownload() {
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
           kill -9 $$
-        else
-          echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
       8)
@@ -418,8 +404,6 @@ checkDownload() {
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
           kill -9 $$
-        else
-          echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
       9)
@@ -452,8 +436,6 @@ checkDownload() {
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
           kill -9 $$
-        else
-          echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
       10)
@@ -487,8 +469,6 @@ checkDownload() {
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
           kill -9 $$
-        else
-          echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
       11)
@@ -522,8 +502,6 @@ checkDownload() {
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
           kill -9 $$
-        else
-          echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
       12)
@@ -563,8 +541,6 @@ checkDownload() {
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
           kill -9 $$
-        else
-          echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
       14)
@@ -589,8 +565,6 @@ checkDownload() {
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
           kill -9 $$
-        else
-          echo "[${CMSG}${FILE_NAME}${CEND}] found."
         fi
         ;;
     esac

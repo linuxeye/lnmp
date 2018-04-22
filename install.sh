@@ -164,7 +164,7 @@ while :; do
       ;;
     --ssh_port)
       ssh_port=$2; shift 2
-      [ ${ssh_port} -ne 22 >/dev/null 2>&1 -o ${ssh_port} -lt 1024 >/dev/null 2>&1 -a ${ssh_port} -gt 65535 >/dev/null 2>&1 ] && { echo "${CWARNING}ssh_port input error! Input range: 22,1025~65534${CEND}"; exit 1; }
+      [ ${ssh_port} -eq 22 >/dev/null 2>&1 -o ${ssh_port} -gt 1024 >/dev/null 2>&1 -a ${ssh_port} -lt 65535 >/dev/null 2>&1 ] || { echo "${CWARNING}ssh_port input error! Input range: 22,1025~65534${CEND}"; exit 1; }
       ;;
     --iptables)
       iptables_yn=y; shift 1

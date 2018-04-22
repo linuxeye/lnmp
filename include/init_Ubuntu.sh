@@ -39,14 +39,14 @@ sed -i 's@^"syntax on@syntax on@' /etc/vim/vimrc
 sed -i '/^# End of file/,$d' /etc/security/limits.conf
 cat >> /etc/security/limits.conf <<EOF
 # End of file
-* soft nproc 65535
-* hard nproc 65535
-* soft nofile 65535
-* hard nofile 65535
-root soft nproc 65535
-root hard nproc 65535
-root soft nofile 65535
-root hard nofile 65535
+* soft nproc 1000000
+* hard nproc 1000000
+* soft nofile 1000000
+* hard nofile 1000000
+root soft nproc 1000000
+root hard nproc 1000000
+root soft nofile 1000000
+root hard nofile 1000000
 EOF
 
 # /etc/hosts
@@ -64,7 +64,7 @@ ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 # /etc/sysctl.conf
 [ -z "$(grep 'fs.file-max' /etc/sysctl.conf)" ] && cat >> /etc/sysctl.conf << EOF
-fs.file-max=65535
+fs.file-max = 1000000
 fs.inotify.max_user_instances = 8192
 net.ipv4.tcp_syncookies = 1
 net.ipv4.tcp_fin_timeout = 30
@@ -119,12 +119,7 @@ if [ "${iptables_yn}" == 'y' ]; then
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 443 -j ACCEPT
--A INPUT -p icmp -m limit --limit 1/sec --limit-burst 10 -j ACCEPT
--A INPUT -f -m limit --limit 100/sec --limit-burst 100 -j ACCEPT
--A INPUT -p tcp -m tcp --tcp-flags FIN,SYN,RST,ACK SYN -j syn-flood
--A INPUT -j REJECT --reject-with icmp-host-prohibited
--A syn-flood -p tcp -m limit --limit 3/sec --limit-burst 6 -j RETURN
--A syn-flood -j REJECT --reject-with icmp-port-unreachable
+-A INPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT
 COMMIT
 EOF
   fi

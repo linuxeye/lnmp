@@ -142,12 +142,7 @@ if [ "${iptables_yn}" == 'y' ]; then
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 443 -j ACCEPT
--A INPUT -p icmp -m limit --limit 1/sec --limit-burst 10 -j ACCEPT
--A INPUT -f -m limit --limit 100/sec --limit-burst 100 -j ACCEPT
--A INPUT -p tcp -m tcp --tcp-flags FIN,SYN,RST,ACK SYN -j syn-flood
--A INPUT -j REJECT --reject-with icmp-host-prohibited
--A syn-flood -p tcp -m limit --limit 3/sec --limit-burst 6 -j RETURN
--A syn-flood -j REJECT --reject-with icmp-port-unreachable
+-A INPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT
 COMMIT
 EOF
   fi

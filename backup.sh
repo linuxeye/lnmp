@@ -18,28 +18,28 @@ pushd ${oneinstack_dir}/tools > /dev/null
 DB_Local_BK() {
   for D in `echo ${db_name} | tr ',' ' '`
   do
-    ./db_bk.sh $D
+    ./db_bk.sh ${D}
   done
 }
 
 DB_Remote_BK() {
   for D in `echo ${db_name} | tr ',' ' '`
   do
-    ./db_bk.sh $D
-    DB_GREP="DB_${D}_`date +%Y`"
+    ./db_bk.sh ${D}
+    DB_GREP="DB_${D}_`date +%Y%m%d`"
     DB_FILE=`ls -lrt ${backup_dir} | grep ${DB_GREP} | tail -1 | awk '{print $NF}'`
-    echo "file:::${backup_dir}/$DB_FILE ${backup_dir} push" >> config_bakcup.txt
-    echo "com:::[ -e "${backup_dir}/$DB_FILE" ] && rm -rf ${backup_dir}/DB_${D}_$(date +%Y%m%d --date="${expired_days} days ago")_*.tgz" >> config_bakcup.txt
+    echo "file:::${backup_dir}/${DB_FILE} ${backup_dir} push" >> config_bakcup.txt
+    echo "com:::[ -e "${backup_dir}/${DB_FILE}" ] && rm -rf ${backup_dir}/DB_${D}_$(date +%Y%m%d --date="${expired_days} days ago")_*.tgz" >> config_bakcup.txt
   done
 }
 
 DB_OSS_BK() {
   for D in `echo ${db_name} | tr ',' ' '`
   do
-    ./db_bk.sh $D
-    DB_GREP="DB_${D}_`date +%Y`"
+    ./db_bk.sh ${D}
+    DB_GREP="DB_${D}_`date +%Y%m%d`"
     DB_FILE=`ls -lrt ${backup_dir} | grep ${DB_GREP} | tail -1 | awk '{print $NF}'`
-    /usr/local/bin/ossutil cp -f ${backup_dir}/$DB_FILE oss://${oss_bucket}/`date +%F`/$DB_FILE
+    /usr/local/bin/ossutil cp -f ${backup_dir}/${DB_FILE} oss://${oss_bucket}/`date +%F`/${DB_FILE}
     [ $? -eq 0 ] && /usr/local/bin/ossutil rm -rf oss://${oss_bucket}/`date +%F --date="${expired_days} days ago"`/
   done
 }
@@ -47,10 +47,10 @@ DB_OSS_BK() {
 DB_COS_BK() {
   for D in `echo ${db_name} | tr ',' ' '`
   do
-    ./db_bk.sh $D
-    DB_GREP="DB_${D}_`date +%Y`"
+    ./db_bk.sh ${D}
+    DB_GREP="DB_${D}_`date +%Y%m%d`"
     DB_FILE=`ls -lrt ${backup_dir} | grep ${DB_GREP} | tail -1 | awk '{print $NF}'`
-    ${python_install_dir}/bin/coscmd upload ${backup_dir}/$DB_FILE /`date +%F`/$DB_FILE
+    ${python_install_dir}/bin/coscmd upload ${backup_dir}/${DB_FILE} /`date +%F`/${DB_FILE}
     [ $? -eq 0 ] && ${python_install_dir}/bin/coscmd delete -r -f `date +%F --date="${expired_days} days ago"` > /dev/null 2>&1
   done
 }
@@ -58,10 +58,10 @@ DB_COS_BK() {
 DB_UPYUN_BK() {
   for D in `echo ${db_name} | tr ',' ' '`
   do
-    ./db_bk.sh $D
-    DB_GREP="DB_${D}_`date +%Y`"
+    ./db_bk.sh ${D}
+    DB_GREP="DB_${D}_`date +%Y%m%d`"
     DB_FILE=`ls -lrt ${backup_dir} | grep ${DB_GREP} | tail -1 | awk '{print $NF}'`
-    /usr/local/bin/upx put ${backup_dir}/$DB_FILE /`date +%F`/$DB_FILE
+    /usr/local/bin/upx put ${backup_dir}/${DB_FILE} /`date +%F`/${DB_FILE}
     [ $? -eq 0 ] && /usr/local/bin/upx rm -a `date +%F --date="${expired_days} days ago"` > /dev/null 2>&1
   done
 }
@@ -78,7 +78,7 @@ WEB_Remote_BK() {
   do
     if [ `du -sm "${wwwroot_dir}/$WebSite" | awk '{print $1}'` -lt 1024 ]; then
       ./website_bk.sh $W
-      Web_GREP="Web_${W}_`date +%Y`"
+      Web_GREP="Web_${W}_`date +%Y%m%d`"
       Web_FILE=`ls -lrt ${backup_dir} | grep ${Web_GREP} | tail -1 | awk '{print $NF}'`
       echo "file:::${backup_dir}/$Web_FILE ${backup_dir} push" >> config_bakcup.txt
       echo "com:::[ -e "${backup_dir}/$Web_FILE" ] && rm -rf ${backup_dir}/Web_${W}_$(date +%Y%m%d --date="${expired_days} days ago")_*.tgz" >> config_bakcup.txt

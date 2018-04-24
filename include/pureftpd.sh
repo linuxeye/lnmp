@@ -16,7 +16,7 @@ Install_PureFTPd() {
   tar xzf pure-ftpd-${pureftpd_ver}.tar.gz
   pushd pure-ftpd-${pureftpd_ver}
   [ ! -d "${pureftpd_install_dir}" ] && mkdir -p ${pureftpd_install_dir}
-  ./configure --prefix=${pureftpd_install_dir} CFLAGS=-O2 --with-puredb --with-quotas --with-cookie --with-virtualhosts --with-virtualchroot --with-diraliases --with-sysquotas --with-ratios --with-altlog --with-paranoidmsg --with-shadow --with-welcomemsg  --with-throttling --with-uploadscript --with-language=english --with-rfc2640
+  ./configure --prefix=${pureftpd_install_dir} CFLAGS=-O2 --with-puredb --with-quotas --with-cookie --with-virtualhosts --with-virtualchroot --with-diraliases --with-sysquotas --with-ratios --with-altlog --with-paranoidmsg --with-shadow --with-welcomemsg  --with-throttling --with-uploadscript --with-language=english --with-rfc2640 --with-tls
   make -j ${THREAD} && make install
   if [ -e "${pureftpd_install_dir}/sbin/pure-ftpwho" ]; then
     [ ! -e "${pureftpd_install_dir}/etc" ] && mkdir ${pureftpd_install_dir}/etc
@@ -31,6 +31,11 @@ Install_PureFTPd() {
 
     sed -i "s@^PureDB.*@PureDB  ${pureftpd_install_dir}/etc/pureftpd.pdb@" ${pureftpd_install_dir}/etc/pure-ftpd.conf
     sed -i "s@^LimitRecursion.*@LimitRecursion  65535 8@" ${pureftpd_install_dir}/etc/pure-ftpd.conf
+    openssl req -x509 -days 7300 -sha256 -nodes -subj "/C=CN/ST=Shanghai/L=Shanghai/O=OneinStack/CN=${IPADDR}" -newkey rsa:2048 -keyout ${pureftpd_install_dir}/etc/pure-ftpd.pem -out ${pureftpd_install_dir}/etc/pure-ftpd.pem
+    chmod 600 ${pureftpd_install_dir}/etc/pure-ftpd.pem
+    sed -i "s@^# TLS.*@&\nCertFile                   ${pureftpd_install_dir}/etc/pure-ftpd.pem@" ${pureftpd_install_dir}/etc/pure-ftpd.conf
+    sed -i "s@^# TLS.*@&\nTLSCipherSuite             HIGH:MEDIUM:+TLSv1:\!SSLv2:\!SSLv3@" ${pureftpd_install_dir}/etc/pure-ftpd.conf
+    sed -i "s@^# TLS.*@TLS                        1@" ${pureftpd_install_dir}/etc/pure-ftpd.conf
     ulimit -s unlimited
     service pureftpd start
 

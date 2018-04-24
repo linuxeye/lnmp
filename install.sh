@@ -713,7 +713,7 @@ fi
 # Database
 case "${db_option}" in
   1)
-    [ "${OS}" == 'CentOS' -a ${CentOS_ver} != '7' ] && dbinstallmethod=1
+    [ "${OS}" == 'CentOS' -a "${CentOS_ver}" != '7' ] && dbinstallmethod=1
     if [ "${dbinstallmethod}" == "2" ]; then
       . include/boost.sh
       installBoost 2>&1 | tee -a ${oneinstack_dir}/install.log
@@ -990,7 +990,7 @@ fi
 
 # Starting DB
 [ -d "/etc/mysql" ] && /bin/mv /etc/mysql{,_bk}
-[ -d "${db_install_dir}/support-files" -a -z "$(ps -ef | grep -v grep | grep mysql)" ] && /etc/init.d/mysqld start
+[ -d "${db_install_dir}/support-files" ] && service mysqld start
 endTime=`date +%s`
 ((installTime=($endTime-$startTime)/60))
 echo "####################Congratulations########################"

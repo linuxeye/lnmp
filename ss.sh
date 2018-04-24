@@ -141,7 +141,7 @@ Install_SS-libev() {
   if [ ! -e "/usr/local/lib/libsodium.la" ]; then
     tar xzf libsodium-${libsodium_ver}.tar.gz
     pushd libsodium-${libsodium_ver}
-    ./configure
+    ./configure --disable-dependency-tracking --enable-minimal
     make -j ${THREAD} && make install
     popd
     rm -rf libsodium-${libsodium_ver}

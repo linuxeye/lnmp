@@ -246,6 +246,19 @@ EOF
       echo "${CFAILURE}Error: Create Let's Encrypt SSL Certificate failed! ${CEND}"
       exit 1
     fi
+  elif [ "${Domian_Mode}" == '4' ]; then
+    while :;do
+      read -p "Please enter exist private key full path: " EXIST_KEY
+      [ -f "${EXIST_KEY}" ] && break
+      echo "${EXIST_KEY} do not exist,pls input again"
+    done
+    cp -f ${EXIST_KEY} ${PATH_SSL}/${domain}.key
+    while :;do
+      read -p "Please enter exist cert full path: " EXIST_CERT
+      [ -f "${EXIST_CERT}" ] && break
+      echo "${EXIST_CERT} do not exist,pls input again"
+    done
+    cp -f ${EXIST_CERT} ${PATH_SSL}/${domain}.crt
   fi
 }
 
@@ -257,6 +270,9 @@ Print_ssl() {
   elif [ "${Domian_Mode}" == '3' -o "${ARG1}" == 'dnsapi' ]; then
     echo "$(printf "%-30s" "Let's Encrypt SSL Certificate:")${CMSG}${PATH_SSL}/${domain}.crt${CEND}"
     echo "$(printf "%-30s" "SSL Private Key:")${CMSG}${PATH_SSL}/${domain}.key${CEND}"
+  elif [ "${Domian_Mode}" == '4' ]; then
+    echo "$(printf "%-30s" "SSL Certificate:")${CMSG}${PATH_SSL}/${domain}.crt${CEND}"
+    echo "$(printf "%-30s" "SSL Private Key:")${CMSG}${PATH_SSL}/${domain}.key${CEND}"
   fi
 }
 
@@ -266,13 +282,14 @@ Input_Add_domain() {
       printf "
 What Are You Doing?
 \t${CMSG}1${CEND}. Use HTTP Only
-\t${CMSG}2${CEND}. Use your own SSL Certificate and Key
+\t${CMSG}2${CEND}. Use Self-signed CA to Create SSL Certificate and Key
 \t${CMSG}3${CEND}. Use Let's Encrypt to Create SSL Certificate and Key
+\t${CMSG}4${CEND}. Use your existing SSL Certificate and Key
 \t${CMSG}q${CEND}. Exit
 "
       read -p "Please input the correct option: " Domian_Mode
-      if [[ ! "${Domian_Mode}" =~ ^[1-3,q]$ ]]; then
-        echo "${CFAILURE}input error! Please only input 1~3 and q${CEND}"
+      if [[ ! "${Domian_Mode}" =~ ^[1-4,q]$ ]]; then
+        echo "${CFAILURE}input error! Please only input 1~4 and q${CEND}"
       else
         break
       fi
@@ -287,7 +304,7 @@ What Are You Doing?
     popd > /dev/null
     popd > /dev/null
   fi
-  if [[ "${Domian_Mode}" =~ ^[2-3]$ ]] || [ "${ARG1}" == 'dnsapi' ]; then
+  if [[ "${Domian_Mode}" =~ ^[2-4]$ ]] || [ "${ARG1}" == 'dnsapi' ]; then
     if [ -e "${web_install_dir}/sbin/nginx" ]; then
       nginx_ssl_flag=y
       PATH_SSL=${web_install_dir}/conf/ssl

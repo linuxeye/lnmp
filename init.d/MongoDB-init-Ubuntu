@@ -55,7 +55,8 @@ NAME=mongod
 # Other configuration options are located in $CONF file. See here for more:
 # http://dochub.mongodb.org/core/configurationoptions
 CONF=/etc/mongod.conf
-PIDFILE=/var/run/$NAME.pid
+PIDFILE=/var/run/mongodb/$NAME.pid
+PIDDIR=`dirname $PIDFILE`
 ENABLE_MONGOD=yes
 
 # Include mongodb defaults if available.
@@ -125,6 +126,13 @@ running() {
 }
 
 start_server() {
+            # Make sure the default pidfile directory exists
+            if [ ! -d $PIDDIR ]; then
+              install -d -m 0755 -o $DAEMONUSER -g $DAEMONGROUP $PIDDIR
+            fi
+	    > $PIDFILE 
+	    chown $DAEMONUSER.$DAEMONGROUP $PIDFILE
+
             # Recommended ulimit values for mongod or mongos
             # See http://docs.mongodb.org/manual/reference/ulimit/#recommended-settings
             #

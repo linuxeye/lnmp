@@ -35,7 +35,6 @@ Install_MySQL80() {
     -DENABLE_DTRACE=0 \
     -DENABLED_LOCAL_INFILE=1 \
     -DDEFAULT_CHARSET=utf8mb4 \
-    -DDEFAULT_COLLATION=utf8mb4_general_ci \
     -DEXTRA_CHARSETS=all
     make -j ${THREAD}
     make install
@@ -90,6 +89,7 @@ server-id = 1
 
 init-connect = 'SET NAMES utf8mb4'
 character-set-server = utf8mb4
+collation-server = utf8mb4_0900_ai_ci
 
 skip-name-resolve
 #skip-networking

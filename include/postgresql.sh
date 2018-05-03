@@ -18,6 +18,7 @@ Install_PostgreSQL() {
   ./configure --prefix=$pgsql_install_dir
   make -j ${THREAD}
   make install
+  chmod 755 ${pgsql_install_dir}
   chown -R postgres.postgres ${pgsql_install_dir}
   /bin/cp ./contrib/start-scripts/linux /etc/init.d/postgresql
   sed -i "s@^prefix=.*@prefix=${pgsql_install_dir}@" /etc/init.d/postgresql
@@ -40,7 +41,6 @@ Install_PostgreSQL() {
   if [ -e "${pgsql_install_dir}/bin/psql" ]; then
     sed -i "s+^dbpostgrespwd.*+dbpostgrespwd='$dbpostgrespwd'+" ../options.conf
     echo "${CSUCCESS}PostgreSQL installed successfully! ${CEND}"
-    rm -rf postgresql-${pgsql_ver}
   else
     rm -rf ${pgsql_install_dir} ${pgsql_data_dir}
     echo "${CFAILURE}PostgreSQL install failed, Please contact the author! ${CEND}"

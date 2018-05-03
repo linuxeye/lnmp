@@ -53,7 +53,16 @@ Install_PHP53() {
 
   [ -z "`grep /usr/local/lib /etc/ld.so.conf.d/*.conf`" ] && echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
   ldconfig
-  [ "$OS" == 'CentOS' ] && { ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config; [ "${OS_BIT}" == '64' ] && ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1 || ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1; }
+
+  if [ "$OS" == 'CentOS' ]; then
+    ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config
+    if [ "${OS_BIT}" == '64' ]; then
+      ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1
+      ln -s /usr/lib64/libc-client.so /usr/lib/libc-client.so
+    else
+      ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1
+    fi
+  fi
 
   [ ! -e '/usr/include/freetype2/freetype' ] &&  ln -s /usr/include/freetype2 /usr/include/freetype2/freetype
 

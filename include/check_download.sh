@@ -672,14 +672,11 @@ checkDownload() {
     esac
   fi
 
-  if [ "${db_option}" == '13' ]; then
-    if [[ "${php_option}" =~ ^[1-2]$ ]]; then
-      echo "Download pecl mongo for php..."
-      src_url=https://pecl.php.net/get/mongo-${mongo_pecl_ver}.tgz && Download_src
-    else
-      echo "Download pecl mongodb for php..."
-      src_url=https://pecl.php.net/get/mongodb-${mongodb_pecl_ver}.tgz && Download_src
-    fi
+  if [ -e "${mongo_install_dir}/bin/mongo" -o "${db_option}" == '14' ]; then
+    echo "Download pecl mongo for php..."
+    src_url=https://pecl.php.net/get/mongo-${mongo_pecl_ver}.tgz && Download_src
+    echo "Download pecl mongodb for php..."
+    src_url=https://pecl.php.net/get/mongodb-${mongodb_pecl_ver}.tgz && Download_src
   fi
 
   if [ "${ioncube_yn}" == 'y' ]; then

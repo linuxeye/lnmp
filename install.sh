@@ -833,13 +833,13 @@ case "${php_option}" in
 esac
 
 # pecl_pgsql
-if [ "${db_option}" == '13' -a -e "${php_install_dir}/bin/phpize" ]; then
+if [ -e "${pgsql_install_dir}/bin/psql" -a -e "${php_install_dir}/bin/phpize" ]; then
   . include/pecl_pgsql.sh
   Install_pecl-pgsql 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # pecl_mongodb
-if [ "${db_option}" == '14' -a -e "${php_install_dir}/bin/phpize" ]; then
+if [ -e "${mongo_install_dir}/bin/mongo" -a -e "${php_install_dir}/bin/phpize" ]; then
   . include/pecl_mongodb.sh
   Install_pecl-mongodb 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi

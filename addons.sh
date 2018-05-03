@@ -168,7 +168,7 @@ What Are You Doing?
 \t${CMSG} 1${CEND}. Install/Uninstall PHP opcode cache
 \t${CMSG} 2${CEND}. Install/Uninstall ZendGuardLoader/ionCube PHP Extension
 \t${CMSG} 3${CEND}. Install/Uninstall ImageMagick/GraphicsMagick PHP Extension
-\t${CMSG} 4${CEND}. Install/Uninstall fileinfo PHP Extension
+\t${CMSG} 4${CEND}. Install/Uninstall fileinfo/imap PHP Extension
 \t${CMSG} 5${CEND}. Install/Uninstall memcached/memcache
 \t${CMSG} 6${CEND}. Install/Uninstall Redis
 \t${CMSG} 7${CEND}. Install/Uninstall swoole PHP Extension
@@ -338,19 +338,43 @@ What Are You Doing?
         ;;
       4)
         ACTION_FUN
-        PHP_extension=fileinfo
+        while :; do echo
+          echo "Please select fileinfo/imap:"
+          echo -e "\t${CMSG}1${CEND}. fileinfo"
+          echo -e "\t${CMSG}2${CEND}. imap"
+          read -p "Please input a number:(Default 1 press Enter) " phpext_option
+          [ -z "${phpext_option}" ] && phpext_option=1
+          if [[ ! "${phpext_option}" =~ ^[1,2]$ ]]; then
+            echo "${CWARNING}input error! Please only input number 1~2${CEND}"
+          else
+            if [ "${phpext_option}" = '1' ]; then
+              PHP_extension=fileinfo
+            elif [ "${phpext_option}" = '2' ]; then
+              PHP_extension=imap
+              IMAP_ARGS='--with-kerberos --with-imap --with-imap-ssl'
+              if [ "$OS" == 'CentOS' ]; then
+                yum -y install libc-client-devel
+                [ -a "${OS_BIT}" == '64' -a ! -e /usr/lib/libc-client.so ] && ln -s /usr/lib64/libc-client.so /usr/lib/libc-client.so
+              else
+                apt-get -y install libc-client2007e-dev
+              fi
+            fi
+            break
+          fi
+        done
+
         if [ "${ACTION}" = '1' ]; then
           Check_PHP_Extension
           pushd ${oneinstack_dir}/src > /dev/null
           src_url=http://www.php.net/distributions/php-${PHP_detail_ver}.tar.gz && Download_src
           tar xzf php-${PHP_detail_ver}.tar.gz
-          pushd php-${PHP_detail_ver}/ext/fileinfo
+          pushd php-${PHP_detail_ver}/ext/${PHP_extension}
           ${php_install_dir}/bin/phpize
-          ./configure --with-php-config=${php_install_dir}/bin/php-config
+          ./configure --with-php-config=${php_install_dir}/bin/php-config ${IMAP_ARGS}
           make -j ${THREAD} && make install
           popd;popd
           rm -rf php-${PHP_detail_ver}
-          echo "extension=fileinfo.so" > ${php_install_dir}/etc/php.d/04-fileinfo.ini
+          echo "extension=${PHP_extension}.so" > ${php_install_dir}/etc/php.d/04-${PHP_extension}.ini
           Check_succ
         else
           Uninstall_succ

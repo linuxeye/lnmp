@@ -170,9 +170,9 @@ fi
 if [ `echo ${desc_bk} | grep -e 3` ]; then
   if [ ! -e "/usr/local/bin/ossutil" ]; then
     if [ "${OS_BIT}" == '64' ]; then
-      wget -qc http://docs-aliyun.cn-hangzhou.oss.aliyun-inc.com/assets/attach/50452/cn_zh/1516454058701/ossutil64 -O /usr/local/bin/ossutil
+      wget -qc http://docs-aliyun.cn-hangzhou.oss.aliyun-inc.com/assets/attach/50452/cn_zh/1524643963683/ossutil64 -O /usr/local/bin/ossutil
     elif [ "${OS_BIT}" == '32' ]; then
-      wget -qc http://docs-aliyun.cn-hangzhou.oss.aliyun-inc.com/assets/attach/50452/cn_zh/1516453988016/ossutil32 -O /usr/local/bin/ossutil
+      wget -qc http://docs-aliyun.cn-hangzhou.oss.aliyun-inc.com/assets/attach/50452/cn_zh/1524643908776/ossutil32 -O /usr/local/bin/ossutil
     fi
     chmod +x /usr/local/bin/ossutil
   fi
@@ -184,14 +184,15 @@ if [ `echo ${desc_bk} | grep -e 3` ]; then
     echo -e "\t ${CMSG}7${CEND}. cn-shenzhen-华南 1 (深圳)         ${CMSG}8${CEND}. cn-hongkong-香港"
     echo -e "\t ${CMSG}9${CEND}. us-west-美西 1 (硅谷)            ${CMSG}10${CEND}. us-east-美东 1 (弗吉尼亚)"
     echo -e "\t${CMSG}11${CEND}. ap-southeast-亚太东南 1 (新加坡) ${CMSG}12${CEND}. ap-southeast-亚太东南 2 (悉尼)"
-    echo -e "\t${CMSG}13${CEND}. ap-southeast-亚太东南 3 (吉隆坡) ${CMSG}14${CEND}. ap-northeast-亚太东北 1 (日本)"
-    echo -e "\t${CMSG}15${CEND}. eu-central-欧洲中部 1 (法兰克福) ${CMSG}16${CEND}. me-east-中东东部 1 (迪拜)"
+    echo -e "\t${CMSG}13${CEND}. ap-southeast-亚太东南 3 (吉隆坡) ${CMSG}14${CEND}. ap-southeast-亚太东南 5 (雅加达)"
+    echo -e "\t${CMSG}15${CEND}. ap-northeast-亚太东北 1 (日本)   ${CMSG}16${CEND}. ap-south-亚太南部 1 (孟买)"
+    echo -e "\t${CMSG}17${CEND}. eu-central-欧洲中部 1 (法兰克福) ${CMSG}18${CEND}. me-east-中东东部 1 (迪拜)"
     read -p "Please input a number:(Default 1 press Enter) " Location
     [ -z "${Location}" ] && Location=1
-    if [[ "${Location}" =~ ^[1-9]$|^1[0-6]$ ]]; then
+    if [[ "${Location}" =~ ^[1-9]$|^1[0-8]$ ]]; then
       break
     else
-      echo "${CWARNING}input error! Please only input number 1~16${CEND}"
+      echo "${CWARNING}input error! Please only input number 1~18${CEND}"
     fi
   done
   [ "${Location}" == '1' ] && Host=oss-cn-hangzhou-internal.aliyuncs.com
@@ -207,9 +208,11 @@ if [ `echo ${desc_bk} | grep -e 3` ]; then
   [ "${Location}" == '11' ] && Host=oss-ap-southeast-1-internal.aliyuncs.com
   [ "${Location}" == '12' ] && Host=oss-ap-southeast-2-internal.aliyuncs.com
   [ "${Location}" == '13' ] && Host=oss-ap-southeast-3-internal.aliyuncs.com
-  [ "${Location}" == '14' ] && Host=oss-ap-northeast-1-internal.aliyuncs.com
-  [ "${Location}" == '15' ] && Host=oss-eu-central-1-internal.aliyuncs.com
-  [ "${Location}" == '16' ] && Host=oss-me-east-1-internal.aliyuncs.com
+  [ "${Location}" == '14' ] && Host=oss-ap-southeast-5-internal.aliyuncs.com
+  [ "${Location}" == '15' ] && Host=oss-ap-northeast-1-internal.aliyuncs.com
+  [ "${Location}" == '16' ] && Host=oss-ap-south-1-internal.aliyuncs.com
+  [ "${Location}" == '17' ] && Host=oss-eu-central-1-internal.aliyuncs.com
+  [ "${Location}" == '18' ] && Host=oss-me-east-1-internal.aliyuncs.com
   [ "$(./include/check_port.py ${Host} 80)" == "False" ] && Host=`echo ${Host} | sed 's@-internal@@g'`
   [ -e "/root/.ossutilconfig" ] && rm -f /root/.ossutilconfig
   while :; do echo
@@ -236,17 +239,19 @@ if [ `echo ${desc_bk} | grep -e 4` ]; then
   [ ! -e "${python_install_dir}/lib/coscmd" ] && ${python_install_dir}/bin/pip install coscmd >/dev/null 2>&1
   while :; do echo
     echo 'Please select your backup datacenter:'
-    echo -e "\t ${CMSG}1${CEND}. 北京一区(华北)  ${CMSG}2${CEND}. 北京"
-    echo -e "\t ${CMSG}3${CEND}. 上海(华东)      ${CMSG}4${CEND}. 广州(华南)"
-    echo -e "\t ${CMSG}5${CEND}. 成都(西南)      ${CMSG}6${CEND}. 新加坡"
-    echo -e "\t ${CMSG}7${CEND}. 香港            ${CMSG}8${CEND}. 多伦多"
-    echo -e "\t ${CMSG}9${CEND}. 法兰克福"
+    echo -e "\t ${CMSG} 1${CEND}. 北京一区(华北)  ${CMSG}2${CEND}. 北京"
+    echo -e "\t ${CMSG} 3${CEND}. 上海(华东)      ${CMSG}4${CEND}. 广州(华南)"
+    echo -e "\t ${CMSG} 5${CEND}. 成都(西南)      ${CMSG}6${CEND}. 重庆"
+    echo -e "\t ${CMSG} 7${CEND}. 新加坡          ${CMSG}8${CEND}. 香港"
+    echo -e "\t ${CMSG} 9${CEND}. 多伦多         ${CMSG}10${CEND}. 法兰克福"
+    echo -e "\t ${CMSG}11${CEND}. 孟买           ${CMSG}12${CEND}. 首尔"
+    echo -e "\t ${CMSG}13${CEND}. 硅谷           ${CMSG}14${CEND}. 弗吉尼亚"
     read -p "Please input a number:(Default 1 press Enter) " Location
     [ -z "${Location}" ] && Location=1
-    if [[ "${Location}" =~ ^[1-9]$ ]]; then
+    if [[ "${Location}" =~ ^[1-9]$|^1[0-4]$ ]]; then
       break
     else
-      echo "${CWARNING}input error! Please only input number 1~9${CEND}"
+      echo "${CWARNING}input error! Please only input number 1~14${CEND}"
     fi
   done
   [ "${Location}" == '1' ] && region='ap-beijing-1'
@@ -254,10 +259,15 @@ if [ `echo ${desc_bk} | grep -e 4` ]; then
   [ "${Location}" == '3' ] && region='ap-shanghai'
   [ "${Location}" == '4' ] && region='ap-guangzhou'
   [ "${Location}" == '5' ] && region='ap-chengdu'
-  [ "${Location}" == '6' ] && region='ap-singapore'
-  [ "${Location}" == '7' ] && region='ap-hongkong'
-  [ "${Location}" == '8' ] && region='na-toronto'
-  [ "${Location}" == '9' ] && region='eu-frankfurt'
+  [ "${Location}" == '6' ] && region='ap-chongqing'
+  [ "${Location}" == '7' ] && region='ap-singapore'
+  [ "${Location}" == '8' ] && region='ap-hongkong'
+  [ "${Location}" == '9' ] && region='na-toronto'
+  [ "${Location}" == '10' ] && region='eu-frankfurt'
+  [ "${Location}" == '11' ] && region='ap-mumbai'
+  [ "${Location}" == '12' ] && region='ap-seoul'
+  [ "${Location}" == '13' ] && region='na-siliconvalley'
+  [ "${Location}" == '14' ] && region='na-ashburn'
   while :; do echo
     read -p "Please enter the Qcloud COS APPID: " APPID
     [ -z "${APPID}" ] && continue

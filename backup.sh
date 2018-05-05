@@ -93,13 +93,13 @@ WEB_OSS_BK() {
   do
     [ ! -e "${wwwroot_dir}/$WebSite" ] && { echo "[${wwwroot_dir}/$WebSite] not exist"; break; }
     PUSH_FILE="${backup_dir}/Web_${W}_$(date +%Y%m%d_%H).tgz"
-    if [ ! -e "$PUSH_FILE" ]; then
+    if [ ! -e "${PUSH_FILE}" ]; then
       pushd ${wwwroot_dir}
-      tar czf $PUSH_FILE ./$W
+      tar czf ${PUSH_FILE} ./$W
       popd
     fi
-    /usr/local/bin/ossutil cp -f $PUSH_FILE oss://${oss_bucket}/`date +%F`/$PUSH_FILE
-    [ $? -eq 0 ] && { [ -e "$PUSH_FILE" ] && rm -rf $PUSH_FILE; /usr/local/bin/ossutil rm -rf oss://${oss_bucket}/`date +%F --date="${expired_days} days ago"`/; }
+    /usr/local/bin/ossutil cp -f ${PUSH_FILE} oss://${oss_bucket}/`date +%F`/${PUSH_FILE##*/}
+    [ $? -eq 0 ] && { [ -e "${PUSH_FILE}" ] && rm -rf ${PUSH_FILE}; /usr/local/bin/ossutil rm -rf oss://${oss_bucket}/`date +%F --date="${expired_days} days ago"`/; }
   done
 }
 
@@ -108,15 +108,15 @@ WEB_COS_BK() {
   do
     [ ! -e "${wwwroot_dir}/$WebSite" ] && { echo "[${wwwroot_dir}/$WebSite] not exist"; break; }
     PUSH_FILE="${backup_dir}/Web_${W}_$(date +%Y%m%d_%H).tgz"
-    if [ ! -e "$PUSH_FILE" ]; then
+    if [ ! -e "${PUSH_FILE}" ]; then
       pushd ${wwwroot_dir}
-      tar czf $PUSH_FILE ./$W
+      tar czf ${PUSH_FILE} ./$W
       popd
     fi
-    ${python_install_dir}/bin/coscmd upload $PUSH_FILE /`date +%F`/Web_${W}_$(date +%Y%m%d_%H).tgz
+    ${python_install_dir}/bin/coscmd upload ${PUSH_FILE} /`date +%F`/${PUSH_FILE##*/}
     if [ $? -eq 0 ]; then
       ${python_install_dir}/bin/coscmd delete -r -f `date +%F --date="${expired_days} days ago"` > /dev/null 2>&1
-      [ -e "$PUSH_FILE" -a -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -rf $PUSH_FILE
+      [ -e "${PUSH_FILE}" -a -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -rf ${PUSH_FILE}
     fi
   done
 }
@@ -127,15 +127,15 @@ WEB_UPYUN_BK() {
     [ ! -e "${wwwroot_dir}/$WebSite" ] && { echo "[${wwwroot_dir}/$WebSite] not exist"; break; }
     [ ! -e "${backup_dir}" ] && mkdir -p ${backup_dir}
     PUSH_FILE="${backup_dir}/Web_${W}_$(date +%Y%m%d_%H).tgz"
-    if [ ! -e "$PUSH_FILE" ]; then
+    if [ ! -e "${PUSH_FILE}" ]; then
       pushd ${wwwroot_dir}
-      tar czf $PUSH_FILE ./$W
+      tar czf ${PUSH_FILE} ./$W
       popd
     fi
-    /usr/local/bin/upx put $PUSH_FILE /`date +%F`/Web_${W}_$(date +%Y%m%d_%H).tgz
+    /usr/local/bin/upx put ${PUSH_FILE} /`date +%F`/${PUSH_FILE##*/}
     if [ $? -eq 0 ]; then
       /usr/local/bin/upx rm -a `date +%F --date="${expired_days} days ago"` > /dev/null 2>&1
-      [ -e "$PUSH_FILE" -a -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -rf $PUSH_FILE
+      [ -e "${PUSH_FILE}" -a -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -rf ${PUSH_FILE}
     fi
   done
 }

@@ -406,7 +406,7 @@ What Are You Doing?
 Nginx_anti_hotlinking() {
   while :; do echo
     read -p "Do you want to add hotlink protection? [y/n]: " anti_hotlinking_flag
-    if [[ ! $anti_hotlinking_flag =~ ^[y,n]$ ]]; then
+    if [[ ! ${anti_hotlinking_flag} =~ ^[y,n]$ ]]; then
       echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
       break
@@ -420,7 +420,7 @@ Nginx_anti_hotlinking() {
   fi
 
   if [ "${anti_hotlinking_flag}" == 'y' ]; then
-    if [ "${moredomainame_flag}" == 'y' ]; then
+    if [ "${moredomainame_flag}" == 'y' -a "*.${domain}" != "${moredomainame}" ]; then
       domain_allow_all=${domain_allow}${moredomainame}
     else
       domain_allow_all=${domain_allow}

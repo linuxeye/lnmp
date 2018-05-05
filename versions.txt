@@ -5,8 +5,8 @@ tengine_ver=2.2.2
 openresty_ver=1.13.6.1
 openssl_ver=1.0.2o
 
-tomcat9_ver=9.0.7
-tomcat8_ver=8.5.30
+tomcat9_ver=9.0.8
+tomcat8_ver=8.5.31
 tomcat7_ver=7.0.86
 tomcat6_ver=6.0.53
 

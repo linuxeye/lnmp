@@ -44,10 +44,14 @@ Install_Nginx() {
   [ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep ${nginx_install_dir} /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=${nginx_install_dir}/sbin:\1@" /etc/profile
   . /etc/profile
 
-  [ "${OS}" == 'CentOS' ] && { /bin/cp ../init.d/Nginx-init-CentOS /etc/init.d/nginx; chkconfig --add nginx; chkconfig nginx on; }
-  [[ ${OS} =~ ^Ubuntu$|^Debian$ ]] && { /bin/cp ../init.d/Nginx-init-Ubuntu /etc/init.d/nginx; update-rc.d nginx defaults; }
-
-  sed -i "s@/usr/local/nginx@${nginx_install_dir}@g" /etc/init.d/nginx
+  if [ -e /bin/systemctl ]; then
+    /bin/cp ../init.d/nginx.service /lib/systemd/system/
+    sed -i "s@/usr/local/nginx@${nginx_install_dir}@g" /lib/systemd/system/nginx.service
+    systemctl enable nginx
+  else
+    [ "${OS}" == 'CentOS' ] && { /bin/cp ../init.d/Nginx-init-CentOS /etc/init.d/nginx; sed -i "s@/usr/local/nginx@${nginx_install_dir}@g" /etc/init.d/nginx; chkconfig --add nginx; chkconfig nginx on; }
+    [[ ${OS} =~ ^Ubuntu$|^Debian$ ]] && { /bin/cp ../init.d/Nginx-init-Ubuntu /etc/init.d/nginx; sed -i "s@/usr/local/nginx@${nginx_install_dir}@g" /etc/init.d/nginx; update-rc.d nginx defaults; }
+  fi
 
   mv ${nginx_install_dir}/conf/nginx.conf{,_bk}
   if [[ ${apache_option} =~ ^[1-2]$ ]]; then

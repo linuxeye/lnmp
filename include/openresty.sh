@@ -41,10 +41,14 @@ Install_OpenResty() {
   [ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep ${openresty_install_dir} /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=${openresty_install_dir}/nginx/sbin:\1@" /etc/profile
   . /etc/profile
 
-  [ "${OS}" == 'CentOS' ] && { /bin/cp ../init.d/Nginx-init-CentOS /etc/init.d/nginx; chkconfig --add nginx; chkconfig nginx on; }
-  [[ ${OS} =~ ^Ubuntu$|^Debian$ ]] && { /bin/cp ../init.d/Nginx-init-Ubuntu /etc/init.d/nginx; update-rc.d nginx defaults; }
-
-  sed -i "s@/usr/local/nginx@${openresty_install_dir}/nginx@g" /etc/init.d/nginx
+  if [ -e /bin/systemctl ]; then
+    /bin/cp ../init.d/nginx.service /lib/systemd/system/
+    sed -i "s@/usr/local/nginx@${openresty_install_dir}/nginx@g" /lib/systemd/system/nginx.service
+    systemctl enable nginx
+  else
+    [ "${OS}" == 'CentOS' ] && { /bin/cp ../init.d/Nginx-init-CentOS /etc/init.d/nginx; sed -i "s@/usr/local/nginx@${nginx_install_dir}@g" /etc/init.d/nginx; chkconfig --add nginx; chkconfig nginx on; }
+    [[ ${OS} =~ ^Ubuntu$|^Debian$ ]] && { /bin/cp ../init.d/Nginx-init-Ubuntu /etc/init.d/nginx; sed -i "s@/usr/local/nginx@${nginx_install_dir}@g" /etc/init.d/nginx; update-rc.d nginx defaults; }
+  fi
 
   mv ${openresty_install_dir}/nginx/conf/nginx.conf{,_bk}
   if [[ ${apache_option} =~ ^[1-2]$ ]]; then

@@ -1,0 +1,19 @@
+[Unit]
+Description=nginx - high performance web server
+Documentation=http://nginx.org/en/docs/
+After=network.target
+
+[Service]
+Type=forking
+PIDFile=/var/run/nginx.pid
+ExecStartPost=/bin/sleep 0.1
+ExecStartPre=/usr/local/nginx/sbin/nginx -t -c /usr/local/nginx/conf/nginx.conf
+ExecStart=/usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf
+ExecReload=/usr/local/nginx/sbin/nginx -s reload
+ExecStop=/usr/local/nginx/sbin/nginx -s stop
+LimitNOFILE=1000000
+LimitNPROC=1000000
+LimitCORE=1000000
+
+[Install]
+WantedBy=multi-user.target

@@ -66,6 +66,7 @@ Print_web() {
   [ -d "${tengine_install_dir}" ] && echo "${tengine_install_dir}"
   [ -d "${openresty_install_dir}" ] && echo "${openresty_install_dir}"
   [ -e "/etc/init.d/nginx" ] && echo '/etc/init.d/nginx'
+  [ -e "/lib/systemd/system/nginx.service" ] && echo '/lib/systemd/system/nginx.service'
   [ -e "/etc/logrotate.d/nginx" ] && echo '/etc/logrotate.d/nginx'
 
   [ -d "${apache_install_dir}" ] && echo "${apache_install_dir}"
@@ -80,6 +81,7 @@ Print_web() {
 }
 
 Uninstall_Web() {
+  [ -e "/lib/systemd/system/nginx.service" ] && { systemctl disable nginx > /dev/null 2>&1; rm -f /lib/systemd/system/nginx.service; }
   [ -d "${nginx_install_dir}" ] && { killall nginx > /dev/null 2>&1; rm -rf ${nginx_install_dir} /etc/init.d/nginx /etc/logrotate.d/nginx; sed -i "s@${nginx_install_dir}/sbin:@@" /etc/profile; echo "${CMSG}Nginx uninstall completed! ${CEND}"; }
   [ -d "${tengine_install_dir}" ] && { killall nginx > /dev/null 2>&1; rm -rf ${tengine_install_dir} /etc/init.d/nginx /etc/logrotate.d/nginx; sed -i "s@${tengine_install_dir}/sbin:@@" /etc/profile; echo "${CMSG}Tengine uninstall completed! ${CEND}"; }
   [ -d "${openresty_install_dir}" ] && { killall nginx > /dev/null 2>&1; rm -rf ${openresty_install_dir} /etc/init.d/nginx /etc/logrotate.d/nginx; sed -i "s@${openresty_install_dir}/nginx/sbin:@@" /etc/profile; echo "${CMSG}OpenResty uninstall completed! ${CEND}"; }

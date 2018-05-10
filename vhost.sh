@@ -420,7 +420,7 @@ Nginx_anti_hotlinking() {
   fi
 
   if [ "${anti_hotlinking_flag}" == 'y' ]; then
-    if [ "${moredomainame_flag}" == 'y' -a "*.${domain}" != "${moredomainame}" ]; then
+    if [ "${moredomainame_flag}" == 'y' -a "${moredomain}" != "*.${domain}" ]; then
       domain_allow_all=${domain_allow}${moredomainame}
     else
       domain_allow_all=${domain_allow}

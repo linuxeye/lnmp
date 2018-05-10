@@ -15,7 +15,7 @@ apache22_ver=2.2.34
 pcre_ver=8.42
 apr_ver=1.6.3
 apr_util_ver=1.6.1
-nghttp2_ver=1.31.1
+nghttp2_ver=1.32.0
 
 # DB
 mysql80_ver=8.0.11
@@ -24,8 +24,8 @@ mysql56_ver=5.6.40
 mysql55_ver=5.5.60
 
 mariadb102_ver=10.2.14
-mariadb101_ver=10.1.32
-mariadb100_ver=10.0.34
+mariadb101_ver=10.1.33
+mariadb100_ver=10.0.35
 mariadb55_ver=5.5.60
 
 percona57_ver=5.7.21-21
@@ -61,7 +61,7 @@ mcrypt_ver=2.6.8
 mhash_ver=0.9.9.9
 libsodium_ver=1.0.16
 argon2_ver=20171227
-imagemagick_ver=6.9.9-40
+imagemagick_ver=6.9.9-43
 imagick_ver=3.4.3
 graphicsmagick_ver=1.3.28
 gmagick_for_php7_ver=2.0.5RC1
@@ -97,7 +97,7 @@ phpmyadmin_ver=4.8.0.1
 phpmyadmin_oldver=4.4.15.10
 
 # jemalloc
-jemalloc_ver=5.0.1
+jemalloc_ver=5.1.0
 
 # boost
 boost_ver=1.66.0

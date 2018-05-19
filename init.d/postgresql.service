@@ -1,0 +1,14 @@
+[Unit]
+Description=PostgreSQL database server
+
+[Service]
+Type=notify
+User=postgres
+ExecStart=/usr/local/pgsql/bin/postgres -D /data/pgsql
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=mixed
+KillSignal=SIGINT
+TimeoutSec=0
+
+[Install]
+WantedBy=multi-user.target

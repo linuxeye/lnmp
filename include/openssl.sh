@@ -20,7 +20,6 @@ Install_openSSL102() {
     popd
     if [ -f "${openssl_install_dir}/lib/libcrypto.a" ]; then
       echo "${CSUCCESS}openssl-1.0.2 module installed successfully! ${CEND}"
-      /bin/cp cacert.pem ${openssl_install_dir}/cacert.pem
       /bin/cp cacert.pem ${openssl_install_dir}/cert.pem
       rm -rf openssl-${openssl_ver}
     else

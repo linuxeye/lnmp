@@ -139,4 +139,4 @@ Follow the instructions in [Wiki Installation page](https://github.com/lj2007331
 
 For feedback, questions, and to follow the progress of the project (Chinese): <br />
 [Telegram Group](https://t.me/oneinstack)<br />
-[lnmp最新源码一键安装脚本](https://blog.linuxeye.com/31.html)<br />
+[lnmp最新源码一键安装脚本](https://blog.linuxeye.cn/31.html)<br />

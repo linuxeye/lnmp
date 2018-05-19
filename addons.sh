@@ -354,7 +354,7 @@ What Are You Doing?
               IMAP_ARGS='--with-kerberos --with-imap --with-imap-ssl'
               if [ "$OS" == 'CentOS' ]; then
                 yum -y install libc-client-devel
-                [ -a "${OS_BIT}" == '64' -a ! -e /usr/lib/libc-client.so ] && ln -s /usr/lib64/libc-client.so /usr/lib/libc-client.so
+                [ "${OS_BIT}" == '64' -a ! -e /usr/lib/libc-client.so ] && ln -s /usr/lib64/libc-client.so /usr/lib/libc-client.so
               else
                 apt-get -y install libc-client2007e-dev
               fi
@@ -451,9 +451,9 @@ What Are You Doing?
             tar xzf swoole-${swoole_ver}.tgz
             pushd swoole-${swoole_ver}
           else
-            src_url=https://pecl.php.net/get/swoole-1.10.4.tgz && Download_src
-            tar xzf swoole-1.10.4.tgz
-            pushd swoole-1.10.4
+            src_url=https://pecl.php.net/get/swoole-1.10.5.tgz && Download_src
+            tar xzf swoole-1.10.5.tgz
+            pushd swoole-1.10.5
           fi
           ${php_install_dir}/bin/phpize
           ./configure --with-php-config=${php_install_dir}/bin/php-config

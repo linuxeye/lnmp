@@ -35,15 +35,17 @@ Install_redis-server() {
     id -u redis >/dev/null 2>&1
     [ $? -ne 0 ] && useradd -M -s /sbin/nologin redis
     chown -R redis:redis ${redis_install_dir}/{var,etc}
-    /bin/cp ../init.d/Redis-server-init /etc/init.d/redis-server
-    if [ "$OS" == 'CentOS' ]; then
-      cc start-stop-daemon.c -o /sbin/start-stop-daemon
-      chkconfig --add redis-server
-      chkconfig redis-server on
-    elif [[ $OS =~ ^Ubuntu$|^Debian$ ]]; then
-      update-rc.d redis-server defaults
+
+    if [ -e /bin/systemctl ]; then
+      /bin/cp ../init.d/redis-server.service /lib/systemd/system/
+      sed -i "s@/usr/local/redis@${redis_install_dir}@g" /lib/systemd/system/redis-server.service
+      systemctl enable redis-server
+    else
+      /bin/cp ../init.d/Redis-server-init /etc/init.d/redis-server
+      sed -i "s@/usr/local/redis@${redis_install_dir}@g" /etc/init.d/redis-server
+      [ "${OS}" == 'CentOS' ] && { cc start-stop-daemon.c -o /sbin/start-stop-daemon; chkconfig --add redis-server; chkconfig redis-server on; }
+      [[ ${OS} =~ ^Ubuntu$|^Debian$ ]] && update-rc.d redis-server defaults
     fi
-    sed -i "s@/usr/local/redis@${redis_install_dir}@g" /etc/init.d/redis-server
     #[ -z "`grep 'vm.overcommit_memory' /etc/sysctl.conf`" ] && echo 'vm.overcommit_memory = 1' >> /etc/sysctl.conf
     #sysctl -p
     service redis-server start
@@ -59,8 +61,8 @@ Install_php-redis() {
   pushd ${oneinstack_dir}/src > /dev/null
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
-    tar xzf redis-$redis_pecl_ver.tgz
-    pushd redis-$redis_pecl_ver
+    tar xzf redis-${redis_pecl_ver}.tgz
+    pushd redis-${redis_pecl_ver}
     ${php_install_dir}/bin/phpize
     ./configure --with-php-config=${php_install_dir}/bin/php-config
     make -j ${THREAD} && make install
@@ -68,7 +70,7 @@ Install_php-redis() {
       echo 'extension=redis.so' > ${php_install_dir}/etc/php.d/05-redis.ini
       echo "${CSUCCESS}PHP Redis module installed successfully! ${CEND}"
       popd
-      rm -rf redis-$redis_pecl_ver
+      rm -rf redis-${redis_pecl_ver}
     else
       echo "${CFAILURE}PHP Redis module install failed, Please contact the author! ${CEND}"
     fi

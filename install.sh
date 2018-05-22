@@ -273,7 +273,7 @@ if [ ${ARG_NUM} == 0 ]; then
         #    if [ "${tomcat_option}" == '1' ]; then
         #      while :; do echo
         #        echo 'Please select JDK version:'
-        #        echo -e "\t${CMSG}1${CEND}. Install JDK-9"
+        #        echo -e "\t${CMSG}1${CEND}. Install JDK-10"
         #        echo -e "\t${CMSG}2${CEND}. Install JDK-1.8"
         #        read -p "Please input a number:(Default 1 press Enter) " jdk_option
         #        [ -z "${jdk_option}" ] && jdk_option=1
@@ -286,7 +286,7 @@ if [ ${ARG_NUM} == 0 ]; then
         #    elif [ "${tomcat_option}" == '2' ]; then
         #      while :; do echo
         #        echo 'Please select JDK version:'
-        #        echo -e "\t${CMSG}1${CEND}. Install JDK-9"
+        #        echo -e "\t${CMSG}1${CEND}. Install JDK-10"
         #        echo -e "\t${CMSG}2${CEND}. Install JDK-1.8"
         #        echo -e "\t${CMSG}3${CEND}. Install JDK-1.7"
         #        read -p "Please input a number:(Default 2 press Enter) " jdk_option
@@ -910,8 +910,8 @@ esac
 # JDK
 case "${jdk_option}" in
   1)
-    . include/jdk-9.sh
-    Install-JDK9 2>&1 | tee -a ${oneinstack_dir}/install.log
+    . include/jdk-10.sh
+    Install-JDK10 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   2)
     . include/jdk-1.8.sh

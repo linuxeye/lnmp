@@ -8,14 +8,14 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-if [ -n "$(grep 'Aliyun Linux release' /etc/issue)" -o -e /etc/redhat-release ]; then
+if [ -e /etc/redhat-release ]; then
   OS=CentOS
-  [ -n "$(grep ' 7\.' /etc/redhat-release 2> /dev/null)" ] && CentOS_ver=7
-  [ -n "$(grep ' 6\.' /etc/redhat-release 2> /dev/null)" -o -n "$(grep 'Aliyun Linux release6 15' /etc/issue)" ] && CentOS_ver=6
-  [ -n "$(grep ' 5\.' /etc/redhat-release 2> /dev/null)" -o -n "$(grep 'Aliyun Linux release5' /etc/issue)" ] && CentOS_ver=5
-elif [ -n "$(grep 'Amazon Linux AMI release' /etc/issue)" -o -e /etc/system-release ]; then
+  [ ! -e "$(which lsb_release)" ] && { yum -y install redhat-lsb-core; clear; }
+  CentOS_ver=$(lsb_release -sr | awk -F. '{print $1}')
+  [ "${CentOS_ver}" == '17' ] && CentOS_ver=7
+elif [ -n "$(grep 'Amazon Linux' /etc/issue)" ]; then
   OS=CentOS
-  CentOS_ver=6
+  CentOS_ver=7
 elif [ -n "$(grep 'bian' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Debian" ]; then
   OS=Debian
   [ ! -e "$(which lsb_release)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
@@ -24,15 +24,15 @@ elif [ -n "$(grep 'Deepin' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "
   OS=Debian
   [ ! -e "$(which lsb_release)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
   Debian_ver=8
-elif [ -n "$(grep 'Kali GNU/Linux Rolling' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Kali" ]; then
-  # kali rolling
+elif [ -n "$(grep -w 'Kali' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Kali" ]; then
   OS=Debian
   [ ! -e "$(which lsb_release)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
   if [ -n "$(grep 'VERSION="2016.*"' /etc/os-release)" ]; then
     Debian_ver=8
-  else
-    echo "${CFAILURE}Does not support this OS, Please contact the author! ${CEND}"
-    kill -9 $$
+  elif [ -n "$(grep 'VERSION="2017.*"' /etc/os-release)" ]; then
+    Debian_ver=9
+  elif [ -n "$(grep 'VERSION="2018.*"' /etc/os-release)" ]; then
+    Debian_ver=9
   fi
 elif [ -n "$(grep 'Ubuntu' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Ubuntu" -o -n "$(grep 'Linux Mint' /etc/issue)" ]; then
   OS=Ubuntu
@@ -84,19 +84,15 @@ fi
 
 THREAD=$(grep 'processor' /proc/cpuinfo | sort -u | wc -l)
 
-# Percona
-if [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]]; then
-  if [ "${Debian_ver}" == '6' ]; then
-    sslLibVer=ssl098
-  else
-    sslLibVer=ssl100
-  fi
-elif [ "${OS}" == "CentOS" ]; then
-  if [ "${CentOS_ver}" == '5' ]; then
-    sslLibVer=ssl098e
-  else
-    sslLibVer=ssl101
-  fi
+# Percona binary
+if [ "${CentOS_ver}" == '5' -o "${Debian_ver}" == '6' ]; then
+  sslLibVer=ssl098
+elif [ "${Debian_ver}" == '7' -o "${Ubuntu_ver}" == '12' ]; then
+  sslLibVer=ssl100
+elif [ "${CentOS_ver}" == '6' -o "${Debian_ver}" == '8' -o "${Ubuntu_ver}" == '14' ]; then
+  sslLibVer=ssl101
+elif [ "${CentOS_ver}" == '7' -o "${Debian_ver}" == '9' -o ${Ubuntu_ver} -ge 16 >/dev/null 2>&1 ]; then
+  sslLibVer=ssl102
 else
   sslLibVer=unknown
 fi

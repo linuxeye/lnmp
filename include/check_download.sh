@@ -35,7 +35,7 @@ checkDownload() {
 
     if [[ "${nginx_option}" =~ ^[1-3]$ || ${apache_option} == '1' ]]; then
       echo "Download pcre..."
-      src_url=${mirrorLink}/pcre-${pcre_ver}.tar.gz && Download_src
+      src_url=https://ftp.pcre.org/pub/pcre/pcre-${pcre_ver}.tar.gz && Download_src
     fi
 
     # apache

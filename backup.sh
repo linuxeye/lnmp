@@ -14,6 +14,7 @@
 oneinstack_dir=$(dirname "`readlink -f $0`")
 pushd ${oneinstack_dir}/tools > /dev/null
 . ../options.conf
+[ ! -e "${backup_dir}" ] && mkdir -p ${backup_dir}
 
 DB_Local_BK() {
   for D in `echo ${db_name} | tr ',' ' '`

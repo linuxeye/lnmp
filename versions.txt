@@ -29,8 +29,8 @@ mariadb101_ver=10.1.33
 mariadb100_ver=10.0.35
 mariadb55_ver=5.5.60
 
-percona57_ver=5.7.21-21
-percona56_ver=5.6.39-83.1
+percona57_ver=5.7.22-22
+percona56_ver=5.6.40-84.0
 percona55_ver=5.5.60-38.12
 
 alisql_ver=5.6.32-9
@@ -106,7 +106,7 @@ boost_oldver=1.59.0
 # Others
 libevent_ver=2.0.22-stable
 tmux_ver=2.7
-htop_ver=2.1.1
+htop_ver=2.2.0
 bison_ver=2.7.1
 python_ver=2.7.15
 setuptools_ver=39.2.0

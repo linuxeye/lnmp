@@ -69,7 +69,7 @@ else
 fi
 
 LIBC_YN=$(awk -v A=$(getconf -a | grep GNU_LIBC_VERSION | awk '{print $NF}') -v B=2.14 'BEGIN{print(A>=B)?"0":"1"}')
-[ $LIBC_YN == '0' ] && GLIBC_FLAG=linux-glibc_214 || GLIBC_FLAG=linux
+[ ${LIBC_YN} == '0' ] && GLIBC_FLAG=linux-glibc_214 || GLIBC_FLAG=linux
 
 if uname -m | grep -Eqi "arm"; then
   armplatform="y"

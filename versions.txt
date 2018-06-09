@@ -61,7 +61,7 @@ mcrypt_ver=2.6.8
 mhash_ver=0.9.9.9
 libsodium_ver=1.0.16
 argon2_ver=20171227
-imagemagick_ver=6.9.9-49
+imagemagick_ver=6.9.9-50
 imagick_ver=3.4.3
 graphicsmagick_ver=1.3.28
 gmagick_for_php7_ver=2.0.5RC1
@@ -71,7 +71,7 @@ xcache_ver=3.2.0
 apcu_ver=4.0.11
 apcu_for_php7_ver=5.1.11
 eaccelerator_ver=0.9.6.1
-swoole_ver=2.1.3
+swoole_ver=2.2.0
 xdebug_ver=2.6.0
 
 # Ftp
@@ -89,7 +89,7 @@ memcached_pecl_php7_ver=3.0.4
 memcache_pecl_ver=3.0.8
 
 # MongoDB
-mongodb_pecl_ver=1.4.3
+mongodb_pecl_ver=1.4.4
 mongo_pecl_ver=1.6.16
 
 # phpMyadmin

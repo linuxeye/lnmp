@@ -115,7 +115,7 @@ Uninstall_MySQL() {
   # uninstall mysql,mariadb,percona,alisql
   if [ -d "${db_install_dir}/support-files" ]; then
     service mysqld stop > /dev/null 2>&1
-    rm -rf ${db_install_dir} /etc/init.d/mysqld /etc/my.cnf /etc/ld.so.conf.d/{mysql,mariadb,percona,alisql}*.conf /usr/local/lib/libboost* /usr/local/include/boost
+    rm -rf ${db_install_dir} /etc/init.d/mysqld /etc/my.cnf /etc/ld.so.conf.d/{mysql,mariadb,percona,alisql}*.conf
     id -u mysql >/dev/null 2>&1 ; [ $? -eq 0 ] && userdel mysql
     [ -e "${db_data_dir}" ] && /bin/mv ${db_data_dir}{,$(date +%Y%m%d%H)}
     sed -i 's@^dbrootpwd=.*@dbrootpwd=@' ./options.conf

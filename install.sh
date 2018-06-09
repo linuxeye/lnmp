@@ -716,18 +716,10 @@ fi
 case "${db_option}" in
   1)
     [ "${OS}" == 'CentOS' -a "${CentOS_ver}" != '7' ] && dbinstallmethod=1
-    if [ "${dbinstallmethod}" == "2" ]; then
-      . include/boost.sh
-      installBoost 2>&1 | tee -a ${oneinstack_dir}/install.log
-    fi
     . include/mysql-8.0.sh
     Install_MySQL80 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   2)
-    if [ "${dbinstallmethod}" == "2" ]; then
-      . include/boost.sh
-      installBoostold 2>&1 | tee -a ${oneinstack_dir}/install.log
-    fi
     . include/mysql-5.7.sh
     Install_MySQL57 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
@@ -740,26 +732,14 @@ case "${db_option}" in
     Install_MySQL55 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   5)
-    if [ "${dbinstallmethod}" == "2" ]; then
-      . include/boost.sh
-      installBoostold 2>&1 | tee -a ${oneinstack_dir}/install.log
-    fi
     . include/mariadb-10.3.sh
     Install_MariaDB103 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   6)
-    if [ "${dbinstallmethod}" == "2" ]; then
-      . include/boost.sh
-      installBoostold 2>&1 | tee -a ${oneinstack_dir}/install.log
-    fi
     . include/mariadb-10.2.sh
     Install_MariaDB102 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   7)
-    if [ "${dbinstallmethod}" == "2" ]; then
-      . include/boost.sh
-      installBoostold 2>&1 | tee -a ${oneinstack_dir}/install.log
-    fi
     . include/mariadb-10.1.sh
     Install_MariaDB101 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
@@ -772,10 +752,6 @@ case "${db_option}" in
     Install_MariaDB55 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   10)
-    if [ "${dbinstallmethod}" == "2" ]; then
-      . include/boost.sh
-      installBoostold 2>&1 | tee -a ${oneinstack_dir}/install.log
-    fi
     . include/percona-5.7.sh
     Install_Percona57 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;

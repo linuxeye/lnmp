@@ -22,10 +22,14 @@ Install_MySQL57() {
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mysql_install_dir}/bin/mysqld_safe
     sed -i "s@/usr/local/mysql@${mysql_install_dir}@g" ${mysql_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then
+    boostVersion2=$(echo ${boost_oldver} | awk -F. '{print $1"_"$2"_"$3}')
+    tar xzf boost_${boostVersion2}.tar.gz
     tar xzf mysql-${mysql57_ver}.tar.gz
     pushd mysql-${mysql57_ver}
     cmake . -DCMAKE_INSTALL_PREFIX=${mysql_install_dir} \
     -DMYSQL_DATADIR=${mysql_data_dir} \
+    -DDOWNLOAD_BOOST=1 \
+    -DWITH_BOOST=../boost_${boostVersion2} \
     -DSYSCONFDIR=/etc \
     -DWITH_INNOBASE_STORAGE_ENGINE=1 \
     -DWITH_PARTITION_STORAGE_ENGINE=1 \
@@ -50,7 +54,7 @@ Install_MySQL57() {
     if [ "${dbinstallmethod}" == "1" ]; then
       rm -rf mysql-${mysql57_ver}-*-${SYS_BIT_b}
     elif [ "${dbinstallmethod}" == "2" ]; then
-      rm -rf mysql-${mysql57_ver}
+      rm -rf mysql-${mysql57_ver} boost_${boostVersion2}
     fi
   else
     rm -rf ${mysql_install_dir}

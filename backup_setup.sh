@@ -248,12 +248,13 @@ if [ `echo ${desc_bk} | grep -e 4` ]; then
     echo -e "\t ${CMSG} 9${CEND}. 多伦多         ${CMSG}10${CEND}. 法兰克福"
     echo -e "\t ${CMSG}11${CEND}. 孟买           ${CMSG}12${CEND}. 首尔"
     echo -e "\t ${CMSG}13${CEND}. 硅谷           ${CMSG}14${CEND}. 弗吉尼亚"
+    echo -e "\t ${CMSG}15${CEND}. 曼谷           ${CMSG}16${CEND}. 莫斯科"
     read -p "Please input a number:(Default 1 press Enter) " Location
     [ -z "${Location}" ] && Location=1
-    if [[ "${Location}" =~ ^[1-9]$|^1[0-4]$ ]]; then
+    if [[ "${Location}" =~ ^[1-9]$|^1[0-6]$ ]]; then
       break
     else
-      echo "${CWARNING}input error! Please only input number 1~14${CEND}"
+      echo "${CWARNING}input error! Please only input number 1~16${CEND}"
     fi
   done
   [ "${Location}" == '1' ] && region='ap-beijing-1'
@@ -270,6 +271,8 @@ if [ `echo ${desc_bk} | grep -e 4` ]; then
   [ "${Location}" == '12' ] && region='ap-seoul'
   [ "${Location}" == '13' ] && region='na-siliconvalley'
   [ "${Location}" == '14' ] && region='na-ashburn'
+  [ "${Location}" == '15' ] && region='ap-bangkok'
+  [ "${Location}" == '16' ] && region='eu-moscow'
   while :; do echo
     read -p "Please enter the Qcloud COS APPID: " APPID
     [ -z "${APPID}" ] && continue

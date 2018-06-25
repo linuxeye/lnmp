@@ -53,6 +53,8 @@ IPADDR_COUNTRY=`./include/get_ipaddr_state.py $PUBLIC_IPADDR | awk '{print $1}'`
 
 . ./include/python.sh
 
+. ./include/ngx_lua_waf.sh
+
 # Check PHP
 if [ -e "${php_install_dir}/bin/phpize" ]; then
   phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
@@ -178,8 +180,8 @@ What Are You Doing?
 \t${CMSG} q${CEND}. Exit
 "
   read -p "Please input the correct option: " Number
-  if [[ ! "${Number}" =~ ^[1-9,q]$|^10$ ]]; then
-    echo "${CFAILURE}input error! Please only input 1~10 and q${CEND}"
+  if [[ ! "${Number}" =~ ^[1-9,q]$|^1[0-1]$ ]]; then
+    echo "${CFAILURE}input error! Please only input 1~11 and q${CEND}"
   else
     case "${Number}" in
       1)
@@ -544,6 +546,16 @@ EOF
           Install_fail2ban
         else
           Uninstall_fail2ban
+        fi
+        ;;
+      11)
+        ACTION_FUN
+        if [ "${ACTION}" = '1' ]; then
+          [ -e "${nginx_install_dir}/sbin/nginx" ] && Nginx_lua_waf
+          [ -e "${tengine_install_dir}/sbin/nginx" ] && Tengine_lua_waf
+          enable_lua_waf
+        else
+          disable_lua_waf
         fi
         ;;
       q)

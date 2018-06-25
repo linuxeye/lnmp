@@ -30,7 +30,6 @@ pushd ${oneinstack_dir} > /dev/null
 . ./include/get_char.sh
 
 ssh_port=22
-phpcache_option=1
 dbrootpwd=`< /dev/urandom tr -dc A-Za-z0-9 | head -c8`
 dbpostgrespwd=`< /dev/urandom tr -dc A-Za-z0-9 | head -c8`
 dbmongopwd=`< /dev/urandom tr -dc A-Za-z0-9 | head -c8`
@@ -101,7 +100,6 @@ while :; do
       [ -e "${php_install_dir}/bin/phpize" ] && { echo "${CWARNING}PHP already installed! ${CEND}"; php_yn=Other; }
       ;;
     --phpcache_option)
-      [[ ! ${phpcache_option} =~ ^[1-4]$ ]] && { echo "${CWARNING}phpcache_option input error! Please only input number 1~4${CEND}"; exit 1; }
       phpcache_option=$2; shift 2
       ;;
     --php_extensions)

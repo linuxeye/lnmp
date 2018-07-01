@@ -177,6 +177,7 @@ What Are You Doing?
 \t${CMSG} 8${CEND}. Install/Uninstall xdebug PHP Extension
 \t${CMSG} 9${CEND}. Install/Uninstall PHP Composer
 \t${CMSG}10${CEND}. Install/Uninstall fail2ban
+\t${CMSG}11${CEND}. Install/Uninstall ngx_lua_waf 
 \t${CMSG} q${CEND}. Exit
 "
   read -p "Please input the correct option: " Number

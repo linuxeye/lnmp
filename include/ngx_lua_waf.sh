@@ -17,14 +17,16 @@ Nginx_lua_waf() {
     tar xzf LuaJIT-2.1.0-beta3.tar.gz
     pushd LuaJIT-2.1.0-beta3
     make && make install
+    [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ] && { echo "${CFAILURE}LuaJIT install failed! ${CEND}"; kill -9 $$; }
     popd > /dev/null
   fi
   if [ ! -e "/usr/local/lib/lua/5.1/cjson.so" ]; then
     src_url=http://mirrors.linuxeye.com/oneinstack/src/lua-cjson-2.1.0.6.tar.gz && Download_src
     tar xzf lua-cjson-2.1.0.6.tar.gz
     pushd lua-cjson-2.1.0.6
-    sed -i 's@LUA_INCLUDE_DIR.*@LUA_INCLUDE_DIR \?=   \$(PREFIX)/include/luajit-2.1@' Makefile
+    sed -i 's@^LUA_INCLUDE_DIR.*@&/luajit-2.1@' Makefile
     make && make install
+    [ ! -e "/usr/local/lib/lua/5.1/cjson.so" ] && { echo "${CFAILURE}lua-cjson install failed! ${CEND}"; kill -9 $$; }
     popd > /dev/null
   fi
   ${nginx_install_dir}/sbin/nginx -V &> $$
@@ -47,7 +49,7 @@ Nginx_lua_waf() {
     sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc # close debug
     export LUAJIT_LIB=/usr/local/lib
     export LUAJIT_INC=/usr/local/include/luajit-2.1
-    ./configure ${nginx_configure_args} --add-module=../lua-nginx-module --add-module=../ngx_devel_kit
+    ./configure ${nginx_configure_args} --with-ld-opt='-Wl,-rpath,/usr/local/lib' --add-module=../lua-nginx-module --add-module=../ngx_devel_kit
     make -j ${THREAD}
     if [ -f "objs/nginx" ]; then
       /bin/mv ${nginx_install_dir}/sbin/nginx{,`date +%m%d`}
@@ -60,6 +62,7 @@ Nginx_lua_waf() {
       rm -rf nginx-${nginx_ver}
     else
       echo "${CFAILURE}lua-nginx-module install failed! ${CEND}"
+      kill -9 $$
     fi
   fi
   popd > /dev/null
@@ -74,14 +77,16 @@ Tengine_lua_waf() {
     tar xzf LuaJIT-2.1.0-beta3.tar.gz
     pushd LuaJIT-2.1.0-beta3
     make && make install
+    [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ] && { echo "${CFAILURE}LuaJIT install failed! ${CEND}"; kill -9 $$; }
     popd > /dev/null
   fi
   if [ ! -e "/usr/local/lib/lua/5.1/cjson.so" ]; then
     src_url=http://mirrors.linuxeye.com/oneinstack/src/lua-cjson-2.1.0.6.tar.gz && Download_src
     tar xzf lua-cjson-2.1.0.6.tar.gz
     pushd lua-cjson-2.1.0.6
-    sed -i 's@LUA_INCLUDE_DIR.*@LUA_INCLUDE_DIR \?=   \$(PREFIX)/include/luajit-2.1@' Makefile
+    sed -i 's@^LUA_INCLUDE_DIR.*@&/luajit-2.1@' Makefile
     make && make install
+    [ ! -e "/usr/local/lib/lua/5.1/cjson.so" ] && { echo "${CFAILURE}lua-cjson install failed! ${CEND}"; kill -9 $$; }
     popd > /dev/null
   fi
   ${tengine_install_dir}/sbin/nginx -V &> $$
@@ -104,7 +109,7 @@ Tengine_lua_waf() {
     sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc # close debug
     export LUAJIT_LIB=/usr/local/lib
     export LUAJIT_INC=/usr/local/include/luajit-2.1
-    ./configure ${tengine_configure_args} --add-module=../lua-nginx-module --add-module=../ngx_devel_kit
+    ./configure ${tengine_configure_args} --with-ld-opt='-Wl,-rpath,/usr/local/lib' --add-module=../lua-nginx-module --add-module=../ngx_devel_kit
     make -j ${THREAD}
     if [ -f "objs/nginx" ]; then
       /bin/mv ${tengine_install_dir}/sbin/nginx{,`date +%m%d`}
@@ -122,6 +127,7 @@ Tengine_lua_waf() {
       rm -rf tengine-${tengine_ver}
     else
       echo "${CFAILURE}lua_module install failed! ${CEND}"
+      kill -9 $$
     fi
   fi
   popd > /dev/null
@@ -141,7 +147,7 @@ enable_lua_waf() {
   if [ $? -eq 0 ]; then
     service nginx reload
     echo "${CSUCCESS}ngx_lua_waf enabled successfully! ${CEND}"
-    chown ${run_user} ${wwwlogs_dir}
+    chown ${run_user}.${run_user} ${wwwlogs_dir}
   else
     echo "${CFAILURE}ngx_lua_waf enable failed! ${CEND}"
   fi

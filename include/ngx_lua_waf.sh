@@ -49,7 +49,7 @@ Nginx_lua_waf() {
     sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc # close debug
     export LUAJIT_LIB=/usr/local/lib
     export LUAJIT_INC=/usr/local/include/luajit-2.1
-    ./configure ${nginx_configure_args} --with-ld-opt='-Wl,-rpath,/usr/local/lib' --add-module=../lua-nginx-module --add-module=../ngx_devel_kit
+    ./configure ${nginx_configure_args} --with-ld-opt="-Wl,-rpath,/usr/local/lib" --add-module=../lua-nginx-module --add-module=../ngx_devel_kit
     make -j ${THREAD}
     if [ -f "objs/nginx" ]; then
       /bin/mv ${nginx_install_dir}/sbin/nginx{,`date +%m%d`}
@@ -59,6 +59,7 @@ Nginx_lua_waf() {
       kill -QUIT `cat /var/run/nginx.pid.oldbin`
       popd > /dev/null
       echo "${CSUCCESS}lua-nginx-module installed successfully! ${CEND}"
+      sed -i "s@^nginx_modules_options='\(.*\)'@nginx_modules_options=\'\1 --with-ld-opt=\"-Wl,-rpath,/usr/local/lib\" --add-module=../lua-nginx-module --add-module=../ngx_devel_kit\'@" ../options.conf
       rm -rf nginx-${nginx_ver}
     else
       echo "${CFAILURE}lua-nginx-module install failed! ${CEND}"
@@ -109,7 +110,7 @@ Tengine_lua_waf() {
     sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc # close debug
     export LUAJIT_LIB=/usr/local/lib
     export LUAJIT_INC=/usr/local/include/luajit-2.1
-    ./configure ${tengine_configure_args} --with-ld-opt='-Wl,-rpath,/usr/local/lib' --add-module=../lua-nginx-module --add-module=../ngx_devel_kit
+    ./configure ${tengine_configure_args} --with-ld-opt="-Wl,-rpath,/usr/local/lib" --add-module=../lua-nginx-module --add-module=../ngx_devel_kit
     make -j ${THREAD}
     if [ -f "objs/nginx" ]; then
       /bin/mv ${tengine_install_dir}/sbin/nginx{,`date +%m%d`}
@@ -123,6 +124,7 @@ Tengine_lua_waf() {
       sleep 1
       kill -QUIT `cat /var/run/nginx.pid.oldbin`
       popd > /dev/null
+      sed -i "s@^nginx_modules_options='\(.*\)'@nginx_modules_options=\'\1 --with-ld-opt=\"-Wl,-rpath,/usr/local/lib\" --add-module=../lua-nginx-module --add-module=../ngx_devel_kit\'@" ../options.conf
       echo "${CSUCCESS}lua_module installed successfully! ${CEND}"
       rm -rf tengine-${tengine_ver}
     else

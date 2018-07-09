@@ -135,9 +135,9 @@ Install_SS-python() {
 }
 
 Install_SS-libev() {
-  src_url=http://mirrors.linuxeye.com/oneinstack/src/shadowsocks-libev-3.1.3.tar.gz && Download_src
+  src_url=http://mirrors.linuxeye.com/oneinstack/src/shadowsocks-libev-3.2.0.tar.gz && Download_src
   src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
-  src_url=http://mirrors.linuxeye.com/oneinstack/src/mbedtls-2.8.0-apache.tgz && Download_src
+  src_url=http://mirrors.linuxeye.com/oneinstack/src/mbedtls-2.11.0-apache.tgz && Download_src
   if [ ! -e "/usr/local/lib/libsodium.la" ]; then
     tar xzf libsodium-${libsodium_ver}.tar.gz
     pushd libsodium-${libsodium_ver}
@@ -146,13 +146,13 @@ Install_SS-libev() {
     popd
     rm -rf libsodium-${libsodium_ver}
   fi
-  tar xzf mbedtls-2.8.0-apache.tgz
-  pushd mbedtls-2.8.0
+  tar xzf mbedtls-2.11.0-apache.tgz
+  pushd mbedtls-2.11.0
   make SHARED=1 CFLAGS=-fPIC
   make DESTDIR=/usr install
   popd
-  tar xzf shadowsocks-libev-3.1.3.tar.gz
-  pushd shadowsocks-libev-3.1.3
+  tar xzf shadowsocks-libev-3.2.0.tar.gz
+  pushd shadowsocks-libev-3.2.0
   make clean
   ./configure
   make -j ${THREAD} && make install

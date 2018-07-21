@@ -174,11 +174,13 @@ Print_HHVM() {
   [ -e "/usr/bin/hhvm" ] && echo "/usr/bin/hhvm"
   [ -e "/etc/hhvm" ] && echo "/etc/hhvm"
   [ -e "/var/log/hhvm" ] && echo "/var/log/hhvm"
+  [ -e "/lib/systemd/system/hhvm.service" ] && echo "/lib/systemd/system/hhvm.service"
   [ -e "/etc/supervisord.conf" ] && echo "/etc/supervisord.conf"
   [ -e "/etc/init.d/supervisord" ] && echo "/etc/init.d/supervisord"
 }
 
 Uninstall_HHVM() {
+  [ -e "/lib/systemd/system/hhvm.service" ] && { systemctl disable hhvm > /dev/null 2>&1; rm -rf /lib/systemd/system/hhvm.service; }
   [ -e "/etc/init.d/supervisord" ] && { service supervisord stop > /dev/null 2>&1; rm -rf /etc/supervisord.conf /etc/init.d/supervisord; }
   [ -e "/usr/bin/hhvm" ] && { rpm -e hhvm; rm -rf /etc/hhvm /var/log/hhvm /usr/bin/hhvm; echo "${CMSG}HHVM uninstall completed! ${CEND}"; }
 }

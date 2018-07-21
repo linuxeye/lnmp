@@ -102,6 +102,9 @@ service php-fpm {start|stop|restart|reload|status}
 ```
 HHVM:
 ```bash
+#centos7
+systemctl {start|stop|status|restart} hhvm
+#centos6
 service supervisord {start|stop|status|restart|reload}
 ```
 Apache:

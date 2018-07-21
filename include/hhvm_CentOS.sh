@@ -136,13 +136,28 @@ EOF
 
   rm -rf /etc/ld.so.conf.d/*_64.conf
   ldconfig
-  # Supervisor
-  yum -y install python-setuptools
-  ping pypi.python.org -c 4 >/dev/null 2>&1
-  easy_install supervisor
-  echo_supervisord_conf > /etc/supervisord.conf
-  sed -i 's@pidfile=/tmp/supervisord.pid@pidfile=/var/run/supervisord.pid@' /etc/supervisord.conf
-  [ -z "$(grep 'program:hhvm' /etc/supervisord.conf)" ] && cat >> /etc/supervisord.conf << EOF
+  if [ -e /bin/systemctl ]; then
+    cat > /lib/systemd/system/hhvm.service << EOF
+[Unit]
+Description=HHVM HipHop Virtual Machine (FCGI)
+After=network.target nginx.service
+
+[Service]
+ExecStart=/usr/local/bin/hhvm --mode server --user ${run_user} --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    systemctl enable hhvm
+    systemctl start hhvm
+  else
+    # Supervisor
+    yum -y install python-setuptools
+    ping pypi.python.org -c 4 >/dev/null 2>&1
+    easy_install supervisor
+    echo_supervisord_conf > /etc/supervisord.conf
+    sed -i 's@pidfile=/tmp/supervisord.pid@pidfile=/var/run/supervisord.pid@' /etc/supervisord.conf
+    [ -z "$(grep 'program:hhvm' /etc/supervisord.conf)" ] && cat >> /etc/supervisord.conf << EOF
 [program:hhvm]
 command=/usr/bin/hhvm --mode server --user ${run_user} --config /etc/hhvm/server.ini --config /etc/hhvm/php.ini --config /etc/hhvm/config.hdf
 numprocs=1 ; number of processes copies to start (def 1)
@@ -151,8 +166,9 @@ autostart=true ; start at supervisord start (default: true)
 autorestart=unexpected ; whether/when to restart (default: unexpected)
 stopwaitsecs=10 ; max num secs to wait b4 SIGKILL (default 10)
 EOF
-  /bin/cp ${oneinstack_dir}/init.d/Supervisor-init-CentOS /etc/init.d/supervisord
-  chmod +x /etc/init.d/supervisord
-  chkconfig supervisord on
-  service supervisord start
+    /bin/cp ${oneinstack_dir}/init.d/Supervisor-init-CentOS /etc/init.d/supervisord
+    chmod +x /etc/init.d/supervisord
+    chkconfig supervisord on
+    service supervisord start
+  fi
 }

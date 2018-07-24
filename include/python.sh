@@ -44,7 +44,7 @@ EOF
     done
   fi
 
-  # Install Python
+  # Install Python3
   if [ ! -e "${python_install_dir}/bin/python" -a ! -e "${python_install_dir}/bin/python3" ] ;then
     src_url=http://mirrors.linuxeye.com/oneinstack/src/Python-${python_ver}.tgz && Download_src
     tar xzf Python-${python_ver}.tgz
@@ -52,26 +52,9 @@ EOF
     ./configure --prefix=${python_install_dir}
     make && make install
     [ ! -e "${python_install_dir}/bin/python" -a -e "${python_install_dir}/bin/python3" ] && ln -s ${python_install_dir}/bin/python{3,}
+    [ ! -e "${python_install_dir}/bin/pip" -a -e "${python_install_dir}/bin/pip3" ] && ln -s ${python_install_dir}/bin/pip{3,}
     popd
     rm -rf Python-${python_ver}
-  fi
-
-  if [ ! -e "${python_install_dir}/bin/easy_install" ] ;then
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/setuptools-${setuptools_ver}.zip && Download_src
-    unzip -q setuptools-${setuptools_ver}.zip
-    pushd setuptools-${setuptools_ver}
-    ${python_install_dir}/bin/python setup.py install
-    popd
-    rm -rf setuptools-${setuptools_ver}
-  fi
-
-  if [ ! -e "${python_install_dir}/bin/pip" ] ;then
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/pip-${pip_ver}.tar.gz && Download_src
-    tar xzf pip-${pip_ver}.tar.gz
-    pushd pip-${pip_ver}
-    ${python_install_dir}/bin/python setup.py install
-    popd
-    rm -rf pip-${pip_ver}
   fi
 
   if [ ! -e "/root/.pip/pip.conf" ] ;then

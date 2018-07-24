@@ -33,7 +33,7 @@ if [ -e "${NewFile}" ]; then
   echo "[${NewFile}] The Backup File is exists, Can't Backup" >> ${LogFile}
 else
   ${db_install_dir}/bin/mysqldump -uroot -p${dbrootpwd} --databases ${DBname} > ${DumpFile}
-  pushd ${backup_dir}
+  pushd ${backup_dir} > /dev/null
   tar czf ${NewFile} ${DumpFile##*/} >> ${LogFile} 2>&1
   echo "[${NewFile}] Backup success ">> ${LogFile}
   rm -f ${DumpFile}

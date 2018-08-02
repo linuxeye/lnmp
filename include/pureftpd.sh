@@ -16,24 +16,33 @@ Install_PureFTPd() {
   tar xzf pure-ftpd-${pureftpd_ver}.tar.gz
   pushd pure-ftpd-${pureftpd_ver}
   [ ! -d "${pureftpd_install_dir}" ] && mkdir -p ${pureftpd_install_dir}
-  ./configure --prefix=${pureftpd_install_dir} CFLAGS=-O2 --with-puredb --with-quotas --with-cookie --with-virtualhosts --with-virtualchroot --with-diraliases --with-sysquotas --with-ratios --with-altlog --with-paranoidmsg --with-shadow --with-welcomemsg  --with-throttling --with-uploadscript --with-language=english --with-rfc2640 --with-tls
+  ./configure --prefix=${pureftpd_install_dir} CFLAGS=-O2 --with-puredb --with-quotas --with-cookie --with-virtualhosts --with-virtualchroot --with-diraliases --with-sysquotas --with-ratios --with-altlog --with-paranoidmsg --with-shadow --with-welcomemsg --with-throttling --with-uploadscript --with-language=english --with-rfc2640 --with-tls
   make -j ${THREAD} && make install
+  popd
   if [ -e "${pureftpd_install_dir}/sbin/pure-ftpwho" ]; then
-    [ ! -e "${pureftpd_install_dir}/etc" ] && mkdir ${pureftpd_install_dir}/etc
-    popd
-    /bin/cp ../init.d/Pureftpd-init /etc/init.d/pureftpd
-    /bin/cp ../config/pure-ftpd.conf ${pureftpd_install_dir}/etc
-    sed -i "s@/usr/local/pureftpd@${pureftpd_install_dir}@g" /etc/init.d/pureftpd
-    chmod +x /etc/init.d/pureftpd
-    [ "${OS}" == "CentOS" ] && { chkconfig --add pureftpd; chkconfig pureftpd on; }
-    [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]] && { sed -i 's@^. /etc/rc.d/init.d/functions@. /lib/lsb/init-functions@' /etc/init.d/pureftpd; update-rc.d pureftpd defaults; }
-    [ "${Debian_ver}" == '7' ] && sed -i 's@/var/lock/subsys/@/var/lock/@g' /etc/init.d/pureftpd
+    if [ -e /bin/systemctl ]; then
+      /bin/cp ../init.d/pureftpd.service /lib/systemd/system/
+      sed -i "s@/usr/local/pureftpd@${pureftpd_install_dir}@g" /lib/systemd/system/pureftpd.service
+      systemctl enable pureftpd
+    else
+      /bin/cp ../init.d/Pureftpd-init /etc/init.d/pureftpd
+      sed -i "s@/usr/local/pureftpd@${pureftpd_install_dir}@g" /etc/init.d/pureftpd
+      chmod +x /etc/init.d/pureftpd
+      [ "${OS}" == 'CentOS' ] && { chkconfig --add pureftpd; chkconfig pureftpd on; }
+      [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]] && { sed -i 's@^. /etc/rc.d/init.d/functions@. /lib/lsb/init-functions@' /etc/init.d/pureftpd; update-rc.d pureftpd defaults; }
+      [ "${Debian_ver}" == '7' ] && sed -i 's@/var/lock/subsys/@/var/lock/@g' /etc/init.d/pureftpd
+    fi
 
+    [ ! -e "${pureftpd_install_dir}/etc" ] && mkdir ${pureftpd_install_dir}/etc
+    /bin/cp ../config/pure-ftpd.conf ${pureftpd_install_dir}/etc
     sed -i "s@^PureDB.*@PureDB  ${pureftpd_install_dir}/etc/pureftpd.pdb@" ${pureftpd_install_dir}/etc/pure-ftpd.conf
     sed -i "s@^LimitRecursion.*@LimitRecursion  65535 8@" ${pureftpd_install_dir}/etc/pure-ftpd.conf
-    openssl req -x509 -days 7300 -sha256 -nodes -subj "/C=CN/ST=Shanghai/L=Shanghai/O=OneinStack/CN=${IPADDR}" -newkey rsa:2048 -keyout ${pureftpd_install_dir}/etc/pure-ftpd.pem -out ${pureftpd_install_dir}/etc/pure-ftpd.pem
-    chmod 600 ${pureftpd_install_dir}/etc/pure-ftpd.pem
-    sed -i "s@^# TLS.*@&\nCertFile                   ${pureftpd_install_dir}/etc/pure-ftpd.pem@" ${pureftpd_install_dir}/etc/pure-ftpd.conf
+    [ -z "${IPADDR}" ] && IPADDR=127.0.0.1
+    [ ! -d /etc/ssl/private ] && mkdir -p /etc/ssl/private
+    openssl dhparam -out /etc/ssl/private/pure-ftpd-dhparams.pem 2048
+    openssl req -x509 -days 7300 -sha256 -nodes -subj "/C=CN/ST=Shanghai/L=Shanghai/O=OneinStack/CN=${IPADDR}" -newkey rsa:2048 -keyout /etc/ssl/private/pure-ftpd.pem -out /etc/ssl/private/pure-ftpd.pem
+    chmod 600 /etc/ssl/private/pure-ftpd*.pem
+    sed -i "s@^# TLS.*@&\nCertFile                   /etc/ssl/private/pure-ftpd.pem@" ${pureftpd_install_dir}/etc/pure-ftpd.conf
     sed -i "s@^# TLS.*@&\nTLSCipherSuite             HIGH:MEDIUM:+TLSv1:\!SSLv2:\!SSLv3@" ${pureftpd_install_dir}/etc/pure-ftpd.conf
     sed -i "s@^# TLS.*@TLS                        1@" ${pureftpd_install_dir}/etc/pure-ftpd.conf
     ulimit -s unlimited

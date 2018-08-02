@@ -1,0 +1,30 @@
+From f446736d4f4c5f7ae81bb8bf84fda7ce3c9d49a0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Bj=C3=B6rn=20Esser?= <besser82@fedoraproject.org>
+Date: Wed, 24 Jan 2018 12:37:48 +0100
+Subject: [PATCH] unix/ngx_user: Apply fix for really old bug in glibc libcrypt
+ if needed
+
+---
+ src/os/unix/ngx_user.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/os/unix/ngx_user.c b/src/os/unix/ngx_user.c
+index 7ebe2b57..d0fe9238 100644
+--- a/src/os/unix/ngx_user.c
++++ b/src/os/unix/ngx_user.c
+@@ -21,8 +21,10 @@ ngx_libc_crypt(ngx_pool_t *pool, u_char *key, u_char *salt, u_char **encrypted)
+     struct crypt_data   cd;
+ 
+     cd.initialized = 0;
+-#ifdef __GLIBC__
+-    /* work around the glibc bug */
++#if (defined(__GLIBC__) && __GLIBC__ == 2) && \
++    (defined(__GLIBC_MINOR__) && __GLIBC_MINOR__ >= 2 && __GLIBC_MINOR__ < 4)
++    /* work around glibc-2.2.5 bug,
++     * has been fixed at some time in glibc-2.3.X */
+     cd.current_salt[0] = ~salt[0];
+ #endif
+ 
+-- 
+2.16.1
+

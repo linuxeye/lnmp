@@ -1,0 +1,11 @@
+[Unit]
+Description=Pure-FTPd FTP server
+After=network.target
+
+[Service]
+Type=forking
+PIDFile=/var/run/pure-ftpd.pid
+ExecStart=/usr/local/pureftpd/sbin/pure-ftpd /usr/local/pureftpd/etc/pure-ftpd.conf
+
+[Install]
+WantedBy=multi-user.target

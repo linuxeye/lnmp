@@ -8,8 +8,8 @@ try:
   data = eval(content)['data']
   code = eval(content)['code']
   if code == 0:
-    print data['country_id'],data['isp_id']
+    print(data['country_id'])
   else:
-    print data
+    print(data)
 except:
-  print "Usage:%s IP" % sys.argv[0]
+  print("Usage:%s IP" % sys.argv[0])

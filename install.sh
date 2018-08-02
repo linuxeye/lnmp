@@ -654,10 +654,9 @@ if [ ${ARG_NUM} == 0 ]; then
 fi
 
 # get the IP information
-IPADDR=`./include/get_ipaddr.py`
-PUBLIC_IPADDR=`./include/get_public_ipaddr.py`
-IPADDR_COUNTRY_ISP=`./include/get_ipaddr_state.py $PUBLIC_IPADDR`
-IPADDR_COUNTRY=`echo $IPADDR_COUNTRY_ISP | awk '{print $1}'`
+IPADDR=$(./include/get_ipaddr.py)
+PUBLIC_IPADDR=$(./include/get_public_ipaddr.py)
+IPADDR_COUNTRY=$(./include/get_ipaddr_state.py $PUBLIC_IPADDR)
 
 # Check download source packages
 . ./include/check_download.sh

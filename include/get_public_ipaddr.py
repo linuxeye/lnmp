@@ -19,4 +19,4 @@ class Get_public_ip:
 
 if __name__ == "__main__":
   getmyip = Get_public_ip()
-  print getmyip.getip()
+  print(getmyip.getip())

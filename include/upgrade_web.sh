@@ -42,6 +42,8 @@ Upgrade_Nginx() {
     echo "Press Ctrl+c to cancel or Press any key to continue..."
     char=`get_char`
     tar xzf nginx-${NEW_nginx_ver}.tar.gz
+    [ "${Fedora_ver}" == '28' ] && patch -d nginx-${nginx_ver} -p1 < 0001-unix-ngx_user-Apply-fix-for-really-old-bug-in-glibc-.patch
+    patch -d nginx-${nginx_ver} -p0 < nginx-auto-cc-gcc.patch
     pushd nginx-${NEW_nginx_ver}
     make clean
     sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc # close debug
@@ -100,6 +102,8 @@ Upgrade_Tengine() {
     echo "Press Ctrl+c to cancel or Press any key to continue..."
     char=`get_char`
     tar xzf tengine-${NEW_tengine_ver}.tar.gz
+    [ "${Fedora_ver}" == '28' ] && patch -d tengine-${tengine_ver} -p1 < 0001-unix-ngx_user-Apply-fix-for-really-old-bug-in-glibc-.patch
+    patch -d tengine-${tengine_ver} -p0 < nginx-auto-cc-gcc.patch
     pushd tengine-${NEW_tengine_ver}
     make clean
     sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc # close debug
@@ -163,6 +167,8 @@ Upgrade_OpenResty() {
     echo "Press Ctrl+c to cancel or Press any key to continue..."
     char=`get_char`
     tar xzf openresty-${NEW_openresy_ver}.tar.gz
+    [ "${Fedora_ver}" == '28' ] && patch -d openresty-${openresty_ver}/bundle/nginx-1.13.6 -p1 < 0001-unix-ngx_user-Apply-fix-for-really-old-bug-in-glibc-.patch
+    patch -d openresty-${openresty_ver}/bundle/nginx-1.13.6 -p0 < nginx-auto-cc-gcc.patch
     pushd openresty-${NEW_openresy_ver}
     make clean
     openresty_ver_tmp=${NEW_openresy_ver%.*}

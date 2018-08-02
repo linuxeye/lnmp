@@ -126,7 +126,7 @@ checkDownload() {
 
         if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download MySQL 8.0 binary package..."
-          FILE_NAME=mysql-${mysql80_ver}-linux-glibc2.12-${SYS_BIT_b}.tar.gz
+          FILE_NAME=mysql-${mysql80_ver}-linux-glibc2.12-${SYS_BIT_b}.tar.xz
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download MySQL 8.0 source package..."
           FILE_NAME=mysql-${mysql80_ver}.tar.gz

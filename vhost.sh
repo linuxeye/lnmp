@@ -193,7 +193,8 @@ If you enter '.', the field will be left blank.
           echo "${CWARNING}Syntax error! PS: export Ali_Key=LTq ; export Ali_Secret=0q5E${CEND}"
         fi
       done
-      ~/.acme.sh/acme.sh --issue --dns dns_${DNS_PRO} -d ${domain} -d ${moredomain}
+      [ "${moredomainame_flag}" == 'y' ] && moredomainame_D="$(for D in ${moredomainame}; do echo -d ${D}; done)"
+      ~/.acme.sh/acme.sh --issue --dns dns_${DNS_PRO} -d ${domain} ${moredomainame_D}
     else
       if [ "${nginx_ssl_flag}" == 'y' ]; then
         [ ! -d ${web_install_dir}/conf/vhost ] && mkdir ${web_install_dir}/conf/vhost
@@ -426,6 +427,7 @@ Nginx_anti_hotlinking() {
     else
       domain_allow_all=${domain_allow}
     fi
+    domain_allow_all=`echo ${domain_allow_all} | tr ' ' '\n' | awk '!a[$1]++' | xargs`
     anti_hotlinking=$(echo -e "location ~ .*\.(wma|wmv|asf|mp3|mmf|zip|rar|jpg|gif|png|swf|flv|mp4)$ {\n    valid_referers none blocked ${domain_allow_all};\n    if (\$invalid_referer) {\n        return 403;\n    }\n  }")
   else
     anti_hotlinking=

@@ -16,6 +16,8 @@ Install_Tengine() {
   tar xzf pcre-${pcre_ver}.tar.gz
   tar xzf tengine-${tengine_ver}.tar.gz
   tar xzf openssl-${openssl_ver}.tar.gz
+  [ "${Fedora_ver}" == '28' ] && patch -d tengine-${tengine_ver} -p1 < 0001-unix-ngx_user-Apply-fix-for-really-old-bug-in-glibc-.patch
+  patch -d tengine-${tengine_ver} -p0 < nginx-auto-cc-gcc.patch
   pushd tengine-${tengine_ver}
   # Modify Tengine version
   #sed -i 's@TENGINE "/" TENGINE_VERSION@"Tengine/unknown"@' src/core/nginx.h

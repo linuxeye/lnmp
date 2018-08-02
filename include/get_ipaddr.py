@@ -11,7 +11,7 @@ def Get_local_ip():
   try:
     socket.setdefaulttimeout(5)
     csock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    csock.connect(('8.8.8.8', 80))
+    csock.connect(('1.1.1.1', 80))
     (addr, port) = csock.getsockname()
     csock.close()
     return addr
@@ -20,4 +20,4 @@ def Get_local_ip():
 
 if __name__ == "__main__":
   IPADDR = Get_local_ip()
-  print IPADDR
+  print(IPADDR)

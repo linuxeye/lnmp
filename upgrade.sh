@@ -38,8 +38,8 @@ pushd ${oneinstack_dir} > /dev/null
 . ./include/upgrade_oneinstack.sh
 
 # get the IP information
-PUBLIC_IPADDR=`./include/get_public_ipaddr.py`
-IPADDR_COUNTRY=`./include/get_ipaddr_state.py $PUBLIC_IPADDR | awk '{print $1}'`
+PUBLIC_IPADDR=$(./include/get_public_ipaddr.py)
+IPADDR_COUNTRY=$(./include/get_ipaddr_state.py $PUBLIC_IPADDR)
 
 Usage(){
   printf "

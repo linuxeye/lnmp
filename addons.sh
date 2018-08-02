@@ -24,8 +24,8 @@ oneinstack_dir=$(dirname "`readlink -f $0`")
 pushd ${oneinstack_dir} > /dev/null
 
 # get the IP information
-PUBLIC_IPADDR=`./include/get_public_ipaddr.py`
-IPADDR_COUNTRY=`./include/get_ipaddr_state.py $PUBLIC_IPADDR | awk '{print $1}'`
+PUBLIC_IPADDR=$(./include/get_public_ipaddr.py)
+IPADDR_COUNTRY=$(./include/get_ipaddr_state.py $PUBLIC_IPADDR)
 
 . ./versions.txt
 . ./options.conf
@@ -459,7 +459,7 @@ What Are You Doing?
             pushd swoole-1.10.5
           fi
           ${php_install_dir}/bin/phpize
-          ./configure --with-php-config=${php_install_dir}/bin/php-config
+          ./configure --with-php-config=${php_install_dir}/bin/php-config --enable-openssl --with-openssl-dir=${openssl_install_dir}
           make -j ${THREAD} && make install
           popd
           rm -rf swoole-${swoole_ver}

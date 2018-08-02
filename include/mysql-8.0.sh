@@ -17,7 +17,7 @@ Install_MySQL80() {
   mkdir -p ${mysql_data_dir};chown mysql.mysql -R ${mysql_data_dir}
 
   if [ "${dbinstallmethod}" == "1" ]; then
-    tar xzf mysql-${mysql80_ver}-linux-glibc2.12-${SYS_BIT_b}.tar.gz
+    tar xJf mysql-${mysql80_ver}-linux-glibc2.12-${SYS_BIT_b}.tar.xz
     mv mysql-${mysql80_ver}-linux-glibc2.12-${SYS_BIT_b}/* ${mysql_install_dir}
     sed -i "s@/usr/local/mysql@${mysql_install_dir}@g" ${mysql_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then

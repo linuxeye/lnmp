@@ -16,6 +16,8 @@ Install_OpenResty() {
   tar xzf pcre-${pcre_ver}.tar.gz
   tar xzf openresty-${openresty_ver}.tar.gz
   tar xzf openssl-${openssl_ver}.tar.gz
+  [ "${Fedora_ver}" == '28' ] && patch -d openresty-${openresty_ver}/bundle/nginx-1.13.6 -p1 < 0001-unix-ngx_user-Apply-fix-for-really-old-bug-in-glibc-.patch
+  patch -d openresty-${openresty_ver}/bundle/nginx-1.13.6 -p0 < nginx-auto-cc-gcc.patch
   pushd openresty-${openresty_ver}
 
   # close debug

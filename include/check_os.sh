@@ -10,23 +10,24 @@
 
 if [ -e /etc/redhat-release ]; then
   OS=CentOS
-  [ ! -e "$(which lsb_release)" ] && { yum -y install redhat-lsb-core; clear; }
+  [ ! -e "$(which lsb_release 2>/dev/null)" ] && { yum -y install redhat-lsb-core; clear; }
   CentOS_ver=$(lsb_release -sr | awk -F. '{print $1}')
   [ "${CentOS_ver}" == '17' ] && CentOS_ver=7
+  [ "$(lsb_release -is)" == 'Fedora' ] && [ ${CentOS_ver} -ge 19 >/dev/null 2>&1 ] && { CentOS_ver=7; Fedora_ver=$(lsb_release -rs); }
 elif [ -n "$(grep 'Amazon Linux' /etc/issue)" ]; then
   OS=CentOS
   CentOS_ver=7
 elif [ -n "$(grep 'bian' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Debian" ]; then
   OS=Debian
-  [ ! -e "$(which lsb_release)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
+  [ ! -e "$(which lsb_release 2>/dev/null)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
   Debian_ver=$(lsb_release -sr | awk -F. '{print $1}')
 elif [ -n "$(grep 'Deepin' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Deepin" ]; then
   OS=Debian
-  [ ! -e "$(which lsb_release)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
+  [ ! -e "$(which lsb_release 2>/dev/null)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
   Debian_ver=8
 elif [ -n "$(grep -w 'Kali' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Kali" ]; then
   OS=Debian
-  [ ! -e "$(which lsb_release)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
+  [ ! -e "$(which lsb_release 2>/dev/null)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
   if [ -n "$(grep 'VERSION="2016.*"' /etc/os-release)" ]; then
     Debian_ver=8
   elif [ -n "$(grep 'VERSION="2017.*"' /etc/os-release)" ]; then
@@ -36,12 +37,12 @@ elif [ -n "$(grep -w 'Kali' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == 
   fi
 elif [ -n "$(grep 'Ubuntu' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Ubuntu" -o -n "$(grep 'Linux Mint' /etc/issue)" ]; then
   OS=Ubuntu
-  [ ! -e "$(which lsb_release)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
+  [ ! -e "$(which lsb_release 2>/dev/null)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
   Ubuntu_ver=$(lsb_release -sr | awk -F. '{print $1}')
   [ -n "$(grep 'Linux Mint 18' /etc/issue)" ] && Ubuntu_ver=16
 elif [ -n "$(grep 'elementary' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == 'elementary' ]; then
   OS=Ubuntu
-  [ ! -e "$(which lsb_release)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
+  [ ! -e "$(which lsb_release 2>/dev/null)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
   Ubuntu_ver=16
 else
   echo "${CFAILURE}Does not support this OS, Please contact the author! ${CEND}"
@@ -84,14 +85,14 @@ fi
 
 THREAD=$(grep 'processor' /proc/cpuinfo | sort -u | wc -l)
 
-# Percona binary
-if [ "${CentOS_ver}" == '5' -o "${Debian_ver}" == '6' ]; then
-  sslLibVer=ssl098
-elif [ "${Debian_ver}" == '7' -o "${Ubuntu_ver}" == '12' ]; then
+# Percona binary: https://www.percona.com/doc/percona-server/5.7/installation.html#installing-percona-server-from-a-binary-tarball
+if [ ${Debian_ver} -lt 9 >/dev/null 2>&1 ] || [ ${Ubuntu_ver} -lt 14 >/dev/null 2>&1 ]; then
   sslLibVer=ssl100
-elif [ "${CentOS_ver}" == '6' -o "${Debian_ver}" == '8' -o "${Ubuntu_ver}" == '14' ]; then
+elif [[ "${CentOS_ver}" =~ ^[6-7]$ ]] && [ "$(lsb_release -is)" != 'Fedora' ]; then
   sslLibVer=ssl101
-elif [ "${CentOS_ver}" == '7' -o "${Debian_ver}" == '9' -o ${Ubuntu_ver} -ge 16 >/dev/null 2>&1 ]; then
+elif [ ${Debian_ver} -ge 9 >/dev/null 2>&1 ] || [ ${Ubuntu_ver} -ge 14 >/dev/null 2>&1 ]; then
+  sslLibVer=ssl102
+elif [ ${Fedora_ver} -ge 27 >/dev/null 2>&1 ]; then
   sslLibVer=ssl102
 else
   sslLibVer=unknown

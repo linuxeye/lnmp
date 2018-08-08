@@ -638,7 +638,7 @@ if [ ${ARG_NUM} == 0 ]; then
     else
       if [ "${hhvm_yn}" == 'y' ]; then
         [ -e "/usr/bin/hhvm" ] && { echo "${CWARNING}HHVM already installed! ${CEND}"; hhvm_yn=Other; break; }
-        if [ "${OS}" == 'CentOS' -a "${OS_BIT}" == '64' ] && [ -n "`grep -E ' 7\.| 6\.[5-9]' /etc/redhat-release`" ]; then
+        if [ "${PM}" == 'yum' -a "${OS_BIT}" == '64' ] && [ -n "`grep -E ' 7\.| 6\.[5-9]' /etc/redhat-release`" ]; then
           break
         else
           echo
@@ -661,8 +661,8 @@ IPADDR_COUNTRY=$(./include/get_ipaddr_state.py $PUBLIC_IPADDR)
 # Check download source packages
 . ./include/check_download.sh
 downloadDepsSrc=1
-[ "${OS}" == 'CentOS' ] && yum -y -q install wget
-[[ "${OS}" =~ ^Ubuntu$|^Debian$ ]] &&  apt -y -q install wget
+[ "${PM}" == 'yum' ] && yum -y -q install wget
+[ "${PM}" == 'apt' ] && apt-get -y -q install wget
 checkDownload 2>&1 | tee -a ${oneinstack_dir}/install.log
 
 # del openssl for jcloud
@@ -966,7 +966,7 @@ fi
 . include/check_dir.sh
 
 # HHVM
-if [ "${hhvm_yn}" == 'y' ] && [ "${OS}" == 'CentOS' -a "${OS_BIT}" == '64' ] && [ -n "`grep -E ' 7\.| 6\.[5-9]' /etc/redhat-release`" ]; then
+if [ "${hhvm_yn}" == 'y' ] && [ "${PM}" == 'yum' -a "${OS_BIT}" == '64' ] && [ -n "`grep -E ' 7\.| 6\.[5-9]' /etc/redhat-release`" ]; then
   . include/hhvm_CentOS.sh
   Install_hhvm_CentOS 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi

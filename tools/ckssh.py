@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # Author:  yeho <lj2007331 AT gmail.com>
 # Blog:  http://blog.linuxeye.cn
 

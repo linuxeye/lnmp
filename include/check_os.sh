@@ -2,15 +2,24 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
+if [ -e "/usr/bin/yum" ]; then
+  PM=yum
+  [ ! -e "$(which lsb_release 2>/dev/null)" ] && { yum -y install redhat-lsb-core; clear; }
+elif [ -e "/usr/bin/apt-get" ]; then
+  PM=apt
+  [ ! -e "$(which lsb_release 2>/dev/null)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
+fi
+
+[ ! -e "$(which lsb_release 2>/dev/null)" ] && { echo "${CFAILURE}${PM} source failed! ${CEND}"; kill -9 $$; }
+
 if [ -e /etc/redhat-release ]; then
   OS=CentOS
-  [ ! -e "$(which lsb_release 2>/dev/null)" ] && { yum -y install redhat-lsb-core; clear; }
   CentOS_ver=$(lsb_release -sr | awk -F. '{print $1}')
   [ "${CentOS_ver}" == '17' ] && CentOS_ver=7
   [ "$(lsb_release -is)" == 'Fedora' ] && [ ${CentOS_ver} -ge 19 >/dev/null 2>&1 ] && { CentOS_ver=7; Fedora_ver=$(lsb_release -rs); }
@@ -19,15 +28,12 @@ elif [ -n "$(grep 'Amazon Linux' /etc/issue)" ]; then
   CentOS_ver=7
 elif [ -n "$(grep 'bian' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Debian" ]; then
   OS=Debian
-  [ ! -e "$(which lsb_release 2>/dev/null)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
   Debian_ver=$(lsb_release -sr | awk -F. '{print $1}')
 elif [ -n "$(grep 'Deepin' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Deepin" ]; then
   OS=Debian
-  [ ! -e "$(which lsb_release 2>/dev/null)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
   Debian_ver=8
 elif [ -n "$(grep -w 'Kali' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Kali" ]; then
   OS=Debian
-  [ ! -e "$(which lsb_release 2>/dev/null)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
   if [ -n "$(grep 'VERSION="2016.*"' /etc/os-release)" ]; then
     Debian_ver=8
   elif [ -n "$(grep 'VERSION="2017.*"' /etc/os-release)" ]; then
@@ -37,12 +43,10 @@ elif [ -n "$(grep -w 'Kali' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == 
   fi
 elif [ -n "$(grep 'Ubuntu' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Ubuntu" -o -n "$(grep 'Linux Mint' /etc/issue)" ]; then
   OS=Ubuntu
-  [ ! -e "$(which lsb_release 2>/dev/null)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
   Ubuntu_ver=$(lsb_release -sr | awk -F. '{print $1}')
   [ -n "$(grep 'Linux Mint 18' /etc/issue)" ] && Ubuntu_ver=16
 elif [ -n "$(grep 'elementary' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == 'elementary' ]; then
   OS=Ubuntu
-  [ ! -e "$(which lsb_release 2>/dev/null)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
   Ubuntu_ver=16
 else
   echo "${CFAILURE}Does not support this OS, Please contact the author! ${CEND}"

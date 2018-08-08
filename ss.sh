@@ -13,7 +13,7 @@ export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 clear
 printf "
 #######################################################################
-#       OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+      #
+#       OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+      #
 #                         Install SS Server                           #
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
@@ -70,13 +70,13 @@ Iptables_set() {
     fi
   done
 
-  if [ "${OS}" == 'CentOS' ]; then
+  if [ "${PM}" == 'yum' ]; then
     if [ -n "`grep 'dport 80 ' /etc/sysconfig/iptables`" -a -z "$(grep -E ${SS_port} /etc/sysconfig/iptables)" ]; then
       iptables -I INPUT 4 -p udp -m state --state NEW -m udp --dport ${SS_port} -j ACCEPT
       iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport ${SS_port} -j ACCEPT
       service iptables save
     fi
-  elif [[ ${OS} =~ ^Ubuntu$|^Debian$ ]]; then
+  elif [ "${PM}" == 'apt' ]; then
     if [ -n "`grep 'dport 80 ' /etc/iptables.up.rules`" -a -z "$(grep -E ${SS_port} /etc/iptables.up.rules)" ]; then
       iptables -I INPUT 4 -p udp -m state --state NEW -m udp --dport ${SS_port} -j ACCEPT
       iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport ${SS_port} -j ACCEPT
@@ -101,12 +101,12 @@ Def_parameter() {
   done
   AddUser_SS
   Iptables_set
-  if [ "${OS}" == "CentOS" ]; then
+  if [ "${PM}" == 'yum' ]; then
     pkgList="wget unzip openssl-devel gcc swig autoconf libtool libevent automake make curl curl-devel zlib-devel perl perl-devel cpio expat-devel gettext-devel git asciidoc xmlto c-ares-devel pcre-devel udns-devel libev-devel"
     for Package in ${pkgList}; do
       yum -y install ${Package}
     done
-  elif [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]]; then
+  elif [ "${PM}" == 'apt' ]; then
     apt-get -y update
     pkgList="curl wget unzip gcc swig automake make perl cpio git libudns-dev libev-dev gettext build-essential autoconf libtool libpcre3-dev asciidoc xmlto libc-ares-dev"
     for Package in ${pkgList}; do
@@ -125,8 +125,8 @@ Install_SS-python() {
     /bin/cp ../init.d/SS-python-init /etc/init.d/shadowsocks
     chmod +x /etc/init.d/shadowsocks
     sed -i "s@SS_bin=.*@SS_bin=${python_install_dir}/bin/ssserver@" /etc/init.d/shadowsocks
-    [ "${OS}" == "CentOS" ] && { chkconfig --add shadowsocks; chkconfig shadowsocks on; }
-    [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]] && update-rc.d shadowsocks defaults
+    [ "${PM}" == 'yum' ] && { chkconfig --add shadowsocks; chkconfig shadowsocks on; }
+    [ "${PM}" == 'apt' ] && update-rc.d shadowsocks defaults
   else
     echo
     echo "${CQUESTION}SS-python install failed! Please visit https://oneinstack.com${CEND}"
@@ -160,11 +160,11 @@ Install_SS-libev() {
   [ -z "`grep /usr/local/lib /etc/ld.so.conf.d/*.conf`" ] && echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
   ldconfig
   if [ -f /usr/local/bin/ss-server ]; then
-    if [ "${OS}" == "CentOS" ]; then
+    if [ "${PM}" == 'yum' ]; then
       /bin/cp ../init.d/SS-libev-init-CentOS /etc/init.d/shadowsocks
       chkconfig --add shadowsocks
       chkconfig shadowsocks on
-    elif [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]]; then
+    elif [ "${PM}" == 'apt' ]; then
       /bin/cp ../init.d/SS-libev-init-Ubuntu /etc/init.d/shadowsocks
       update-rc.d shadowsocks defaults
     fi
@@ -187,8 +187,8 @@ Uninstall_SS() {
 
   if [ "${SS_yn}" == 'y' ]; then
     [ -n "$(ps -ef | grep -v grep | grep -iE "ssserver|ss-server")" ] && /etc/init.d/shadowsocks stop
-    [ "${OS}" == "CentOS" ] && chkconfig --del shadowsocks
-    [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]] && update-rc.d -f shadowsocks remove
+    [ "${PM}" == 'yum' ] && chkconfig --del shadowsocks
+    [ "${PM}" == 'apt' ] && update-rc.d -f shadowsocks remove
     rm -rf /etc/shadowsocks /var/run/shadowsocks.pid /etc/init.d/shadowsocks
     if [ "${ss_option}" == '1' ]; then
       rm -f /usr/local/bin/{ss-local,ss-tunnel,ss-server,ss-manager,ss-redir}

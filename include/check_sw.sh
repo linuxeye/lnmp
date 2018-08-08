@@ -1,7 +1,7 @@
 #!/bin/bash
 # Author:  Alpha Eva <kaneawk AT gmail.com>
 #
-# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -120,7 +120,7 @@ installDepsUbuntu() {
 
 installDepsBySrc() {
   pushd ${oneinstack_dir}/src > /dev/null
-  if [ "${OS}" == "Ubuntu" ]; then
+  if [ "${OS}" == 'Ubuntu' ]; then
     if [[ "${Ubuntu_ver}" =~ ^14$|^15$ ]]; then
       # Install bison on ubt 14.x 15.x
       tar xzf bison-${bison_ver}.tar.gz
@@ -130,7 +130,7 @@ installDepsBySrc() {
       popd
       rm -rf bison-${bison_ver}
     fi
-  elif [ "${OS}" == "CentOS" ]; then
+  elif [ "${OS}" == 'CentOS' ]; then
     # Install tmux
     if [ ! -e "$(which tmux)" ]; then
       # Install libevent first

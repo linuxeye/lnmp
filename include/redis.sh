@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -12,7 +12,7 @@ Install_redis-server() {
   pushd ${oneinstack_dir}/src > /dev/null
   tar xzf redis-${redis_ver}.tar.gz
   pushd redis-${redis_ver}
-  if [ "${OS_BIT}" == '32' ]; then
+  if [ "${OS_BIT}" == '32' -a "${armplatform}" != 'y' ]; then
     sed -i '1i\CFLAGS= -march=i686' src/Makefile
     sed -i 's@^OPT=.*@OPT=-O2 -march=i686@' src/.make-settings
   fi
@@ -43,8 +43,8 @@ Install_redis-server() {
     else
       /bin/cp ../init.d/Redis-server-init /etc/init.d/redis-server
       sed -i "s@/usr/local/redis@${redis_install_dir}@g" /etc/init.d/redis-server
-      [ "${OS}" == 'CentOS' ] && { cc start-stop-daemon.c -o /sbin/start-stop-daemon; chkconfig --add redis-server; chkconfig redis-server on; }
-      [[ ${OS} =~ ^Ubuntu$|^Debian$ ]] && update-rc.d redis-server defaults
+      [ "${PM}" == 'yum' ] && { cc start-stop-daemon.c -o /sbin/start-stop-daemon; chkconfig --add redis-server; chkconfig redis-server on; }
+      [ "${PM}" == 'apt' ] && update-rc.d redis-server defaults
     fi
     #[ -z "`grep 'vm.overcommit_memory' /etc/sysctl.conf`" ] && echo 'vm.overcommit_memory = 1' >> /etc/sysctl.conf
     #sysctl -p

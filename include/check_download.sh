@@ -1,7 +1,7 @@
 #!/bin/bash
 # Author:  Alpha Eva <kaneawk AT gmail.com>
 #
-# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -764,7 +764,7 @@ checkDownload() {
     src_url=http://download.redis.io/releases/redis-${redis_ver}.tar.gz && Download_src
     echo "Download redis pecl..."
     src_url=https://pecl.php.net/get/redis-${redis_pecl_ver}.tgz && Download_src
-    if [ "${OS}" == "CentOS" ]; then
+    if [ "${PM}" == 'yum' ]; then
       echo "Download start-stop-daemon.c for CentOS..."
       src_url=${mirrorLink}/start-stop-daemon.c && Download_src
     fi
@@ -798,7 +798,7 @@ checkDownload() {
 
   # others
   if [ "${downloadDepsSrc}" == '1' ]; then
-    if [ "${OS}" == "CentOS" ]; then
+    if [ "${PM}" == 'yum' ]; then
       echo "Download tmux for CentOS..."
       src_url=${mirrorLink}/libevent-${libevent_ver}.tar.gz && Download_src
       src_url=https://github.com/tmux/tmux/releases/download/${tmux_ver}/tmux-${tmux_ver}.tar.gz && Download_src

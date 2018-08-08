@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -17,7 +17,7 @@ Install_memcached() {
   tar xzf memcached-${memcached_ver}.tar.gz
   pushd memcached-${memcached_ver}
   [ ! -d "${memcached_install_dir}" ] && mkdir -p ${memcached_install_dir}
-  [ "${OS}" == "CentOS" ] && libevent_arg='--with-libevent=/usr/local'
+  [ "${PM}" == 'yum' ] && libevent_arg='--with-libevent=/usr/local'
   ./configure --prefix=${memcached_install_dir} ${libevent_arg}
   make -j ${THREAD} && make install
   popd
@@ -25,8 +25,8 @@ Install_memcached() {
     echo "${CSUCCESS}memcached installed successfully! ${CEND}"
     rm -rf memcached-${memcached_ver}
     ln -s ${memcached_install_dir}/bin/memcached /usr/bin/memcached
-    [ "${OS}" == "CentOS" ] && { /bin/cp ../init.d/Memcached-init-CentOS /etc/init.d/memcached; chkconfig --add memcached; chkconfig memcached on; }
-    [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]] && { /bin/cp ../init.d/Memcached-init-Ubuntu /etc/init.d/memcached; update-rc.d memcached defaults; }
+    [ "${PM}" == 'yum' ] && { /bin/cp ../init.d/Memcached-init-CentOS /etc/init.d/memcached; chkconfig --add memcached; chkconfig memcached on; }
+    [ "${PM}" == 'apt' ] && { /bin/cp ../init.d/Memcached-init-Ubuntu /etc/init.d/memcached; update-rc.d memcached defaults; }
     sed -i "s@/usr/local/memcached@${memcached_install_dir}@g" /etc/init.d/memcached
     let memcachedCache="${Mem}/8"
     [ -n "$(grep 'CACHESIZE=' /etc/init.d/memcached)" ] && sed -i "s@^CACHESIZE=.*@CACHESIZE=${memcachedCache}@" /etc/init.d/memcached
@@ -79,8 +79,8 @@ Install_php-memcached() {
     tar xzf libmemcached-${libmemcached_ver}.tar.gz
     patch -d libmemcached-${libmemcached_ver} -p0 < libmemcached-build.patch
     pushd libmemcached-${libmemcached_ver}
-    [ "${OS}" == "CentOS" ] && yum -y install cyrus-sasl-devel
-    [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]] && sed -i "s@lthread -pthread -pthreads@lthread -lpthread -pthreads@" ./configure
+    [ "${PM}" == 'yum' ] && yum -y install cyrus-sasl-devel
+    [ "${PM}" == 'apt' ] && sed -i "s@lthread -pthread -pthreads@lthread -lpthread -pthreads@" ./configure
     ./configure --with-memcached=${memcached_install_dir}
     make -j ${THREAD} && make install
     popd

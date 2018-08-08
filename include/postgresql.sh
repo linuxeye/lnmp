@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -24,8 +24,8 @@ Install_PostgreSQL() {
   sed -i "s@^prefix=.*@prefix=${pgsql_install_dir}@" /etc/init.d/postgresql
   sed -i "s@^PGDATA=.*@PGDATA=${pgsql_data_dir}@" /etc/init.d/postgresql
   chmod +x /etc/init.d/postgresql
-  [ "${OS}" == "CentOS" ] && { chkconfig --add postgresql; chkconfig postgresql on; }
-  [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]] && update-rc.d postgresql defaults
+  [ "${PM}" == 'yum' ] && { chkconfig --add postgresql; chkconfig postgresql on; }
+  [ "${PM}" == 'apt' ] && update-rc.d postgresql defaults
   popd
   su - postgres -c "${pgsql_install_dir}/bin/initdb -D ${pgsql_data_dir}"
   service postgresql start

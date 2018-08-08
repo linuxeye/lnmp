@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -14,7 +14,7 @@ Install-JDK16() {
   JAVA_dir=/usr/java
   JDK_NAME="jdk${jdk16_ver}"
   JDK_PATH=${JAVA_dir}/${JDK_NAME}
-  [ "${OS}" == 'CentOS' ] && [ -n "`rpm -qa | grep jdk`" ] && rpm -e `rpm -qa | grep jdk`
+  [ "${PM}" == 'yum' ] && [ -n "`rpm -qa | grep jdk`" ] && rpm -e `rpm -qa | grep jdk`
   chmod +x ${JDK_FILE}
   ./${JDK_FILE}
   [ ! -e ${JAVA_dir} ] && mkdir -p ${JAVA_dir}

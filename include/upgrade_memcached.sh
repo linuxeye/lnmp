@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -39,7 +39,7 @@ Upgrade_Memcached() {
     tar xzf memcached-${NEW_memcached_ver}.tar.gz
     pushd memcached-${NEW_memcached_ver}
     make clean
-    [ "${OS}" == "CentOS" ] && libevent_arg='--with-libevent=/usr/local'
+    [ "${PM}" == 'yum' ] && libevent_arg='--with-libevent=/usr/local'
     ./configure --prefix=${memcached_install_dir} ${libevent_arg}
     make -j ${THREAD}
 

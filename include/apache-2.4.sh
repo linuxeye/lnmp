@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -59,8 +59,8 @@ Install_Apache24() {
   sed -i '2a # chkconfig: - 85 15' /etc/init.d/httpd
   sed -i '3a # description: Apache is a World Wide Web server. It is used to serve' /etc/init.d/httpd
   chmod +x /etc/init.d/httpd
-  [ "${OS}" == 'CentOS' ] && { chkconfig --add httpd; chkconfig httpd on; }
-  [[ ${OS} =~ ^Ubuntu$|^Debian$ ]] && update-rc.d httpd defaults
+  [ "${PM}" == 'yum' ] && { chkconfig --add httpd; chkconfig httpd on; }
+  [ "${PM}" == 'apt' ] && update-rc.d httpd defaults
 
   sed -i "s@^User daemon@User ${run_user}@" ${apache_install_dir}/conf/httpd.conf
   sed -i "s@^Group daemon@Group ${run_user}@" ${apache_install_dir}/conf/httpd.conf

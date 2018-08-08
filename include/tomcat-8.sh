@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -72,12 +72,12 @@ EOF
 
     if [ ! -e "${nginx_install_dir}/sbin/nginx" -a ! -e "${tengine_install_dir}/sbin/nginx" -a ! -e "${openresty_install_dir}/nginx/sbin/nginx" -a ! -e "${apache_install_dir}/conf/httpd.conf" ]; then
       if [ "${iptables_yn}" == 'y' ]; then
-        if [ "${OS}" == "CentOS" ]; then
+        if [ "${PM}" == 'yum' ]; then
           if [ -z "$(grep -w '8080' /etc/sysconfig/iptables)" ]; then
             iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
             service iptables save
           fi
-        elif [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]]; then
+        elif [ "${PM}" == 'apt' ]; then
           if [ -z "$(grep -w '8080' /etc/iptables.up.rules)" ]; then
             iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
             iptables-save > /etc/iptables.up.rules
@@ -124,8 +124,8 @@ EOF
     sed -i "s@JAVA_HOME=.*@JAVA_HOME=${JAVA_HOME}@" /etc/init.d/tomcat
     sed -i "s@^CATALINA_HOME=.*@CATALINA_HOME=${tomcat_install_dir}@" /etc/init.d/tomcat
     sed -i "s@^TOMCAT_USER=.*@TOMCAT_USER=${run_user}@" /etc/init.d/tomcat
-    [ "${OS}" == "CentOS" ] && { chkconfig --add tomcat; chkconfig tomcat on; }
-    [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]] && update-rc.d tomcat defaults
+    [ "${PM}" == 'yum' ] && { chkconfig --add tomcat; chkconfig tomcat on; }
+    [ "${PM}" == 'apt' ] && update-rc.d tomcat defaults
     echo "${CSUCCESS}Tomcat installed successfully! ${CEND}"
     rm -rf apache-tomcat-${tomcat8_ver}
   else

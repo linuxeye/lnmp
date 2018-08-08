@@ -90,7 +90,7 @@ if [[ ${desc_bk} =~ ^[1,2]$ ]]; then
 fi
 
 while :; do echo
-  echo "Pleas enter a valid backup number of days: "
+  echo "Please enter a valid backup number of days: "
   read -p "(Default days: 5): " expired_days
   [ -z "${expired_days}" ] && expired_days=5
   [ -n "`echo ${expired_days} | sed -n "/^[0-9]\+$/p"`" ] && break || echo "${CWARNING}input error! Please only enter numbers! ${CEND}"

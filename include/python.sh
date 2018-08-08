@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 6+ Debian 6+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -32,12 +32,12 @@ gpgcheck=0
 EOF
   fi
 
-  if [ "${OS}" == "CentOS" ]; then
+  if [ "${PM}" == 'yum' ]; then
     pkgList="gcc dialog augeas-libs openssl openssl-devel libffi-devel redhat-rpm-config ca-certificates"
     for Package in ${pkgList}; do
       yum -y install ${Package}
     done
-  elif [[ "${OS}" =~ ^Ubuntu$|^Debian$ ]]; then
+  elif [ "${PM}" == 'apt' ]; then
     pkgList="gcc dialog libaugeas0 augeas-lenses libssl-dev libffi-dev ca-certificates"
     for Package in ${pkgList}; do
       apt-get -y install $Package

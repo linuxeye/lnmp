@@ -83,8 +83,8 @@ Upgrade_DB() {
     fi
   done
 
-  if [ -e "${DB_name}.tar.gz" ]; then
-    echo "[${CMSG}${DB_name}.tar.gz${CEND}] found"
+  if [ -e "`ls ${DB_name}.tar.?z 2>/dev/null`" ]; then
+    echo "[${CMSG}`ls ${DB_name}.tar.?z 2>/dev/null`${CEND}] found"
     echo "Press Ctrl+c to cancel or Press any key to continue..."
     char=`get_char`
     if [ "${DB}" == 'MariaDB' ]; then

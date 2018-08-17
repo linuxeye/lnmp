@@ -58,7 +58,7 @@ Install_PHP72() {
   [ -z "`grep /usr/local/lib /etc/ld.so.conf.d/*.conf`" ] && echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
   ldconfig
 
-  if [ "$OS" == 'CentOS' ]; then
+  if [ "${PM}" == 'yum' ]; then
     if [ "${OS_BIT}" == '64' ]; then
       ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1
       ln -s /usr/lib64/libc-client.so /usr/lib/libc-client.so
@@ -148,8 +148,7 @@ opcache.max_wasted_percentage=5
 opcache.use_cwd=1
 opcache.validate_timestamps=1
 opcache.revalidate_freq=60
-opcache.save_comments=0
-opcache.fast_shutdown=1
+;opcache.save_comments=0
 opcache.consistency_checks=0
 ;opcache.optimization_level=0
 EOF
@@ -158,8 +157,8 @@ EOF
     # php-fpm Init Script
     /bin/cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
     chmod +x /etc/init.d/php-fpm
-    [ "$OS" == 'CentOS' ] && { chkconfig --add php-fpm; chkconfig php-fpm on; }
-    [[ $OS =~ ^Ubuntu$|^Debian$ ]] && update-rc.d php-fpm defaults
+    [ "${PM}" == 'yum' ] && { chkconfig --add php-fpm; chkconfig php-fpm on; }
+    [ "${PM}" == 'apt' ] && update-rc.d php-fpm defaults
 
     cat > ${php_install_dir}/etc/php-fpm.conf <<EOF
 ;;;;;;;;;;;;;;;;;;;;;

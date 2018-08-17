@@ -54,7 +54,7 @@ Install_PHP53() {
   [ -z "`grep /usr/local/lib /etc/ld.so.conf.d/*.conf`" ] && echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
   ldconfig
 
-  if [ "$OS" == 'CentOS' ]; then
+  if [ "${PM}" == 'yum' ]; then
     ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config
     if [ "${OS_BIT}" == '64' ]; then
       ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1
@@ -146,8 +146,8 @@ Install_PHP53() {
     # php-fpm Init Script
     /bin/cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
     chmod +x /etc/init.d/php-fpm
-    [ "$OS" == 'CentOS' ] && { chkconfig --add php-fpm; chkconfig php-fpm on; }
-    [[ $OS =~ ^Ubuntu$|^Debian$ ]] && update-rc.d php-fpm defaults
+    [ "${PM}" == 'yum' ] && { chkconfig --add php-fpm; chkconfig php-fpm on; }
+    [ "${PM}" == 'apt' ] && update-rc.d php-fpm defaults
 
     cat > ${php_install_dir}/etc/php-fpm.conf <<EOF
 ;;;;;;;;;;;;;;;;;;;;;

@@ -10,13 +10,13 @@
 
 if [ -e "/usr/bin/yum" ]; then
   PM=yum
-  [ ! -e "$(which lsb_release 2>/dev/null)" ] && { yum -y install redhat-lsb-core; clear; }
+  command -v lsb_release >/dev/null 2>&1 || { yum -y install redhat-lsb-core; clear; }
 elif [ -e "/usr/bin/apt-get" ]; then
   PM=apt
-  [ ! -e "$(which lsb_release 2>/dev/null)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
+  command -v lsb_release >/dev/null 2>&1 || { apt-get -y update; apt-get -y install lsb-release; clear; }
 fi
 
-[ ! -e "$(which lsb_release 2>/dev/null)" ] && { echo "${CFAILURE}${PM} source failed! ${CEND}"; kill -9 $$; }
+command -v lsb_release >/dev/null 2>&1 || { echo "${CFAILURE}${PM} source failed! ${CEND}"; kill -9 $$; }
 
 if [ -e /etc/redhat-release ]; then
   OS=CentOS

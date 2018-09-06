@@ -1,38 +1,333 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta http-equiv="Cache-Control" content="max-age=604800" />
-<title>OneinStack - A PHP/JAVA Deployment Tool</title>
-<meta name="keywords" content="OneinStack,lemp Stack,lamp Stack,lnmp stack" />
-<meta name="description" content="OneinStack is a LEMP, LAMP stack of Nginx, Apache, Tomcat, MySQL, MariaDB, Percona, Redis, Memcached, Pureftpd, PHP & JAVA. It's quite simple to use, manage and extend." />
-<style type="text/css">
-body {
-color:#333333;
-font-family:"Microsoft YaHei",sans-serif;
-}
-.links {color: #009900}
-#main {
-    margin-right: auto;
-    margin-left: auto;
-    width: 920px;
-}
-</style>
-</head>
-<body>
-<div id="main">
-<br>
-<div align="center"><h2>Congratulations, OneinStack installed successfully!</h2></div>
-<h3><a href="https://oneinstack.com" target="_blank" class="links">OneinStack </a><a href="http://www.linuxeye.com/" target="_blank">Linux</a>+Nginx/Tengine+MySQL/MariaDB/Percona</br>+PHP+Pureftpd+phpMyAdmin+redis+memcached+jemalloc.</h3>
-<p><b>Check environment:&nbsp;&nbsp;</b><a href="/prober.php" target="_blank" class="links">Proberv</a>&nbsp;<a href="/phpinfo.php" target="_blank" class="links">phpinfo</a>&nbsp;<a href="/ocp.php" target="_blank" class="links">Opcache</a>&nbsp;<a href="/phpMyAdmin/" target="_blank" class="links">phpMyAdmin</a></p>
-<p><b>Create Web virtual running script:</b>&nbsp;&nbsp;<font color="#008000">./vhost.sh</font></p>
-<p><b>Create FTP virtual running script:</b>&nbsp;&nbsp;<font color="#008000">./pureftpd_vhost.sh</font></p>
-<p><b>For feedback, questions, and to follow the progress of the project:&nbsp;&nbsp;</b> <a target="_blank" class="links" href="https://oneinstack.com">https://oneinstack.com</a></p>
-<p><b>Telegram Group:&nbsp;&nbsp;</b> <a target="_blank" class="links" href="https://t.me/oneinstack">t.me/oneinstack</a></p>
-<p><b>Donate:</b>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://paypal.me/yeho" target="_blank"><img src="https://img.shields.io/badge/Paypal-donate-green.svg" alt="" /></a> <a href="https://static.oneinstack.com/images/alipay.png" target="_blank"><img src="https://img.shields.io/badge/Alipay-donate-green.svg" alt="" /></a> <a href="https://static.oneinstack.com/images/weixin.png" target="_blank"><img src="https://img.shields.io/badge/Wechat-donate-green.svg" /></a></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Paypal:&nbsp;&nbsp;lj2007331@gmail.com &nbsp;&nbsp;Alipay:&nbsp;&nbsp;lj2007331@gmail.com</p>
-<div align="center"><iframe src="https://static.oneinstack.com/ad_buttom.html" width="475" frameborder="0" scrolling="no"></iframe></div>
-<div align="center"><h3><a href="https://oneinstack.com" target="_blank">OneinStack</a> by <a href="https://blog.linuxeye.cn/" target="_blank">LinuxEye</a></h3></div>
-</div>
-</body>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="OneinStack - A PHP/JAVA Deployment Tool. In order to quickly deploy lnmp,lamp,lnmpa,ltmp,lnmh,MySQL,PostgreSQL,MongoDB,oneinstack.com">
+    <meta name="author" content="yeho">
+    <title>Welcome to use OneinStack</title>
+    <link href="https://static.oneinstack.com/assets/ois.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="./">OneinStack</a>
+
+      <form class="w-100" action="https://lempstack.com/qa/" method="GET" target="_blank">
+      	<input class="form-control form-control-dark w-100" type="text" placeholder="What do you want to know?" aria-label="What do you want to know?" name="qs">
+      </form>
+
+      <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link" href="https://lempstack.com" target="_blank">OneinStack</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link active" href="###home" id="home_link">
+                  <span data-feather="home"></span>
+		Control center <span class="sr-only">(current)</span>
+                </a>
+              </li>
+              <!--<li class="nav-item">
+                <a class="nav-link" href="###step" id="step_link">
+                  <span data-feather="file"></span>
+                </a>
+              </li>-->
+              <li class="nav-item">
+                <a class="nav-link" href="###vhost" id="vhost_link">
+                  <span data-feather="layers"></span>
+                  Virtual host 
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="###db" id="db_link">
+                  <span data-feather="shopping-cart"></span>
+                  Database 
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="###ftp" id="ftp_link">
+                  <span data-feather="users"></span>
+                  FTP
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="###tools" id="tools_link">
+                  <span data-feather="briefcase"></span>
+                  Tools 
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="###manage" id="manage_link">
+                  <span data-feather="bar-chart-2"></span>
+                  Manage service 
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="###backup" id="backup_link">
+                  <span data-feather="disc"></span>
+                  Backup 
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="###upgrade" id="upgrade_link">
+                  <span data-feather="trending-up"></span>
+                  Upgrade & Uninstall 
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="###port" id="port_link">
+                  <span data-feather="cloud"></span>
+                  Security group 
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="###donation" id="donation_link">
+                  <span data-feather="heart"></span>
+                  Donation 
+                </a>
+              </li>
+            </ul>
+
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>OneinStack</span>
+              <a class="d-flex align-items-center text-muted" href="https://lempstack.com/" target="_blank">
+                <span data-feather="chevron-down"></span>
+              </a>
+            </h6>
+            <ul class="nav flex-column mb-2">
+              <li class="nav-item">
+                <a class="nav-link" href="https://oneinstack.com/" target="_blank">
+                  <span data-feather="home"></span>
+                  OneinStack Home
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="https://lempstack.com/install/" target="_blank">
+                  <span data-feather="help-circle"></span>
+                  Install & Docs 
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="https://lempstack.com/faq/" target="_blank">
+                  <span data-feather="link"></span>
+                  FAQ
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="https://lempstack.com/changelog/" target="_blank">
+                  <span data-feather="link"></span>
+                  ChangeLog 
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+
+	        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+	            <h1 class="h2" id="home">Control center</h1>
+	            <div class="btn-toolbar mb-2 mb-md-0">
+	              <div class="btn-group mr-2">
+	                <a class="btn btn-sm btn-outline-primary btn_prober" href="prober.php"><span data-feather="compass"></span> prober</a>
+	                <a class="btn btn-sm btn-outline-primary btn_tz" href="tz.php"><span data-feather="compass"></span> 探针</a>
+	                <a class="btn btn-sm btn-outline-info btn_phpinfo" href="phpinfo.php"><span data-feather="info"></span> phpinfo</a>
+	                <a class="btn btn-sm btn-outline-secondary btn_op" href="ocp.php"><span data-feather="cpu"></span> Opcache</a>
+	              </div>
+	              <a class="btn btn-sm btn-outline-warning mr-2 btn_pma" href="phpMyAdmin/">
+	                <span data-feather="database"></span> phpMyAdmin
+	              </a>
+	            </div>
+	        </div>
+		
+			<section class="section" id="home_section">
+	          	<h2>Congratulations, OneinStack installed successfully!</h2>
+	          	<h3><a href="https://oneinstack.com" target="_blank" class="links">OneinStack </a><a href="http://www.linuxeye.com/" target="_blank">Linux</a>+Nginx/Tengine+MySQL/MariaDB/Percona</br>+PHP+Pureftpd+phpMyAdmin+redis+memcached+jemalloc.</h3>
+
+ 			</section>
+		
+			<section class="section" id="tools_section">
+	          <h2 class="mt-5" id="tools">Tools</h2>
+	          	<a class="btn btn-primary btn_tz" href="tz.php" target="_blank" role="button">探针</a>
+	          	<a class="btn btn-primary btn_prober" href="prober.php" target="_blank" role="button">prober</a>
+	          	<a class="btn btn-info btn_phpinfo" href="phpinfo.php" target="_blank" role="button">phpinfo</a>
+	          	<a class="btn btn-success btn_pma" href="phpMyAdmin/" target="_blank" role="button">phpMyAdmin</a>
+	          	<a class="btn btn-secondary btn_op" href="ocp.php" target="_blank" role="button">Opcache</a>
+ 			</section>
+		
+			<section class="section" id="step_section">
+	          <h2 class="mt-5" id="step">Steps</h2>
+				<div class="card-deck mb-3 text-center">
+			        <div class="card mb-4 box-shadow">
+			          <div class="card-header">
+			            <h4 class="my-0 font-weight-normal">Dns analysis</h4>
+			          </div>
+			          <div class="card-body">
+			            <h1 class="card-title pricing-card-title">Domain<small class="text-muted"> control</small></h1>
+			            <ul class="list-unstyled mt-3 mb-4">
+			              <li>Cloudflare</li>
+			              <li>Alibabacloud</li>
+			              <li>DNSPOD</li>
+			            </ul>
+			            <a href="https://www.alibabacloud.com/help/faq-detail/35854.htm" target="_blank" type="button" class="btn btn-lg btn-block btn-primary">BROWSE DOCS</a>
+			          </div>
+			        </div>
+			        <div class="card mb-4 box-shadow">
+			          <div class="card-header">
+			            <h4 class="my-0 font-weight-normal">Add virtual host</h4>
+			          </div>
+			          <div class="card-body">
+			            <h1 class="card-title pricing-card-title">Create<small class="text-muted"> website</small></h1>
+			            <ul class="list-unstyled mt-3 mb-4">
+			              <li>Add virtual host: ./vhost.sh</li>
+			              <li>Del virtual host: ./vhost.sh del</li>
+			              <li>Manage FTP account: ./pureftpd_vhost.sh</li>
+			            </ul>
+			            <a href="https://oneinstack.com/install/" target="_blank" type="button" class="btn btn-lg btn-block btn-primary">BROWSE DOCS</a>
+			          </div>
+			        </div>
+			        <div class="card mb-4 box-shadow">
+			          <div class="card-header">
+			            <h4 class="my-0 font-weight-normal">Deploy website</h4>
+			          </div>
+			          <div class="card-body">
+			            <h1 class="card-title pricing-card-title">Online<small class="text-muted"> running</small></h1>
+			            <ul class="list-unstyled mt-3 mb-4">
+			              <li><a href="phpMyAdmin/">phpMyAdmin</a></li>
+			              <li>Manage FTP account: ./pureftpd_vhost.sh</li>
+			              <li>Backup: ./backup_setup.sh</li>
+			            </ul>
+			            <a href="https://oneinstack.com/install/" target="_blank" type="button" class="btn btn-lg btn-block btn-primary">BROWSE DOCS</a>
+			          </div>
+			        </div>
+			      </div>
+			</section>
+		
+			<section class="section" id="vhost_section">
+	          <h2 class="mt-5" id="vhost">How to add a virtual host?</h2>
+	          <div class="alert alert-primary" role="alert">
+	          	<code>./vhost.sh</code>
+	          </div>
+	          <img class="img-fluid" src="https://static.oneinstack.com/images/vhost.png" alt="《Interactive install》">
+	          <h2 class="mt-5">How to delete a virtual host?</h2>
+	          <div class="alert alert-primary" role="alert">
+	          	<code>./vhost.sh del</code>
+	          </div>
+	          <img class="img-fluid" src="https://static.oneinstack.com/images/vhost_del.png" alt="《Interactive install》">
+			</section>
+		
+			<section class="section" id="ftp_section">			
+	          <h2 class="mt-5">FTP Client</h2>
+	          <h3>FileZilla: <a href="https://filezilla-project.org/download.php" target="_blank" class="links">Download address</a></h3>
+	          <h2 class="mt-5" id="ftp">How to add FTP virtual user?</h2>
+	          <div class="alert alert-primary" role="alert"><code>./pureftpd_vhost.sh</code></pre></div>
+	          <img class="img-fluid" src="https://static.oneinstack.com/images/pureftpd.png" alt="《Interactive install》">
+			</section>
+		
+			<section class="section" id="db_section">			
+	          <h2 class="mt-5" id="db">Database</h2>
+	          <div class="list-group">
+				  <a href="phpMyAdmin" target="_blank" class="list-group-item list-group-item-action active">
+				    phpMyAdmin
+				  </a>
+				  <a href="https://lempstack.com/question/display-default-mysql-root-password/" target="_blank" class="list-group-item list-group-item-action">Display default MySQL root password</a>
+				  <a href="https://lempstack.com/question/how-to-setup-a-remote-mysql-connection/" target="_blank" class="list-group-item list-group-item-action">How to setup a remote MySQL connection?</a>
+				</div>	          	
+			</section>
+
+			<section class="section" id="backup_section">			
+	          <h2 class="mt-5" id="backup">How to backup?</h2>
+	          <div class="alert alert-primary" role="alert"><code>./backup_setup.sh # Set backup options</code></div>
+	          <img class="img-fluid" src="https://static.oneinstack.com/images/backup_setup.png" alt="《Interactive install》">
+	          <div class="alert alert-primary" role="alert"><pre><code>./backup.sh # Start backup, You can add cron jobs
+   # crontab -l # Examples
+     0 1 * * * cd ~/oneinstack;./backup.sh  &gt; /dev/null 2&gt;&amp;1 &amp;</code></pre></div>
+			</section>
+
+			<section class="section" id="manage_section">	
+	          <h2 class="mt-5" id="manage">How to manage service?</h2>
+	         	<p class="mt-4">Nginx/Tengine/OpenResty:</p>
+				<div class="alert alert-primary" role="alert"><code>service nginx {start<span class="pl-k">|</span>stop<span class="pl-k">|</span>status<span class="pl-k">|</span>restart<span class="pl-k">|</span>reload<span class="pl-k">|</span>configtest}</code></div>
+				<p class="mt-4">MySQL/MariaDB/Percona:</p>
+				<div class="alert alert-primary" role="alert"><code>service mysqld {start<span class="pl-k">|</span>stop<span class="pl-k">|</span>restart<span class="pl-k">|</span>reload<span class="pl-k">|</span>status}</code></div>
+				<p class="mt-4">PostgreSQL:</p>
+				<div class="alert alert-primary" role="alert"><code>service postgresql {start|stop|restart|status}</code></div>
+				<p class="mt-4">MongoDB:</p>
+				<div class="alert alert-primary" role="alert"><code>service mongod {start|stop|status|restart|reload}</code></div>
+				<p class="mt-4">PHP:</p>
+				<div class="alert alert-primary" role="alert"><code>service php-fpm {start<span class="pl-k">|</span>stop<span class="pl-k">|</span>restart<span class="pl-k">|</span>reload<span class="pl-k">|</span>status}</code></div>
+				<p class="mt-4">HHVM:</p>
+				<div class="alert alert-primary" role="alert"><code>service supervisord {start|stop|status|restart|reload}</code></div>
+				Apache:</p>
+				<div class="alert alert-primary" role="alert"><code>service httpd {start|restart|stop}</code></div>
+				<p class="mt-4">Tomcat:</p>
+				<div class="alert alert-primary" role="alert"><code>service tomcat {start|stop|status|restart}</code></div>
+				<p class="mt-4">Pure-Ftpd:</p>
+				<div class="alert alert-primary" role="alert"><code>service pureftpd {start|stop|restart|status}</code></div>
+				<p class="mt-4">Redis:</p>
+				<div class="alert alert-primary" role="alert"><code>service redis-server {start|stop|status|restart}</code></div>
+				<p class="mt-4">Memcached:</p>
+				<div class="alert alert-primary" role="alert"><code>service memcached {start|stop|status|restart|reload}</code></div>
+			</section>
+
+			<section class="section" id="upgrade_section">			
+	          <h2 class="mt-5" id="upgrade">How to upgrade?</h2>
+	          <div class="alert alert-primary" role="alert"><code>./upgrade.sh</code></div>
+	          <img class="img-fluid" src="https://static.oneinstack.com/images/upgrade.png" alt="">
+	          <h2 class="mt-5">How to uninstall?</h2>
+ 	          <div class="alert alert-primary" role="alert"><code>./uninstall.sh</code></div>
+	          <img class="img-fluid" src="https://static.oneinstack.com/images/uninstall.png" alt="">
+			</section>
+				
+			<section class="section" id="port_section">
+	          <div class="card text-white bg-danger" style="width: 20rem;">
+				  <div class="card-header">
+				    You must specify port numbers (for TCP): 
+				  </div>
+				  <ul class="list-group list-group-flush">
+				    <li class="list-group-item text-danger">ssh: 22</li>
+				    <li class="list-group-item text-danger">http: 80</li>
+				    <li class="list-group-item text-danger">https: 443</li>
+				    <li class="list-group-item text-danger">ftp: 21, 20000~30000</li>
+				  </ul>
+				</div>
+				<div class="list-group mt-5" style="width: 18rem;">
+				  <a href="phpMyAdmin" class="list-group-item list-group-item-action active">
+				    Security Groups for Your VPC
+				  </a>
+				  <a href="https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html" target="_blank" class="list-group-item list-group-item-action">AWS Security group</a>
+				  <a href="https://www.alibabacloud.com/help/doc-detail/58746.htm" target="_blank" class="list-group-item list-group-item-action">Alibabacloud Security group</a>
+				</div>	          	
+			</section>
+
+          	<section class="section" id="donation_section">
+          		<p>PayPal: lj2007331@gmail.com ; Alipay：lj2007331@gmail.com<br>
+			<a href="https://paypal.me/yeho" target="_blank" rel="noopener noreferrer"><img layer-src="https://img.shields.io/badge/Paypal-donate-green.svg" src="https://img.shields.io/badge/Paypal-donate-green.svg" alt="《Donation》" layer-index="0"></a>
+			<a href="https://static.oneinstack.com/images/alipay.png" target="_blank"><img src="https://img.shields.io/badge/Alipay-donate-green.svg" alt="《Donation》"></a>
+			<a href="https://static.oneinstack.com/images/weixin.png" target="_blank"><img src="https://img.shields.io/badge/Wechat-donate-green.svg" alt="《Donation》"></a><br>
+			<img class="img-fluid" src="https://static.oneinstack.com/images/pay.png" alt="《Donation》"><br>
+			</p>
+	        </section>
+
+          	<div align="center" class="mt-5"><iframe src="https://static.oneinstack.com/ad_buttom.html" width="475" frameborder="0" scrolling="no"></iframe></div>
+          	<div>          		
+          		<p>
+          			<a href="https://oneinstack.com" target="_blank">OneinStack</a> by <a href="https://blog.linuxeye.cn/" target="_blank">LinuxEye</a>
+          			&nbsp; &nbsp; &nbsp; &nbsp; Telegram Group:&nbsp;&nbsp; <a target="_blank" class="links" href="https://t.me/oneinstack">t.me/oneinstack</a>
+          		</p>
+          		<p align="right"><a href="#">Top</a></p>
+          	</div>
+        </main>
+      </div>
+    </div>
+    <script src="https://static.oneinstack.com/assets/ois.js"></script>
+  </body>
 </html>

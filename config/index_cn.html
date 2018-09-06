@@ -1,39 +1,337 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta http-equiv="Cache-Control" content="max-age=604800" />
-<title>OneinStack - PHP/JAVA环境一键部署工具</title>
-<meta name="keywords" content="OneinStack,LAMP Stack,LNMP Stack,lnmpa stack" />
-<meta name="description" content="OneinStack是PHP/JAVA环境一键部署工具, 包括Nginx, Apache, Tomcat, MySQL, MariaDB, Percona, Redis, Memcached, Pureftpd, PHP & JAVA." />
-<style type="text/css">
-body {
-color:#333333;
-font-family:微软雅黑,sans-serif;
-}
-.links {color: #009900}
-#main {
-    margin-right: auto;
-    margin-left: auto;
-    width: 920px;
-}
-</style>
-</head>
-<body>
-<div id="main">
-<br>
-<div align="center"><h2>恭喜您，OneinStack 安装成功！</h2></div>
-<h3><a href="https://oneinstack.com" target="_blank" class="links">OneinStack </a> <a href="http://www.linuxeye.com/" target="_blank">Linux</a>+Nginx/Tengine+MySQL/MariaDB/Percona+PHP</br>+Pureftpd+phpMyAdmin+redis+memcached+jemalloc脚本中用到的软件包大多最新稳定版本,修复了一些安全性问题。</h3>
-<p><b>查看本地环境:</b>&nbsp;&nbsp;<a href="/tz.php" target="_blank" class="links">探针</a>&nbsp;<a href="/phpinfo.php" target="_blank" class="links">phpinfo</a>&nbsp;<a href="/ocp.php" target="_blank" class="links">Opcache</a>&nbsp;<a href="/phpMyAdmin/" target="_blank" class="links">phpMyAdmin</a>(为了更安全，建议重命名 phpMyAdmin 目录！)</p>
-<p><b>创建 WEB 虚拟主机执行脚本:</b>&nbsp;&nbsp;<font color="#008000">./vhost.sh</font></p>
-<p><b>创建 FTP 虚拟账号执行脚本:</b>&nbsp;&nbsp;<font color="#008000">./pureftpd_vhost.sh</font></p>
-<p><b>Github 项目地址:</b>&nbsp;&nbsp;<a target="_blank" class="links" href="https://github.com/lj2007331/oneinstack">https://github.com/lj2007331/oneinstack</a></p>
-<p><b>OneinStack 官网:</b>&nbsp;&nbsp;<a target="_blank" class="links" href="https://oneinstack.com">https://oneinstack.com</a></p>
-<p><b>QQ 群:</b>&nbsp;&nbsp;558540514(付费千人群) 262601796(新)</p>
-<p><b>赞助我们:</b>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://paypal.me/yeho" target="_blank"><img src="https://img.shields.io/badge/Paypal-donate-green.svg" alt="" /></a> <a href="https://static.oneinstack.com/images/alipay.png" target="_blank"><img src="https://img.shields.io/badge/%E6%94%AF%E4%BB%98%E5%AE%9D-%E5%90%91TA%E6%8D%90%E5%8A%A9-green.svg" alt="" /></a> <a href="https://static.oneinstack.com/images/weixin.png" target="_blank"><img src="https://img.shields.io/badge/%E5%BE%AE%E4%BF%A1-%E5%90%91TA%E6%8D%90%E5%8A%A9-green.svg" /></a></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Paypal:&nbsp;&nbsp;lj2007331@gmail.com &nbsp;&nbsp;支付宝:&nbsp;&nbsp;lj2007331@gmail.com</p>
-<div align="center"><iframe src="https://static.oneinstack.com/ad_buttom.html" width="475" frameborder="0" scrolling="no"></iframe></div>
-<div align="center"><h3><a href="https://oneinstack.com" target="_blank">OneinStack</a> by <a href="https://blog.linuxeye.cn/" target="_blank">Linux 运维笔记</a></h3></div>
-</div>
-</body>
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="OneinStack是一键PHP/JAVA安装脚本工具,包含lnmp,lamp,lnmpa,ltmp,lnmh,MySQL,PostgreSQL,MongoDB等,官网oneinstack.com">
+    <meta name="author" content="yeho">
+    <title>欢迎您使用OneinStack</title>
+    <link href="https://static.oneinstack.com/assets/ois.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="./">OneinStack</a>
+
+      <form class="w-100" action="https://oneinstack.com/qa/" method="GET" target="_blank">
+      	<input class="form-control form-control-dark w-100" type="text" placeholder="搜索OneinStack官网问答" aria-label="搜索OneinStack官网问答" name="qs">
+      </form>
+
+      <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link" href="https://oneinstack.com" target="_blank">OneinStack官网</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link active" href="###home" id="home_link">
+                  <span data-feather="home"></span>
+                  控制中心 <span class="sr-only">(current)</span>
+                </a>
+              </li>
+              <!--<li class="nav-item">
+                <a class="nav-link" href="###step" id="step_link">
+                  <span data-feather="file"></span>
+                </a>
+              </li>-->
+              <li class="nav-item">
+                <a class="nav-link" href="###vhost" id="vhost_link">
+                  <span data-feather="layers"></span>
+                  虚拟主机管理
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="###db" id="db_link">
+                  <span data-feather="shopping-cart"></span>
+                  数据库管理
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="###ftp" id="ftp_link">
+                  <span data-feather="users"></span>
+                  FTP管理
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="###tools" id="tools_link">
+                  <span data-feather="briefcase"></span>
+                  运维工具
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="###manage" id="manage_link">
+                  <span data-feather="bar-chart-2"></span>
+                  管理服务
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="###backup" id="backup_link">
+                  <span data-feather="disc"></span>
+                  备份
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="###upgrade" id="upgrade_link">
+                  <span data-feather="trending-up"></span>
+                  升级 & 卸载
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="###port" id="port_link">
+                  <span data-feather="cloud"></span>
+                  端口开放教程
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="###donation" id="donation_link">
+                  <span data-feather="heart"></span>
+                  捐赠
+                </a>
+              </li>
+            </ul>
+
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>OneinStack官网</span>
+              <a class="d-flex align-items-center text-muted" href="https://oneinstack.com/" target="_blank">
+                <span data-feather="chevron-down"></span>
+              </a>
+            </h6>
+            <ul class="nav flex-column mb-2">
+              <li class="nav-item">
+                <a class="nav-link" href="https://oneinstack.com/" target="_blank">
+                  <span data-feather="home"></span>
+                  OneinStack首页
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="https://oneinstack.com/install/" target="_blank">
+                  <span data-feather="help-circle"></span>
+                  安装、使用方法
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="https://oneinstack.com/faq/" target="_blank">
+                  <span data-feather="link"></span>
+                  FAQ
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="https://oneinstack.com/changelog/" target="_blank">
+                  <span data-feather="link"></span>
+                  更新日志
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+
+	        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+	            <h1 class="h2" id="home">控制中心</h1>
+	            <div class="btn-toolbar mb-2 mb-md-0">
+	              <div class="btn-group mr-2">
+	                <a class="btn btn-sm btn-outline-primary btn_prober" href="prober.php"><span data-feather="compass"></span> prober</a>
+	                <a class="btn btn-sm btn-outline-primary btn_tz" href="tz.php"><span data-feather="compass"></span> 探针</a>
+	                <a class="btn btn-sm btn-outline-info btn_phpinfo" href="phpinfo.php"><span data-feather="info"></span> phpinfo</a>
+	                <a class="btn btn-sm btn-outline-secondary btn_op" href="ocp.php"><span data-feather="cpu"></span> Opcache</a>
+	              </div>
+	              <a class="btn btn-sm btn-outline-warning mr-2 btn_pma" href="phpMyAdmin/">
+	                <span data-feather="database"></span> phpMyAdmin
+	              </a>
+	            </div>
+	        </div>
+		
+			<section class="section" id="home_section">
+	          	<h2>Congratulations, OneinStack installed successfully!</h2>
+	          	<h3><a href="https://oneinstack.com" target="_blank" class="links">OneinStack </a><a href="http://www.linuxeye.com/" target="_blank">Linux</a>+Nginx/Tengine+MySQL/MariaDB/Percona</br>+PHP+Pureftpd+phpMyAdmin+redis+memcached+jemalloc.</h3>
+
+ 			</section>
+		
+			<section class="section" id="tools_section">
+	          <h2 class="mt-5" id="tools">主机工具</h2>
+	          	<a class="btn btn-primary btn_tz" href="tz.php" target="_blank" role="button">探针</a>
+	          	<a class="btn btn-primary btn_prober" href="prober.php" target="_blank" role="button">prober</a>
+	          	<a class="btn btn-info btn_phpinfo" href="phpinfo.php" target="_blank" role="button">phpinfo</a>
+	          	<a class="btn btn-success btn_pma" href="phpMyAdmin/" target="_blank" role="button">phpMyAdmin</a>
+	          	<a class="btn btn-secondary btn_op" href="ocp.php" target="_blank" role="button">Opcache</a>
+ 			</section>
+		
+			<section class="section" id="step_section">
+	          <h2 class="mt-5" id="step">基本使用步骤</h2>
+				<div class="card-deck mb-3 text-center">
+			        <div class="card mb-4 box-shadow">
+			          <div class="card-header">
+			            <h4 class="my-0 font-weight-normal">域名解析</h4>
+			          </div>
+			          <div class="card-body">
+			            <h1 class="card-title pricing-card-title">域名<small class="text-muted">控制</small></h1>
+			            <ul class="list-unstyled mt-3 mb-4">
+			              <li>阿里云(万网)</li>
+			              <li>DNSPOD</li>
+			              <li>Cloudflare</li>
+			            </ul>
+			            <a href="https://help.aliyun.com/document_detail/29716.html" target="_blank" type="button" class="btn btn-lg btn-block btn-primary">详细教程</a>
+			          </div>
+			        </div>
+			        <div class="card mb-4 box-shadow">
+			          <div class="card-header">
+			            <h4 class="my-0 font-weight-normal">新建虚拟主机</h4>
+			          </div>
+			          <div class="card-body">
+			            <h1 class="card-title pricing-card-title">建立<small class="text-muted">网站</small></h1>
+			            <ul class="list-unstyled mt-3 mb-4">
+			              <li>新建虚拟主机 ./vhost.sh</li>
+			              <li>删除虚拟主机 ./vhost.sh del</li>
+			              <li>管理FTP账号 ./pureftpd_vhost.sh</li>
+			            </ul>
+			            <a href="https://oneinstack.com/install/" target="_blank" type="button" class="btn btn-lg btn-block btn-primary">详细教程</a>
+			          </div>
+			        </div>
+			        <div class="card mb-4 box-shadow">
+			          <div class="card-header">
+			            <h4 class="my-0 font-weight-normal">部署网站</h4>
+			          </div>
+			          <div class="card-body">
+			            <h1 class="card-title pricing-card-title">上线<small class="text-muted">运行</small></h1>
+			            <ul class="list-unstyled mt-3 mb-4">
+			              <li><a href="phpMyAdmin/">phpMyAdmin</a></li>
+			              <li>管理FTP账号 ./pureftpd_vhost.sh</li>
+			              <li>备份 ./backup_setup.sh</li>
+			            </ul>
+			            <a href="https://oneinstack.com/install/" target="_blank" type="button" class="btn btn-lg btn-block btn-primary">详细教程</a>
+			          </div>
+			        </div>
+			      </div>
+			</section>
+		
+			<section class="section" id="vhost_section">
+	          <h2 class="mt-5" id="vhost">如何添加虚拟主机?</h2>
+	          <div class="alert alert-primary" role="alert">
+	          	<code>./vhost.sh</code>
+	          </div>
+	          <img class="img-fluid" src="https://static.oneinstack.com/images/vhost.png" alt="《交互安装》">
+	          <h2 class="mt-5">如何删除虚拟主机?</h2>
+	          <div class="alert alert-primary" role="alert">
+	          	<code>./vhost.sh del</code>
+	          </div>
+	          <img class="img-fluid" src="https://static.oneinstack.com/images/vhost_del.png" alt="《交互安装》">
+			</section>
+		
+			<section class="section" id="ftp_section">			
+	          <h2 class="mt-5">FTP客户端推荐</h2>
+	          <h3>FileZilla: <a href="https://filezilla-project.org/download.php" target="_blank" class="links">下载地址</a></h3>
+	          <h2 class="mt-5" id="ftp">如何管理FTP账号?</h2>
+	          <div class="alert alert-primary" role="alert"><code>./pureftpd_vhost.sh</code></pre></div>
+	          <img class="img-fluid" src="https://static.oneinstack.com/images/pureftpd.png" alt="《交互安装》">
+			</section>
+		
+			<section class="section" id="db_section">			
+	          <h2 class="mt-5" id="db">数据库</h2>
+	          <div class="list-group">
+				  <a href="phpMyAdmin" target="_blank" class="list-group-item list-group-item-action active">
+				    phpMyAdmin
+				  </a>
+				  <a href="https://oneinstack.com/question/17347/" target="_blank" class="list-group-item list-group-item-action">如何获取MySQL root密码?</a>
+				  <a href="https://oneinstack.com/question/oneinstack-how-to-configure-mysql-remote-connection/" target="_blank" class="list-group-item list-group-item-action">如何配置MySQL远程连接?</a>
+				</div>	          	
+			</section>
+
+			<section class="section" id="backup_section">			
+	          <h2 class="mt-5" id="backup">如何备份?</h2>
+	          <div class="alert alert-primary" role="alert"><code>./backup_setup.sh # Set backup options</code></div>
+	          <img class="img-fluid" src="https://static.oneinstack.com/images/backup_setup.png" alt="《交互安装》">
+	          <div class="alert alert-primary" role="alert"><pre><code>./backup.sh # Start backup, You can add cron jobs
+   # crontab -l # Examples
+     0 1 * * * cd ~/oneinstack;./backup.sh  &gt; /dev/null 2&gt;&amp;1 &amp;</code></pre></div>
+			</section>
+
+			<section class="section" id="manage_section">	
+	          <h2 class="mt-5" id="manage">如何管理服务?</h2>
+	               <div class="alert alert-primary" role="alert">PS: 提示Redirecting to /bin/systemctl请忽略,即已切换至systemd,兼容service</div>
+	         	<p class="mt-4">Nginx/Tengine/OpenResty:</p>
+				<div class="alert alert-primary" role="alert"><code>service nginx {start<span class="pl-k">|</span>stop<span class="pl-k">|</span>status<span class="pl-k">|</span>restart<span class="pl-k">|</span>reload<span class="pl-k">|</span>configtest}</code></div>
+				<p class="mt-4">MySQL/MariaDB/Percona:</p>
+				<div class="alert alert-primary" role="alert"><code>service mysqld {start<span class="pl-k">|</span>stop<span class="pl-k">|</span>restart<span class="pl-k">|</span>reload<span class="pl-k">|</span>status}</code></div>
+				<p class="mt-4">PostgreSQL:</p>
+				<div class="alert alert-primary" role="alert"><code>service postgresql {start|stop|restart|status}</code></div>
+				<p class="mt-4">MongoDB:</p>
+				<div class="alert alert-primary" role="alert"><code>service mongod {start|stop|status|restart|reload}</code></div>
+				<p class="mt-4">PHP:</p>
+				<div class="alert alert-primary" role="alert"><code>service php-fpm {start<span class="pl-k">|</span>stop<span class="pl-k">|</span>restart<span class="pl-k">|</span>reload<span class="pl-k">|</span>status}</code></div>
+				<p class="mt-4">HHVM:</p>
+				<div class="alert alert-primary" role="alert"><code>service supervisord {start|stop|status|restart|reload}</code></div>
+				<p class="mt-4"><strong><span style="color: #ff0000;">注</span></strong>：hhvm进程交给supervisord管理，了解更多请访问《<a href="https://blog.linuxeye.com/408.html" target="_blank" rel="noopener noreferrer">Supervisor管理hhvm进程</a>》<br>
+				Apache:</p>
+				<div class="alert alert-primary" role="alert"><code>service httpd {start|restart|stop}</code></div>
+				<p class="mt-4">Tomcat:</p>
+				<div class="alert alert-primary" role="alert"><code>service tomcat {start|stop|status|restart}</code></div>
+				<p class="mt-4">Pure-Ftpd:</p>
+				<div class="alert alert-primary" role="alert"><code>service pureftpd {start|stop|restart|status}</code></div>
+				<p class="mt-4">Redis:</p>
+				<div class="alert alert-primary" role="alert"><code>service redis-server {start|stop|status|restart}</code></div>
+				<p class="mt-4">Memcached:</p>
+				<div class="alert alert-primary" role="alert"><code>service memcached {start|stop|status|restart|reload}</code></div>
+			</section>
+
+			<section class="section" id="upgrade_section">			
+	          <h2 class="mt-5" id="upgrade">如何更新版本?</h2>
+	          <div class="alert alert-primary" role="alert"><code>./upgrade.sh</code></div>
+	          <img class="img-fluid" src="https://static.oneinstack.com/images/upgrade.png" alt="">
+	          <h2 class="mt-5">如何卸载?</h2>
+ 	          <div class="alert alert-primary" role="alert"><code>./uninstall.sh</code></div>
+	          <img class="img-fluid" src="https://static.oneinstack.com/images/uninstall.png" alt="">
+			</section>
+				
+			<section class="section" id="port_section">
+	          <!--<h2 class="mt-5" id="port">云主机安全组端口开放教程<span class="badge badge-secondary">Version 1.0.0</span></h2>-->
+	          <div class="card text-white bg-danger" style="width: 18rem;">
+				  <div class="card-header">
+				    云主机安全组必须打开如下端口:
+				  </div>
+				  <ul class="list-group list-group-flush">
+				    <li class="list-group-item text-danger">ssh: 22</li>
+				    <li class="list-group-item text-danger">http: 80</li>
+				    <li class="list-group-item text-danger">https: 443</li>
+				    <li class="list-group-item text-danger">ftp: 21, 20000~30000</li>
+				  </ul>
+				</div>
+				<div class="list-group mt-5" style="width: 18rem;">
+				  <a href="phpMyAdmin" class="list-group-item list-group-item-action active">
+				    云主机安全组端口开放教程
+				  </a>
+				  <a href="https://oneinstack.com/docs/securitygroup/#11" target="_blank" class="list-group-item list-group-item-action">阿里云安全组端口</a>
+				  <a href="https://oneinstack.com/docs/securitygroup/#12" target="_blank" class="list-group-item list-group-item-action">腾讯云安全组端口</a>
+				  <a href="https://oneinstack.com/docs/securitygroup/#13" target="_blank" class="list-group-item list-group-item-action">华为云安全组端口</a>
+				</div>	          	
+			</section>
+
+          	<section class="section" id="donation_section">
+          		<p>PayPal: lj2007331@gmail.com ; 支付宝：lj2007331@gmail.com , 手机客户端扫描二维码捐赠：<br>
+			<a href="https://paypal.me/yeho" target="_blank" rel="noopener noreferrer"><img layer-src="https://img.shields.io/badge/Paypal-donate-green.svg" src="https://img.shields.io/badge/Paypal-donate-green.svg" alt="《捐赠》" layer-index="0"></a>
+			<a href="https://static.oneinstack.com/images/alipay.png" target="_blank"><img src="https://img.shields.io/badge/%E6%94%AF%E4%BB%98%E5%AE%9D-%E5%90%91TA%E6%8D%90%E5%8A%A9-green.svg" alt="《捐赠》"></a>
+			<a href="https://static.oneinstack.com/images/weixin.png" target="_blank"><img src="https://img.shields.io/badge/%E5%BE%AE%E4%BF%A1-%E5%90%91TA%E6%8D%90%E5%8A%A9-green.svg" alt="《捐赠》"></a><br>
+			<img class="img-fluid" src="https://static.oneinstack.com/images/pay.png" alt="《捐赠》"><br>
+			</p>
+	        </section>
+
+          	<div align="center" class="mt-5"><iframe src="https://static.oneinstack.com/ad_buttom.html" width="475" frameborder="0" scrolling="no"></iframe></div>
+          	<div>          		
+          		<p>
+          			<a href="https://oneinstack.com" target="_blank">OneinStack</a> by <a href="https://blog.linuxeye.cn/" target="_blank">LinuxEye</a>
+          			&nbsp; &nbsp; &nbsp; &nbsp; QQ群:&nbsp;&nbsp; 262601796(新) 558540514(付费千人群)</a>
+          		</p>
+          		<p align="right"><a href="#">回顶部</a></p>
+          	</div>
+        </main>
+      </div>
+    </div>
+    <script src="https://static.oneinstack.com/assets/ois.js"></script>
+  </body>
 </html>

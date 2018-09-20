@@ -50,7 +50,7 @@ showhelp() {
   --apache_option [1-2]       Install Apache server version
   --php_option [1-7]          Install PHP version
   --phpcache_option [1-4]     Install PHP opcode cache, default: 1 opcache
-  --php_extensions [ext name] Install PHP extension, include zendguardloader,ioncube,imagick,gmagick
+  --php_extensions [ext name] Install PHP extension, include zendguardloader,ioncube,imagick,gmagick,redis,memcached,memcache
   --tomcat_option [1-4]       Install Tomcat version
   --jdk_option [1-4]          Install JDK version
   --db_option [1-15]          Install DB version
@@ -108,6 +108,9 @@ while :; do
       [ -n "`echo ${php_extensions} | grep -w ioncube`" ] && ioncube_yn=y
       [ -n "`echo ${php_extensions} | grep -w imagick`" ] && magick_option=1
       [ -n "`echo ${php_extensions} | grep -w gmagick`" ] && magick_option=2
+      [ -n "`echo ${php_extensions} | grep -w redis`" ] && redis_pecl=1
+      [ -n "`echo ${php_extensions} | grep -w memcached`" ] && memcached_pecl=1
+      [ -n "`echo ${php_extensions} | grep -w memcache`" ] && memcache_pecl=1
       ;;
     --tomcat_option)
       tomcat_option=$2; shift 2
@@ -948,12 +951,27 @@ if [ "${redis_yn}" == 'y' ]; then
   [ -e "${php_install_dir}/bin/phpize" ] && [ ! -e "$(${php_install_dir}/bin/php-config --extension-dir)/redis.so" ] && Install_php-redis 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
+if [ "${redis_pecl}" == '1' ]; then
+  . include/redis.sh
+  [ -e "${php_install_dir}/bin/phpize" ] && [ ! -e "$(${php_install_dir}/bin/php-config --extension-dir)/redis.so" ] && Install_php-redis 2>&1 | tee -a ${oneinstack_dir}/install.log
+fi
+
 # memcached
 if [ "${memcached_yn}" == 'y' ]; then
   . include/memcached.sh
   [ ! -d "${memcached_install_dir}/include/memcached" ] && Install_memcached 2>&1 | tee -a ${oneinstack_dir}/install.log
   [ -e "${php_install_dir}/bin/phpize" ] && [ ! -e "$(${php_install_dir}/bin/php-config --extension-dir)/memcache.so" ] && Install_php-memcache 2>&1 | tee -a ${oneinstack_dir}/install.log
   [ -e "${php_install_dir}/bin/phpize" ] && [ ! -e "$(${php_install_dir}/bin/php-config --extension-dir)/memcached.so" ] && Install_php-memcached 2>&1 | tee -a ${oneinstack_dir}/install.log
+fi
+
+if [ "${memcached_pecl}" == '1' ]; then
+  . include/memcached.sh
+  [ -e "${php_install_dir}/bin/phpize" ] && [ ! -e "$(${php_install_dir}/bin/php-config --extension-dir)/memcached.so" ] && Install_php-memcached 2>&1 | tee -a ${oneinstack_dir}/install.log
+fi
+
+if [ "${memcache_pecl}" == '1' ]; then
+  . include/memcached.sh
+  [ -e "${php_install_dir}/bin/phpize" ] && [ ! -e "$(${php_install_dir}/bin/php-config --extension-dir)/memcache.so" ] && Install_php-memcache 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # index example

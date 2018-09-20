@@ -27,7 +27,7 @@ Install_Tengine() {
 
   [ ! -d "${tengine_install_dir}" ] && mkdir -p ${tengine_install_dir}
   ./configure --prefix=${tengine_install_dir} --user=${run_user} --group=${run_user} --with-http_v2_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-http_concat_module=shared --with-http_sysguard_module=shared --with-openssl=../openssl-${openssl_ver} --with-pcre=../pcre-${pcre_ver} --with-pcre-jit --with-jemalloc ${nginx_modules_options}
-  make -j ${THREAD} && make install
+  make && make install
   if [ -e "${tengine_install_dir}/conf/nginx.conf" ]; then
     popd
     rm -rf pcre-${pcre_ver}

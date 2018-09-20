@@ -8,6 +8,8 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
+export LANG=en_US.UTF-8
+export LANGUAGE=en_US:en
 Mem=`free -m | awk '/Mem:/{print $2}'`
 Swap=`free -m | awk '/Swap:/{print $2}'`
 

@@ -11,7 +11,7 @@
 
   <body>
     <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="./">OneinStack</a>
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="">OneinStack</a>
 
       <form class="w-100" action="https://oneinstack.com/qa/" method="GET" target="_blank">
       	<input class="form-control form-control-dark w-100" type="text" placeholder="搜索OneinStack官网问答" aria-label="搜索OneinStack官网问答" name="qs">
@@ -137,12 +137,12 @@
 	            <h1 class="h2" id="home">控制中心</h1>
 	            <div class="btn-toolbar mb-2 mb-md-0">
 	              <div class="btn-group mr-2">
-	                <a class="btn btn-sm btn-outline-primary btn_prober" href="prober.php"><span data-feather="compass"></span> prober</a>
-	                <a class="btn btn-sm btn-outline-primary btn_tz" href="tz.php"><span data-feather="compass"></span> 探针</a>
-	                <a class="btn btn-sm btn-outline-info btn_phpinfo" href="phpinfo.php"><span data-feather="info"></span> phpinfo</a>
-	                <a class="btn btn-sm btn-outline-secondary btn_op" href="ocp.php"><span data-feather="cpu"></span> Opcache</a>
+	                <a class="btn btn-sm btn-outline-primary btn_prober" href="prober.php" target="_blank"><span data-feather="compass"></span> prober</a>
+	                <a class="btn btn-sm btn-outline-primary btn_tz" href="tz.php" target="_blank"><span data-feather="compass"></span> 探针</a>
+	                <a class="btn btn-sm btn-outline-info btn_phpinfo" href="phpinfo.php" target="_blank"><span data-feather="info"></span> phpinfo</a>
+	                <a class="btn btn-sm btn-outline-secondary btn_op" href="ocp.php" target="_blank"><span data-feather="cpu"></span> Opcache</a>
 	              </div>
-	              <a class="btn btn-sm btn-outline-warning mr-2 btn_pma" href="phpMyAdmin/">
+	              <a class="btn btn-sm btn-outline-warning mr-2 btn_pma" href="phpMyAdmin/" target="_blank">
 	                <span data-feather="database"></span> phpMyAdmin
 	              </a>
 	            </div>
@@ -201,7 +201,7 @@
 			          <div class="card-body">
 			            <h1 class="card-title pricing-card-title">上线<small class="text-muted">运行</small></h1>
 			            <ul class="list-unstyled mt-3 mb-4">
-			              <li><a href="phpMyAdmin/">phpMyAdmin</a></li>
+			              <li><a href="phpMyAdmin/" target="_blank">phpMyAdmin</a></li>
 			              <li>管理FTP账号 ./pureftpd_vhost.sh</li>
 			              <li>备份 ./backup_setup.sh</li>
 			            </ul>
@@ -268,7 +268,7 @@
 				<p class="mt-4">HHVM:</p>
 				<div class="alert alert-primary" role="alert"><code>service supervisord {start|stop|status|restart|reload}</code></div>
 				<p class="mt-4"><strong><span style="color: #ff0000;">注</span></strong>：hhvm进程交给supervisord管理，了解更多请访问《<a href="https://blog.linuxeye.com/408.html" target="_blank" rel="noopener noreferrer">Supervisor管理hhvm进程</a>》<br>
-				Apache:</p>
+				<p class="mt-4">Apache:</p>
 				<div class="alert alert-primary" role="alert"><code>service httpd {start|restart|stop}</code></div>
 				<p class="mt-4">Tomcat:</p>
 				<div class="alert alert-primary" role="alert"><code>service tomcat {start|stop|status|restart}</code></div>
@@ -303,7 +303,7 @@
 				  </ul>
 				</div>
 				<div class="list-group mt-5" style="width: 18rem;">
-				  <a href="phpMyAdmin" class="list-group-item list-group-item-action active">
+				  <a class="list-group-item list-group-item-action active">
 				    云主机安全组端口开放教程
 				  </a>
 				  <a href="https://oneinstack.com/docs/securitygroup/#11" target="_blank" class="list-group-item list-group-item-action">阿里云安全组端口</a>

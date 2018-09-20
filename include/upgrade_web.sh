@@ -116,7 +116,7 @@ Upgrade_Tengine() {
     export LUAJIT_LIB=/usr/local/lib
     export LUAJIT_INC=/usr/local/include/luajit-2.1
     ./configure ${tengine_configure_args}
-    make -j ${THREAD}
+    make
     if [ -f "objs/nginx" ]; then
       /bin/mv ${tengine_install_dir}/sbin/nginx{,`date +%m%d`}
       /bin/mv ${tengine_install_dir}/sbin/dso_tool{,`date +%m%d`}

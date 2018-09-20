@@ -241,20 +241,21 @@ if [ `echo ${desc_bk} | grep -e 4` ]; then
   [ ! -e "${python_install_dir}/lib/coscmd" ] && ${python_install_dir}/bin/pip install coscmd >/dev/null 2>&1
   while :; do echo
     echo 'Please select your backup qcloud datacenter:'
-    echo -e "\t ${CMSG} 1${CEND}. 北京一区(华北)  ${CMSG}2${CEND}. 北京"
-    echo -e "\t ${CMSG} 3${CEND}. 上海(华东)      ${CMSG}4${CEND}. 广州(华南)"
-    echo -e "\t ${CMSG} 5${CEND}. 成都(西南)      ${CMSG}6${CEND}. 重庆"
-    echo -e "\t ${CMSG} 7${CEND}. 新加坡          ${CMSG}8${CEND}. 香港"
-    echo -e "\t ${CMSG} 9${CEND}. 多伦多         ${CMSG}10${CEND}. 法兰克福"
-    echo -e "\t ${CMSG}11${CEND}. 孟买           ${CMSG}12${CEND}. 首尔"
-    echo -e "\t ${CMSG}13${CEND}. 硅谷           ${CMSG}14${CEND}. 弗吉尼亚"
-    echo -e "\t ${CMSG}15${CEND}. 曼谷           ${CMSG}16${CEND}. 莫斯科"
+    echo -e "\t ${CMSG} 1${CEND}. ap-beijing-1-北京一区(华北)  ${CMSG}2${CEND}. ap-beijing-北京"
+    echo -e "\t ${CMSG} 3${CEND}. ap-shanghai-上海(华东)       ${CMSG}4${CEND}. ap-guangzhou-广州(华南)"
+    echo -e "\t ${CMSG} 5${CEND}. ap-chengdu-成都(西南)        ${CMSG}6${CEND}. ap-chongqing-重庆"
+    echo -e "\t ${CMSG} 7${CEND}. ap-singapore-新加坡          ${CMSG}8${CEND}. ap-hongkong-香港"
+    echo -e "\t ${CMSG} 9${CEND}. na-toronto-多伦多           ${CMSG}10${CEND}. eu-frankfurt-法兰克福"
+    echo -e "\t ${CMSG}11${CEND}. ap-mumbai-孟买              ${CMSG}12${CEND}. ap-seoul-首尔"
+    echo -e "\t ${CMSG}13${CEND}. na-siliconvalley-硅谷       ${CMSG}14${CEND}. na-ashburn-弗吉尼亚"
+    echo -e "\t ${CMSG}15${CEND}. ap-bangkok-曼谷             ${CMSG}16${CEND}. eu-moscow-莫斯科"
+    echo -e "\t ${CMSG}17${CEND}. ap-tokyo-东京"
     read -p "Please input a number:(Default 1 press Enter) " Location
     [ -z "${Location}" ] && Location=1
-    if [[ "${Location}" =~ ^[1-9]$|^1[0-6]$ ]]; then
+    if [[ "${Location}" =~ ^[1-9]$|^1[0-7]$ ]]; then
       break
     else
-      echo "${CWARNING}input error! Please only input number 1~16${CEND}"
+      echo "${CWARNING}input error! Please only input number 1~17${CEND}"
     fi
   done
   [ "${Location}" == '1' ] && region='ap-beijing-1'
@@ -273,6 +274,7 @@ if [ `echo ${desc_bk} | grep -e 4` ]; then
   [ "${Location}" == '14' ] && region='na-ashburn'
   [ "${Location}" == '15' ] && region='ap-bangkok'
   [ "${Location}" == '16' ] && region='eu-moscow'
+  [ "${Location}" == '17' ] && region='ap-tokyo'
   while :; do echo
     read -p "Please enter the Qcloud COS APPID: " APPID
     [ -z "${APPID}" ] && continue

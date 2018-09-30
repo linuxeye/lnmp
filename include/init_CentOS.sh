@@ -8,12 +8,6 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-# closed Unnecessary services and remove obsolete rpm package
-[ "${CentOS_ver}" == '7' ] && [ "$(systemctl is-active NetworkManager.service)" == 'active' ] && NM_flag=1
-for Service in $(chkconfig --list | grep 3:on | awk '{print $1}' | grep -viE 'nginx|httpd|tomcat|mysqld|php-fpm|pureftpd|redis-server|memcached|supervisord|aegis|agentwatch|NetworkManager|iptables|cloud');do chkconfig --level 3 ${Service} off;done
-[ "${NM_flag}" == '1' ] && systemctl enable NetworkManager.service
-for Service in sshd network crond messagebus irqbalance syslog rsyslog;do chkconfig --level 3 ${Service} on;done
-
 # Close SELINUX
 setenforce 0
 sed -i 's/^SELINUX=.*$/SELINUX=disabled/' /etc/selinux/config

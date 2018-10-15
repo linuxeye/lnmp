@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+
 #        Install SS Server
 #
 # Project home page:
@@ -13,7 +13,7 @@ export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 clear
 printf "
 #######################################################################
-#       OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+      #
+#       OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+      #
 #                         Install SS Server                           #
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
@@ -41,7 +41,7 @@ Check_SS() {
 
 AddUser_SS() {
   while :; do echo
-    read -p "Please input password for SS: " SS_password
+    read -e -p "Please input password for SS: " SS_password
     [ -n "$(echo ${SS_password} | grep '[+|&]')" ] && { echo "${CWARNING}input error,not contain a plus sign (+) and & ${CEND}"; continue; }
     (( ${#SS_password} >= 5 )) && break || echo "${CWARNING}SS password least 5 characters! ${CEND}"
   done
@@ -61,7 +61,7 @@ Iptables_set() {
   fi
 
   while :; do echo
-    read -p "Please input SS port(Default: ${SS_Default_port}): " SS_port
+    read -e -p "Please input SS port(Default: ${SS_Default_port}): " SS_port
     [ -z "${SS_port}" ] && SS_port=${SS_Default_port}
     if [ ${SS_port} -ge 1 >/dev/null 2>&1 -a ${SS_port} -le 65535 >/dev/null 2>&1 ]; then
       [ -z "$(netstat -tpln | grep :${SS_port}$)" ] && break || echo "${CWARNING}This port is already used! ${CEND}"
@@ -91,7 +91,7 @@ Def_parameter() {
     echo "Please select SS server version:"
     echo -e "\t${CMSG}1${CEND}. Install SS-libev"
     echo -e "\t${CMSG}2${CEND}. Install SS-python"
-    read -p "Please input a number:(Default 1 press Enter) " ss_option
+    read -e -p "Please input a number:(Default 1 press Enter) " ss_option
     [ -z "${ss_option}" ] && ss_option=1
     if [[ ! "${ss_option}" =~ ^[1-2]$ ]]; then
       echo "${CWARNING}input error! Please only input number 1~2${CEND}"
@@ -177,7 +177,7 @@ Install_SS-libev() {
 
 Uninstall_SS() {
   while :; do echo
-    read -p "Do you want to uninstall SS? [y/n]: " SS_yn
+    read -e -p "Do you want to uninstall SS? [y/n]: " SS_yn
     if [[ ! "${SS_yn}" =~ ^[y,n]$ ]]; then
       echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else

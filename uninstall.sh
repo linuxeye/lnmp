@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -12,7 +12,7 @@ export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 clear
 printf "
 #######################################################################
-#       OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+      #
+#       OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+      #
 #                         Uninstall OneinStack                        #
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
@@ -46,7 +46,7 @@ ${CMSG}memcached${CEND}      --->Uninstall Memcached
 
 Uninstall_status() {
   while :; do echo
-    read -p "Do you want to uninstall? [y/n]: " uninstall_yn
+    read -e -p "Do you want to uninstall? [y/n]: " uninstall_yn
     echo
     if [[ ! ${uninstall_yn} =~ ^[y,n]$ ]]; then
       echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
@@ -243,7 +243,7 @@ What Are You Doing?
 \t${CMSG}q${CEND}. Exit
 "
   echo
-  read -p "Please input the correct option: " Number
+  read -e -p "Please input the correct option: " Number
   if [[ ! $Number =~ ^[0-9,q]$ ]]; then
     echo "${CWARNING}input error! Please only input 0~9 and q${CEND}"
   else

@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -12,7 +12,7 @@ export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 clear
 printf "
 #######################################################################
-#       OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+      #
+#       OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+      #
 #                     Setup the backup parameters                     #
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
@@ -38,7 +38,7 @@ while :; do echo
   echo -e "\t${CMSG}4${CEND}. Qcloud COS"
   echo -e "\t${CMSG}5${CEND}. UPYUN"
   echo -e "\t${CMSG}6${CEND}. QINIU"
-  read -p "Please input a number:(Default 1 press Enter) " desc_bk
+  read -e -p "Please input a number:(Default 1 press Enter) " desc_bk
   [ -z "${desc_bk}" ] && desc_bk=1
   ary=(1 2 3 4 5 6 12 13 14 15 16 23 24 25 26 34 35 36 45 46 56 123 124 125 126 134 135 136 145 146 156 234 235 236 245 246 256 345 346 456 1234 1235 1236 2345 2346 3456 12345 12346 13456 23456 123456)
   if [[ "${ary[@]}" =~ "${desc_bk}" ]]; then
@@ -62,7 +62,7 @@ while :; do echo
   echo -e "\t${CMSG}1${CEND}. Only Database"
   echo -e "\t${CMSG}2${CEND}. Only Website"
   echo -e "\t${CMSG}3${CEND}. Database and Website"
-  read -p "Please input a number:(Default 1 press Enter) " content_bk
+  read -e -p "Please input a number:(Default 1 press Enter) " content_bk
   [ -z "${content_bk}" ] && content_bk=1
   if [[ ! ${content_bk} =~ ^[1-3]$ ]]; then
     echo "${CWARNING}input error! Please only input number 1~3${CEND}"
@@ -78,7 +78,7 @@ done
 if [[ ${desc_bk} =~ ^[1,2]$ ]]; then
   while :; do echo
     echo "Please enter the directory for save the backup file: "
-    read -p "(Default directory: ${backup_dir}): " new_backup_dir
+    read -e -p "(Default directory: ${backup_dir}): " new_backup_dir
     [ -z "${new_backup_dir}" ] && new_backup_dir="${backup_dir}"
     if [ -z "`echo ${new_backup_dir}| grep '^/'`" ]; then
       echo "${CWARNING}input error! ${CEND}"
@@ -91,7 +91,7 @@ fi
 
 while :; do echo
   echo "Please enter a valid backup number of days: "
-  read -p "(Default days: 5): " expired_days
+  read -e -p "(Default days: 5): " expired_days
   [ -z "${expired_days}" ] && expired_days=5
   [ -n "`echo ${expired_days} | sed -n "/^[0-9]\+$/p"`" ] && break || echo "${CWARNING}input error! Please only enter numbers! ${CEND}"
 done
@@ -101,7 +101,7 @@ if [ "${content_bk}" != '2' ]; then
   databases=`${db_install_dir}/bin/mysql -uroot -p$dbrootpwd -e "show databases\G" | grep Database | awk '{print $2}' | grep -Evw "(performance_schema|information_schema|mysql|sys)"`
   while :; do echo
     echo "Please enter one or more name for database, separate multiple database names with commas: "
-    read -p "(Default database: `echo $databases | tr ' ' ','`) " db_name
+    read -e -p "(Default database: `echo $databases | tr ' ' ','`) " db_name
     db_name=`echo ${db_name} | tr -d ' '`
     [ -z "${db_name}" ] && db_name="`echo $databases | tr ' ' ','`"
     D_tmp=0
@@ -118,7 +118,7 @@ if [ "${content_bk}" != '1' ]; then
   websites=`ls ${wwwroot_dir}`
   while :; do echo
     echo "Please enter one or more name for website, separate multiple website names with commas: "
-    read -p "(Default website: `echo $websites | tr ' ' ','`) " website_name
+    read -e -p "(Default website: `echo $websites | tr ' ' ','`) " website_name
     website_name=`echo ${website_name} | tr -d ' '`
     [ -z "${website_name}" ] && website_name="`echo $websites | tr ' ' ','`"
     W_tmp=0
@@ -139,16 +139,16 @@ echo "You have to backup the content:"
 if [ `echo ${desc_bk} | grep -e 2` ]; then
   > tools/iplist.txt
   while :; do echo
-    read -p "Please enter the remote host ip: " remote_ip
+    read -e -p "Please enter the remote host ip: " remote_ip
     [ -z "${remote_ip}" -o "${remote_ip}" == '127.0.0.1' ] && continue
     echo
-    read -p "Please enter the remote host port(Default: 22) : " remote_port
+    read -e -p "Please enter the remote host port(Default: 22) : " remote_port
     [ -z "${remote_port}" ] && remote_port=22
     echo
-    read -p "Please enter the remote host user(Default: root) : " remote_user
+    read -e -p "Please enter the remote host user(Default: root) : " remote_user
     [ -z "${remote_user}" ] && remote_user=root
     echo
-    read -p "Please enter the remote host password: " remote_password
+    read -e -p "Please enter the remote host password: " remote_password
     IPcode=$(echo "ibase=16;$(echo "${remote_ip}" | xxd -ps -u)"|bc|tr -d '\\'|tr -d '\n')
     Portcode=$(echo "ibase=16;$(echo "${remote_port}" | xxd -ps -u)"|bc|tr -d '\\'|tr -d '\n')
     PWcode=$(echo "ibase=16;$(echo "$remote_password" | xxd -ps -u)"|bc|tr -d '\\'|tr -d '\n')
@@ -157,7 +157,7 @@ if [ `echo ${desc_bk} | grep -e 2` ]; then
     if [ $? -eq 0 ]; then
       [ -z "`grep ${remote_ip} tools/iplist.txt`" ] && echo "${remote_ip} ${remote_port} ${remote_user} $remote_password" >> tools/iplist.txt || echo "${CWARNING}${remote_ip} has been added! ${CEND}"
       while :; do
-        read -p "Do you want to add more host ? [y/n]: " morehost_yn
+        read -e -p "Do you want to add more host ? [y/n]: " morehost_yn
         if [[ ! ${morehost_yn} =~ ^[y,n]$ ]]; then
           echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
         else
@@ -189,7 +189,7 @@ if [ `echo ${desc_bk} | grep -e 3` ]; then
     echo -e "\t${CMSG}13${CEND}. ap-southeast-亚太东南 3 (吉隆坡) ${CMSG}14${CEND}. ap-southeast-亚太东南 5 (雅加达)"
     echo -e "\t${CMSG}15${CEND}. ap-northeast-亚太东北 1 (日本)   ${CMSG}16${CEND}. ap-south-亚太南部 1 (孟买)"
     echo -e "\t${CMSG}17${CEND}. eu-central-欧洲中部 1 (法兰克福) ${CMSG}18${CEND}. me-east-中东东部 1 (迪拜)"
-    read -p "Please input a number:(Default 1 press Enter) " Location
+    read -e -p "Please input a number:(Default 1 press Enter) " Location
     [ -z "${Location}" ] && Location=1
     if [[ "${Location}" =~ ^[1-9]$|^1[0-8]$ ]]; then
       break
@@ -218,16 +218,16 @@ if [ `echo ${desc_bk} | grep -e 3` ]; then
   [ "$(./include/check_port.py ${Host} 80)" == "False" ] && Host=`echo ${Host} | sed 's@-internal@@g'`
   [ -e "/root/.ossutilconfig" ] && rm -f /root/.ossutilconfig
   while :; do echo
-    read -p "Please enter the aliyun oss Access Key ID: " KeyID
+    read -e -p "Please enter the aliyun oss Access Key ID: " KeyID
     [ -z "${KeyID}" ] && continue
     echo
-    read -p "Please enter the aliyun oss Access Key Secret: " KeySecret
+    read -e -p "Please enter the aliyun oss Access Key Secret: " KeySecret
     [ -z "${KeySecret}" ] && continue
     /usr/local/bin/ossutil ls -e ${Host} -i ${KeyID} -k ${KeySecret} >/dev/null 2>&1
     if [ $? -eq 0 ];then
       /usr/local/bin/ossutil config -e ${Host} -i ${KeyID} -k ${KeySecret} >/dev/null 2>&1
       while :; do echo
-        read -p "Please enter the aliyun oss bucket: " Bucket
+        read -e -p "Please enter the aliyun oss bucket: " Bucket
         /usr/local/bin/ossutil mb oss://${Bucket} >/dev/null 2>&1
         [ $? -eq 0 ] && { echo "${CMSG}[${Bucket}] createbucket OK${CEND}"; sed -i "s@^oss_bucket=.*@oss_bucket=${Bucket}@" ./options.conf; break; } || echo "${CWARNING}[${Bucket}] already exists, You need to use the OSS Console to create a bucket for storing.${CEND}"
       done
@@ -250,7 +250,7 @@ if [ `echo ${desc_bk} | grep -e 4` ]; then
     echo -e "\t ${CMSG}13${CEND}. na-siliconvalley-硅谷       ${CMSG}14${CEND}. na-ashburn-弗吉尼亚"
     echo -e "\t ${CMSG}15${CEND}. ap-bangkok-曼谷             ${CMSG}16${CEND}. eu-moscow-莫斯科"
     echo -e "\t ${CMSG}17${CEND}. ap-tokyo-东京"
-    read -p "Please input a number:(Default 1 press Enter) " Location
+    read -e -p "Please input a number:(Default 1 press Enter) " Location
     [ -z "${Location}" ] && Location=1
     if [[ "${Location}" =~ ^[1-9]$|^1[0-7]$ ]]; then
       break
@@ -276,16 +276,16 @@ if [ `echo ${desc_bk} | grep -e 4` ]; then
   [ "${Location}" == '16' ] && region='eu-moscow'
   [ "${Location}" == '17' ] && region='ap-tokyo'
   while :; do echo
-    read -p "Please enter the Qcloud COS APPID: " APPID
+    read -e -p "Please enter the Qcloud COS APPID: " APPID
     [ -z "${APPID}" ] && continue
     echo
-    read -p "Please enter the Qcloud COS SecretId: " SecretId
+    read -e -p "Please enter the Qcloud COS SecretId: " SecretId
     [ -z "${SecretId}" ] && continue
     echo
-    read -p "Please enter the Qcloud COS SecretKey: " SecretKey
+    read -e -p "Please enter the Qcloud COS SecretKey: " SecretKey
     [ -z "$SecretKey" ] && continue
     echo
-    read -p "Please enter the Qcloud COS bucket: " bucket
+    read -e -p "Please enter the Qcloud COS bucket: " bucket
     [ -z "${bucket}" ] && continue
     echo
     ${python_install_dir}/bin/coscmd config -u ${APPID} -a ${SecretId} -s $SecretKey -r $region -b ${bucket} >/dev/null 2>&1
@@ -310,13 +310,13 @@ if [ `echo ${desc_bk} | grep -e 5` ]; then
     chmod +x /usr/local/bin/upx
   fi
   while :; do echo
-    read -p "Please enter the upyun ServiceName: " ServiceName
+    read -e -p "Please enter the upyun ServiceName: " ServiceName
     [ -z "${ServiceName}" ] && continue
     echo
-    read -p "Please enter the upyun Operator: " Operator
+    read -e -p "Please enter the upyun Operator: " Operator
     [ -z "${Operator}" ] && continue
     echo
-    read -p "Please enter the upyun Password: " Password
+    read -e -p "Please enter the upyun Password: " Password
     [ -z "${Password}" ] && continue
     echo
     /usr/local/bin/upx login ${ServiceName} ${Operator} ${Password} >/dev/null 2>&1
@@ -355,7 +355,7 @@ if [ `echo ${desc_bk} | grep -e 6` ]; then
     echo -e "\t ${CMSG} 1${CEND}. 华东            ${CMSG}2${CEND}. 华北"
     echo -e "\t ${CMSG} 3${CEND}. 华南            ${CMSG}4${CEND}. 北美"
     echo -e "\t ${CMSG} 5${CEND}. 东南亚" 
-    read -p "Please input a number:(Default 1 press Enter) " Location
+    read -e -p "Please input a number:(Default 1 press Enter) " Location
     [ -z "${Location}" ] && Location=1
     if [[ "${Location}" =~ ^[1-5]$ ]]; then
       break
@@ -369,13 +369,13 @@ if [ `echo ${desc_bk} | grep -e 6` ]; then
   [ "${Location}" == '4' ] && zone='na0'
   [ "${Location}" == '5' ] && zone='as0'
   while :; do echo
-    read -p "Please enter the qiniu AccessKey: " AccessKey 
+    read -e -p "Please enter the qiniu AccessKey: " AccessKey 
     [ -z "${AccessKey}" ] && continue
     echo
-    read -p "Please enter the qiniu SecretKey: " SecretKey 
+    read -e -p "Please enter the qiniu SecretKey: " SecretKey 
     [ -z "${SecretKey}" ] && continue
     echo
-    read -p "Please enter the qiniu bucket: " bucket
+    read -e -p "Please enter the qiniu bucket: " bucket
     [ -z "${bucket}" ] && continue
     echo
     /usr/local/bin/qshell account ${AccessKey} ${SecretKey}

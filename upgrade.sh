@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -12,7 +12,7 @@ export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 clear
 printf "
 #######################################################################
-#       OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+      #
+#       OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+      #
 #              Upgrade Software versions for OneinStack               #
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
@@ -71,7 +71,7 @@ What Are You Doing?
 \t${CMSG}q${CEND}. Exit
 "
     echo
-    read -p "Please input the correct option: " Upgrade_flag
+    read -e -p "Please input the correct option: " Upgrade_flag
     if [[ ! ${Upgrade_flag} =~ ^[1-8,q]$ ]]; then
       echo "${CWARNING}input error! Please only input 1~8 and q${CEND}"
     else

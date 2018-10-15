@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://blog.linuxeye.cn
 #
-# Notes: OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -12,7 +12,7 @@ export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 clear
 printf "
 #######################################################################
-#       OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+      #
+#       OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+      #
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
@@ -47,7 +47,7 @@ Choose_env() {
       echo -e "\t${CMSG}1${CEND}. Use php"
       echo -e "\t${CMSG}2${CEND}. Use java"
       echo -e "\t${CMSG}3${CEND}. Use hhvm"
-      read -p "Please input a number:(Default 1 press Enter) " ENV_FLAG
+      read -e -p "Please input a number:(Default 1 press Enter) " ENV_FLAG
       [ -z "${ENV_FLAG}" ] && ENV_FLAG=1
       if [[ ! ${ENV_FLAG} =~ ^[1-3]$ ]]; then
         echo "${CWARNING}input error! Please only input number 1~3${CEND}"
@@ -72,7 +72,7 @@ Choose_env() {
       echo "Please choose to use environment:"
       echo -e "\t${CMSG}1${CEND}. Use php"
       echo -e "\t${CMSG}2${CEND}. Use java"
-      read -p "Please input a number:(Default 1 press Enter) " ENV_FLAG
+      read -e -p "Please input a number:(Default 1 press Enter) " ENV_FLAG
       [ -z "${ENV_FLAG}" ] && ENV_FLAG=1
       if [[ ! ${ENV_FLAG} =~ ^[1-2]$ ]]; then
         echo "${CWARNING}input error! Please only input number 1~2${CEND}"
@@ -91,7 +91,7 @@ Choose_env() {
       echo "Please choose to use environment:"
       echo -e "\t${CMSG}1${CEND}. Use php"
       echo -e "\t${CMSG}2${CEND}. Use hhvm"
-      read -p "Please input a number:(Default 1 press Enter) " ENV_FLAG
+      read -e -p "Please input a number:(Default 1 press Enter) " ENV_FLAG
       [ -z "${ENV_FLAG}" ] && ENV_FLAG=1
       if [[ ! ${ENV_FLAG} =~ ^[1-2]$ ]]; then
         echo "${CWARNING}input error! Please only input number 1~2${CEND}"
@@ -107,7 +107,7 @@ Choose_env() {
       echo "Please choose to use environment:"
       echo -e "\t${CMSG}1${CEND}. Use java"
       echo -e "\t${CMSG}2${CEND}. Use hhvm"
-      read -p "Please input a number:(Default 1 press Enter) " ENV_FLAG
+      read -e -p "Please input a number:(Default 1 press Enter) " ENV_FLAG
       [ -z "${ENV_FLAG}" ] && ENV_FLAG=1
       if [[ ! ${ENV_FLAG} =~ ^[1-2]$ ]]; then
         echo "${CWARNING}input error! Please only input number 1~2${CEND}"
@@ -152,19 +152,19 @@ For some fields there will be a default value,
 If you enter '.', the field will be left blank.
 "
     echo
-    read -p "Country Name (2 letter code) [CN]: " SELFSIGNEDSSL_C
+    read -e -p "Country Name (2 letter code) [CN]: " SELFSIGNEDSSL_C
     [ -z "${SELFSIGNEDSSL_C}" ] && SELFSIGNEDSSL_C="CN"
     echo
-    read -p "State or Province Name (full name) [Shanghai]: " SELFSIGNEDSSL_ST
+    read -e -p "State or Province Name (full name) [Shanghai]: " SELFSIGNEDSSL_ST
     [ -z "${SELFSIGNEDSSL_ST}" ] && SELFSIGNEDSSL_ST="Shanghai"
     echo
-    read -p "Locality Name (eg, city) [Shanghai]: " SELFSIGNEDSSL_L
+    read -e -p "Locality Name (eg, city) [Shanghai]: " SELFSIGNEDSSL_L
     [ -z "${SELFSIGNEDSSL_L}" ] && SELFSIGNEDSSL_L="Shanghai"
     echo
-    read -p "Organization Name (eg, company) [Example Inc.]: " SELFSIGNEDSSL_O
+    read -e -p "Organization Name (eg, company) [Example Inc.]: " SELFSIGNEDSSL_O
     [ -z "${SELFSIGNEDSSL_O}" ] && SELFSIGNEDSSL_O="Example Inc."
     echo
-    read -p "Organizational Unit Name (eg, section) [IT Dept.]: " SELFSIGNEDSSL_OU
+    read -e -p "Organizational Unit Name (eg, section) [IT Dept.]: " SELFSIGNEDSSL_OU
     [ -z "${SELFSIGNEDSSL_OU}" ] && SELFSIGNEDSSL_OU="IT Dept."
 
     openssl req -new -newkey rsa:2048 -sha256 -nodes -out ${PATH_SSL}/${domain}.csr -keyout ${PATH_SSL}/${domain}.key -subj "/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${domain}" > /dev/null 2>&1
@@ -175,7 +175,7 @@ If you enter '.', the field will be left blank.
         echo 'Please select DNS provider:'
         echo "${CMSG}dp${CEND},${CMSG}cx${CEND},${CMSG}ali${CEND},${CMSG}cf${CEND},${CMSG}aws${CEND},${CMSG}linode${CEND},${CMSG}he${CEND},${CMSG}namesilo${CEND},${CMSG}dgon${CEND},${CMSG}freedns${CEND},${CMSG}gd${CEND},${CMSG}namecom${CEND} and so on."
         echo "${CMSG}More: https://oneinstack.com/faq/letsencrypt${CEND}"
-        read -p "Please enter your DNS provider: " DNS_PRO
+        read -e -p "Please enter your DNS provider: " DNS_PRO
         if [ -e ~/.acme.sh/dnsapi/dns_${DNS_PRO}.sh ]; then
           break
         else
@@ -184,7 +184,7 @@ If you enter '.', the field will be left blank.
       done
       while :; do echo
         echo "Syntax: export Key1=Value1 ; export Key2=Value1"
-        read -p "Please enter your dnsapi parameters: " DNS_PAR
+        read -e -p "Please enter your dnsapi parameters: " DNS_PAR
         echo
         eval $DNS_PAR
         if [ $? == 0 ]; then
@@ -272,7 +272,7 @@ What Are You Doing?
 \t${CMSG}3${CEND}. Use Let's Encrypt to Create SSL Certificate and Key
 \t${CMSG}q${CEND}. Exit
 "
-      read -p "Please input the correct option: " Domian_Mode
+      read -e -p "Please input the correct option: " Domian_Mode
       if [[ ! "${Domian_Mode}" =~ ^[1-3,q]$ ]]; then
         echo "${CFAILURE}input error! Please only input 1~3 and q${CEND}"
       else
@@ -304,7 +304,7 @@ What Are You Doing?
   fi
 
   while :; do echo
-    read -p "Please input domain(example: www.example.com): " domain
+    read -e -p "Please input domain(example: www.example.com): " domain
     if [ -z "$(echo ${domain} | grep '.*\..*')" ]; then
       echo "${CWARNING}Your ${domain} is invalid! ${CEND}"
     else
@@ -323,7 +323,7 @@ What Are You Doing?
 
   while :; do echo
     echo "Please input the directory for the domain:${domain} :"
-    read -p "(Default directory: ${wwwroot_dir}/${domain}): " vhostdir
+    read -e -p "(Default directory: ${wwwroot_dir}/${domain}): " vhostdir
     if [ -n "${vhostdir}" -a -z "$(echo ${vhostdir} | grep '^/')" ]; then
       echo "${CWARNING}input error! Press Enter to continue...${CEND}"
     else
@@ -341,7 +341,7 @@ What Are You Doing?
   done
 
   while :; do echo
-    read -p "Do you want to add more domain name? [y/n]: " moredomainame_flag
+    read -e -p "Do you want to add more domain name? [y/n]: " moredomainame_flag
     if [[ ! ${moredomainame_flag} =~ ^[y,n]$ ]]; then
       echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
@@ -351,7 +351,7 @@ What Are You Doing?
 
   if [ "${moredomainame_flag}" == 'y' ]; then
     while :; do echo
-      read -p "Type domainname or IP(example: example.com other.example.com): " moredomain
+      read -e -p "Type domainname or IP(example: example.com other.example.com): " moredomain
       if [ -z "$(echo ${moredomain} | grep '.*\..*')" ]; then
         echo "${CWARNING}Your ${domain} is invalid! ${CEND}"
       else
@@ -366,7 +366,7 @@ What Are You Doing?
 
     if [ -e "${web_install_dir}/sbin/nginx" ]; then
       while :; do echo
-        read -p "Do you want to redirect from ${moredomain} to ${domain}? [y/n]: " redirect_flag
+        read -e -p "Do you want to redirect from ${moredomain} to ${domain}? [y/n]: " redirect_flag
         if [[ ! ${redirect_flag} =~ ^[y,n]$ ]]; then
           echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
         else
@@ -379,7 +379,7 @@ What Are You Doing?
 
   if [ "${nginx_ssl_flag}" == 'y' ]; then
     while :; do echo
-      read -p "Do you want to redirect all HTTP requests to HTTPS? [y/n]: " https_flag
+      read -e -p "Do you want to redirect all HTTP requests to HTTPS? [y/n]: " https_flag
       if [[ ! ${https_flag} =~ ^[y,n]$ ]]; then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
       else
@@ -407,7 +407,7 @@ What Are You Doing?
 
 Nginx_anti_hotlinking() {
   while :; do echo
-    read -p "Do you want to add hotlink protection? [y/n]: " anti_hotlinking_flag
+    read -e -p "Do you want to add hotlink protection? [y/n]: " anti_hotlinking_flag
     if [[ ! ${anti_hotlinking_flag} =~ ^[y,n]$ ]]; then
       echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
@@ -437,7 +437,7 @@ Nginx_anti_hotlinking() {
 Nginx_rewrite() {
   [ ! -d "${web_install_dir}/conf/rewrite" ] && mkdir ${web_install_dir}/conf/rewrite
   while :; do echo
-    read -p "Allow Rewrite rule? [y/n]: " rewrite_flag
+    read -e -p "Allow Rewrite rule? [y/n]: " rewrite_flag
     if [[ ! "${rewrite_flag}" =~ ^[y,n]$ ]]; then
       echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
@@ -451,7 +451,7 @@ Nginx_rewrite() {
     echo
     echo "Please input the rewrite of programme :"
     echo "${CMSG}wordpress${CEND},${CMSG}opencart${CEND},${CMSG}magento2${CEND},${CMSG}drupal${CEND},${CMSG}joomla${CEND},${CMSG}laravel${CEND},${CMSG}thinkphp${CEND},${CMSG}pathinfo${CEND},${CMSG}discuz${CEND},${CMSG}typecho${CEND},${CMSG}ecshop${CEND},${CMSG}nextcloud${CEND} rewrite was exist."
-    read -p "(Default rewrite: other): " rewrite
+    read -e -p "(Default rewrite: other): " rewrite
     if [ "${rewrite}" == "" ]; then
       rewrite="other"
     fi
@@ -471,7 +471,7 @@ Nginx_rewrite() {
 
 Nginx_log() {
 while :; do echo
-    read -p "Allow Nginx/Tengine/OpenResty access_log? [y/n]: " access_flag
+    read -e -p "Allow Nginx/Tengine/OpenResty access_log? [y/n]: " access_flag
     if [[ ! "${access_flag}" =~ ^[y,n]$ ]]; then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
@@ -542,7 +542,7 @@ EOF
 
   printf "
 #######################################################################
-#       OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+      #
+#       OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+      #
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
@@ -569,7 +569,7 @@ EOF
 
   printf "
 #######################################################################
-#       OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+      #
+#       OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+      #
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
@@ -659,7 +659,7 @@ EOF
 
   printf "
 #######################################################################
-#       OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+      #
+#       OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+      #
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
@@ -672,7 +672,7 @@ EOF
 
 Apache_log() {
   while :; do echo
-    read -p "Allow Apache access_log? [y/n]: " access_flag
+    read -e -p "Allow Apache access_log? [y/n]: " access_flag
     if [[ ! "${access_flag}" =~ ^[y,n]$ ]]; then
       echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
@@ -744,7 +744,7 @@ EOF
 
   printf "
 #######################################################################
-#       OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+      #
+#       OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+      #
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
@@ -839,7 +839,7 @@ EOF
 
   printf "
 #######################################################################
-#       OneinStack for CentOS/RadHat 6+ Debian 7+ and Ubuntu 12+      #
+#       OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+      #
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
@@ -902,7 +902,7 @@ Del_NGX_Vhost() {
       echo "Virtualhost list:"
       echo ${CMSG}${Domain_List}${CEND}
         while :; do echo
-          read -p "Please input a domain you want to delete: " domain
+          read -e -p "Please input a domain you want to delete: " domain
           if [ -z "$(echo ${domain} | grep '.*\..*')" ]; then
             echo "${CWARNING}Your ${domain} is invalid! ${CEND}"
           else
@@ -911,7 +911,7 @@ Del_NGX_Vhost() {
               rm -rf ${web_install_dir}/conf/vhost/${domain}.conf
               ${web_install_dir}/sbin/nginx -s reload
               while :; do echo
-                read -p "Do you want to delete Virtul Host directory? [y/n]: " Del_Vhost_wwwroot_flag
+                read -e -p "Do you want to delete Virtul Host directory? [y/n]: " Del_Vhost_wwwroot_flag
                 if [[ ! ${Del_Vhost_wwwroot_flag} =~ ^[y,n]$ ]]; then
                   echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
                 else
@@ -950,7 +950,7 @@ Del_Apache_Vhost() {
         echo "Virtualhost list:"
         echo ${CMSG}${Domain_List}${CEND}
         while :; do echo
-          read -p "Please input a domain you want to delete: " domain
+          read -e -p "Please input a domain you want to delete: " domain
           if [ -z "$(echo ${domain} | grep '.*\..*')" ]; then
             echo "${CWARNING}Your ${domain} is invalid! ${CEND}"
           else
@@ -959,7 +959,7 @@ Del_Apache_Vhost() {
               rm -rf ${apache_install_dir}/conf/vhost/${domain}.conf
               /etc/init.d/httpd restart
               while :; do echo
-                read -p "Do you want to delete Virtul Host directory? [y/n]: " Del_Vhost_wwwroot_flag
+                read -e -p "Do you want to delete Virtul Host directory? [y/n]: " Del_Vhost_wwwroot_flag
                 if [[ ! ${Del_Vhost_wwwroot_flag} =~ ^[y,n]$ ]]; then
                   echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
                 else
@@ -1002,7 +1002,7 @@ Del_Tomcat_Vhost() {
         echo "Virtualhost list:"
         echo ${CMSG}${Domain_List}${CEND}
         while :; do echo
-          read -p "Please input a domain you want to delete: " domain
+          read -e -p "Please input a domain you want to delete: " domain
           if [ -z "$(echo ${domain} | grep '.*\..*')" ]; then
             echo "${CWARNING}Your ${domain} is invalid! ${CEND}"
           else
@@ -1011,7 +1011,7 @@ Del_Tomcat_Vhost() {
               rm -rf ${tomcat_install_dir}/conf/vhost/${domain}.xml
               /etc/init.d/tomcat restart
               while :; do echo
-                read -p "Do you want to delete Virtul Host directory? [y/n]: " Del_Vhost_wwwroot_flag
+                read -e -p "Do you want to delete Virtul Host directory? [y/n]: " Del_Vhost_wwwroot_flag
                 if [[ ! ${Del_Vhost_wwwroot_flag} =~ ^[y,n]$ ]]; then
                   echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
                 else

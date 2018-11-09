@@ -218,11 +218,10 @@ Config_SS() {
 {
     "server":"0.0.0.0",
     "server_port":${SS_port},
-    "local_address":"127.0.0.1",
     "local_port":1080,
     "password":"${SS_password}",
     "timeout":300,
-    "method":"aes-256-cfb",
+    "method":"aes-256-cfb"
 }
 EOF
 

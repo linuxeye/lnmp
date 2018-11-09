@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/lj2007331/oneinstack
 
-Install_openSSL102() {
+Install_openSSL() {
   if [ ! -e "${openssl_install_dir}/lib/libcrypto.a" ]; then
     pushd ${oneinstack_dir}/src > /dev/null
     tar xzf openssl-${openssl_ver}.tar.gz
@@ -19,11 +19,11 @@ Install_openSSL102() {
     make -j ${THREAD} && make install
     popd
     if [ -f "${openssl_install_dir}/lib/libcrypto.a" ]; then
-      echo "${CSUCCESS}openssl-1.0.2 module installed successfully! ${CEND}"
+      echo "${CSUCCESS}openssl installed successfully! ${CEND}"
       /bin/cp cacert.pem ${openssl_install_dir}/cert.pem
       rm -rf openssl-${openssl_ver}
     else
-      echo "${CFAILURE}openssl-1.0.2 install failed, Please contact the author! ${CEND}"
+      echo "${CFAILURE}openssl failed, Please contact the author! ${CEND}"
       kill -9 $$
     fi
     popd

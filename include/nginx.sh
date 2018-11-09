@@ -15,7 +15,7 @@ Install_Nginx() {
 
   tar xzf pcre-${pcre_ver}.tar.gz
   tar xzf nginx-${nginx_ver}.tar.gz
-  tar xzf openssl-${openssl_ver}.tar.gz
+  tar xzf openssl-${openssl11_ver}.tar.gz
   [ "${Fedora_ver}" == '28' ] && patch -d nginx-${nginx_ver} -p1 < 0001-unix-ngx_user-Apply-fix-for-really-old-bug-in-glibc-.patch
   patch -d nginx-${nginx_ver} -p0 < nginx-auto-cc-gcc.patch
   pushd nginx-${nginx_ver}
@@ -28,12 +28,12 @@ Install_Nginx() {
   sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc
 
   [ ! -d "${nginx_install_dir}" ] && mkdir -p ${nginx_install_dir}
-  ./configure --prefix=${nginx_install_dir} --user=${run_user} --group=${run_user} --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-openssl=../openssl-${openssl_ver} --with-pcre=../pcre-${pcre_ver} --with-pcre-jit --with-ld-opt='-ljemalloc' ${nginx_modules_options}
+  ./configure --prefix=${nginx_install_dir} --user=${run_user} --group=${run_user} --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-openssl=../openssl-${openssl11_ver} --with-pcre=../pcre-${pcre_ver} --with-pcre-jit --with-ld-opt='-ljemalloc' ${nginx_modules_options}
   make -j ${THREAD} && make install
   if [ -e "${nginx_install_dir}/conf/nginx.conf" ]; then
     popd
     rm -rf pcre-${pcre_ver}
-    rm -rf openssl-${openssl_ver}
+    rm -rf openssl-${openssl11_ver}
     rm -rf nginx-${nginx_ver}
     echo "${CSUCCESS}Nginx installed successfully! ${CEND}"
   else

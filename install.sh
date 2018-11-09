@@ -274,7 +274,7 @@ if [ ${ARG_NUM} == 0 ]; then
         #    if [ "${tomcat_option}" == '1' ]; then
         #      while :; do echo
         #        echo 'Please select JDK version:'
-        #        echo -e "\t${CMSG}1${CEND}. Install JDK-10"
+        #        echo -e "\t${CMSG}1${CEND}. Install JDK-11.0"
         #        echo -e "\t${CMSG}2${CEND}. Install JDK-1.8"
         #        read -e -p "Please input a number:(Default 1 press Enter) " jdk_option
         #        [ -z "${jdk_option}" ] && jdk_option=1
@@ -287,7 +287,7 @@ if [ ${ARG_NUM} == 0 ]; then
         #    elif [ "${tomcat_option}" == '2' ]; then
         #      while :; do echo
         #        echo 'Please select JDK version:'
-        #        echo -e "\t${CMSG}1${CEND}. Install JDK-10"
+        #        echo -e "\t${CMSG}1${CEND}. Install JDK-11.0"
         #        echo -e "\t${CMSG}2${CEND}. Install JDK-1.8"
         #        echo -e "\t${CMSG}3${CEND}. Install JDK-1.7"
         #        read -e -p "Please input a number:(Default 2 press Enter) " jdk_option
@@ -664,8 +664,8 @@ IPADDR_COUNTRY=$(./include/get_ipaddr_state.py $PUBLIC_IPADDR)
 # Check download source packages
 . ./include/check_download.sh
 downloadDepsSrc=1
-[ "${PM}" == 'yum' ] && yum -y -q install wget
-[ "${PM}" == 'apt' ] && apt-get -y -q install wget
+[ "${PM}" == 'yum' ] && yum -y -q install wget gcc
+[ "${PM}" == 'apt' ] && apt-get -y -q install wget gcc
 checkDownload 2>&1 | tee -a ${oneinstack_dir}/install.log
 
 # del openssl for jcloud
@@ -709,7 +709,7 @@ fi
 # openSSL
 . ./include/openssl.sh
 if [[ ${tomcat_option} =~ ^[1-4]$ ]] || [[ ${apache_option} =~ ^[1-2]$ ]] || [[ ${php_option} =~ ^[1-7]$ ]]; then
-  Install_openSSL102 | tee -a ${oneinstack_dir}/install.log
+  Install_openSSL | tee -a ${oneinstack_dir}/install.log
 fi
 
 # Database
@@ -896,8 +896,8 @@ esac
 # JDK
 case "${jdk_option}" in
   1)
-    . include/jdk-10.sh
-    Install-JDK10 2>&1 | tee -a ${oneinstack_dir}/install.log
+    . include/jdk-11.0.sh
+    Install-JDK110 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   2)
     . include/jdk-1.8.sh

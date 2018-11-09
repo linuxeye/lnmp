@@ -246,6 +246,8 @@ EOF
       ~/.acme.sh/acme.sh --install-cert -d ${domain} --fullchain-file ${PATH_SSL}/${domain}.crt --key-file ${PATH_SSL}/${domain}.key --reloadcmd "${Command}" > /dev/null
     else
       echo "${CFAILURE}Error: Create Let's Encrypt SSL Certificate failed! ${CEND}"
+      [ -e "${web_install_dir}/conf/vhost/${domain}.conf" ] && rm -f ${web_install_dir}/conf/vhost/${domain}.conf
+      [ -e "${apache_install_dir}/conf/vhost/${domain}.conf" ] && rm -f ${apache_install_dir}/conf/vhost/${domain}.conf
       exit 1
     fi
   fi

@@ -11,7 +11,8 @@
 if [ -e "/usr/bin/yum" ]; then
   PM=yum
   command -v lsb_release >/dev/null 2>&1 || { yum -y install redhat-lsb-core; clear; }
-elif [ -e "/usr/bin/apt-get" ]; then
+fi
+if [ -e "/usr/bin/apt-get" ]; then
   PM=apt
   command -v lsb_release >/dev/null 2>&1 || { apt-get -y update; apt-get -y install lsb-release; clear; }
 fi

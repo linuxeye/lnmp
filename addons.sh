@@ -89,6 +89,7 @@ Install_fail2ban() {
   src_url=http://mirrors.linuxeye.com/oneinstack/src/fail2ban-${fail2ban_ver}.tar.gz && Download_src
   tar xzf fail2ban-${fail2ban_ver}.tar.gz
   pushd fail2ban-${fail2ban_ver}
+  sed -i 's@for i in xrange(50)@for i in range(50)@' fail2ban/__init__.py
   ${python_install_dir}/bin/python setup.py install
   if [ "${PM}" == 'yum' ]; then
     LOGPATH=/var/log/secure

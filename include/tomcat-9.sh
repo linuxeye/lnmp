@@ -36,15 +36,15 @@ Install_Tomcat9() {
   fi
 
   /bin/cp catalina-jmx-remote.jar ${tomcat_install_dir}/lib
-  [ ! -d "${tomcat_install_dir}/lib/catalina" ] &&  mkdir ${tomcat_install_dir}/lib/catalina
-  pushd ${tomcat_install_dir}/lib/catalina
-  jar xf ../catalina.jar
-  sed -i 's@^server.info=.*@server.info=Tomcat@' org/apache/catalina/util/ServerInfo.properties
-  sed -i 's@^server.number=.*@server.number=9@' org/apache/catalina/util/ServerInfo.properties
-  sed -i "s@^server.built=.*@server.built=$(date)@" org/apache/catalina/util/ServerInfo.properties
-  jar cf ../catalina.jar ./*
-  popd
-  rm -rf ${tomcat_install_dir}/lib/catalina
+  #[ ! -d "${tomcat_install_dir}/lib/catalina" ] && mkdir ${tomcat_install_dir}/lib/catalina
+  #pushd ${tomcat_install_dir}/lib/catalina
+  #jar xf ../catalina.jar
+  #sed -i 's@^server.info=.*@server.info=Tomcat@' org/apache/catalina/util/ServerInfo.properties
+  #sed -i 's@^server.number=.*@server.number=9@' org/apache/catalina/util/ServerInfo.properties
+  #sed -i "s@^server.built=.*@server.built=$(date)@" org/apache/catalina/util/ServerInfo.properties
+  #jar cf ../catalina.jar ./*
+  #popd
+  #rm -rf ${tomcat_install_dir}/lib/catalina
 
   pushd ${tomcat_install_dir}/bin
   tar xzf tomcat-native.tar.gz

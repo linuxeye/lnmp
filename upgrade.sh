@@ -44,14 +44,14 @@ IPADDR_COUNTRY=$(./include/get_ipaddr_state.py $PUBLIC_IPADDR)
 Usage(){
   printf "
 Usage: $0 [ ${CMSG}web${CEND} | ${CMSG}db${CEND} | ${CMSG}php${CEND} | ${CMSG}redis${CEND} | ${CMSG}memcached${CEND} | ${CMSG}phpmyadmin${CEND} | ${CMSG}oneinstack${CEND} | ${CMSG}acme.sh${CEND} ]
-${CMSG}web${CEND}            --->Upgrade Nginx/Tengine/OpenResty/Apache
-${CMSG}db${CEND}             --->Upgrade MySQL/MariaDB/Percona
-${CMSG}php${CEND}            --->Upgrade PHP
-${CMSG}redis${CEND}          --->Upgrade Redis
-${CMSG}memcached${CEND}      --->Upgrade Memcached
-${CMSG}phpmyadmin${CEND}     --->Upgrade phpMyAdmin
-${CMSG}oneinstack${CEND}     --->Upgrade OneinStack
-${CMSG}acme.sh${CEND}        --->Upgrade acme.sh
+${CMSG}web${CEND} [nginx|tengine|openresty|apache|tomcat] ->Upgrade Nginx/Tengine/OpenResty/Apache/Tomcat
+${CMSG}db${CEND}                                          ->Upgrade MySQL/MariaDB/Percona
+${CMSG}php${CEND}                                         ->Upgrade PHP
+${CMSG}redis${CEND}                                       ->Upgrade Redis
+${CMSG}memcached${CEND}                                   ->Upgrade Memcached
+${CMSG}phpmyadmin${CEND}                                  ->Upgrade phpMyAdmin
+${CMSG}oneinstack${CEND}                                  ->Upgrade OneinStack
+${CMSG}acme.sh${CEND}                                     ->Upgrade acme.sh
 
 "
 }
@@ -60,7 +60,7 @@ Menu(){
   while :; do
     printf "
 What Are You Doing?
-\t${CMSG}1${CEND}. Upgrade Nginx/Tengine/OpenResty/Apache
+\t${CMSG}1${CEND}. Upgrade Nginx/Tengine/OpenResty/Apache/Tomcat
 \t${CMSG}2${CEND}. Upgrade MySQL/MariaDB/Percona
 \t${CMSG}3${CEND}. Upgrade PHP
 \t${CMSG}4${CEND}. Upgrade Redis
@@ -77,15 +77,11 @@ What Are You Doing?
     else
       case "${Upgrade_flag}" in
         1)
-          if [ -e "$nginx_install_dir/sbin/nginx" ]; then
-            Upgrade_Nginx
-          elif [ -e "$tengine_install_dir/sbin/nginx" ]; then
-            Upgrade_Tengine
-          elif [ -e "$openresty_install_dir/nginx/sbin/nginx" ]; then
-            Upgrade_OpenResty
-          elif [ -e "${apache_install_dir}/conf/httpd.conf" ]; then
-            Upgrade_Apache
-          fi
+          [ -e "${nginx_install_dir}/sbin/nginx" ] && Upgrade_Nginx
+          [ -e "${tengine_install_dir}/sbin/nginx" ] && Upgrade_Tengine
+          [ -e "${openresty_install_dir}/nginx/sbin/nginx" ] && Upgrade_OpenResty
+          [ -e "${apache_install_dir}/conf/httpd.conf" ] && Upgrade_Apache
+          [ -e "${tomcat_install_dir}/conf/server.xml" ] && Upgrade_Tomcat
           ;;
         2)
           Upgrade_DB
@@ -118,18 +114,29 @@ What Are You Doing?
 
 if [ $# == 0 ]; then
   Menu
-elif [ $# == 1 ]; then
+elif [ $# -ge 1 ] && [ $# -le 2 ]; then
   case $1 in
     web)
-      if [ -e "$nginx_install_dir/sbin/nginx" ]; then
-        Upgrade_Nginx
-      elif [ -e "$tengine_install_dir/sbin/nginx" ]; then
-        Upgrade_Tengine
-      elif [ -e "$openresty_install_dir/nginx/sbin/nginx" ]; then
-        Upgrade_OpenResty
-      elif [ -e "${apache_install_dir}/conf/httpd.conf" ]; then
-        Upgrade_Apache
-      fi
+      case $2 in
+        nginx)
+          Upgrade_Nginx
+          ;;
+        tengine)
+          Upgrade_Tengine
+          ;;
+        openresty)
+          Upgrade_OpenResty
+          ;;
+        apache)
+          Upgrade_Apache
+          ;;
+        tomcat)
+          Upgrade_Tomcat
+          ;;
+        *)
+          Usage
+          ;;
+      esac
       ;;
     db)
       Upgrade_DB

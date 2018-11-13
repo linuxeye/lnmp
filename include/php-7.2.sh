@@ -23,7 +23,7 @@ Install_PHP72() {
   if [ ! -e "${curl_install_dir}/lib/libcurl.la" ]; then
     tar xzf curl-${curl_ver}.tar.gz
     pushd curl-${curl_ver}
-    ./configure --prefix=${curl_install_dir} --with-ssl=${openssl_install_dir}
+    ./configure -Wl,-rpath=${curl_install_dir}/lib --prefix=${curl_install_dir} --with-ssl=${openssl_install_dir}
     make -j ${THREAD} && make install
     popd
     rm -rf curl-${curl_ver}

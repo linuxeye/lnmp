@@ -1,7 +1,7 @@
 # newest software version
 # Web
 nginx_ver=1.14.1
-tengine_ver=2.2.2
+tengine_ver=2.2.3
 openresty_ver=1.13.6.2
 openssl11_ver=1.1.1
 openssl_ver=1.0.2p
@@ -79,7 +79,7 @@ xdebug_ver=2.6.1
 pureftpd_ver=1.0.47
 
 # Redis
-redis_ver=5.0.0
+redis_ver=5.0.1
 redis_pecl_ver=4.1.1
 
 # Memcached

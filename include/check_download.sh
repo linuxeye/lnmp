@@ -107,7 +107,7 @@ checkDownload() {
 
   if [ "${db_yn}" == 'y' ]; then
     if [[ "${db_option}" =~ ^[1,2,5,6,9]$ ]] && [ "${dbinstallmethod}" == "2" ]; then
-      [[ "${db_option}" =~ ^[2,5,6,9]$ ]] && boost_ver=${boost_oldver} 
+      [[ "${db_option}" =~ ^[2,5,6,9]$ ]] && boost_ver=${boost_oldver}
       echo "Download boost..."
       [ "${IPADDR_COUNTRY}"x == "CN"x ] && DOWN_ADDR_BOOST=${mirrorLink} || DOWN_ADDR_BOOST=http://downloads.sourceforge.net/project/boost/boost/${boost_ver}
       boostVersion2=$(echo ${boost_ver} | awk -F. '{print $1"_"$2"_"$3}')
@@ -116,7 +116,7 @@ checkDownload() {
 
     case "${db_option}" in
       1)
-        # MySQL 8.0 
+        # MySQL 8.0
         if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
           DOWN_ADDR_MYSQL=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-8.0
           DOWN_ADDR_MYSQL_BK=http://mirrors.huaweicloud.com/repository/toolkit/mysql/Downloads/MySQL-8.0
@@ -725,6 +725,15 @@ checkDownload() {
       src_url=https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_armv7l.tar.gz && Download_src
     else
       src_url=https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_${SYS_BIT_d}.tar.gz && Download_src
+    fi
+  fi
+
+  if [ "${sourceguardian_yn}" == 'y' ]; then
+    echo "Download SourceGuardian..."
+    if [ "${TARGET_ARCH}" == "armv8" ]; then
+      src_url=https://www.sourceguardian.com/loaders/download/loaders.linux-aarch64.tar.gz && Download_src
+    else
+      src_url=${mirrorLink}/loaders.linux-${SYS_BIT_c}.tar.gz && Download_src
     fi
   fi
 

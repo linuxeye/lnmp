@@ -10,7 +10,7 @@ Script properties:
 - Providing multiple PHP versions (PHP-7.2, PHP-7.1, PHP-7.0, PHP-5.6, PHP-5.5, PHP-5.4, PHP-5.3)
 - Provide Nginx, Tengine, OpenResty and ngx_lua_waf
 - Providing a plurality of Apache version (Apache-2.4, Apache-2.2)
-- According to their needs to install PHP Cache Accelerator provides ZendOPcache, xcache, apcu, eAccelerator. And php encryption and decryption tool ionCube, ZendGuardLoader, swoole, xdebug, Composer
+- According to their needs to install PHP Cache Accelerator provides ZendOPcache, xcache, apcu, eAccelerator. And php encryption and decryption tool ionCube, ZendGuardLoader, SourceGuardian, swoole, xdebug, Composer
 - Installation Pureftpd, phpMyAdmin according to their needs
 - Install memcached, redis according to their needs
 - Jemalloc optimize MySQL, Nginx

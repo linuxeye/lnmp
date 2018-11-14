@@ -92,5 +92,5 @@ Install_ionCube() {
 
   echo "zend_extension=${zend_extension}" > ${php_install_dir}/etc/php.d/00-ioncube.ini
   rm -rf ioncube
-  popd
+  popd > /dev/null
 }

@@ -43,6 +43,7 @@ IPADDR_COUNTRY=$(./include/get_ipaddr_state.py $PUBLIC_IPADDR)
 
 . ./include/ZendGuardLoader.sh
 . ./include/ioncube.sh
+. ./include/sourceguardian.sh
 
 . ./include/ImageMagick.sh
 . ./include/GraphicsMagick.sh
@@ -169,16 +170,16 @@ while :;do
   printf "
 What Are You Doing?
 \t${CMSG} 1${CEND}. Install/Uninstall PHP opcode cache
-\t${CMSG} 2${CEND}. Install/Uninstall ZendGuardLoader/ionCube PHP Extension
+\t${CMSG} 2${CEND}. Install/Uninstall ZendGuardLoader/ionCube/SourceGuardian PHP Extension
 \t${CMSG} 3${CEND}. Install/Uninstall ImageMagick/GraphicsMagick PHP Extension
-\t${CMSG} 4${CEND}. Install/Uninstall fileinfo/imap PHP Extension
+\t${CMSG} 4${CEND}. Install/Uninstall fileinfo/imap/phalcon PHP Extension
 \t${CMSG} 5${CEND}. Install/Uninstall memcached/memcache
 \t${CMSG} 6${CEND}. Install/Uninstall Redis
 \t${CMSG} 7${CEND}. Install/Uninstall swoole PHP Extension
 \t${CMSG} 8${CEND}. Install/Uninstall xdebug PHP Extension
 \t${CMSG} 9${CEND}. Install/Uninstall PHP Composer
 \t${CMSG}10${CEND}. Install/Uninstall fail2ban
-\t${CMSG}11${CEND}. Install/Uninstall ngx_lua_waf 
+\t${CMSG}11${CEND}. Install/Uninstall ngx_lua_waf
 \t${CMSG} q${CEND}. Exit
 "
   read -e -p "Please input the correct option: " Number
@@ -270,16 +271,18 @@ What Are You Doing?
       2)
         ACTION_FUN
         while :; do echo
-          echo "Please select ZendGuardLoader/ionCube:"
+          echo "Please select ZendGuardLoader/ionCube/SourceGuardian:"
           echo -e "\t${CMSG}1${CEND}. ZendGuardLoader"
           echo -e "\t${CMSG}2${CEND}. ionCube Loader"
+          echo -e "\t${CMSG}3${CEND}. SourceGuardian"
           read -e -p "Please input a number:(Default 1 press Enter) " Loader
           [ -z "${Loader}" ] && Loader=1
-          if [[ ! "${Loader}" =~ ^[1,2]$ ]]; then
-            echo "${CWARNING}input error! Please only input number 1~2${CEND}"
+          if [[ ! "${Loader}" =~ ^[1-3]$ ]]; then
+            echo "${CWARNING}input error! Please only input number 1~3${CEND}"
           else
             [ "${Loader}" = '1' ] && PHP_extension=ZendGuardLoader
             [ "${Loader}" = '2' ] && PHP_extension=ioncube
+            [ "${Loader}" = '3' ] && PHP_extension=sourceguardian
             break
           fi
         done
@@ -298,6 +301,14 @@ What Are You Doing?
               ioncube_yn='y' && checkDownload
               Install_ionCube
               Restart_PHP; echo "${CSUCCESS}PHP ioncube module installed successfully! ${CEND}";
+            else
+              echo; echo "${CWARNING}Your php ${PHP_detail_ver} or platform ${TARGET_ARCH} does not support ${PHP_extension}! ${CEND}";
+            fi
+          elif [ "${Loader}" = '3' ]; then
+            if [[ "${PHP_main_ver}" =~ ^5.[3-6]$|^7.[0-2]$ ]] || [ "${TARGET_ARCH}" != "armv8" ]; then
+              sourceguardian_yn='y' && checkDownload
+              Install_SourceGuardian
+              Restart_PHP; echo "${CSUCCESS}PHP SourceGuardian module installed successfully! ${CEND}";
             else
               echo; echo "${CWARNING}Your php ${PHP_detail_ver} or platform ${TARGET_ARCH} does not support ${PHP_extension}! ${CEND}";
             fi
@@ -343,13 +354,14 @@ What Are You Doing?
       4)
         ACTION_FUN
         while :; do echo
-          echo "Please select fileinfo/imap:"
+          echo "Please select fileinfo/imap/phalcon:"
           echo -e "\t${CMSG}1${CEND}. fileinfo"
           echo -e "\t${CMSG}2${CEND}. imap"
+          echo -e "\t${CMSG}3${CEND}. phalcon"
           read -e -p "Please input a number:(Default 1 press Enter) " phpext_option
           [ -z "${phpext_option}" ] && phpext_option=1
-          if [[ ! "${phpext_option}" =~ ^[1,2]$ ]]; then
-            echo "${CWARNING}input error! Please only input number 1~2${CEND}"
+          if [[ ! "${phpext_option}" =~ ^[1-3]$ ]]; then
+            echo "${CWARNING}input error! Please only input number 1~3${CEND}"
           else
             if [ "${phpext_option}" = '1' ]; then
               PHP_extension=fileinfo
@@ -362,6 +374,8 @@ What Are You Doing?
               else
                 apt-get -y install libc-client2007e-dev
               fi
+            elif [ "${phpext_option}" = '3' ]; then
+              PHP_extension=phalcon
             fi
             break
           fi
@@ -370,15 +384,29 @@ What Are You Doing?
         if [ "${ACTION}" = '1' ]; then
           Check_PHP_Extension
           pushd ${oneinstack_dir}/src > /dev/null
-          src_url=http://www.php.net/distributions/php-${PHP_detail_ver}.tar.gz && Download_src
-          tar xzf php-${PHP_detail_ver}.tar.gz
-          pushd php-${PHP_detail_ver}/ext/${PHP_extension}
-          ${php_install_dir}/bin/phpize
-          ./configure --with-php-config=${php_install_dir}/bin/php-config ${IMAP_ARGS}
-          make -j ${THREAD} && make install
-          popd;popd
-          rm -rf php-${PHP_detail_ver}
-          echo "extension=${PHP_extension}.so" > ${php_install_dir}/etc/php.d/04-${PHP_extension}.ini
+          if [[ "${phpext_option}" =~ ^[1-2]$ ]]; then
+            src_url=http://www.php.net/distributions/php-${PHP_detail_ver}.tar.gz && Download_src
+            tar xzf php-${PHP_detail_ver}.tar.gz
+            pushd php-${PHP_detail_ver}/ext/${PHP_extension}
+            ${php_install_dir}/bin/phpize
+            ./configure --with-php-config=${php_install_dir}/bin/php-config ${IMAP_ARGS}
+            make -j ${THREAD} && make install
+            popd
+            rm -rf php-${PHP_detail_ver}
+          elif [ "${phpext_option}" = '3' ]; then
+            if [[ "${PHP_main_ver}" =~ ^5.[5-6]$|^7.[0-2]$ ]]; then
+              src_url=http://mirrors.linuxeye.com/oneinstack/src/cphalcon-${phalcon_ver}.tar.gz && Download_src
+              tar xzf cphalcon-${phalcon_ver}.tar.gz
+              pushd cphalcon-${phalcon_ver}/build
+              ./install --phpize ${php_install_dir}/bin/phpize --php-config ${php_install_dir}/bin/php-config --arch ${OS_BIT}bits
+              popd
+              rm -rf cphalcon-${phalcon_ver}
+            else
+              echo; echo "${CWARNING}Your php ${PHP_detail_ver} does not support ${PHP_extension}! ${CEND}";
+            fi
+          fi
+          popd
+          [ -f "${phpExtensionDir}/${PHP_extension}.so" ] && echo "extension=${PHP_extension}.so" > ${php_install_dir}/etc/php.d/04-${PHP_extension}.ini
           Check_succ
         else
           Uninstall_succ

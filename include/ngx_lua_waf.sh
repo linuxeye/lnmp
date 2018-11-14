@@ -32,15 +32,15 @@ Nginx_lua_waf() {
   ${nginx_install_dir}/sbin/nginx -V &> $$
   nginx_configure_args_tmp=`cat $$ | grep 'configure arguments:' | awk -F: '{print $2}'`
   rm -rf $$
-  nginx_configure_args=`echo ${nginx_configure_args_tmp} | sed "s@--with-openssl=../openssl-...... @--with-openssl=../openssl-${openssl_ver} @" | sed "s@--with-pcre=../pcre-.... @--with-pcre=../pcre-${pcre_ver} @"`
+  nginx_configure_args=`echo ${nginx_configure_args_tmp} | sed "s@--with-openssl=../openssl-...... @--with-openssl=../openssl-${openssl11_ver} @" | sed "s@--with-pcre=../pcre-.... @--with-pcre=../pcre-${pcre_ver} @"`
   if [ -z "`echo ${nginx_configure_args} | grep lua-nginx-module`" ]; then
     src_url=http://nginx.org/download/nginx-${nginx_ver}.tar.gz && Download_src
-    src_url=https://www.openssl.org/source/openssl-${openssl_ver}.tar.gz && Download_src
+    src_url=https://www.openssl.org/source/openssl-${openssl11_ver}.tar.gz && Download_src
     src_url=http://mirrors.linuxeye.com/oneinstack/src/pcre-${pcre_ver}.tar.gz && Download_src
     src_url=http://mirrors.linuxeye.com/oneinstack/src/ngx_devel_kit.tar.gz && Download_src
     src_url=http://mirrors.linuxeye.com/oneinstack/src/lua-nginx-module.tar.gz && Download_src
     tar xzf nginx-${nginx_ver}.tar.gz
-    tar xzf openssl-${openssl_ver}.tar.gz
+    tar xzf openssl-${openssl11_ver}.tar.gz
     tar xzf pcre-${pcre_ver}.tar.gz
     tar xzf ngx_devel_kit.tar.gz
     tar xzf lua-nginx-module.tar.gz

@@ -12,13 +12,13 @@ Install_XCache() {
   pushd ${oneinstack_dir}/src > /dev/null
   phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
   tar xzf xcache-${xcache_ver}.tar.gz
-  pushd xcache-${xcache_ver}
+  pushd xcache-${xcache_ver} > /dev/null
   ${php_install_dir}/bin/phpize
   ./configure --enable-xcache --enable-xcache-coverager --enable-xcache-optimizer --with-php-config=${php_install_dir}/bin/php-config
   make -j ${THREAD} && make install
   if [ -f "${phpExtensionDir}/xcache.so" ]; then
     /bin/cp -R htdocs ${wwwroot_dir}/default/xcache
-    popd
+    popd > /dev/null
     chown -R ${run_user}.${run_user} ${wwwroot_dir}/default/xcache
     touch /tmp/xcache;chown ${run_user}.${run_user} /tmp/xcache
     let xcacheCount="${CPU}+1"
@@ -65,5 +65,5 @@ EOF
   else
     echo "${CFAILURE}Xcache module install failed, Please contact the author! ${CEND}"
   fi
-  popd
+  popd > /dev/null 
 }

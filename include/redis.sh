@@ -44,7 +44,7 @@ Install_redis-server() {
       /bin/cp ../init.d/Redis-server-init /etc/init.d/redis-server
       sed -i "s@/usr/local/redis@${redis_install_dir}@g" /etc/init.d/redis-server
       [ "${PM}" == 'yum' ] && { cc start-stop-daemon.c -o /sbin/start-stop-daemon; chkconfig --add redis-server; chkconfig redis-server on; }
-      [ "${PM}" == 'apt' ] && update-rc.d redis-server defaults
+      [ "${PM}" == 'apt-get' ] && update-rc.d redis-server defaults
     fi
     #[ -z "`grep 'vm.overcommit_memory' /etc/sysctl.conf`" ] && echo 'vm.overcommit_memory = 1' >> /etc/sysctl.conf
     #sysctl -p
@@ -57,23 +57,23 @@ Install_redis-server() {
   popd
 }
 
-Install_php-redis() {
+Install_pecl-redis() {
   pushd ${oneinstack_dir}/src > /dev/null
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
-    tar xzf redis-${redis_pecl_ver}.tgz
-    pushd redis-${redis_pecl_ver}
+    tar xzf redis-${pecl_redis_ver}.tgz
+    pushd redis-${pecl_redis_ver} > /dev/null
     ${php_install_dir}/bin/phpize
     ./configure --with-php-config=${php_install_dir}/bin/php-config
     make -j ${THREAD} && make install
+    popd > /dev/null
     if [ -f "${phpExtensionDir}/redis.so" ]; then
       echo 'extension=redis.so' > ${php_install_dir}/etc/php.d/05-redis.ini
       echo "${CSUCCESS}PHP Redis module installed successfully! ${CEND}"
-      popd
-      rm -rf redis-${redis_pecl_ver}
+      rm -rf redis-${pecl_redis_ver}
     else
       echo "${CFAILURE}PHP Redis module install failed, Please contact the author! ${CEND}"
     fi
   fi
-  popd
+  popd > /dev/null
 }

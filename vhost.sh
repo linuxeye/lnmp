@@ -186,7 +186,7 @@ If you enter '.', the field will be left blank.
         echo "Syntax: export Key1=Value1 ; export Key2=Value1"
         read -e -p "Please enter your dnsapi parameters: " DNS_PAR
         echo
-        eval $DNS_PAR
+        eval ${DNS_PAR}
         if [ $? == 0 ]; then
           break
         else
@@ -220,7 +220,7 @@ If you enter '.', the field will be left blank.
 </Directory>
 </VirtualHost>
 EOF
-        /etc/init.d/httpd restart > /dev/null
+        ${apache_install_dir}/bin/apachectl -k graceful
       fi
       auth_file="`< /dev/urandom tr -dc A-Za-z0-9 | head -c8`".html
       auth_str='oneinstack'; echo ${auth_str} > ${vhostdir}/${auth_file}
@@ -234,14 +234,15 @@ EOF
       ~/.acme.sh/acme.sh --issue -d ${domain} ${moredomainame_D} -w ${vhostdir}
     fi
     if [ -s ~/.acme.sh/${domain}/fullchain.cer ]; then
-      [ -e "${PATH_SSL}/${domain}.crt" ] && rm -rf ${PATH_SSL}/${domain}.{crt,key}
+      [ -e "${PATH_SSL}/${domain}.crt" ] && rm -f ${PATH_SSL}/${domain}.{crt,key}
       [ -e /bin/systemctl -a -e /lib/systemd/system/nginx.service ] && Nginx_cmd='/bin/systemctl restart nginx' || Nginx_cmd='/etc/init.d/nginx force-reload'
+      Apache_cmd="${apache_install_dir}/bin/apachectl -k graceful"
       if [ -e "${web_install_dir}/sbin/nginx" -a -e "${apache_install_dir}/conf/httpd.conf" ]; then
-        Command="${Nginx_cmd};/etc/init.d/httpd graceful"
+        Command="${Nginx_cmd};${Apache_cmd}"
       elif [ -e "${web_install_dir}/sbin/nginx" -a ! -e "${apache_install_dir}/conf/httpd.conf" ]; then
         Command="${Nginx_cmd}"
       elif [ ! -e "${web_install_dir}/sbin/nginx" -a -e "${apache_install_dir}/conf/httpd.conf" ]; then
-        Command="/etc/init.d/httpd graceful"
+        Command="${Apache_cmd}"
       fi
       ~/.acme.sh/acme.sh --install-cert -d ${domain} --fullchain-file ${PATH_SSL}/${domain}.crt --key-file ${PATH_SSL}/${domain}.key --reloadcmd "${Command}" > /dev/null
     else
@@ -295,11 +296,11 @@ What Are You Doing?
     if [ -e "${web_install_dir}/sbin/nginx" ]; then
       nginx_ssl_flag=y
       PATH_SSL=${web_install_dir}/conf/ssl
-      [ ! -d "${PATH_SSL}" ] && mkdir ${PATH_SSL};
+      [ ! -d "${PATH_SSL}" ] && mkdir ${PATH_SSL}
     elif [ ! -e "${web_install_dir}/sbin/nginx" -a -e "${apache_install_dir}/bin/apachectl" ]; then
       apache_ssl_flag=y
       PATH_SSL=${apache_install_dir}/conf/ssl
-      [ ! -d "${PATH_SSL}" ] && mkdir ${PATH_SSL};
+      [ ! -d "${PATH_SSL}" ] && mkdir ${PATH_SSL}
     fi
   elif [ "${Domian_Mode}" == 'q' ]; then
     exit 1
@@ -431,8 +432,6 @@ Nginx_anti_hotlinking() {
     fi
     domain_allow_all=`echo ${domain_allow_all} | tr ' ' '\n' | awk '!a[$1]++' | xargs`
     anti_hotlinking=$(echo -e "location ~ .*\.(wma|wmv|asf|mp3|mmf|zip|rar|jpg|gif|png|swf|flv|mp4)$ {\n    valid_referers none blocked ${domain_allow_all};\n    if (\$invalid_referer) {\n        return 403;\n    }\n  }")
-  else
-    anti_hotlinking=
   fi
 }
 
@@ -472,20 +471,20 @@ Nginx_rewrite() {
 }
 
 Nginx_log() {
-while :; do echo
+  while :; do echo
     read -e -p "Allow Nginx/Tengine/OpenResty access_log? [y/n]: " access_flag
     if [[ ! "${access_flag}" =~ ^[y,n]$ ]]; then
-        echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
+      echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
-        break
+      break
     fi
-done
-if [ "${access_flag}" == 'n' ]; then
-    N_log="access_log off;"
-else
-    N_log="access_log ${wwwlogs_dir}/${domain}_nginx.log combined;"
+  done
+  if [ "${access_flag}" == 'n' ]; then
+    Nginx_log="access_log off;"
+  else
+    Nginx_log="access_log ${wwwlogs_dir}/${domain}_nginx.log combined;"
     echo "You access log file=${CMSG}${wwwlogs_dir}/${domain}_nginx.log${CEND}"
-fi
+  fi
 }
 
 Create_nginx_tomcat_conf() {
@@ -494,7 +493,7 @@ Create_nginx_tomcat_conf() {
 server {
   ${Nginx_conf}
   server_name ${domain}${moredomainame};
-  ${N_log}
+  ${Nginx_log}
   index index.html index.htm index.jsp;
   root ${vhostdir};
   ${Nginx_redirect}
@@ -537,7 +536,7 @@ EOF
     ${web_install_dir}/sbin/nginx -s reload
     /etc/init.d/tomcat restart
   else
-    rm -rf ${web_install_dir}/conf/vhost/${domain}.conf
+    rm -f ${web_install_dir}/conf/vhost/${domain}.conf
     echo "Create virtualhost ... [${CFAILURE}FAILED${CEND}]"
     exit 1
   fi
@@ -587,7 +586,7 @@ Create_nginx_php-fpm_hhvm_conf() {
 server {
   ${Nginx_conf}
   server_name ${domain}${moredomainame};
-  ${N_log}
+  ${Nginx_log}
   index index.html index.htm index.php;
   root ${vhostdir};
   ${Nginx_redirect}
@@ -616,7 +615,7 @@ EOF
     /bin/cp config/${rewrite}.conf ${web_install_dir}/conf/vhost/${domain}.conf
     sed -i "s@^  set \$MAGE_ROOT.*;@  set \$MAGE_ROOT ${vhostdir};@" ${web_install_dir}/conf/vhost/${domain}.conf
     sed -i "s@^  server_name.*;@  server_name ${domain}${moredomainame};@" ${web_install_dir}/conf/vhost/${domain}.conf
-    sed -i "s@^  server_name.*;@&\n  ${N_log}@" ${web_install_dir}/conf/vhost/${domain}.conf
+    sed -i "s@^  server_name.*;@&\n  ${Nginx_log}@" ${web_install_dir}/conf/vhost/${domain}.conf
     [ "${NGX_FLAG}" == 'hhvm' ] && sed -i 's@fastcgi_pass unix:.*;@fastcgi_pass unix:/var/log/hhvm/sock;@g' ${web_install_dir}/conf/vhost/${domain}.conf
     if [ "${anti_hotlinking_flag}" == 'y' ]; then
       sed -i "s@^  root.*;@&\n  }@" ${web_install_dir}/conf/vhost/${domain}.conf
@@ -654,7 +653,7 @@ EOF
     echo "Reload Nginx......"
     ${web_install_dir}/sbin/nginx -s reload
   else
-    rm -rf ${web_install_dir}/conf/vhost/${domain}.conf
+    rm -f ${web_install_dir}/conf/vhost/${domain}.conf
     echo "Create virtualhost ... [${CFAILURE}FAILED${CEND}]"
     exit 1
   fi
@@ -683,15 +682,20 @@ Apache_log() {
   done
 
   if [ "${access_flag}" == 'n' ]; then
-    A_log='CustomLog "/dev/null" common'
+    Apache_log='CustomLog "/dev/null" common'
   else
-    A_log="CustomLog \"${wwwlogs_dir}/${domain}_apache.log\" common"
+    Apache_log="CustomLog \"${wwwlogs_dir}/${domain}_apache.log\" common"
     echo "You access log file=${wwwlogs_dir}/${domain}_apache.log"
   fi
 }
 
 Create_apache_conf() {
-  [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '4' ] && R_TMP='Require all granted' || R_TMP=
+  if [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '4' ]; then
+    Apache_grant='Require all granted'
+    if [ -e "/dev/shm/php-cgi.sock" ] && [ -n "`grep -E ^LoadModule.*mod_proxy_fcgi.so ${apache_install_dir}/conf/httpd.conf`" ]; then
+      Apache_fcgi=$(echo -e "<Files ~ (\\.user.ini|\\.htaccess|\\.git|\\.svn|\\.project|LICENSE|README.md)\$>\n    Order allow,deny\n    Deny from all\n  </Files>\n  <FilesMatch \\.php\$>\n    SetHandler \"proxy:unix:/dev/shm/php-cgi.sock|fcgi://localhost\"\n  </FilesMatch>")
+    fi
+  fi
   [ ! -d ${apache_install_dir}/conf/vhost ] && mkdir ${apache_install_dir}/conf/vhost
   cat > ${apache_install_dir}/conf/vhost/${domain}.conf << EOF
 <VirtualHost *:80>
@@ -700,11 +704,12 @@ Create_apache_conf() {
   ServerName ${domain}
   ${Apache_Domain_alias}
   ErrorLog "${wwwlogs_dir}/${domain}_error_apache.log"
-  ${A_log}
+  ${Apache_log}
+  ${Apache_fcgi}
 <Directory "${vhostdir}">
   SetOutputFilter DEFLATE
   Options FollowSymLinks ExecCGI
-  ${R_TMP}
+  ${Apache_grant}
   AllowOverride All
   Order allow,deny
   Allow from all
@@ -720,11 +725,12 @@ EOF
   ${Apache_Domain_alias}
   ${Apache_SSL}
   ErrorLog "${wwwlogs_dir}/${domain}_error_apache.log"
-  ${A_log}
+  ${Apache_log}
+  ${Apache_fcgi}
 <Directory "${vhostdir}">
   SetOutputFilter DEFLATE
   Options FollowSymLinks ExecCGI
-  ${R_TMP}
+  ${Apache_grant}
   AllowOverride All
   Order allow,deny
   Allow from all
@@ -737,9 +743,9 @@ EOF
   ${apache_install_dir}/bin/apachectl -t
   if [ $? == 0 ]; then
     echo "Restart Apache......"
-    /etc/init.d/httpd restart
+    ${apache_install_dir}/bin/apachectl -k graceful
   else
-    rm -rf ${apache_install_dir}/conf/vhost/${domain}.conf
+    rm -f ${apache_install_dir}/conf/vhost/${domain}.conf
     echo "Create virtualhost ... [${CFAILURE}FAILED${CEND}]"
     exit 1
   fi
@@ -763,7 +769,7 @@ Create_nginx_apache_mod-php_conf() {
 server {
   ${Nginx_conf}
   server_name ${domain}${moredomainame};
-  ${N_log}
+  ${Nginx_log}
   index index.html index.htm index.php;
   root ${vhostdir};
   ${Nginx_redirect}
@@ -801,12 +807,17 @@ EOF
     echo "Reload Nginx......"
     ${web_install_dir}/sbin/nginx -s reload
   else
-    rm -rf ${web_install_dir}/conf/vhost/${domain}.conf
+    rm -f ${web_install_dir}/conf/vhost/${domain}.conf
     echo "Create virtualhost ... [${CFAILURE}FAILED${CEND}]"
   fi
 
   # Apache
-  [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '4' ] && R_TMP="Require all granted" || R_TMP=
+  if [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '4' ];then
+    Apache_grant="Require all granted"
+    if [ -e "/dev/shm/php-cgi.sock" ] && [ -n "`grep -E ^LoadModule.*mod_proxy_fcgi.so ${apache_install_dir}/conf/httpd.conf`" ]; then
+      Apache_fcgi=$(echo -e "<Files ~ (\\.user.ini|\\.htaccess|\\.git|\\.svn|\\.project|LICENSE|README.md)\$>\n    Order allow,deny\n    Deny from all\n  </Files>\n  <FilesMatch \\.php\$>\n    SetHandler \"proxy:unix:/dev/shm/php-cgi.sock|fcgi://localhost\"\n  </FilesMatch>")
+    fi
+  fi
   [ ! -d ${apache_install_dir}/conf/vhost ] && mkdir ${apache_install_dir}/conf/vhost
   cat > ${apache_install_dir}/conf/vhost/${domain}.conf << EOF
 <VirtualHost *:88>
@@ -816,11 +827,12 @@ EOF
   ${Apache_Domain_alias}
   ${Apache_SSL}
   ErrorLog "${wwwlogs_dir}/${domain}_error_apache.log"
-  ${A_log}
+  ${Apache_log}
+  ${Apache_fcgi}
 <Directory "${vhostdir}">
   SetOutputFilter DEFLATE
   Options FollowSymLinks ExecCGI
-  ${R_TMP}
+  ${Apache_grant}
   AllowOverride All
   Order allow,deny
   Allow from all
@@ -833,9 +845,9 @@ EOF
   ${apache_install_dir}/bin/apachectl -t
   if [ $? == 0 ]; then
     echo "Restart Apache......"
-    /etc/init.d/httpd restart
+    ${apache_install_dir}/bin/apachectl -k graceful
   else
-    rm -rf ${apache_install_dir}/conf/vhost/${domain}.conf
+    rm -f ${apache_install_dir}/conf/vhost/${domain}.conf
     exit 1
   fi
 
@@ -874,7 +886,7 @@ Add_Vhost() {
     Choose_env
     Input_Add_domain
     Create_tomcat_conf
-  elif [ -e "${web_install_dir}/sbin/nginx" -a -e "$(ls ${apache_install_dir}/modules/libphp?.so 2>/dev/null)" ]; then
+  elif [ -e "${web_install_dir}/sbin/nginx" -a -e "${apache_install_dir}/conf/httpd.conf" ]; then
     Choose_env
     Input_Add_domain
     Nginx_anti_hotlinking
@@ -886,7 +898,6 @@ Add_Vhost() {
       Nginx_log
       Create_nginx_php-fpm_hhvm_conf
     elif [ "${NGX_FLAG}" == "php" ]; then
-      #Nginx_rewrite
       Nginx_log
       Apache_log
       Create_nginx_apache_mod-php_conf
@@ -910,7 +921,7 @@ Del_NGX_Vhost() {
           else
             if [ -e "${web_install_dir}/conf/vhost/${domain}.conf" ]; then
               Directory=$(grep '^  root' ${web_install_dir}/conf/vhost/${domain}.conf | head -1 | awk -F'[ ;]' '{print $(NF-1)}')
-              rm -rf ${web_install_dir}/conf/vhost/${domain}.conf
+              rm -f ${web_install_dir}/conf/vhost/${domain}.conf
               ${web_install_dir}/sbin/nginx -s reload
               while :; do echo
                 read -e -p "Do you want to delete Virtul Host directory? [y/n]: " Del_Vhost_wwwroot_flag
@@ -943,8 +954,8 @@ Del_NGX_Vhost() {
 Del_Apache_Vhost() {
   if [ -e "${apache_install_dir}/conf/httpd.conf" ]; then
     if [ -e "${web_install_dir}/sbin/nginx" ]; then
-      rm -rf ${apache_install_dir}/conf/vhost/${domain}.conf
-      /etc/init.d/httpd restart
+      rm -f ${apache_install_dir}/conf/vhost/${domain}.conf
+      ${apache_install_dir}/bin/apachectl -k graceful
     else
       Domain_List=$(ls ${apache_install_dir}/conf/vhost | grep -v '0.conf' | sed "s@.conf@@g")
       if [ -n "${Domain_List}" ]; then
@@ -958,8 +969,8 @@ Del_Apache_Vhost() {
           else
             if [ -e "${apache_install_dir}/conf/vhost/${domain}.conf" ]; then
               Directory=$(grep '^<Directory ' ${apache_install_dir}/conf/vhost/${domain}.conf | head -1 | awk -F'"' '{print $2}')
-              rm -rf ${apache_install_dir}/conf/vhost/${domain}.conf
-              /etc/init.d/httpd restart
+              rm -f ${apache_install_dir}/conf/vhost/${domain}.conf
+              ${apache_install_dir}/bin/apachectl -k graceful
               while :; do echo
                 read -e -p "Do you want to delete Virtul Host directory? [y/n]: " Del_Vhost_wwwroot_flag
                 if [[ ! ${Del_Vhost_wwwroot_flag} =~ ^[y,n]$ ]]; then
@@ -994,7 +1005,7 @@ Del_Tomcat_Vhost() {
     if [ -e "${web_install_dir}/sbin/nginx" ]; then
       if [ -n "$(echo ${domain} | grep '.*\..*')" ] && [ -n "$(grep vhost-${domain} ${tomcat_install_dir}/conf/server.xml)" ]; then
         sed -i /vhost-${domain}/d ${tomcat_install_dir}/conf/server.xml
-        rm -rf ${tomcat_install_dir}/conf/vhost/${domain}.xml
+        rm -f ${tomcat_install_dir}/conf/vhost/${domain}.xml
         /etc/init.d/tomcat restart
       fi
     else
@@ -1010,7 +1021,7 @@ Del_Tomcat_Vhost() {
           else
             if [ -n "$(grep vhost-${domain} ${tomcat_install_dir}/conf/server.xml)" ]; then
               sed -i /vhost-${domain}/d ${tomcat_install_dir}/conf/server.xml
-              rm -rf ${tomcat_install_dir}/conf/vhost/${domain}.xml
+              rm -f ${tomcat_install_dir}/conf/vhost/${domain}.xml
               /etc/init.d/tomcat restart
               while :; do echo
                 read -e -p "Do you want to delete Virtul Host directory? [y/n]: " Del_Vhost_wwwroot_flag

@@ -16,6 +16,12 @@ checkDownload() {
   echo "Download cacert.pem..."
   src_url=https://curl.haxx.se/ca/cacert.pem && Download_src
 
+  # jemalloc
+  if [[ ${nginx_option} =~ ^[1-3]$ ]] || [ "${db_yn}" == 'y' ]; then
+    echo "Download jemalloc..."
+    src_url=${mirrorLink}/jemalloc-${jemalloc_ver}.tar.bz2 && Download_src
+  fi
+
   # Web
   if [ "${web_yn}" == 'y' ]; then
     case "${nginx_option}" in
@@ -609,6 +615,7 @@ checkDownload() {
         ;;
     esac
   fi
+
   # PHP
   if [ "${php_yn}" == 'y' ]; then
     # php 5.3 5.4 5.5 5.6 5.7
@@ -712,13 +719,7 @@ checkDownload() {
     esac
   fi
 
-  if [ -e "${mongo_install_dir}/bin/mongo" -o "${db_option}" == '14' ]; then
-    echo "Download pecl mongo for php..."
-    src_url=https://pecl.php.net/get/mongo-${mongo_pecl_ver}.tgz && Download_src
-    echo "Download pecl mongodb for php..."
-    src_url=https://pecl.php.net/get/mongodb-${mongodb_pecl_ver}.tgz && Download_src
-  fi
-
+  # ioncube
   if [ "${ioncube_yn}" == 'y' ]; then
     echo "Download ioncube..."
     if [ "${TARGET_ARCH}" == "armv7" ]; then
@@ -728,6 +729,7 @@ checkDownload() {
     fi
   fi
 
+  # SourceGuardian
   if [ "${sourceguardian_yn}" == 'y' ]; then
     echo "Download SourceGuardian..."
     if [ "${TARGET_ARCH}" == "armv8" ]; then
@@ -737,6 +739,7 @@ checkDownload() {
     fi
   fi
 
+  # ImageMagick graphicsmagick
   if [ "${magick_yn}" == 'y' ]; then
     if [ "${magick_option}" == '1' ]; then
       echo "Download ImageMagick..."
@@ -756,11 +759,55 @@ checkDownload() {
     fi
   fi
 
+  # redis-server pecl_redis
+  if [ "${redis_yn}" == 'y' -o "${pecl_redis}" == '1' ]; then
+    echo "Download redis..."
+    src_url=http://download.redis.io/releases/redis-${redis_ver}.tar.gz && Download_src
+    echo "Download pecl_redis..."
+    src_url=https://pecl.php.net/get/redis-${pecl_redis_ver}.tgz && Download_src
+    if [ "${PM}" == 'yum' ]; then
+      echo "Download start-stop-daemon.c for CentOS..."
+      src_url=${mirrorLink}/start-stop-daemon.c && Download_src
+    fi
+  fi
+
+  # memcached-server pecl_memcached pecl_memcache
+  if [ "${memcached_yn}" == 'y' -o "${pecl_memcached}" == '1' -o "${pecl_memcache}" == '1' ]; then
+    echo "Download memcached..."
+    [ "$IPADDR_COUNTRY"x == "CN"x ] && DOWN_ADDR=${mirrorLink} || DOWN_ADDR=http://www.memcached.org/files
+    src_url=${DOWN_ADDR}/memcached-${memcached_ver}.tar.gz && Download_src
+    if [[ "${php_option}" =~ ^[5-7]$ ]]; then
+      echo "Download pecl_memcache for php 7.x..."
+      # src_url=https://codeload.github.com/websupport-sk/pecl-memcache/zip/php7 && Download_src
+      src_url=${mirrorLink}/pecl-memcache-php7.tgz && Download_src
+      echo "Download pecl_memcached for php 7.x..."
+      src_url=https://pecl.php.net/get/memcached-${pecl_memcached_php7_ver}.tgz && Download_src
+    else
+      echo "Download pecl_memcache for php..."
+      src_url=https://pecl.php.net/get/memcache-${pecl_memcache_ver}.tgz && Download_src
+      echo "Download pecl_memcached for php..."
+      src_url=https://pecl.php.net/get/memcached-${pecl_memcached_ver}.tgz && Download_src
+    fi
+
+    echo "Download libmemcached..."
+    src_url=https://launchpad.net/libmemcached/1.0/${libmemcached_ver}/+download/libmemcached-${libmemcached_ver}.tar.gz && Download_src
+  fi
+
+  # pecl_mongodb
+  if [ -e "${mongo_install_dir}/bin/mongo" -o "${db_option}" == '14' -o "${pecl_mongodb}" == '1' ]; then
+    echo "Download pecl mongo for php..."
+    src_url=https://pecl.php.net/get/mongo-${pecl_mongo_ver}.tgz && Download_src
+    echo "Download pecl mongodb for php..."
+    src_url=https://pecl.php.net/get/mongodb-${pecl_mongodb_ver}.tgz && Download_src
+  fi
+
+  # pureftpd
   if [ "${ftp_yn}" == 'y' ]; then
     echo "Download pureftpd..."
     src_url=https://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-${pureftpd_ver}.tar.gz && Download_src
   fi
 
+  # phpMyAdmin
   if [ "${phpmyadmin_yn}" == 'y' ]; then
     echo "Download phpMyAdmin..."
     if [[ "${php_option}" =~ ^[1-2]$ ]]; then
@@ -770,49 +817,12 @@ checkDownload() {
     fi
   fi
 
-  if [ "${redis_yn}" == 'y' ]; then
-    echo "Download redis..."
-    src_url=http://download.redis.io/releases/redis-${redis_ver}.tar.gz && Download_src
-    echo "Download redis pecl..."
-    src_url=https://pecl.php.net/get/redis-${redis_pecl_ver}.tgz && Download_src
-    if [ "${PM}" == 'yum' ]; then
-      echo "Download start-stop-daemon.c for CentOS..."
-      src_url=${mirrorLink}/start-stop-daemon.c && Download_src
-    fi
-  fi
-
-  if [ "${memcached_yn}" == 'y' ]; then
-    echo "Download memcached..."
-    [ "$IPADDR_COUNTRY"x == "CN"x ] && DOWN_ADDR=${mirrorLink} || DOWN_ADDR=http://www.memcached.org/files
-    src_url=${DOWN_ADDR}/memcached-${memcached_ver}.tar.gz && Download_src
-    if [[ "${php_option}" =~ ^[5-7]$ ]]; then
-      echo "Download pecl memcache for php 7.x..."
-      # src_url=https://codeload.github.com/websupport-sk/pecl-memcache/zip/php7 && Download_src
-      src_url=${mirrorLink}/pecl-memcache-php7.tgz && Download_src
-      echo "Download pecl memcached for php 7.x..."
-      src_url=https://pecl.php.net/get/memcached-${memcached_pecl_php7_ver}.tgz && Download_src
-    else
-      echo "Download pecl memcache for php..."
-      src_url=https://pecl.php.net/get/memcache-${memcache_pecl_ver}.tgz && Download_src
-      echo "Download pecl memcached for php..."
-      src_url=https://pecl.php.net/get/memcached-${memcached_pecl_ver}.tgz && Download_src
-    fi
-
-    echo "Download libmemcached..."
-    src_url=https://launchpad.net/libmemcached/1.0/${libmemcached_ver}/+download/libmemcached-${libmemcached_ver}.tar.gz && Download_src
-  fi
-
-  if [[ ${nginx_option} =~ ^[1-3]$ ]] || [ "${db_yn}" == 'y' ]; then
-    echo "Download jemalloc..."
-    src_url=${mirrorLink}/jemalloc-${jemalloc_ver}.tar.bz2 && Download_src
-  fi
-
   # others
   if [ "${downloadDepsSrc}" == '1' ]; then
     if [ "${PM}" == 'yum' ]; then
       echo "Download tmux for CentOS..."
       src_url=${mirrorLink}/libevent-${libevent_ver}.tar.gz && Download_src
-      src_url=https://github.com/tmux/tmux/releases/download/${tmux_ver}/tmux-${tmux_ver}.tar.gz && Download_src
+      src_url=${mirrorLink}/tmux-${tmux_ver}.tar.gz && Download_src
 
       echo "Download htop for CentOS..."
       src_url=http://hisham.hm/htop/releases/${htop_ver}/htop-${htop_ver}.tar.gz && Download_src
@@ -824,5 +834,5 @@ checkDownload() {
     fi
   fi
 
-  popd
+  popd > /dev/null
 }

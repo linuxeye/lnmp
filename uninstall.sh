@@ -31,7 +31,7 @@ Usage(){
   printf "
 Usage: $0 [  ${CMSG}all${CEND} | ${CMSG}web${CEND} | ${CMSG}mysql${CEND} | ${CMSG}postgresql${CEND} | ${CMSG}mongodb${CEND} | ${CMSG}php${CEND} | ${CMSG}hhvm${CEND} | ${CMSG}pureftpd${CEND} | ${CMSG}redis${CEND} | ${CMSG}memcached${CEND} ]
 ${CMSG}all${CEND}            --->Uninstall All
-${CMSG}web${CEND}            --->Uninstall Nginx/Tengine/Apache/Tomcat
+${CMSG}web${CEND}            --->Uninstall Nginx/Tengine/OpenResty/Apache/Tomcat
 ${CMSG}mysql${CEND}          --->Uninstall MySQL/MariaDB/Percona/AliSQL
 ${CMSG}postgresql${CEND}     --->Uninstall PostgreSQL
 ${CMSG}mongodb${CEND}        --->Uninstall MongoDB
@@ -70,6 +70,7 @@ Print_web() {
   [ -e "/etc/logrotate.d/nginx" ] && echo '/etc/logrotate.d/nginx'
 
   [ -d "${apache_install_dir}" ] && echo "${apache_install_dir}"
+  [ -e "/lib/systemd/system/httpd.service" ] && echo '/lib/systemd/system/httpd.service'
   [ -e "/etc/init.d/httpd" ] && echo "/etc/init.d/httpd"
   [ -e "/etc/logrotate.d/apache" ] && echo "/etc/logrotate.d/apache"
 
@@ -86,6 +87,7 @@ Uninstall_Web() {
   [ -d "${openresty_install_dir}" ] && { killall nginx > /dev/null 2>&1; rm -rf ${openresty_install_dir} /etc/init.d/nginx /etc/logrotate.d/nginx; sed -i "s@${openresty_install_dir}/nginx/sbin:@@" /etc/profile; echo "${CMSG}OpenResty uninstall completed! ${CEND}"; }
   [ -e "/lib/systemd/system/nginx.service" ] && { systemctl disable nginx > /dev/null 2>&1; rm -f /lib/systemd/system/nginx.service; }
   [ -d "${apache_install_dir}" ] && { service httpd stop > /dev/null 2>&1; rm -rf ${apache_install_dir} /etc/init.d/httpd /etc/logrotate.d/apache; sed -i "s@${apache_install_dir}/bin:@@" /etc/profile; echo "${CMSG}Apache uninstall completed! ${CEND}"; }
+  [ -e "/lib/systemd/system/httpd.service" ] && { systemctl disable httpd > /dev/null 2>&1; rm -f /lib/systemd/system/httpd.service; }
   [ -d "${tomcat_install_dir}" ] && { killall java > /dev/null 2>&1; chmod +x /etc/logrotate.d/tomcat; rm -rf ${tomcat_install_dir} /etc/init.d/tomcat /etc/logrotate.d/tomcat /usr/local/apr; echo "${CMSG}Tomcat uninstall completed! ${CEND}"; }
   [ -d "/usr/java" ] && { rm -rf /usr/java; sed -i '/export JAVA_HOME=/d' /etc/profile; sed -i '/export CLASSPATH=/d' /etc/profile; sed -i 's@\$JAVA_HOME/bin:@@' /etc/profile; }
   [ -e "${wwwroot_dir}" ] && /bin/mv ${wwwroot_dir}{,$(date +%Y%m%d%H)}
@@ -103,11 +105,13 @@ Print_MySQL() {
 Print_PostgreSQL() {
   [ -e "${pgsql_install_dir}" ] && echo "${pgsql_install_dir}"
   [ -e "/etc/init.d/postgresql" ] && echo "/etc/init.d/postgresql"
+  [ -e "/lib/systemd/system/postgresql.service" ] && echo "/lib/systemd/system/postgresql.service"
 }
 
 Print_MongoDB() {
   [ -e "${mongo_install_dir}" ] && echo "${mongo_install_dir}"
   [ -e "/etc/init.d/mongod" ] && echo "/etc/init.d/mongod"
+  [ -e "/lib/systemd/system/mongod.service" ] && echo "/lib/systemd/system/mongod.service"
   [ -e "/etc/mongod.conf" ] && echo "/etc/mongod.conf"
 }
 
@@ -129,7 +133,8 @@ Uninstall_PostgreSQL() {
   if [ -e "${pgsql_install_dir}/bin/psql" ]; then
     service postgresql stop > /dev/null 2>&1
     rm -rf ${pgsql_install_dir} /etc/init.d/postgresql
-    [ -e "${php_install_dir}/etc/php.d/07-pgsql.ini" ] && rm -rf ${php_install_dir}/etc/php.d/07-pgsql.ini
+    [ -e "/lib/systemd/system/postgresql.service" ] && { systemctl disable postgresql > /dev/null 2>&1; rm -f /lib/systemd/system/postgresql.service; }
+    [ -e "${php_install_dir}/etc/php.d/07-pgsql.ini" ] && rm -f ${php_install_dir}/etc/php.d/07-pgsql.ini
     id -u postgres >/dev/null 2>&1 ; [ $? -eq 0 ] && userdel postgres
     [ -e "${pgsql_data_dir}" ] && /bin/mv ${pgsql_data_dir}{,$(date +%Y%m%d%H)}
     sed -i 's@^dbpostgrespwd=.*@dbpostgrespwd=@' ./options.conf
@@ -143,8 +148,9 @@ Uninstall_MongoDB() {
   if [ -e "${mongo_install_dir}/bin/mongo" ]; then
     service mongod stop > /dev/null 2>&1
     rm -rf ${mongo_install_dir} /etc/mongod.conf /etc/init.d/mongod /tmp/mongo*.sock
-    [ -e "${php_install_dir}/etc/php.d/07-mongo.ini" ] && rm -rf ${php_install_dir}/etc/php.d/07-mongo.ini
-    [ -e "${php_install_dir}/etc/php.d/07-mongodb.ini" ] && rm -rf ${php_install_dir}/etc/php.d/07-mongodb.ini
+    [ -e "/lib/systemd/system/mongod.service" ] && { systemctl disable mongod > /dev/null 2>&1; rm -f /lib/systemd/system/mongod.service; }
+    [ -e "${php_install_dir}/etc/php.d/07-mongo.ini" ] && rm -f ${php_install_dir}/etc/php.d/07-mongo.ini
+    [ -e "${php_install_dir}/etc/php.d/07-mongodb.ini" ] && rm -f ${php_install_dir}/etc/php.d/07-mongodb.ini
     id -u mongod > /dev/null 2>&1 ; [ $? -eq 0 ] && userdel mongod
     [ -e "${mongo_data_dir}" ] && /bin/mv ${mongo_data_dir}{,$(date +%Y%m%d%H)}
     sed -i 's@^dbmongopwd=.*@dbmongopwd=@' ./options.conf
@@ -180,30 +186,31 @@ Print_HHVM() {
 }
 
 Uninstall_HHVM() {
-  [ -e "/lib/systemd/system/hhvm.service" ] && { systemctl disable hhvm > /dev/null 2>&1; rm -rf /lib/systemd/system/hhvm.service; }
-  [ -e "/etc/init.d/supervisord" ] && { service supervisord stop > /dev/null 2>&1; rm -rf /etc/supervisord.conf /etc/init.d/supervisord; }
+  [ -e "/lib/systemd/system/hhvm.service" ] && { systemctl disable hhvm > /dev/null 2>&1; rm -f /lib/systemd/system/hhvm.service; }
+  [ -e "/etc/init.d/supervisord" ] && { service supervisord stop > /dev/null 2>&1; rm -f /etc/supervisord.conf /etc/init.d/supervisord; }
   [ -e "/usr/bin/hhvm" ] && { rpm -e hhvm; rm -rf /etc/hhvm /var/log/hhvm /usr/bin/hhvm; echo "${CMSG}HHVM uninstall completed! ${CEND}"; }
 }
 
 Print_PureFtpd() {
   [ -e "${pureftpd_install_dir}" ] && echo "${pureftpd_install_dir}"
   [ -e "/etc/init.d/pureftpd" ] && echo "/etc/init.d/pureftpd"
+  [ -e "/lib/systemd/system/pureftpd.service" ] && echo "/lib/systemd/system/pureftpd.service"
 }
 
 Uninstall_PureFtpd() {
   [ -e "${pureftpd_install_dir}" ] && { service pureftpd stop > /dev/null 2>&1; rm -rf ${pureftpd_install_dir} /etc/init.d/pureftpd; echo "${CMSG}Pureftpd uninstall completed! ${CEND}"; }
+  [ -e "/lib/systemd/system/pureftpd.service" ] && { systemctl disable pureftpd > /dev/null 2>&1; rm -f /lib/systemd/system/pureftpd.service; }
 }
 
 Print_Redis() {
-  [ -e "$redis_install_dir" ] && echo "$redis_install_dir"
+  [ -e "${redis_install_dir}" ] && echo "${redis_install_dir}"
   [ -e "/etc/init.d/redis-server" ] && echo "/etc/init.d/redis-server"
   [ -e "/lib/systemd/system/redis-server.service" ] && echo '/lib/systemd/system/redis-server.service'
 }
 
 Uninstall_Redis() {
-  [ -e "$redis_install_dir" ] && { service redis-server stop > /dev/null 2>&1; rm -rf $redis_install_dir /etc/init.d/redis-server /usr/local/bin/redis-*; echo "${CMSG}Redis uninstall completed! ${CEND}"; }
+  [ -e "${redis_install_dir}" ] && { service redis-server stop > /dev/null 2>&1; rm -rf ${redis_install_dir} /etc/init.d/redis-server /usr/local/bin/redis-*; echo "${CMSG}Redis uninstall completed! ${CEND}"; }
   [ -e "/lib/systemd/system/redis-server.service" ] && { systemctl disable redis-server > /dev/null 2>&1; rm -f /lib/systemd/system/redis-server.service; }
-  [ -e "${php_install_dir}/etc/php.d/05-redis.ini" ] && { rm -rf ${php_install_dir}/etc/php.d/05-redis.ini; echo "${CMSG}Pecl_redis uninstall completed! ${CEND}"; }
 }
 
 Print_Memcached() {
@@ -214,8 +221,6 @@ Print_Memcached() {
 
 Uninstall_Memcached() {
   [ -e "${memcached_install_dir}" ] && { service memcached stop > /dev/null 2>&1; rm -rf ${memcached_install_dir} /etc/init.d/memcached /usr/bin/memcached; echo "${CMSG}Memcached uninstall completed! ${CEND}"; }
-  [ -e "${php_install_dir}/etc/php.d/05-memcache.ini" ] && rm -rf ${php_install_dir}/etc/php.d/05-memcache.ini
-  [ -e "${php_install_dir}/etc/php.d/05-memcached.ini" ] && rm -rf ${php_install_dir}/etc/php.d/05-memcached.ini
 }
 
 Print_openssl() {
@@ -231,7 +236,7 @@ while :; do
   printf "
 What Are You Doing?
 \t${CMSG}0${CEND}. Uninstall All
-\t${CMSG}1${CEND}. Uninstall Nginx/Tengine/Apache/Tomcat
+\t${CMSG}1${CEND}. Uninstall Nginx/Tengine/OpenResty/Apache/Tomcat
 \t${CMSG}2${CEND}. Uninstall MySQL/MariaDB/Percona/AliSQL
 \t${CMSG}3${CEND}. Uninstall PostgreSQL
 \t${CMSG}4${CEND}. Uninstall MongoDB

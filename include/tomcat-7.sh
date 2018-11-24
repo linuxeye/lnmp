@@ -77,7 +77,7 @@ EOF
             iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
             service iptables save
           fi
-        elif [ "${PM}" == 'apt' ]; then
+        elif [ "${PM}" == 'apt-get' ]; then
           if [ -z "$(grep -w '8080' /etc/iptables.up.rules)" ]; then
             iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
             iptables-save > /etc/iptables.up.rules
@@ -125,7 +125,7 @@ EOF
     sed -i "s@^CATALINA_HOME=.*@CATALINA_HOME=${tomcat_install_dir}@" /etc/init.d/tomcat
     sed -i "s@^TOMCAT_USER=.*@TOMCAT_USER=${run_user}@" /etc/init.d/tomcat
     [ "${PM}" == 'yum' ] && { chkconfig --add tomcat; chkconfig tomcat on; }
-    [ "${PM}" == 'apt' ] && update-rc.d tomcat defaults
+    [ "${PM}" == 'apt-get' ] && update-rc.d tomcat defaults
     echo "${CSUCCESS}Tomcat installed successfully! ${CEND}"
     rm -rf apache-tomcat-${tomcat7_ver}
   else

@@ -37,7 +37,7 @@ EOF
     for Package in ${pkgList}; do
       yum -y install ${Package}
     done
-  elif [ "${PM}" == 'apt' ]; then
+  elif [ "${PM}" == 'apt-get' ]; then
     pkgList="gcc dialog libaugeas0 augeas-lenses libssl-dev libffi-dev ca-certificates"
     for Package in ${pkgList}; do
       apt-get -y install $Package

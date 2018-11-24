@@ -29,7 +29,7 @@ Install_PureFTPd() {
       sed -i "s@/usr/local/pureftpd@${pureftpd_install_dir}@g" /etc/init.d/pureftpd
       chmod +x /etc/init.d/pureftpd
       [ "${PM}" == 'yum' ] && { chkconfig --add pureftpd; chkconfig pureftpd on; }
-      [ "${PM}" == 'apt' ] && { sed -i 's@^. /etc/rc.d/init.d/functions@. /lib/lsb/init-functions@' /etc/init.d/pureftpd; update-rc.d pureftpd defaults; }
+      [ "${PM}" == 'apt-get' ] && { sed -i 's@^. /etc/rc.d/init.d/functions@. /lib/lsb/init-functions@' /etc/init.d/pureftpd; update-rc.d pureftpd defaults; }
       [ "${Debian_ver}" == '7' ] && sed -i 's@/var/lock/subsys/@/var/lock/@g' /etc/init.d/pureftpd
     fi
 
@@ -56,7 +56,7 @@ Install_PureFTPd() {
           iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
           service iptables save
         fi
-      elif [ "${PM}" == 'apt' ]; then
+      elif [ "${PM}" == 'apt-get' ]; then
         if [ -z "$(grep '20000:30000' /etc/iptables.up.rules)" ]; then
           iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
           iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT

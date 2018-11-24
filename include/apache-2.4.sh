@@ -11,10 +11,10 @@
 Install_Apache24() {
   pushd ${oneinstack_dir}/src > /dev/null
   tar xzf pcre-${pcre_ver}.tar.gz
-  pushd pcre-${pcre_ver}
+  pushd pcre-${pcre_ver} > /dev/null
   ./configure
   make -j ${THREAD} && make install
-  popd
+  popd > /dev/null
   id -u ${run_user} >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin ${run_user}
   tar xzf httpd-${apache24_ver}.tar.gz
@@ -24,26 +24,25 @@ Install_Apache24() {
   # install nghttp2
   if [ ! -e "/usr/local/lib/libnghttp2.so" ]; then
     tar xzf nghttp2-${nghttp2_ver}.tar.gz
-    pushd nghttp2-${nghttp2_ver}
+    pushd nghttp2-${nghttp2_ver} > /dev/null
     ./configure
     make -j ${THREAD} && make install
-    popd
+    popd > /dev/null
     [ -z "`grep /usr/local/lib /etc/ld.so.conf.d/*.conf`" ] && echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
     ldconfig
     rm -rf nghttp2-${nghttp2_ver}
   fi
 
-  pushd httpd-${apache24_ver}
+  pushd httpd-${apache24_ver} > /dev/null
   [ ! -d "${apache_install_dir}" ] && mkdir -p ${apache_install_dir}
   /bin/cp -R ../apr-${apr_ver} ./srclib/apr
   /bin/cp -R ../apr-util-${apr_util_ver} ./srclib/apr-util
-  [[ "${php_option}" =~ ^[1-4]$ ]] && Apache_mpm_arg='--with-mpm=prefork'
-  LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} ${Apache_mpm_arg} --enable-mpms-shared=all --with-included-apr --enable-headers --enable-deflate --enable-so --enable-dav --enable-rewrite --enable-ssl --with-ssl=${openssl_install_dir} --enable-http2 --with-nghttp2=/usr/local --enable-expires --enable-static-support --enable-suexec --enable-modules=all --enable-mods-shared=all
+  LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} --enable-mpms-shared=all --with-pcre --with-included-apr --enable-headers --enable-mime-magic --enable-deflate --enable-proxy --enable-so --enable-dav --enable-rewrite --enable-remoteip --enable-expires --enable-static-support --enable-suexec --enable-mods-shared=most --enable-nonportable-atomics=yes --enable-ssl --with-ssl=${openssl_install_dir} --enable-http2 --with-nghttp2=/usr/local
   make -j ${THREAD} && make install
+  popd > /dev/null
   unset LDFLAGS
   if [ -e "${apache_install_dir}/conf/httpd.conf" ]; then
     echo "${CSUCCESS}Apache installed successfully! ${CEND}"
-    popd
     rm -rf httpd-${apache24_ver} pcre-${pcre_ver} apr-${apr_ver} apr-util-${apr_util_ver}
   else
     rm -rf ${apache_install_dir}
@@ -55,12 +54,18 @@ Install_Apache24() {
   [ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep ${apache_install_dir} /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=${apache_install_dir}/bin:\1@" /etc/profile
   . /etc/profile
 
-  /bin/cp ${apache_install_dir}/bin/apachectl /etc/init.d/httpd
-  sed -i '2a # chkconfig: - 85 15' /etc/init.d/httpd
-  sed -i '3a # description: Apache is a World Wide Web server. It is used to serve' /etc/init.d/httpd
-  chmod +x /etc/init.d/httpd
-  [ "${PM}" == 'yum' ] && { chkconfig --add httpd; chkconfig httpd on; }
-  [ "${PM}" == 'apt' ] && update-rc.d httpd defaults
+  if [ -e /bin/systemctl ]; then
+    /bin/cp ../init.d/httpd.service /lib/systemd/system/
+    sed -i "s@/usr/local/apache@${apache_install_dir}@g" /lib/systemd/system/httpd.service
+    systemctl enable httpd 
+  else
+    /bin/cp ${apache_install_dir}/bin/apachectl /etc/init.d/httpd
+    sed -i '2a # chkconfig: - 85 15' /etc/init.d/httpd
+    sed -i '3a # description: Apache is a World Wide Web server. It is used to serve' /etc/init.d/httpd
+    chmod +x /etc/init.d/httpd
+    [ "${PM}" == 'yum' ] && { chkconfig --add httpd; chkconfig httpd on; }
+    [ "${PM}" == 'apt-get' ] && update-rc.d httpd defaults
+  fi
 
   sed -i "s@^User daemon@User ${run_user}@" ${apache_install_dir}/conf/httpd.conf
   sed -i "s@^Group daemon@Group ${run_user}@" ${apache_install_dir}/conf/httpd.conf
@@ -74,6 +79,8 @@ Install_Apache24() {
   fi
   sed -i "s@AddType\(.*\)Z@AddType\1Z\n    AddType application/x-httpd-php .php .phtml\n    AddType application/x-httpd-php-source .phps@" ${apache_install_dir}/conf/httpd.conf
   sed -i "s@#AddHandler cgi-script .cgi@AddHandler cgi-script .cgi .pl@" ${apache_install_dir}/conf/httpd.conf
+  sed -ri 's@^#(.*mod_proxy.so)@\1@' ${apache_install_dir}/conf/httpd.conf
+  sed -ri 's@^#(.*mod_proxy_fcgi.so)@\1@' ${apache_install_dir}/conf/httpd.conf
   sed -ri 's@^#(.*mod_suexec.so)@\1@' ${apache_install_dir}/conf/httpd.conf
   sed -ri 's@^#(.*mod_vhost_alias.so)@\1@' ${apache_install_dir}/conf/httpd.conf
   sed -ri 's@^#(.*mod_rewrite.so)@\1@' ${apache_install_dir}/conf/httpd.conf
@@ -110,6 +117,13 @@ EOF
   ServerName 127.0.0.1
   ErrorLog "${wwwlogs_dir}/error_apache.log"
   CustomLog "${wwwlogs_dir}/access_apache.log" common
+  <Files ~ (\.user.ini|\.htaccess|\.git|\.svn|\.project|LICENSE|README.md)\$>
+    Order allow,deny
+    Deny from all
+  </Files>
+  <FilesMatch \.php$>
+    SetHandler "proxy:unix:/dev/shm/php-cgi.sock|fcgi://localhost"
+  </FilesMatch>
 <Directory "${wwwroot_dir}/default">
   SetOutputFilter DEFLATE
   Options FollowSymLinks ExecCGI
@@ -157,5 +171,5 @@ EOF
   fi
   ldconfig
   service httpd start
-  popd
+  popd > /dev/null
 }

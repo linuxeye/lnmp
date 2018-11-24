@@ -19,7 +19,7 @@ Install_ImageMagick() {
   popd
 }
 
-Install_php-imagick() {
+Install_pecl-imagick() {
   pushd ${oneinstack_dir}/src > /dev/null
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`

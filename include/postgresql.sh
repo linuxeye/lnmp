@@ -31,7 +31,7 @@ Install_PostgreSQL() {
     sed -i "s@^PGDATA=.*@PGDATA=${pgsql_data_dir}@" /etc/init.d/postgresql
     chmod +x /etc/init.d/postgresql
     [ "${PM}" == 'yum' ] && { chkconfig --add postgresql; chkconfig postgresql on; }
-    [ "${PM}" == 'apt' ] && update-rc.d postgresql defaults
+    [ "${PM}" == 'apt-get' ] && update-rc.d postgresql defaults
   fi
   popd
   su - postgres -c "${pgsql_install_dir}/bin/initdb -D ${pgsql_data_dir}"

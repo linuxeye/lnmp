@@ -48,6 +48,8 @@ IPADDR_COUNTRY=$(./include/get_ipaddr_state.py $PUBLIC_IPADDR)
 . ./include/ImageMagick.sh
 . ./include/GraphicsMagick.sh
 
+. ./include/pecl_mongodb.sh
+
 . ./include/memcached.sh
 
 . ./include/redis.sh
@@ -61,6 +63,29 @@ if [ -e "${php_install_dir}/bin/phpize" ]; then
   phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
   PHP_detail_ver=$(${php_install_dir}/bin/php -r 'echo PHP_VERSION;')
   PHP_main_ver=${PHP_detail_ver%.*}
+  case "${PHP_main_ver}" in
+    5.3)
+      php_option=1
+    ;;
+    5.4)
+      php_option=2
+    ;;
+    5.5)
+      php_option=3
+    ;;
+    5.6)
+      php_option=4
+    ;;
+    7.0)
+      php_option=5
+    ;;
+    7.1)
+      php_option=6
+    ;;
+    7.2)
+      php_option=7
+    ;;
+  esac
 fi
 
 # Check PHP Extensions
@@ -71,7 +96,7 @@ Check_PHP_Extension() {
 
 # restart PHP
 Restart_PHP() {
-  [ -e "${apache_install_dir}/conf/httpd.conf" ] && /etc/init.d/httpd restart || /etc/init.d/php-fpm restart
+  [ -e "${apache_install_dir}/conf/httpd.conf" ] && service httpd restart || service php-fpm restart
 }
 
 # Check succ
@@ -101,7 +126,7 @@ Install_fail2ban() {
     chkconfig --add fail2ban
     chkconfig fail2ban on
   fi
-  if [ "${PM}" == 'apt' ]; then
+  if [ "${PM}" == 'apt-get' ]; then
     LOGPATH=/var/log/auth.log
     /bin/cp files/debian-initd /etc/init.d/fail2ban
     sed -i 's@2 3 4 5@3 4 5@' /etc/init.d/fail2ban
@@ -134,13 +159,13 @@ EOF
   sed -i 's@^iptables = iptables.*@iptables = iptables@' /etc/fail2ban/action.d/iptables-common.conf
   kill -9 `ps -ef | grep fail2ban | grep -v grep | awk '{print $2}'` > /dev/null 2>&1
   /etc/init.d/fail2ban start
-  popd
+  popd > /dev/null
   if [ -e "${python_install_dir}/bin/fail2ban-python" ]; then
     echo; echo "${CSUCCESS}fail2ban installed successfully! ${CEND}"
   else
     echo; echo "${CFAILURE}fail2ban install failed, Please try again! ${CEND}"
   fi
-  popd
+  popd > /dev/null
 }
 
 Uninstall_fail2ban() {
@@ -172,7 +197,7 @@ What Are You Doing?
 \t${CMSG} 1${CEND}. Install/Uninstall PHP opcode cache
 \t${CMSG} 2${CEND}. Install/Uninstall ZendGuardLoader/ionCube/SourceGuardian PHP Extension
 \t${CMSG} 3${CEND}. Install/Uninstall ImageMagick/GraphicsMagick PHP Extension
-\t${CMSG} 4${CEND}. Install/Uninstall fileinfo/imap/phalcon PHP Extension
+\t${CMSG} 4${CEND}. Install/Uninstall fileinfo/imap/phalcon/mongodb PHP Extension
 \t${CMSG} 5${CEND}. Install/Uninstall memcached/memcache
 \t${CMSG} 6${CEND}. Install/Uninstall Redis
 \t${CMSG} 7${CEND}. Install/Uninstall swoole PHP Extension
@@ -229,7 +254,7 @@ What Are You Doing?
                 src_url=http://www.php.net/distributions/php-${PHP_detail_ver}.tar.gz && Download_src
                 Install_ZendOPcache
               fi
-              popd
+              popd > /dev/null
               Check_succ
               ;;
             2)
@@ -338,11 +363,11 @@ What Are You Doing?
           magick_yn=y && checkDownload
           if [ "${magick_option}" = '1' ]; then
             [ ! -d "${imagick_install_dir}" ] && Install_ImageMagick
-            Install_php-imagick
+            Install_pecl-imagick
             Check_succ
           elif [ "${magick_option}" = '2' ]; then
             [ ! -d "${gmagick_install_dir}" ] && Install_GraphicsMagick
-            Install_php-gmagick
+            Install_pecl-gmagick
             Check_succ
           fi
         else
@@ -354,14 +379,15 @@ What Are You Doing?
       4)
         ACTION_FUN
         while :; do echo
-          echo "Please select fileinfo/imap/phalcon:"
+          echo "Please select fileinfo/imap/phalcon/mongodb:"
           echo -e "\t${CMSG}1${CEND}. fileinfo"
           echo -e "\t${CMSG}2${CEND}. imap"
           echo -e "\t${CMSG}3${CEND}. phalcon"
+          echo -e "\t${CMSG}4${CEND}. mongodb"
           read -e -p "Please input a number:(Default 1 press Enter) " phpext_option
           [ -z "${phpext_option}" ] && phpext_option=1
-          if [[ ! "${phpext_option}" =~ ^[1-3]$ ]]; then
-            echo "${CWARNING}input error! Please only input number 1~3${CEND}"
+          if [[ ! "${phpext_option}" =~ ^[1-4]$ ]]; then
+            echo "${CWARNING}input error! Please only input number 1~4${CEND}"
           else
             if [ "${phpext_option}" = '1' ]; then
               PHP_extension=fileinfo
@@ -376,6 +402,12 @@ What Are You Doing?
               fi
             elif [ "${phpext_option}" = '3' ]; then
               PHP_extension=phalcon
+            elif [ "${phpext_option}" = '4' ]; then
+              if [[ "${PHP_main_ver}" =~ ^5.[3-4]$ ]]; then
+                PHP_extension=mongo
+              else
+                PHP_extension=mongodb
+              fi
             fi
             break
           fi
@@ -391,7 +423,8 @@ What Are You Doing?
             ${php_install_dir}/bin/phpize
             ./configure --with-php-config=${php_install_dir}/bin/php-config ${IMAP_ARGS}
             make -j ${THREAD} && make install
-            popd
+            [ -f "${phpExtensionDir}/${PHP_extension}.so" ] && echo "extension=${PHP_extension}.so" > ${php_install_dir}/etc/php.d/04-${PHP_extension}.ini
+            popd > /dev/null
             rm -rf php-${PHP_detail_ver}
           elif [ "${phpext_option}" = '3' ]; then
             if [[ "${PHP_main_ver}" =~ ^5.[5-6]$|^7.[0-2]$ ]]; then
@@ -399,14 +432,23 @@ What Are You Doing?
               tar xzf cphalcon-${phalcon_ver}.tar.gz
               pushd cphalcon-${phalcon_ver}/build
               ./install --phpize ${php_install_dir}/bin/phpize --php-config ${php_install_dir}/bin/php-config --arch ${OS_BIT}bits
-              popd
+              [ -f "${phpExtensionDir}/${PHP_extension}.so" ] && echo "extension=${PHP_extension}.so" > ${php_install_dir}/etc/php.d/04-${PHP_extension}.ini
+              popd > /dev/null
               rm -rf cphalcon-${phalcon_ver}
             else
               echo; echo "${CWARNING}Your php ${PHP_detail_ver} does not support ${PHP_extension}! ${CEND}";
             fi
+          elif [ "${phpext_option}" = '4' ]; then
+            if [ "${PHP_extension}" == 'mongo' ]; then
+              echo "Download pecl mongo for php..."
+              src_url=https://pecl.php.net/get/mongo-${pecl_mongo_ver}.tgz && Download_src
+            elif [ "${PHP_extension}" == 'mongo' ]; then
+              echo "Download pecl mongodb for php..."
+              src_url=https://pecl.php.net/get/mongodb-${pecl_mongodb_ver}.tgz && Download_src
+            fi
+            Install_pecl-mongodb
           fi
-          popd
-          [ -f "${phpExtensionDir}/${PHP_extension}.so" ] && echo "extension=${PHP_extension}.so" > ${php_install_dir}/etc/php.d/04-${PHP_extension}.ini
+          popd > /dev/null
           Check_succ
         else
           Uninstall_succ
@@ -435,21 +477,21 @@ What Are You Doing?
             1)
               [ ! -d "${memcached_install_dir}/include/memcached" ] && Install_memcached
               Check_PHP_Extension
-              Install_php-memcache
+              Install_pecl-memcache
               Check_succ
               ;;
             2)
               [ ! -d "${memcached_install_dir}/include/memcached" ] && Install_memcached
               Check_PHP_Extension
-              Install_php-memcached
+              Install_pecl-memcached
               Check_succ
               ;;
             3)
               [ ! -d "${memcached_install_dir}/include/memcached" ] && Install_memcached
               PHP_extension=memcache && Check_PHP_Extension
-              Install_php-memcache
+              Install_pecl-memcache
               PHP_extension=memcached && Check_PHP_Extension
-              Install_php-memcached
+              Install_pecl-memcached
               [ -f "${phpExtensionDir}/memcache.so" -a "${phpExtensionDir}/memcached.so" ] && { Restart_PHP; echo;echo "${CSUCCESS}PHP memcache/memcached module installed successfully! ${CEND}"; }
               ;;
           esac
@@ -466,7 +508,7 @@ What Are You Doing?
         if [ "${ACTION}" = '1' ]; then
           [ ! -d "${redis_install_dir}" ] && Install_redis-server
           Check_PHP_Extension
-          Install_php-redis
+          Install_pecl-redis
         else
           Uninstall_succ
           [ -e "${redis_install_dir}" ] && { service redis-server stop > /dev/null 2>&1; rm -rf ${redis_install_dir} /etc/init.d/redis-server /usr/local/bin/redis-*; }
@@ -490,9 +532,9 @@ What Are You Doing?
           ${php_install_dir}/bin/phpize
           ./configure --with-php-config=${php_install_dir}/bin/php-config --enable-openssl --with-openssl-dir=${openssl_install_dir}
           make -j ${THREAD} && make install
-          popd
+          popd > /dev/null
           rm -rf swoole-${swoole_ver}
-          popd
+          popd > /dev/null
           echo 'extension=swoole.so' > ${php_install_dir}/etc/php.d/06-swoole.ini
           Check_succ
         else
@@ -526,9 +568,9 @@ What Are You Doing?
           ${php_install_dir}/bin/phpize
           ./configure --with-php-config=${php_install_dir}/bin/php-config
           make -j ${THREAD} && make install
-          popd
+          popd > /dev/null
           rm -rf xdebug-${xdebug_ver}
-          popd
+          popd > /dev/null
           [ ! -e /tmp/xdebug ] && { mkdir /tmp/xdebug; chown ${run_user}.${run_user} /tmp/xdebug; }
           [ ! -e /tmp/webgrind ] && { mkdir /tmp/webgrind; chown ${run_user}.${run_user} /tmp/webgrind; }
           chown -R ${run_user}.${run_user} ${wwwroot_dir}/default/webgrind

@@ -241,20 +241,18 @@ Upgrade_Apache() {
     if [ "${Apache_flag}" == '24' ]; then
       /bin/cp -R ../apr-${apr_ver} ./srclib/apr
       /bin/cp -R ../apr-util-${apr_util_ver} ./srclib/apr-util
-      [ -e "${php_install_dir}/bin/phpize" ] && { PHP_detail_ver=`${php_install_dir}/bin/php -r 'echo PHP_VERSION;'`; PHP_master_ver=${PHP_detail_ver%%.*}; }
-      [ "${PHP_master_ver}" == '5' ] && Apache_mpm_arg='--with-mpm=prefork'
-      LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} ${Apache_mpm_arg} --enable-mpms-shared=all --with-included-apr --enable-headers --enable-deflate --enable-so --enable-dav --enable-rewrite --enable-ssl --with-ssl=${openssl_install_dir} --enable-http2 --with-nghttp2=/usr/local --enable-expires --enable-static-support --enable-suexec --enable-modules=all --enable-mods-shared=all
+      LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} --enable-mpms-shared=all --with-pcre --with-included-apr --enable-headers --enable-mime-magic --enable-deflate --enable-proxy --enable-so --enable-dav --enable-rewrite --enable-remoteip --enable-expires --enable-static-support --enable-suexec --enable-mods-shared=most --enable-nonportable-atomics=yes --enable-ssl --with-ssl=${openssl_install_dir} --enable-http2 --with-nghttp2=/usr/local
     elif [ "${Apache_flag}" == '22' ]; then
       [ "${Ubuntu_ver}" == "12" ] && sed -i '@SSL_PROTOCOL_SSLV2@d' modules/ssl/ssl_engine_io.c
-      LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} --with-mpm=prefork --with-included-apr --enable-headers --enable-deflate --enable-so --enable-rewrite --enable-ssl--with-ssl=${openssl_install_dir} --enable-expires --enable-static-support --enable-suexec --enable-modules=all --enable-mods-shared=all
+      LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} --with-mpm=prefork --enable-mpms-shared=all --with-included-apr --enable-headers --enable-mime-magic --enable-deflate --enable-proxy --enable-so --enable-dav --enable-rewrite --enable-expires --enable-static-support --enable-suexec --with-expat=builtin --enable-mods-shared=most --enable-ssl --with-ssl=${openssl_install_dir}
     fi
     make -j ${THREAD}
     if [ -e 'httpd' ]; then
       [[ -d ${apache_install_dir}_bak && -d ${apache_install_dir} ]] && rm -rf ${apache_install_dir}_bak
-      /etc/init.d/httpd stop
+      service httpd stop
       /bin/cp -R ${apache_install_dir}{,_bak}
       make install && unset LDFLAGS
-      /etc/init.d/httpd start
+      service httpd start
       popd > /dev/null
       echo "You have ${CMSG}successfully${CEND} upgrade from ${CWARNING}${OLD_apache_ver}${CEND} to ${CWARNING}${NEW_apache_ver}${CEND}"
       rm -rf httpd-${NEW_apache_ver} apr-${apr_ver} apr-util-${apr_util_ver}

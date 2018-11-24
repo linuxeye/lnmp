@@ -117,6 +117,7 @@ EOF
     [ -n "`ps -ef | grep mysql | grep -v grep | awk '{print $2}'`" ] && ps -ef | grep mysql | grep -v grep | awk '{print $2}' | xargs kill -9 > /dev/null 2>&1
     /etc/init.d/mysqld start > /dev/null 2>&1
     sed -i "s+^dbrootpwd.*+dbrootpwd='${New_dbrootpwd}'+" ./options.conf
+    [ -e ~/ReadMe ] && sed -i "s+^MySQL root password:.*+MySQL root password: ${New_dbrootpwd}+"  ~/ReadMe
     echo
     echo "Password reset succesfully! "
     echo "The new password: ${CMSG}${New_dbrootpwd}${CEND}"
@@ -131,7 +132,6 @@ if [ "${quiet_yn}" == 'y' ]; then
   else
     sleep 2 && [ ! -e /tmp/mysql.sock ] && /etc/init.d/mysqld start
     Reset_Interaction_dbrootpwd
-    [ $? -eq 0 ] && [ -n "`grep reset_db_root_password /etc/rc.local`" ] && sed -i '/reset_db_root_password/d' /etc/rc.d/rc.local > /dev/null 2>&1
   fi
 else
   Input_dbrootpwd

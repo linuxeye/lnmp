@@ -67,7 +67,7 @@ Install_MariaDB102() {
   sed -i "s@^datadir=.*@datadir=${mariadb_data_dir}@" /etc/init.d/mysqld
   chmod +x /etc/init.d/mysqld
   [ "${PM}" == 'yum' ] && { chkconfig --add mysqld; chkconfig mysqld on; }
-  [ "${PM}" == 'apt' ] && update-rc.d mysqld defaults
+  [ "${PM}" == 'apt-get' ] && update-rc.d mysqld defaults
   popd
 
   # my.cnf

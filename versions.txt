@@ -3,12 +3,12 @@
 nginx_ver=1.14.1
 tengine_ver=2.2.3
 openresty_ver=1.13.6.2
-openssl11_ver=1.1.1
-openssl_ver=1.0.2p
+openssl11_ver=1.1.1a
+openssl_ver=1.0.2q
 
 tomcat9_ver=9.0.13
 tomcat8_ver=8.5.35
-tomcat7_ver=7.0.91
+tomcat7_ver=7.0.92
 tomcat6_ver=6.0.53
 
 apache24_ver=2.4.37
@@ -24,7 +24,7 @@ mysql57_ver=5.7.24
 mysql56_ver=5.6.42
 mysql55_ver=5.5.62
 
-mariadb103_ver=10.3.10
+mariadb103_ver=10.3.11
 mariadb102_ver=10.2.19
 mariadb101_ver=10.1.37
 mariadb100_ver=10.0.37
@@ -56,7 +56,7 @@ php54_ver=5.4.45
 php53_ver=5.3.29
 
 libiconv_ver=1.15
-curl_ver=7.61.1
+curl_ver=7.62.0
 libmcrypt_ver=2.5.8
 mcrypt_ver=2.6.8
 mhash_ver=0.9.9.9
@@ -80,19 +80,19 @@ xdebug_ver=2.6.1
 pureftpd_ver=1.0.47
 
 # Redis
-redis_ver=5.0.1
-redis_pecl_ver=4.1.1
+redis_ver=5.0.2
+pecl_redis_ver=4.2.0
 
 # Memcached
 memcached_ver=1.5.12
 libmemcached_ver=1.0.18
-memcached_pecl_ver=2.2.0
-memcached_pecl_php7_ver=3.0.4
-memcache_pecl_ver=3.0.8
+pecl_memcached_ver=2.2.0
+pecl_memcached_php7_ver=3.0.4
+pecl_memcache_ver=3.0.8
 
 # MongoDB
-mongodb_pecl_ver=1.5.3
-mongo_pecl_ver=1.6.16
+pecl_mongodb_ver=1.5.3
+pecl_mongo_ver=1.6.16
 
 # phpMyadmin
 phpmyadmin_ver=4.8.3
@@ -107,7 +107,7 @@ boost_oldver=1.59.0
 
 # Others
 libevent_ver=2.0.22-stable
-tmux_ver=2.7
+tmux_ver=2.8
 htop_ver=2.2.0
 bison_ver=2.7.1
 python_ver=3.6.7

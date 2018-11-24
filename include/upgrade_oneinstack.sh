@@ -11,7 +11,7 @@
 Upgrade_OneinStack() {
   pushd ${oneinstack_dir} > /dev/null
   Latest_OneinStack_MD5=$(curl -s http://mirrors.linuxeye.com/md5sum.txt | grep oneinstack.tar.gz | awk '{print $1}')
-  [ ! -e install.sh ] && install_flag=n
+  [ ! -e README.md ] && ois_flag=n
   if [ "${oneinstack_md5}" != "${Latest_OneinStack_MD5}" ]; then
     /bin/mv options.conf /tmp
     sed -i '/oneinstack_dir=/d' /tmp/options.conf
@@ -33,7 +33,7 @@ Upgrade_OneinStack() {
       sed -i "s@^${Key}=.*@${Key}=${Value}@" ./options.conf
     done
     rm -rf /tmp/{oneinstack.tar.gz,options.conf}
-    [ "${install_flag}" == 'n' ] && rm -rf install.sh LICENSE README.md
+    [ "${ois_flag}" == 'n' ] && rm -f ss.sh LICENSE README.md
     sed -i "s@^oneinstack_md5=.*@oneinstack_md5=${Latest_OneinStack_MD5}@" ./options.conf
     echo
     echo "${CSUCCESS}Congratulations! OneinStack upgrade successful! ${CEND}"

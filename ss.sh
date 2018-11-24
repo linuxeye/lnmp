@@ -76,7 +76,7 @@ Iptables_set() {
       iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport ${SS_port} -j ACCEPT
       service iptables save
     fi
-  elif [ "${PM}" == 'apt' ]; then
+  elif [ "${PM}" == 'apt-get' ]; then
     if [ -n "`grep 'dport 80 ' /etc/iptables.up.rules`" -a -z "$(grep -E ${SS_port} /etc/iptables.up.rules)" ]; then
       iptables -I INPUT 4 -p udp -m state --state NEW -m udp --dport ${SS_port} -j ACCEPT
       iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport ${SS_port} -j ACCEPT
@@ -106,7 +106,7 @@ Def_parameter() {
     for Package in ${pkgList}; do
       yum -y install ${Package}
     done
-  elif [ "${PM}" == 'apt' ]; then
+  elif [ "${PM}" == 'apt-get' ]; then
     apt-get -y update
     pkgList="curl wget unzip gcc swig automake make perl cpio git libudns-dev libev-dev gettext build-essential autoconf libtool libpcre3-dev asciidoc xmlto libc-ares-dev"
     for Package in ${pkgList}; do
@@ -126,7 +126,7 @@ Install_SS-python() {
     chmod +x /etc/init.d/shadowsocks
     sed -i "s@SS_bin=.*@SS_bin=${python_install_dir}/bin/ssserver@" /etc/init.d/shadowsocks
     [ "${PM}" == 'yum' ] && { chkconfig --add shadowsocks; chkconfig shadowsocks on; }
-    [ "${PM}" == 'apt' ] && update-rc.d shadowsocks defaults
+    [ "${PM}" == 'apt-get' ] && update-rc.d shadowsocks defaults
   else
     echo
     echo "${CQUESTION}SS-python install failed! Please visit https://oneinstack.com${CEND}"
@@ -164,7 +164,7 @@ Install_SS-libev() {
       /bin/cp ../init.d/SS-libev-init-CentOS /etc/init.d/shadowsocks
       chkconfig --add shadowsocks
       chkconfig shadowsocks on
-    elif [ "${PM}" == 'apt' ]; then
+    elif [ "${PM}" == 'apt-get' ]; then
       /bin/cp ../init.d/SS-libev-init-Ubuntu /etc/init.d/shadowsocks
       update-rc.d shadowsocks defaults
     fi
@@ -188,7 +188,7 @@ Uninstall_SS() {
   if [ "${SS_yn}" == 'y' ]; then
     [ -n "$(ps -ef | grep -v grep | grep -iE "ssserver|ss-server")" ] && /etc/init.d/shadowsocks stop
     [ "${PM}" == 'yum' ] && chkconfig --del shadowsocks
-    [ "${PM}" == 'apt' ] && update-rc.d -f shadowsocks remove
+    [ "${PM}" == 'apt-get' ] && update-rc.d -f shadowsocks remove
     rm -rf /etc/shadowsocks /var/run/shadowsocks.pid /etc/init.d/shadowsocks
     if [ "${ss_option}" == '1' ]; then
       rm -f /usr/local/bin/{ss-local,ss-tunnel,ss-server,ss-manager,ss-redir}

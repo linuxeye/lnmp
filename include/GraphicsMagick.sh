@@ -19,7 +19,7 @@ Install_GraphicsMagick() {
   popd
 }
 
-Install_php-gmagick() {
+Install_pecl-gmagick() {
   pushd ${oneinstack_dir}/src > /dev/null
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`

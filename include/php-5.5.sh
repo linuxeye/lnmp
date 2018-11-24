@@ -13,41 +13,42 @@ Install_PHP55() {
   if [ ! -e "/usr/local/lib/libiconv.la" ]; then
     tar xzf libiconv-${libiconv_ver}.tar.gz
     patch -d libiconv-${libiconv_ver} -p0 < libiconv-glibc-2.16.patch
-    pushd libiconv-${libiconv_ver}
+    pushd libiconv-${libiconv_ver} > /dev/null
     ./configure --prefix=/usr/local
     make -j ${THREAD} && make install
-    popd
+    popd > /dev/null
     rm -rf libiconv-${libiconv_ver}
   fi
 
   if [ ! -e "${curl_install_dir}/lib/libcurl.la" ]; then
     tar xzf curl-${curl_ver}.tar.gz
-    pushd curl-${curl_ver}
+    pushd curl-${curl_ver} > /dev/null
     ./configure --prefix=${curl_install_dir} --with-ssl=${openssl_install_dir}
     make -j ${THREAD} && make install
-    popd
+    popd > /dev/null
     rm -rf curl-${curl_ver}
   fi
 
   if [ ! -e "/usr/local/lib/libmcrypt.la" ]; then
     tar xzf libmcrypt-${libmcrypt_ver}.tar.gz
-    pushd libmcrypt-${libmcrypt_ver}
+    pushd libmcrypt-${libmcrypt_ver} > /dev/null
     ./configure
     make -j ${THREAD} && make install
     ldconfig
-    pushd libltdl
+    pushd libltdl > /dev/null
     ./configure --enable-ltdl-install
     make -j ${THREAD} && make install
-    popd;popd
+    popd > /dev/null
+    popd > /dev/null
     rm -rf libmcrypt-${libmcrypt_ver}
   fi
 
   if [ ! -e "/usr/local/lib/libmhash.la" ]; then
     tar xzf mhash-${mhash_ver}.tar.gz
-    pushd mhash-${mhash_ver}
+    pushd mhash-${mhash_ver} > /dev/null
     ./configure
     make -j ${THREAD} && make install
-    popd
+    popd > /dev/null
     rm -rf mhash-${mhash_ver}
   fi
 
@@ -64,22 +65,22 @@ Install_PHP55() {
     fi
   fi
 
-  tar xzf mcrypt-$mcrypt_ver.tar.gz
-  pushd mcrypt-$mcrypt_ver
+  tar xzf mcrypt-${mcrypt_ver}.tar.gz
+  pushd mcrypt-${mcrypt_ver} > /dev/null
   ldconfig
   ./configure
   make -j ${THREAD} && make install
-  popd
-  rm -rf mcrypt-$mcrypt_ver
+  popd > /dev/null
+  rm -rf mcrypt-${mcrypt_ver}
 
   id -u ${run_user} >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin ${run_user}
   tar xzf php-${php55_ver}.tar.gz
   patch -d php-${php55_ver} -p0 < fpm-race-condition.patch
-  pushd php-${php55_ver}
+  pushd php-${php55_ver} > /dev/null
   [ ! -d "${php_install_dir}" ] && mkdir -p ${php_install_dir}
   [ "${phpcache_option}" == '1' ] && phpcache_arg='--enable-opcache' || phpcache_arg='--disable-opcache'
-  if [[ ${apache_option} =~ ^[1-2]$ ]] || [ -e "${apache_install_dir}/bin/apxs" ]; then
+  if [ "${apache_option}" == '2' ] || [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '2' ]; then
     ./configure --prefix=${php_install_dir} --with-config-file-path=${php_install_dir}/etc \
     --with-config-file-scan-dir=${php_install_dir}/etc/php.d \
     --with-apxs2=${apache_install_dir}/bin/apxs ${phpcache_arg} --disable-fileinfo \
@@ -150,12 +151,12 @@ opcache.enable_cli=1
 ;opcache.optimization_level=0
 EOF
 
-  if [[ ! ${apache_option} =~ ^[1-2]$ ]] && [ ! -e "${apache_install_dir}/bin/apxs" ]; then
+  if [ ! -e "${apache_install_dir}/bin/apxs" -o "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '4' ]; then
     # php-fpm Init Script
     /bin/cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
     chmod +x /etc/init.d/php-fpm
     [ "${PM}" == 'yum' ] && { chkconfig --add php-fpm; chkconfig php-fpm on; }
-    [ "${PM}" == 'apt' ] && update-rc.d php-fpm defaults
+    [ "${PM}" == 'apt-get' ] && update-rc.d php-fpm defaults
 
     cat > ${php_install_dir}/etc/php-fpm.conf <<EOF
 ;;;;;;;;;;;;;;;;;;;;;
@@ -213,8 +214,6 @@ env[TMPDIR] = /tmp
 env[TEMP] = /tmp
 EOF
 
-    [ -d "/run/shm" -a ! -e "/dev/shm" ] && sed -i 's@/dev/shm@/run/shm@' ${php_install_dir}/etc/php-fpm.conf ${oneinstack_dir}/vhost.sh ${oneinstack_dir}/config/nginx.conf
-
     if [ $Mem -le 3000 ]; then
       sed -i "s@^pm.max_children.*@pm.max_children = $(($Mem/3/20))@" ${php_install_dir}/etc/php-fpm.conf
       sed -i "s@^pm.start_servers.*@pm.start_servers = $(($Mem/3/30))@" ${php_install_dir}/etc/php-fpm.conf
@@ -245,10 +244,10 @@ EOF
     #[ "$web_yn" == 'n' ] && sed -i "s@^listen =.*@listen = $IPADDR:9000@" ${php_install_dir}/etc/php-fpm.conf
     service php-fpm start
 
-  elif [[ ${apache_option} =~ ^[1-2]$ ]] || [ -e "${apache_install_dir}/bin/apxs" ]; then
+  elif [ "${apache_option}" == '2' ] || [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '2' ]; then
     service httpd restart
   fi
-  popd
+  popd > /dev/null
   [ -e "${php_install_dir}/bin/phpize" ] && rm -rf php-${php55_ver}
-  popd
+  popd > /dev/null
 }

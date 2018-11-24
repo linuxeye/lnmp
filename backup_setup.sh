@@ -171,11 +171,7 @@ fi
 
 if [ `echo ${desc_bk} | grep -e 3` ]; then
   if [ ! -e "/usr/local/bin/ossutil" ]; then
-    if [ "${OS_BIT}" == '64' ]; then
-      wget -qc http://docs-aliyun.cn-hangzhou.oss.aliyun-inc.com/assets/attach/50452/cn_zh/1524643963683/ossutil64 -O /usr/local/bin/ossutil
-    elif [ "${OS_BIT}" == '32' ]; then
-      wget -qc http://docs-aliyun.cn-hangzhou.oss.aliyun-inc.com/assets/attach/50452/cn_zh/1524643908776/ossutil32 -O /usr/local/bin/ossutil
-    fi
+    wget -qc http://gosspublic.alicdn.com/ossutil/1.4.1/ossutil${OS_BIT} -O /usr/local/bin/ossutil
     chmod +x /usr/local/bin/ossutil
   fi
   while :; do echo

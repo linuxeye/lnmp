@@ -13,8 +13,8 @@ Upgrade_Nginx() {
   [ ! -e "${nginx_install_dir}/sbin/nginx" ] && echo "${CWARNING}Nginx is not installed on your system! ${CEND}" && exit 1
   OLD_nginx_ver_tmp=`${nginx_install_dir}/sbin/nginx -v 2>&1`
   OLD_nginx_ver=${OLD_nginx_ver_tmp##*/}
-  Latest_nginx_ver=`curl -s http://nginx.org/en/CHANGES-1.14 | awk '/Changes with nginx/{print$0}' | awk '{print $4}' | head -1`
-  [ -z "${Latest_nginx_ver}" ] && Latest_nginx_ver=`curl -s http://nginx.org/en/CHANGES | awk '/Changes with nginx/{print$0}' | awk '{print $4}' | head -1`
+  Latest_nginx_ver=`curl --connect-timeout 2 -m 3 -s http://nginx.org/en/CHANGES-1.14 | awk '/Changes with nginx/{print$0}' | awk '{print $4}' | head -1`
+  [ -z "${Latest_nginx_ver}" ] && Latest_nginx_ver=`curl --connect-timeout 2 -m 3 -s http://nginx.org/en/CHANGES | awk '/Changes with nginx/{print$0}' | awk '{print $4}' | head -1`
   echo
   echo "Current Nginx Version: ${CMSG}${OLD_nginx_ver}${CEND}"
   while :; do echo
@@ -50,7 +50,7 @@ Upgrade_Nginx() {
     ${nginx_install_dir}/sbin/nginx -V &> $$
     nginx_configure_args_tmp=`cat $$ | grep 'configure arguments:' | awk -F: '{print $2}'`
     rm -rf $$
-    nginx_configure_args=`echo ${nginx_configure_args_tmp} | sed "s@--with-openssl=../openssl-...... @--with-openssl=../openssl-${openssl11_ver} @" | sed "s@--with-pcre=../pcre-.... @--with-pcre=../pcre-${pcre_ver} @"`
+    nginx_configure_args=`echo ${nginx_configure_args_tmp} | sed "s@--with-openssl=../openssl-\w.\w.\w\+ @--with-openssl=../openssl-${openssl11_ver} @" | sed "s@--with-pcre=../pcre-\w.\w\+ @--with-pcre=../pcre-${pcre_ver} @"`
     export LUAJIT_LIB=/usr/local/lib
     export LUAJIT_INC=/usr/local/include/luajit-2.1
     ./configure ${nginx_configure_args}
@@ -76,7 +76,7 @@ Upgrade_Tengine() {
   [ ! -e "${tengine_install_dir}/sbin/nginx" ] && echo "${CWARNING}Tengine is not installed on your system! ${CEND}" && exit 1
   OLD_tengine_ver_tmp=`${tengine_install_dir}/sbin/nginx -v 2>&1`
   OLD_tengine_ver="`echo ${OLD_tengine_ver_tmp#*/} | awk '{print $1}'`"
-  Latest_tengine_ver=`curl -s http://tengine.taobao.org/changelog.html | grep -oE "[0-9]\.[0-9]\.[0-9]+" | head -1`
+  Latest_tengine_ver=`curl --connect-timeout 2 -m 3 -s http://tengine.taobao.org/changelog.html | grep -oE "[0-9]\.[0-9]\.[0-9]+" | head -1`
   echo
   echo "Current Tengine Version: ${CMSG}${OLD_tengine_ver}${CEND}"
   while :; do echo
@@ -112,7 +112,7 @@ Upgrade_Tengine() {
     ${tengine_install_dir}/sbin/nginx -V &> $$
     tengine_configure_args_tmp=`cat $$ | grep 'configure arguments:' | awk -F: '{print $2}'`
     rm -rf $$
-    tengine_configure_args=`echo ${tengine_configure_args_tmp} | sed "s@--with-openssl=../openssl-...... @--with-openssl=../openssl-${openssl_ver} @" | sed "s@--with-pcre=../pcre-.... @--with-pcre=../pcre-${pcre_ver} @"`
+    tengine_configure_args=`echo ${tengine_configure_args_tmp} | sed "s@--with-openssl=../openssl-\w.\w.\w\+ @--with-openssl=../openssl-${openssl_ver} @" | sed "s@--with-pcre=../pcre-\w.\w\+ @--with-pcre=../pcre-${pcre_ver} @"`
     export LUAJIT_LIB=/usr/local/lib
     export LUAJIT_INC=/usr/local/include/luajit-2.1
     ./configure ${tengine_configure_args}
@@ -143,7 +143,7 @@ Upgrade_OpenResty() {
   [ ! -e "${openresty_install_dir}/nginx/sbin/nginx" ] && echo "${CWARNING}OpenResty is not installed on your system! ${CEND}" && exit 1
   OLD_openresy_ver_tmp=`${openresty_install_dir}/nginx/sbin/nginx -v 2>&1`
   OLD_openresy_ver="`echo ${OLD_openresy_ver_tmp#*/} | awk '{print $1}'`"
-  Latest_openresy_ver=`curl -s https://openresty.org/en/download.html | awk '/download\/openresty-/{print $0}' |  grep -oE "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" | head -1`
+  Latest_openresy_ver=`curl --connect-timeout 2 -m 3 -s https://openresty.org/en/download.html | awk '/download\/openresty-/{print $0}' |  grep -oE "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" | head -1`
   echo
   echo "Current OpenResty Version: ${CMSG}${OLD_openresy_ver}${CEND}"
   while :; do echo
@@ -201,7 +201,7 @@ Upgrade_Apache() {
   [ ! -e "${apache_install_dir}/bin/httpd" ] && echo "${CWARNING}Apache is not installed on your system! ${CEND}" && exit 1
   OLD_apache_ver="`${apache_install_dir}/bin/httpd -v | grep version | awk -F'/| ' '{print $4}'`"
   Apache_flag="`echo ${OLD_apache_ver} | awk -F. '{print $1 $2}'`"
-  Latest_apache_ver=`curl -s http://httpd.apache.org/download.cgi | awk "/#apache${Apache_flag}/{print $2}" | head -1 | grep -oE "2\.[24]\.[0-9]+"`
+  Latest_apache_ver=`curl --connect-timeout 2 -m 3 -s http://httpd.apache.org/download.cgi | awk "/#apache${Apache_flag}/{print $2}" | head -1 | grep -oE "2\.[24]\.[0-9]+"`
   [ -z "${Latest_apache_ver}" ] && Latest_apache_ver=${apache22_ver}
   echo
   echo "Current Apache Version: ${CMSG}${OLD_apache_ver}${CEND}"
@@ -268,7 +268,7 @@ Upgrade_Tomcat() {
   [ ! -e "${tomcat_install_dir}/conf/server.xml" ] && echo "${CWARNING}Tomcat is not installed on your system! ${CEND}" && exit 1
   OLD_tomcat_ver="`${tomcat_install_dir}/bin/version.sh | awk '/Server number/{print $3}' | awk -F. '{print $1"."$2"."$3}'`"
   Tomcat_flag="`echo ${OLD_tomcat_ver} | awk -F. '{print $1}'`"
-  Latest_tomcat_ver=`curl -s https://tomcat.apache.org/download-${Tomcat_flag}0.cgi | grep "README" | head -1 | grep -oE "[6-9]\.[0-9]\.[0-9]+"`
+  Latest_tomcat_ver=`curl --connect-timeout 2 -m 3 -s https://tomcat.apache.org/download-${Tomcat_flag}0.cgi | grep "README" | head -1 | grep -oE "[6-9]\.[0-9]\.[0-9]+"`
   [ -z "${Latest_tomcat_ver}" ] && Latest_tomcat_ver=${tomcat9_ver}
   echo
   echo "Current Tomcat Version: ${CMSG}${OLD_tomcat_ver}${CEND}"

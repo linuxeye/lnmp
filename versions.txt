@@ -30,9 +30,9 @@ mariadb101_ver=10.1.37
 mariadb100_ver=10.0.37
 mariadb55_ver=5.5.62
 
-percona57_ver=5.7.23-23
+percona57_ver=5.7.23-25
 percona56_ver=5.6.41-84.1
-percona55_ver=5.5.61-38.13
+percona55_ver=5.5.62-38.14
 
 alisql_ver=5.6.32-9
 

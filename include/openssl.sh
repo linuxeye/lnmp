@@ -14,7 +14,7 @@ Install_openSSL() {
     tar xzf openssl-${openssl_ver}.tar.gz
     pushd openssl-${openssl_ver}
     make clean
-    ./config -fPIC --prefix=${openssl_install_dir} --openssldir=${openssl_install_dir}
+    ./config -Wl,-rpath=${openssl_install_dir}/lib -fPIC --prefix=${openssl_install_dir} --openssldir=${openssl_install_dir}
     make depend
     make -j ${THREAD} && make install
     popd

@@ -12,7 +12,7 @@ Upgrade_Memcached() {
   pushd ${oneinstack_dir}/src > /dev/null
   [ ! -e "${memcached_install_dir}/bin/memcached" ] && echo "${CWARNING}Memcached is not installed on your system! ${CEND}" && exit 1
   OLD_memcached_ver=`${memcached_install_dir}/bin/memcached -V | awk '{print $2}'`
-  Latest_memcached_ver=`curl -s https://github.com/memcached/memcached/wiki/ReleaseNotes | grep 'internal present.*ReleaseNotes' |  grep -oE "[0-9]\.[0-9]\.[0-9]+" | head -1`
+  Latest_memcached_ver=`curl --connect-timeout 2 -m 3 -s https://github.com/memcached/memcached/wiki/ReleaseNotes | grep 'internal present.*ReleaseNotes' |  grep -oE "[0-9]\.[0-9]\.[0-9]+" | head -1`
   [ -z "${Latest_memcached_ver}" ] && Latest_memcached_ver=1.6.8
   echo "Current Memcached Version: ${CMSG}${OLD_memcached_ver}${CEND}"
   while :; do echo

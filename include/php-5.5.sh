@@ -23,8 +23,10 @@ Install_PHP55() {
   if [ ! -e "${curl_install_dir}/lib/libcurl.la" ]; then
     tar xzf curl-${curl_ver}.tar.gz
     pushd curl-${curl_ver} > /dev/null
+    [ "${Debian_ver}" == '8' ] && apt-get -y remove zlib1g-dev
     ./configure --prefix=${curl_install_dir} --with-ssl=${openssl_install_dir}
     make -j ${THREAD} && make install
+    [ "${Debian_ver}" == '8' ] && apt-get -y install libc-client2007e-dev libfreetype6-dev libglib2.0-dev libpng12-dev libssl-dev libzip-dev zlib1g-dev
     popd > /dev/null
     rm -rf curl-${curl_ver}
   fi

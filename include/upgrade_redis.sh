@@ -12,7 +12,7 @@ Upgrade_Redis() {
   pushd ${oneinstack_dir}/src > /dev/null
   [ ! -d "$redis_install_dir" ] && echo "${CWARNING}Redis is not installed on your system! ${CEND}" && exit 1
   OLD_redis_ver=`$redis_install_dir/bin/redis-cli --version | awk '{print $2}'`
-  Latest_redis_ver=`curl -s http://download.redis.io/redis-stable/00-RELEASENOTES | awk '/Released/{print $2}' | head -1`
+  Latest_redis_ver=`curl --connect-timeout 2 -m 3 -s http://download.redis.io/redis-stable/00-RELEASENOTES | awk '/Released/{print $2}' | head -1`
   [ -z "$Latest_redis_ver" ] && Latest_redis_ver=4.2.8
   echo "Current Redis Version: ${CMSG}$OLD_redis_ver${CEND}"
   while :; do echo

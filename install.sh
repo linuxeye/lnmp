@@ -48,7 +48,7 @@ showhelp() {
   --version, -v               Show version info
   --nginx_option [1-3]        Install Nginx server version
   --apache_option [1-2]       Install Apache server version
-  --php_option [1-7]          Install PHP version
+  --php_option [1-8]          Install PHP version
   --phpcache_option [1-4]     Install PHP opcode cache, default: 1 opcache
   --php_extensions [ext name] Install PHP extension, include zendguardloader,ioncube,sourceguardian,imagick,gmagick,redis,memcached,memcache,mongodb
   --tomcat_option [1-4]       Install Tomcat version
@@ -95,7 +95,7 @@ while :; do
       ;;
     --php_option)
       php_option=$2; shift 2
-      [[ ! ${php_option} =~ ^[1-7]$ ]] && { echo "${CWARNING}php_option input error! Please only input number 1~7${CEND}"; exit 1; }
+      [[ ! ${php_option} =~ ^[1-8]$ ]] && { echo "${CWARNING}php_option input error! Please only input number 1~8${CEND}"; exit 1; }
       php_yn=y
       [ -e "${php_install_dir}/bin/phpize" ] && { echo "${CWARNING}PHP already installed! ${CEND}"; php_option=Other; }
       ;;
@@ -439,10 +439,11 @@ if [ ${ARG_NUM} == 0 ]; then
           echo -e "\t${CMSG}5${CEND}. Install php-7.0"
           echo -e "\t${CMSG}6${CEND}. Install php-7.1"
           echo -e "\t${CMSG}7${CEND}. Install php-7.2"
+          echo -e "\t${CMSG}8${CEND}. Install php-7.3"
           read -e -p "Please input a number:(Default 5 press Enter) " php_option
           [ -z "${php_option}" ] && php_option=5
-          if [[ ! ${php_option} =~ ^[1-7]$ ]]; then
-            echo "${CWARNING}input error! Please only input number 1~7${CEND}"
+          if [[ ! ${php_option} =~ ^[1-8]$ ]]; then
+            echo "${CWARNING}input error! Please only input number 1~8${CEND}"
           else
             while :; do echo
               read -e -p "Do you want to install opcode cache of the PHP? [y/n]: " phpcache_yn
@@ -526,7 +527,7 @@ if [ ${ARG_NUM} == 0 ]; then
                       fi
                     done
                   fi
-                  [ ${php_option} == 7 ] && phpcache_option=1
+                  [[ ${php_option} =~ ^[7-8]$ ]] && phpcache_option=1
                 fi
                 break
               fi
@@ -604,7 +605,7 @@ if [ ${ARG_NUM} == 0 ]; then
   done
 
   # check phpMyAdmin
-  if [[ ${php_option} =~ ^[1-7]$ ]] || [ -e "${php_install_dir}/bin/phpize" ]; then
+  if [[ ${php_option} =~ ^[1-8]$ ]] || [ -e "${php_install_dir}/bin/phpize" ]; then
     while :; do echo
       read -e -p "Do you want to install phpMyAdmin? [y/n]: " phpmyadmin_yn
       if [[ ! ${phpmyadmin_yn} =~ ^[y,n]$ ]]; then
@@ -711,7 +712,7 @@ fi
 
 # openSSL
 . ./include/openssl.sh
-if [[ ${tomcat_option} =~ ^[1-4]$ ]] || [[ ${apache_option} =~ ^[1-2]$ ]] || [[ ${php_option} =~ ^[1-7]$ ]]; then
+if [[ ${tomcat_option} =~ ^[1-4]$ ]] || [[ ${apache_option} =~ ^[1-2]$ ]] || [[ ${php_option} =~ ^[1-8]$ ]]; then
   Install_openSSL | tee -a ${oneinstack_dir}/install.log
 fi
 
@@ -835,12 +836,16 @@ case "${php_option}" in
     . include/php-7.2.sh
     Install_PHP72 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
+  8)
+    . include/php-7.3.sh
+    Install_PHP73 2>&1 | tee -a ${oneinstack_dir}/install.log
+    ;;
 esac
 
 # PHP opcode cache
 case "${phpcache_option}" in
   1)
-    if [[ "${php_option}" =~ ^[1,2]$ ]]; then
+    if [[ "${php_option}" =~ ^[1-2]$ ]]; then
       . include/zendopcache.sh
       Install_ZendOPcache 2>&1 | tee -a ${oneinstack_dir}/install.log
     fi
@@ -854,7 +859,7 @@ case "${phpcache_option}" in
     Install_APCU 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   4)
-    if [[ "${php_option}" =~ ^[1,2]$ ]]; then
+    if [[ "${php_option}" =~ ^[1-2]$ ]]; then
       . include/eaccelerator.sh
       Install_eAccelerator 2>&1 | tee -a ${oneinstack_dir}/install.log
     fi

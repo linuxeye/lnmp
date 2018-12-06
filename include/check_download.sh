@@ -657,6 +657,12 @@ checkDownload() {
         src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
         src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
         ;;
+      8)
+        src_url=http://www.php.net/distributions/php-${php73_ver}.tar.gz && Download_src
+        src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
+        src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
+        src_url=https://libzip.org/download/libzip-${libzip_ver}.tar.gz && Download_src
+        ;;
     esac
   fi
 
@@ -749,12 +755,12 @@ checkDownload() {
     else
       echo "Download graphicsmagick..."
       src_url=http://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/${graphicsmagick_ver}/GraphicsMagick-${graphicsmagick_ver}.tar.gz && Download_src
-      if [[ "${php_option}" =~ ^[5-7]$ ]]; then
-        echo "Download gmagick for php 7.x..."
-        src_url=https://pecl.php.net/get/gmagick-${gmagick_for_php7_ver}.tgz && Download_src
-      else
+      if [[ "${php_option}" =~ ^[1-4]$ ]]; then
         echo "Download gmagick for php..."
         src_url=https://pecl.php.net/get/gmagick-${gmagick_ver}.tgz && Download_src
+      else
+        echo "Download gmagick for php 7.x..."
+        src_url=https://pecl.php.net/get/gmagick-${gmagick_for_php7_ver}.tgz && Download_src
       fi
     fi
   fi
@@ -776,17 +782,17 @@ checkDownload() {
     echo "Download memcached..."
     [ "$IPADDR_COUNTRY"x == "CN"x ] && DOWN_ADDR=${mirrorLink} || DOWN_ADDR=http://www.memcached.org/files
     src_url=${DOWN_ADDR}/memcached-${memcached_ver}.tar.gz && Download_src
-    if [[ "${php_option}" =~ ^[5-7]$ ]]; then
+    if [[ "${php_option}" =~ ^[1-4]$ ]]; then
+      echo "Download pecl_memcache for php..."
+      src_url=https://pecl.php.net/get/memcache-${pecl_memcache_ver}.tgz && Download_src
+      echo "Download pecl_memcached for php..."
+      src_url=https://pecl.php.net/get/memcached-${pecl_memcached_ver}.tgz && Download_src
+    else
       echo "Download pecl_memcache for php 7.x..."
       # src_url=https://codeload.github.com/websupport-sk/pecl-memcache/zip/php7 && Download_src
       src_url=${mirrorLink}/pecl-memcache-php7.tgz && Download_src
       echo "Download pecl_memcached for php 7.x..."
       src_url=https://pecl.php.net/get/memcached-${pecl_memcached_php7_ver}.tgz && Download_src
-    else
-      echo "Download pecl_memcache for php..."
-      src_url=https://pecl.php.net/get/memcache-${pecl_memcache_ver}.tgz && Download_src
-      echo "Download pecl_memcached for php..."
-      src_url=https://pecl.php.net/get/memcached-${pecl_memcached_ver}.tgz && Download_src
     fi
 
     echo "Download libmemcached..."

@@ -202,6 +202,7 @@ If you enter '.', the field will be left blank.
         ${web_install_dir}/sbin/nginx -s reload
       fi
       if [ "${apache_ssl_flag}" == 'y' ]; then
+        [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '4' ] && Apache_grant='Require all granted'
         [ ! -d ${apache_install_dir}/conf/vhost ] && mkdir ${apache_install_dir}/conf/vhost
         cat > ${apache_install_dir}/conf/vhost/${domain}.conf << EOF
 <VirtualHost *:80>
@@ -292,6 +293,7 @@ What Are You Doing?
     popd > /dev/null
     popd > /dev/null
   fi
+  [ -e ~/.acme.sh/account.conf ] && sed -i '/^CERT_HOME=/d' ~/.acme.sh/account.conf
   if [[ "${Domian_Mode}" =~ ^[2-3]$ ]] || [ "${ARG1}" == 'dnsapi' ]; then
     if [ -e "${web_install_dir}/sbin/nginx" ]; then
       nginx_ssl_flag=y

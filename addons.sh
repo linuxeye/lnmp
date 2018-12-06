@@ -85,6 +85,9 @@ if [ -e "${php_install_dir}/bin/phpize" ]; then
     7.2)
       php_option=7
     ;;
+    7.3)
+      php_option=8
+    ;;
   esac
 fi
 
@@ -271,7 +274,7 @@ What Are You Doing?
               fi
               ;;
             3)
-              if [[ "${PHP_main_ver}" =~ ^5.[3-6]$|^7.[0-2]$ ]]; then
+              if [[ "${PHP_main_ver}" =~ ^5.[3-6]$|^7.[0-3]$ ]]; then
                 checkDownload
                 Install_APCU
                 Check_succ
@@ -520,14 +523,14 @@ What Are You Doing?
         if [ "${ACTION}" = '1' ]; then
           Check_PHP_Extension
           pushd ${oneinstack_dir}/src > /dev/null
-          if [[ "${PHP_main_ver}" =~ ^7\.[0-2]$ ]]; then
-            src_url=https://pecl.php.net/get/swoole-${swoole_ver}.tgz && Download_src
-            tar xzf swoole-${swoole_ver}.tgz
-            pushd swoole-${swoole_ver}
-          else
+          if [[ "${PHP_main_ver}" =~ ^5\.[3-6]$ ]]; then
             src_url=https://pecl.php.net/get/swoole-1.10.5.tgz && Download_src
             tar xzf swoole-1.10.5.tgz
             pushd swoole-1.10.5
+          else
+            src_url=https://pecl.php.net/get/swoole-${swoole_ver}.tgz && Download_src
+            tar xzf swoole-${swoole_ver}.tgz
+            pushd swoole-${swoole_ver}
           fi
           ${php_install_dir}/bin/phpize
           ./configure --with-php-config=${php_install_dir}/bin/php-config --enable-openssl --with-openssl-dir=${openssl_install_dir}
@@ -547,7 +550,7 @@ What Are You Doing?
         if [ "${ACTION}" = '1' ]; then
           Check_PHP_Extension
           pushd ${oneinstack_dir}/src > /dev/null
-          if [[ "${PHP_main_ver}" =~ ^7\.[0-2]$ ]]; then
+          if [[ "${PHP_main_ver}" =~ ^7\.[0-3]$ ]]; then
             src_url=https://pecl.php.net/get/xdebug-${xdebug_ver}.tgz && Download_src
             src_url=http://mirrors.linuxeye.com/oneinstack/src/webgrind-master.zip && Download_src
             tar xzf xdebug-${xdebug_ver}.tgz

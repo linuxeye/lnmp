@@ -60,9 +60,9 @@ installDepsCentOS() {
       systemctl enable iptables.service
     fi
   elif [ "${CentOS_ver}" == '6' ]; then
-    yum -y groupremove "FTP Server" "PostgreSQL Database client" "PostgreSQL Database server" "MySQL Database server" "MySQL Database client" "Web Server" "Office Suite and Productivity" "E-mail server" "Ruby Support" "Printing client"
+    yum -y groupremove "FTP Server" "PostgreSQL Database client" "PostgreSQL Database server" "MySQL Database server" "MySQL Database client" "Web Server"
   elif [ "${CentOS_ver}" == '5' ]; then
-    yum -y groupremove "FTP Server" "Windows File Server" "PostgreSQL Database" "News Server" "MySQL Database" "DNS Name Server" "Web Server" "Dialup Networking Support" "Mail Server" "Ruby" "Office/Productivity" "Sound and Video" "Printing Support" "OpenFabrics Enterprise Distribution"
+    yum -y groupremove "FTP Server" "PostgreSQL Database" "News Server" "MySQL Database" "Web Server"
   fi
 
   echo "${CMSG}Installing dependencies packages...${CEND}"

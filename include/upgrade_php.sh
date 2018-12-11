@@ -13,12 +13,12 @@ Upgrade_PHP() {
   [ ! -e "${php_install_dir}" ] && echo "${CWARNING}PHP is not installed on your system! ${CEND}" && exit 1
   OLD_php_ver=`${php_install_dir}/bin/php -r 'echo PHP_VERSION;'`
   Latest_php_ver=`curl --connect-timeout 2 -m 3 -s http://php.net/downloads.php | awk '/Changelog/{print $2}' | grep "${OLD_php_ver%.*}"`
-  [ -z "$Latest_php_ver" ] && Latest_php_ver=5.5.38
+  Latest_php_ver=${Latest_php_ver:-5.5.38}
   echo
   echo "Current PHP Version: ${CMSG}$OLD_php_ver${CEND}"
   while :; do echo
-    read -p "Please input upgrade PHP Version(Default: $Latest_php_ver): " NEW_php_ver
-    [ -z "$NEW_php_ver" ] && NEW_php_ver=$Latest_php_ver
+    read -e -p "Please input upgrade PHP Version(Default: $Latest_php_ver): " NEW_php_ver
+    NEW_php_ver=${NEW_php_ver:-${Latest_php_ver}}
     if [ "${NEW_php_ver%.*}" == "${OLD_php_ver%.*}" ]; then
       [ ! -e "php-${NEW_php_ver}.tar.gz" ] && wget --no-check-certificate -c http://www.php.net/distributions/php-${NEW_php_ver}.tar.gz > /dev/null 2>&1
       if [ -e "php-${NEW_php_ver}.tar.gz" ]; then

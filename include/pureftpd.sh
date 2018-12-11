@@ -37,7 +37,7 @@ Install_PureFTPd() {
     /bin/cp ../config/pure-ftpd.conf ${pureftpd_install_dir}/etc
     sed -i "s@^PureDB.*@PureDB  ${pureftpd_install_dir}/etc/pureftpd.pdb@" ${pureftpd_install_dir}/etc/pure-ftpd.conf
     sed -i "s@^LimitRecursion.*@LimitRecursion  65535 8@" ${pureftpd_install_dir}/etc/pure-ftpd.conf
-    [ -z "${IPADDR}" ] && IPADDR=127.0.0.1
+    IPADDR=${IPADDR:-127.0.0.1}
     [ ! -d /etc/ssl/private ] && mkdir -p /etc/ssl/private
     openssl dhparam -out /etc/ssl/private/pure-ftpd-dhparams.pem 2048
     openssl req -x509 -days 7300 -sha256 -nodes -subj "/C=CN/ST=Shanghai/L=Shanghai/O=OneinStack/CN=${IPADDR}" -newkey rsa:2048 -keyout /etc/ssl/private/pure-ftpd.pem -out /etc/ssl/private/pure-ftpd.pem

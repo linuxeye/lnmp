@@ -34,7 +34,7 @@ Upgrade_DB() {
       break
     else
       echo
-      read -p "Please input the root password of database: " NEW_dbrootpwd
+      read -e -p "Please input the root password of database: " NEW_dbrootpwd
       ${db_install_dir}/bin/mysql -uroot -p${NEW_dbrootpwd} -e "quit" >/dev/null 2>&1
       if [ $? -eq 0 ]; then
         dbrootpwd=${NEW_dbrootpwd}
@@ -55,7 +55,7 @@ Upgrade_DB() {
   echo
   echo "Current ${DB} Version: ${CMSG}${OLD_db_ver}${CEND}"
   while :; do echo
-    read -p "Please input upgrade ${DB} Version(example: ${OLD_db_ver}): " NEW_db_ver
+    read -e -p "Please input upgrade ${DB} Version(example: ${OLD_db_ver}): " NEW_db_ver
     if [ `echo ${NEW_db_ver} | awk -F. '{print $1"."$2}'` == `echo ${OLD_db_ver} | awk -F. '{print $1"."$2}'` ]; then
       if [ "${DB}" == 'MariaDB' ]; then
         DB_name=mariadb-${NEW_db_ver}-${GLIBC_FLAG}-${SYS_BIT_b}

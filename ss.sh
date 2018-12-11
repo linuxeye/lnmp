@@ -62,7 +62,7 @@ Iptables_set() {
 
   while :; do echo
     read -e -p "Please input SS port(Default: ${SS_Default_port}): " SS_port
-    [ -z "${SS_port}" ] && SS_port=${SS_Default_port}
+    SS_port=${SS_port:-${SS_Default_port}}
     if [ ${SS_port} -ge 1 >/dev/null 2>&1 -a ${SS_port} -le 65535 >/dev/null 2>&1 ]; then
       [ -z "$(netstat -tpln | grep :${SS_port}$)" ] && break || echo "${CWARNING}This port is already used! ${CEND}"
     else
@@ -92,7 +92,7 @@ Def_parameter() {
     echo -e "\t${CMSG}1${CEND}. Install SS-libev"
     echo -e "\t${CMSG}2${CEND}. Install SS-python"
     read -e -p "Please input a number:(Default 1 press Enter) " ss_option
-    [ -z "${ss_option}" ] && ss_option=1
+    ss_option=${ss_option:-1}
     if [[ ! "${ss_option}" =~ ^[1-2]$ ]]; then
       echo "${CWARNING}input error! Please only input number 1~2${CEND}"
     else
@@ -135,9 +135,9 @@ Install_SS-python() {
 }
 
 Install_SS-libev() {
-  src_url=http://mirrors.linuxeye.com/oneinstack/src/shadowsocks-libev-3.2.0.tar.gz && Download_src
+  src_url=http://mirrors.linuxeye.com/oneinstack/src/shadowsocks-libev-3.2.3.tar.gz && Download_src
   src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
-  src_url=http://mirrors.linuxeye.com/oneinstack/src/mbedtls-2.11.0-apache.tgz && Download_src
+  src_url=http://mirrors.linuxeye.com/oneinstack/src/mbedtls-2.14.1-apache.tgz && Download_src
   if [ ! -e "/usr/local/lib/libsodium.la" ]; then
     tar xzf libsodium-${libsodium_ver}.tar.gz
     pushd libsodium-${libsodium_ver}
@@ -146,13 +146,13 @@ Install_SS-libev() {
     popd
     rm -rf libsodium-${libsodium_ver}
   fi
-  tar xzf mbedtls-2.11.0-apache.tgz
-  pushd mbedtls-2.11.0
+  tar xzf mbedtls-2.14.1-apache.tgz
+  pushd mbedtls-2.14.1
   make SHARED=1 CFLAGS=-fPIC
   make DESTDIR=/usr install
   popd
-  tar xzf shadowsocks-libev-3.2.0.tar.gz
-  pushd shadowsocks-libev-3.2.0
+  tar xzf shadowsocks-libev-3.2.3.tar.gz
+  pushd shadowsocks-libev-3.2.3
   make clean
   ./configure
   make -j ${THREAD} && make install

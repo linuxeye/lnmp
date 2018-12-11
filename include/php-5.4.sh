@@ -10,6 +10,10 @@
 
 Install_PHP54() {
   pushd ${oneinstack_dir}/src > /dev/null
+  if [ -e "${apache_install_dir}/bin/apachectl" ];then
+    [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '4' ] && Apache_flag=24
+    [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '2' ] && Apache_flag=22
+  fi
   if [ ! -e "/usr/local/lib/libiconv.la" ]; then
     tar xzf libiconv-${libiconv_ver}.tar.gz
     patch -d libiconv-${libiconv_ver} -p0 < libiconv-glibc-2.16.patch
@@ -83,7 +87,7 @@ Install_PHP54() {
   pushd php-${php54_ver} > /dev/null
   make clean
   [ ! -d "${php_install_dir}" ] && mkdir -p ${php_install_dir}
-  if [ "${apache_option}" == '2' ] || [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '2' ]; then
+  if [ "${apache_option}" == '2' ] || [ "${Apache_flag}" == '22' ]; then
     ./configure --prefix=${php_install_dir} --with-config-file-path=${php_install_dir}/etc \
     --with-config-file-scan-dir=${php_install_dir}/etc/php.d \
     --with-apxs2=${apache_install_dir}/bin/apxs --disable-fileinfo \
@@ -129,7 +133,7 @@ Install_PHP54() {
 
   sed -i "s@^memory_limit.*@memory_limit = ${Memory_limit}M@" ${php_install_dir}/etc/php.ini
   sed -i 's@^output_buffering =@output_buffering = On\noutput_buffering =@' ${php_install_dir}/etc/php.ini
-  sed -i 's@^;cgi.fix_pathinfo.*@cgi.fix_pathinfo=0@' ${php_install_dir}/etc/php.ini
+  #sed -i 's@^;cgi.fix_pathinfo.*@cgi.fix_pathinfo=0@' ${php_install_dir}/etc/php.ini
   sed -i 's@^short_open_tag = Off@short_open_tag = On@' ${php_install_dir}/etc/php.ini
   sed -i 's@^expose_php = On@expose_php = Off@' ${php_install_dir}/etc/php.ini
   sed -i 's@^request_order.*@request_order = "CGP"@' ${php_install_dir}/etc/php.ini
@@ -140,12 +144,17 @@ Install_PHP54() {
   sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,stream_socket_server,fsocket,popen@' ${php_install_dir}/etc/php.ini
   [ -e /usr/sbin/sendmail ] && sed -i 's@^;sendmail_path.*@sendmail_path = /usr/sbin/sendmail -t -i@' ${php_install_dir}/etc/php.ini
 
-  if [ ! -e "${apache_install_dir}/bin/apxs" -o "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '4' ]; then
+  if [ ! -e "${apache_install_dir}/bin/apxs" -o "${Apache_flag}" == '24' ]; then
     # php-fpm Init Script
-    /bin/cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
-    chmod +x /etc/init.d/php-fpm
-    [ "${PM}" == 'yum' ] && { chkconfig --add php-fpm; chkconfig php-fpm on; }
-    [ "${PM}" == 'apt-get' ] && update-rc.d php-fpm defaults
+    if [ -e /bin/systemctl ]; then
+      /bin/cp sapi/fpm/php-fpm.service /lib/systemd/system/
+      systemctl enable php-fpm
+    else
+      /bin/cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
+      chmod +x /etc/init.d/php-fpm
+      [ "${PM}" == 'yum' ] && { chkconfig --add php-fpm; chkconfig php-fpm on; }
+      [ "${PM}" == 'apt-get' ] && update-rc.d php-fpm defaults
+    fi
 
     cat > ${php_install_dir}/etc/php-fpm.conf <<EOF
 ;;;;;;;;;;;;;;;;;;;;;
@@ -233,7 +242,7 @@ EOF
     #[ "$web_yn" == 'n' ] && sed -i "s@^listen =.*@listen = $IPADDR:9000@" ${php_install_dir}/etc/php-fpm.conf
     service php-fpm start
 
-  elif [ "${apache_option}" == '2' ] || [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '2' ]; then
+  elif [ "${apache_option}" == '2' ] || [ "${Apache_flag}" == '22' ]; then
     service httpd restart
   fi
   popd > /dev/null

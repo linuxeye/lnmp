@@ -18,8 +18,8 @@ Upgrade_Nginx() {
   echo
   echo "Current Nginx Version: ${CMSG}${OLD_nginx_ver}${CEND}"
   while :; do echo
-    read -p "Please input upgrade Nginx Version(default: ${Latest_nginx_ver}): " NEW_nginx_ver
-    [ -z "${NEW_nginx_ver}" ] && NEW_nginx_ver=${Latest_nginx_ver}
+    read -e -p "Please input upgrade Nginx Version(default: ${Latest_nginx_ver}): " NEW_nginx_ver
+    NEW_nginx_ver=${NEW_nginx_ver:-${Latest_nginx_ver}}
     if [ "${NEW_nginx_ver}" != "${OLD_nginx_ver}" ]; then
       [ ! -e "nginx-${NEW_nginx_ver}.tar.gz" ] && wget --no-check-certificate -c http://nginx.org/download/nginx-${NEW_nginx_ver}.tar.gz > /dev/null 2>&1
       if [ -e "nginx-${NEW_nginx_ver}.tar.gz" ]; then
@@ -80,8 +80,8 @@ Upgrade_Tengine() {
   echo
   echo "Current Tengine Version: ${CMSG}${OLD_tengine_ver}${CEND}"
   while :; do echo
-    read -p "Please input upgrade Tengine Version(default: ${Latest_tengine_ver}): " NEW_tengine_ver
-    [ -z "${NEW_tengine_ver}" ] && NEW_tengine_ver=${Latest_tengine_ver}
+    read -e -p "Please input upgrade Tengine Version(default: ${Latest_tengine_ver}): " NEW_tengine_ver
+    NEW_tengine_ver=${NEW_tengine_ver:-${Latest_tengine_ver}}
     if [ "${NEW_tengine_ver}" != "${OLD_tengine_ver}" ]; then
       [ ! -e "tengine-${NEW_tengine_ver}.tar.gz" ] && wget --no-check-certificate -c http://tengine.taobao.org/download/tengine-${NEW_tengine_ver}.tar.gz > /dev/null 2>&1
       if [ -e "tengine-${NEW_tengine_ver}.tar.gz" ]; then
@@ -147,8 +147,8 @@ Upgrade_OpenResty() {
   echo
   echo "Current OpenResty Version: ${CMSG}${OLD_openresy_ver}${CEND}"
   while :; do echo
-    read -p "Please input upgrade OpenResty Version(default: ${Latest_openresy_ver}): " NEW_openresy_ver
-    [ -z "${NEW_openresy_ver}" ] && NEW_openresy_ver=${Latest_openresy_ver}
+    read -e -p "Please input upgrade OpenResty Version(default: ${Latest_openresy_ver}): " NEW_openresy_ver
+    NEW_openresy_ver=${NEW_openresy_ver:-${Latest_openresy_ver}}
     if [ "${NEW_openresy_ver}" != "${OLD_openresy_ver}" ]; then
       [ ! -e "openresty-${NEW_openresy_ver}.tar.gz" ] && wget --no-check-certificate -c https://openresty.org/download/openresty-${NEW_openresy_ver}.tar.gz > /dev/null 2>&1
       if [ -e "openresty-${NEW_openresy_ver}.tar.gz" ]; then
@@ -202,12 +202,12 @@ Upgrade_Apache() {
   OLD_apache_ver="`${apache_install_dir}/bin/httpd -v | grep version | awk -F'/| ' '{print $4}'`"
   Apache_flag="`echo ${OLD_apache_ver} | awk -F. '{print $1 $2}'`"
   Latest_apache_ver=`curl --connect-timeout 2 -m 3 -s http://httpd.apache.org/download.cgi | awk "/#apache${Apache_flag}/{print $2}" | head -1 | grep -oE "2\.[24]\.[0-9]+"`
-  [ -z "${Latest_apache_ver}" ] && Latest_apache_ver=${apache22_ver}
+  Latest_apache_ver=${Latest_apache_ver:-${apache22_ver}}
   echo
   echo "Current Apache Version: ${CMSG}${OLD_apache_ver}${CEND}"
   while :; do echo
-    read -p "Please input upgrade Apache Version(Default: ${Latest_apache_ver}): " NEW_apache_ver
-    [ -z "${NEW_apache_ver}" ] && NEW_apache_ver=${Latest_apache_ver}
+    read -e -p "Please input upgrade Apache Version(Default: ${Latest_apache_ver}): " NEW_apache_ver
+    NEW_apache_ver=${NEW_apache_ver:-${Latest_apache_ver}}
     if [ `echo ${NEW_apache_ver} | awk -F. '{print $1$2}'` == "${Apache_flag}" ]; then
       if [ "${NEW_apache_ver}" != "${OLD_apache_ver}" ]; then
         if [ "${Apache_flag}" == '24' ]; then
@@ -269,12 +269,12 @@ Upgrade_Tomcat() {
   OLD_tomcat_ver="`${tomcat_install_dir}/bin/version.sh | awk '/Server number/{print $3}' | awk -F. '{print $1"."$2"."$3}'`"
   Tomcat_flag="`echo ${OLD_tomcat_ver} | awk -F. '{print $1}'`"
   Latest_tomcat_ver=`curl --connect-timeout 2 -m 3 -s https://tomcat.apache.org/download-${Tomcat_flag}0.cgi | grep "README" | head -1 | grep -oE "[6-9]\.[0-9]\.[0-9]+"`
-  [ -z "${Latest_tomcat_ver}" ] && Latest_tomcat_ver=${tomcat9_ver}
+  Latest_tomcat_ver=${Latest_tomcat_ver:-${tomcat9_ver}}
   echo
   echo "Current Tomcat Version: ${CMSG}${OLD_tomcat_ver}${CEND}"
   while :; do echo
-    read -p "Please input upgrade Tomcat Version(Default: ${Latest_tomcat_ver}): " NEW_tomcat_ver
-    [ -z "${NEW_tomcat_ver}" ] && NEW_tomcat_ver=${Latest_tomcat_ver}
+    read -e -p "Please input upgrade Tomcat Version(Default: ${Latest_tomcat_ver}): " NEW_tomcat_ver
+    NEW_tomcat_ver=${NEW_tomcat_ver:-${Latest_tomcat_ver}}
     if [ "`echo ${NEW_tomcat_ver} | awk -F. '{print $1}'`" == "${Tomcat_flag}" ]; then
       rm -f catalina-jmx-remote.jar
       echo "Download tomcat-${NEW_tomcat_ver}..."
@@ -304,11 +304,11 @@ Upgrade_Tomcat() {
     /bin/cp -R ${tomcat_install_dir}/conf/vhost apache-tomcat-${NEW_tomcat_ver}/conf/
     chmod +x apache-tomcat-${NEW_tomcat_ver}/bin/*.sh
     [[ -d ${tomcat_install_dir}_bak && -d ${tomcat_install_dir} ]] && rm -rf ${tomcat_install_dir}._bak
-    /etc/init.d/tomcat stop
+    service tomcat stop
     /bin/mv ${tomcat_install_dir}{,_bak}
     /bin/mv apache-tomcat-${NEW_tomcat_ver} ${tomcat_install_dir} && chown -R ${run_user}.${run_user} ${tomcat_install_dir}
     if [ -e "${tomcat_install_dir}/conf/server.xml" ]; then
-      /etc/init.d/tomcat start
+      service tomcat start
       echo "You have ${CMSG}successfully${CEND} upgrade from ${CWARNING}${OLD_tomcat_ver}${CEND} to ${CWARNING}${NEW_tomcat_ver}${CEND}"
     else
       echo "${CFAILURE}Upgrade Tomcat failed! ${CEND}"

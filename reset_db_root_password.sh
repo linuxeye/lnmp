@@ -89,7 +89,7 @@ Reset_Interaction_dbrootpwd() {
 Reset_force_dbrootpwd() {
   DB_Ver="`${db_install_dir}/bin/mysql_config --version`"
   echo "${CMSG}Stopping MySQL...${CEND}"
-  /etc/init.d/mysqld stop > /dev/null 2>&1
+  service mysqld stop > /dev/null 2>&1
   while [ -n "`ps -ef | grep mysql | grep -v grep | awk '{print $2}'`" ]; do
     sleep 1
   done
@@ -115,7 +115,7 @@ EOF
       sleep 1
     done
     [ -n "`ps -ef | grep mysql | grep -v grep | awk '{print $2}'`" ] && ps -ef | grep mysql | grep -v grep | awk '{print $2}' | xargs kill -9 > /dev/null 2>&1
-    /etc/init.d/mysqld start > /dev/null 2>&1
+    service mysqld start > /dev/null 2>&1
     sed -i "s+^dbrootpwd.*+dbrootpwd='${New_dbrootpwd}'+" ./options.conf
     [ -e ~/ReadMe ] && sed -i "s+^MySQL root password:.*+MySQL root password: ${New_dbrootpwd}+"  ~/ReadMe
     echo
@@ -130,7 +130,7 @@ if [ "${quiet_yn}" == 'y' ]; then
   if [ "${force_yn}" == 'y' ]; then
     Reset_force_dbrootpwd
   else
-    sleep 2 && [ ! -e /tmp/mysql.sock ] && /etc/init.d/mysqld start
+    sleep 2 && [ ! -e /tmp/mysql.sock ] && service mysqld start
     Reset_Interaction_dbrootpwd
   fi
 else

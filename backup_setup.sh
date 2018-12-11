@@ -39,7 +39,7 @@ while :; do echo
   echo -e "\t${CMSG}5${CEND}. UPYUN"
   echo -e "\t${CMSG}6${CEND}. QINIU"
   read -e -p "Please input a number:(Default 1 press Enter) " desc_bk
-  [ -z "${desc_bk}" ] && desc_bk=1
+  desc_bk=${desc_bk:-1}
   ary=(1 2 3 4 5 6 12 13 14 15 16 23 24 25 26 34 35 36 45 46 56 123 124 125 126 134 135 136 145 146 156 234 235 236 245 246 256 345 346 456 1234 1235 1236 2345 2346 3456 12345 12346 13456 23456 123456)
   if [[ "${ary[@]}" =~ "${desc_bk}" ]]; then
     break
@@ -63,7 +63,7 @@ while :; do echo
   echo -e "\t${CMSG}2${CEND}. Only Website"
   echo -e "\t${CMSG}3${CEND}. Database and Website"
   read -e -p "Please input a number:(Default 1 press Enter) " content_bk
-  [ -z "${content_bk}" ] && content_bk=1
+  content_bk=${content_bk:-1}
   if [[ ! ${content_bk} =~ ^[1-3]$ ]]; then
     echo "${CWARNING}input error! Please only input number 1~3${CEND}"
   else
@@ -79,7 +79,7 @@ if [[ ${desc_bk} =~ ^[1,2]$ ]]; then
   while :; do echo
     echo "Please enter the directory for save the backup file: "
     read -e -p "(Default directory: ${backup_dir}): " new_backup_dir
-    [ -z "${new_backup_dir}" ] && new_backup_dir="${backup_dir}"
+    new_backup_dir=${new_backup_dir:-${backup_dir}}
     if [ -z "`echo ${new_backup_dir}| grep '^/'`" ]; then
       echo "${CWARNING}input error! ${CEND}"
     else
@@ -92,7 +92,7 @@ fi
 while :; do echo
   echo "Please enter a valid backup number of days: "
   read -e -p "(Default days: 5): " expired_days
-  [ -z "${expired_days}" ] && expired_days=5
+  expired_days=${expired_days:-5}
   [ -n "`echo ${expired_days} | sed -n "/^[0-9]\+$/p"`" ] && break || echo "${CWARNING}input error! Please only enter numbers! ${CEND}"
 done
 sed -i "s@^expired_days=.*@expired_days=${expired_days}@" ./options.conf
@@ -143,10 +143,10 @@ if [ `echo ${desc_bk} | grep -e 2` ]; then
     [ -z "${remote_ip}" -o "${remote_ip}" == '127.0.0.1' ] && continue
     echo
     read -e -p "Please enter the remote host port(Default: 22) : " remote_port
-    [ -z "${remote_port}" ] && remote_port=22
+    remote_port=${remote_port:-22}
     echo
     read -e -p "Please enter the remote host user(Default: root) : " remote_user
-    [ -z "${remote_user}" ] && remote_user=root
+    remote_user=${remote_user:-root}
     echo
     read -e -p "Please enter the remote host password: " remote_password
     IPcode=$(echo "ibase=16;$(echo "${remote_ip}" | xxd -ps -u)"|bc|tr -d '\\'|tr -d '\n')
@@ -186,7 +186,7 @@ if [ `echo ${desc_bk} | grep -e 3` ]; then
     echo -e "\t${CMSG}15${CEND}. ap-northeast-亚太东北 1 (日本)   ${CMSG}16${CEND}. ap-south-亚太南部 1 (孟买)"
     echo -e "\t${CMSG}17${CEND}. eu-central-欧洲中部 1 (法兰克福) ${CMSG}18${CEND}. me-east-中东东部 1 (迪拜)"
     read -e -p "Please input a number:(Default 1 press Enter) " Location
-    [ -z "${Location}" ] && Location=1
+    Location=${Location:-1}
     if [[ "${Location}" =~ ^[1-9]$|^1[0-8]$ ]]; then
       break
     else
@@ -247,51 +247,64 @@ if [ `echo ${desc_bk} | grep -e 4` ]; then
     echo -e "\t ${CMSG}15${CEND}. ap-bangkok-曼谷             ${CMSG}16${CEND}. eu-moscow-莫斯科"
     echo -e "\t ${CMSG}17${CEND}. ap-tokyo-东京"
     read -e -p "Please input a number:(Default 1 press Enter) " Location
-    [ -z "${Location}" ] && Location=1
+    Location=${Location:-1}
     if [[ "${Location}" =~ ^[1-9]$|^1[0-7]$ ]]; then
       break
     else
       echo "${CWARNING}input error! Please only input number 1~17${CEND}"
     fi
   done
-  [ "${Location}" == '1' ] && region='ap-beijing-1'
-  [ "${Location}" == '2' ] && region='ap-beijing'
-  [ "${Location}" == '3' ] && region='ap-shanghai'
-  [ "${Location}" == '4' ] && region='ap-guangzhou'
-  [ "${Location}" == '5' ] && region='ap-chengdu'
-  [ "${Location}" == '6' ] && region='ap-chongqing'
-  [ "${Location}" == '7' ] && region='ap-singapore'
-  [ "${Location}" == '8' ] && region='ap-hongkong'
-  [ "${Location}" == '9' ] && region='na-toronto'
-  [ "${Location}" == '10' ] && region='eu-frankfurt'
-  [ "${Location}" == '11' ] && region='ap-mumbai'
-  [ "${Location}" == '12' ] && region='ap-seoul'
-  [ "${Location}" == '13' ] && region='na-siliconvalley'
-  [ "${Location}" == '14' ] && region='na-ashburn'
-  [ "${Location}" == '15' ] && region='ap-bangkok'
-  [ "${Location}" == '16' ] && region='eu-moscow'
-  [ "${Location}" == '17' ] && region='ap-tokyo'
+  [ "${Location}" == '1' ] && REGION='ap-beijing-1'
+  [ "${Location}" == '2' ] && REGION='ap-beijing'
+  [ "${Location}" == '3' ] && REGION='ap-shanghai'
+  [ "${Location}" == '4' ] && REGION='ap-guangzhou'
+  [ "${Location}" == '5' ] && REGION='ap-chengdu'
+  [ "${Location}" == '6' ] && REGION='ap-chongqing'
+  [ "${Location}" == '7' ] && REGION='ap-singapore'
+  [ "${Location}" == '8' ] && REGION='ap-hongkong'
+  [ "${Location}" == '9' ] && REGION='na-toronto'
+  [ "${Location}" == '10' ] && REGION='eu-frankfurt'
+  [ "${Location}" == '11' ] && REGION='ap-mumbai'
+  [ "${Location}" == '12' ] && REGION='ap-seoul'
+  [ "${Location}" == '13' ] && REGION='na-siliconvalley'
+  [ "${Location}" == '14' ] && REGION='na-ashburn'
+  [ "${Location}" == '15' ] && REGION='ap-bangkok'
+  [ "${Location}" == '16' ] && REGION='eu-moscow'
+  [ "${Location}" == '17' ] && REGION='ap-tokyo'
   while :; do echo
     read -e -p "Please enter the Qcloud COS APPID: " APPID
-    [ -z "${APPID}" ] && continue
+    [[ ! "${APPID}" =~ ^[0-9]+$ ]] && { echo "${CWARNING}input error, must be a number${CEND}"; continue; }
     echo
-    read -e -p "Please enter the Qcloud COS SecretId: " SecretId
-    [ -z "${SecretId}" ] && continue
+    read -e -p "Please enter the Qcloud COS SECRET_ID: " SECRET_ID
+    [ -z "${SECRET_ID}" ] && continue
     echo
-    read -e -p "Please enter the Qcloud COS SecretKey: " SecretKey
-    [ -z "$SecretKey" ] && continue
+    read -e -p "Please enter the Qcloud COS SECRET_KEY: " SECRET_KEY
+    [ -z "${SECRET_KEY}" ] && continue
     echo
-    read -e -p "Please enter the Qcloud COS bucket: " bucket
-    [ -z "${bucket}" ] && continue
-    echo
-    ${python_install_dir}/bin/coscmd config -u ${APPID} -a ${SecretId} -s $SecretKey -r $region -b ${bucket} >/dev/null 2>&1
+    read -e -p "Please enter the Qcloud COS BUCKET: " BUCKET
+    if [[ ${BUCKET} =~ "-${APPID}"$ ]]; then 
+      Bucket=${BUCKET}
+    else
+      [ -z "${BUCKET}" ] && continue
+      echo
+      Bucket=${BUCKET}-${APPID}
+    fi
+    ${python_install_dir}/bin/coscmd config -u ${APPID} -a ${SECRET_ID} -s ${SECRET_KEY} -r ${REGION} -b ${Bucket} >/dev/null 2>&1
     ${python_install_dir}/bin/coscmd list >/dev/null 2>&1
-    if [ $? = 0 ]; then
-      echo "${CMSG}APPID/SecretId/SecretKey/region/bucket OK${CEND}"
+    if [ $? -eq 0 ];then
+      echo "${CMSG}APPID/SECRET_ID/SECRET_KEY/REGION/BUCKET OK${CEND}"
       echo
       break
     else
-      echo "${CWARNING}input error! APPID/SecretId/SecretKey/region/bucket invalid${CEND}"
+      ${python_install_dir}/bin/coscmd -b ${Bucket} createbucket >/dev/null 2>&1
+      if [ $? -eq 0 ];then
+        echo "${CMSG}APPID/SECRET_ID/SECRET_KEY/REGION OK, You createbucket ${Bucket}${CEND}"
+        echo
+        break
+      else
+        echo "${CWARNING}input error! APPID/SECRET_ID/SECRET_KEY/REGION/BUCKET invalid${CEND}"
+        continue
+      fi
     fi
   done
 fi
@@ -350,9 +363,9 @@ if [ `echo ${desc_bk} | grep -e 6` ]; then
     echo 'Please select your backup qiniu datacenter:'
     echo -e "\t ${CMSG} 1${CEND}. 华东            ${CMSG}2${CEND}. 华北"
     echo -e "\t ${CMSG} 3${CEND}. 华南            ${CMSG}4${CEND}. 北美"
-    echo -e "\t ${CMSG} 5${CEND}. 东南亚" 
+    echo -e "\t ${CMSG} 5${CEND}. 东南亚"
     read -e -p "Please input a number:(Default 1 press Enter) " Location
-    [ -z "${Location}" ] && Location=1
+    Location=${Location:-1}
     if [[ "${Location}" =~ ^[1-5]$ ]]; then
       break
     else
@@ -365,30 +378,30 @@ if [ `echo ${desc_bk} | grep -e 6` ]; then
   [ "${Location}" == '4' ] && zone='na0'
   [ "${Location}" == '5' ] && zone='as0'
   while :; do echo
-    read -e -p "Please enter the qiniu AccessKey: " AccessKey 
+    read -e -p "Please enter the qiniu AccessKey: " AccessKey
     [ -z "${AccessKey}" ] && continue
     echo
-    read -e -p "Please enter the qiniu SecretKey: " SecretKey 
+    read -e -p "Please enter the qiniu SecretKey: " SecretKey
     [ -z "${SecretKey}" ] && continue
     echo
-    read -e -p "Please enter the qiniu bucket: " bucket
-    [ -z "${bucket}" ] && continue
+    read -e -p "Please enter the qiniu bucket: " Bucket
+    [ -z "${Bucket}" ] && continue
     echo
     /usr/local/bin/qshell account ${AccessKey} ${SecretKey}
     /usr/local/bin/qrsctl login ${AccessKey} ${SecretKey}
-    if /usr/local/bin/qrsctl bucketinfo ${bucket} > /dev/null 2>&1; then
-      sed -i "s@^qiniu_bucket=.*@qiniu_bucket=${bucket}@" ./options.conf
+    if /usr/local/bin/qrsctl bucketinfo ${Bucket} > /dev/null 2>&1; then
+      sed -i "s@^qiniu_bucket=.*@qiniu_bucket=${Bucket}@" ./options.conf
       echo "${CMSG}AccessKey/SecretKey OK${CEND}"
       echo
       break
-    elif /usr/local/bin/qrsctl mkbucket ${bucket} ${zone} > /dev/null 2>&1; then
-      /usr/local/bin/qrsctl private ${bucket} 1
-      echo "${CMSG}[${bucket}] createbucket OK${CEND}"
-      sed -i "s@^qiniu_bucket=.*@qiniu_bucket=${bucket}@" ./options.conf
+    elif /usr/local/bin/qrsctl mkbucket ${Bucket} ${zone} > /dev/null 2>&1; then
+      /usr/local/bin/qrsctl private ${Bucket} 1
+      echo "${CMSG}[${Bucket}] createbucket OK${CEND}"
+      sed -i "s@^qiniu_bucket=.*@qiniu_bucket=${Bucket}@" ./options.conf
       echo "${CMSG}AccessKey/SecretKey OK${CEND}"
       echo
       break
-    else 
+    else
       echo "${CWARNING}input error! AccessKey/SecretKey invalid${CEND}"
     fi
   done

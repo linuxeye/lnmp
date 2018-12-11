@@ -13,11 +13,11 @@ Upgrade_Memcached() {
   [ ! -e "${memcached_install_dir}/bin/memcached" ] && echo "${CWARNING}Memcached is not installed on your system! ${CEND}" && exit 1
   OLD_memcached_ver=`${memcached_install_dir}/bin/memcached -V | awk '{print $2}'`
   Latest_memcached_ver=`curl --connect-timeout 2 -m 3 -s https://github.com/memcached/memcached/wiki/ReleaseNotes | grep 'internal present.*ReleaseNotes' |  grep -oE "[0-9]\.[0-9]\.[0-9]+" | head -1`
-  [ -z "${Latest_memcached_ver}" ] && Latest_memcached_ver=1.6.8
+  Latest_memcached_ver=${Latest_memcached_ver:-1.5.12}
   echo "Current Memcached Version: ${CMSG}${OLD_memcached_ver}${CEND}"
   while :; do echo
-    read -p "Please input upgrade Memcached Version(default: ${Latest_memcached_ver}): " NEW_memcached_ver
-    [ -z "${NEW_memcached_ver}" ] && NEW_memcached_ver=${Latest_memcached_ver}
+    read -e -p "Please input upgrade Memcached Version(default: ${Latest_memcached_ver}): " NEW_memcached_ver
+    NEW_memcached_ver=${NEW_memcached_ver:-${Latest_memcached_ver}}
     if [ "${NEW_memcached_ver}" != "${OLD_memcached_ver}" ]; then
       [ "$IPADDR_COUNTRY"x == "CN"x ] && DOWN_ADDR=http://mirrors.linuxeye.com/oneinstack/src || DOWN_ADDR=http://www.memcached.org/files
       [ ! -e "memcached-${NEW_memcached_ver}.tar.gz" ] && wget --no-check-certificate -c ${DOWN_ADDR}/memcached-${NEW_memcached_ver}.tar.gz > /dev/null 2>&1

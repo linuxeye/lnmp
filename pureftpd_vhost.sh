@@ -61,9 +61,7 @@ done
 DIRECTORY() {
 while :; do echo
   read -e -p "Please input the directory(Default directory: ${wwwroot_dir}): " Directory
-  if [ -z "${Directory}" ]; then
-    Directory="${wwwroot_dir}"
-  fi
+  Directory=${Directory:-${wwwroot_dir}}
   if [ ! -d "${Directory}" ]; then
     echo "${CWARNING}The directory does not exist${CEND}"
   else

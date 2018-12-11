@@ -13,11 +13,11 @@ Upgrade_Redis() {
   [ ! -d "$redis_install_dir" ] && echo "${CWARNING}Redis is not installed on your system! ${CEND}" && exit 1
   OLD_redis_ver=`$redis_install_dir/bin/redis-cli --version | awk '{print $2}'`
   Latest_redis_ver=`curl --connect-timeout 2 -m 3 -s http://download.redis.io/redis-stable/00-RELEASENOTES | awk '/Released/{print $2}' | head -1`
-  [ -z "$Latest_redis_ver" ] && Latest_redis_ver=4.2.8
+  Latest_redis_ver=${Latest_redis_ver:-5.0.2}
   echo "Current Redis Version: ${CMSG}$OLD_redis_ver${CEND}"
   while :; do echo
-    read -p "Please input upgrade Redis Version(default: $Latest_redis_ver): " NEW_redis_ver
-    [ -z "$NEW_redis_ver" ] && NEW_redis_ver=$Latest_redis_ver
+    read -e -p "Please input upgrade Redis Version(default: ${Latest_redis_ver}): " NEW_redis_ver
+    NEW_redis_ver=${NEW_redis_ver:-${Latest_redis_ver}}
     if [ "$NEW_redis_ver" != "$OLD_redis_ver" ]; then
       [ ! -e "redis-$NEW_redis_ver.tar.gz" ] && wget --no-check-certificate -c http://download.redis.io/releases/redis-$NEW_redis_ver.tar.gz > /dev/null 2>&1
       if [ -e "redis-$NEW_redis_ver.tar.gz" ]; then

@@ -161,7 +161,7 @@ EOF
 EOF
   sed -i 's@^iptables = iptables.*@iptables = iptables@' /etc/fail2ban/action.d/iptables-common.conf
   kill -9 `ps -ef | grep fail2ban | grep -v grep | awk '{print $2}'` > /dev/null 2>&1
-  /etc/init.d/fail2ban start
+  service fail2ban start
   popd > /dev/null
   if [ -e "${python_install_dir}/bin/fail2ban-python" ]; then
     echo; echo "${CSUCCESS}fail2ban installed successfully! ${CEND}"
@@ -172,7 +172,7 @@ EOF
 }
 
 Uninstall_fail2ban() {
-  /etc/init.d/fail2ban stop
+  service fail2ban stop
   ${python_install_dir}/bin/pip uninstall -y fail2ban > /dev/null 2>&1
   rm -rf /etc/init.d/fail2ban /etc/fail2ban /etc/logrotate.d/fail2ban /var/log/fail2ban.* /var/run/fail2ban
   echo; echo "${CMSG}fail2ban uninstall completed${CEND}";
@@ -185,7 +185,7 @@ ACTION_FUN() {
     echo -e "\t${CMSG}1${CEND}. install"
     echo -e "\t${CMSG}2${CEND}. uninstall"
     read -e -p "Please input a number:(Default 1 press Enter) " ACTION
-    [ -z "${ACTION}" ] && ACTION=1
+    ACTION=${ACTION:-1}
     if [[ ! "${ACTION}" =~ ^[1,2]$ ]]; then
       echo "${CWARNING}input error! Please only input number 1~2${CEND}"
     else
@@ -224,7 +224,7 @@ What Are You Doing?
           echo -e "\t${CMSG}3${CEND}. APCU"
           echo -e "\t${CMSG}4${CEND}. eAccelerator"
           read -e -p "Please input a number:(Default 1 press Enter) " phpcache_option
-          [ -z "${phpcache_option}" ] && phpcache_option=1
+          phpcache_option=${phpcache_option:-1}
           if [[ ! "${phpcache_option}" =~ ^[1-4]$ ]]; then
             echo "${CWARNING}input error! Please only input number 1~4${CEND}"
           else
@@ -304,7 +304,7 @@ What Are You Doing?
           echo -e "\t${CMSG}2${CEND}. ionCube Loader"
           echo -e "\t${CMSG}3${CEND}. SourceGuardian"
           read -e -p "Please input a number:(Default 1 press Enter) " Loader
-          [ -z "${Loader}" ] && Loader=1
+          Loader=${Loader:-1}
           if [[ ! "${Loader}" =~ ^[1-3]$ ]]; then
             echo "${CWARNING}input error! Please only input number 1~3${CEND}"
           else
@@ -352,7 +352,7 @@ What Are You Doing?
           echo -e "\t${CMSG}1${CEND}. ImageMagick"
           echo -e "\t${CMSG}2${CEND}. GraphicsMagick"
           read -e -p "Please input a number:(Default 1 press Enter) " magick_option
-          [ -z "${magick_option}" ] && magick_option=1
+          magick_option=${magick_option:-1}
           if [[ ! "${magick_option}" =~ ^[1,2]$ ]]; then
             echo "${CWARNING}input error! Please only input number 1~2${CEND}"
           else
@@ -388,7 +388,7 @@ What Are You Doing?
           echo -e "\t${CMSG}3${CEND}. phalcon"
           echo -e "\t${CMSG}4${CEND}. mongodb"
           read -e -p "Please input a number:(Default 1 press Enter) " phpext_option
-          [ -z "${phpext_option}" ] && phpext_option=1
+          phpext_option=${phpext_option:-1}
           if [[ ! "${phpext_option}" =~ ^[1-4]$ ]]; then
             echo "${CWARNING}input error! Please only input number 1~4${CEND}"
           else
@@ -465,7 +465,7 @@ What Are You Doing?
           echo -e "\t${CMSG}2${CEND}. memcached PHP Extension"
           echo -e "\t${CMSG}3${CEND}. memcache/memcached PHP Extension"
           read -e -p "Please input a number:(Default 1 press Enter) " Memcache
-          [ -z "${Memcache}" ] && Memcache=1
+          Memcache=${Memcache:-1}
           if [[ ! "${Memcache}" =~ ^[1-3]$ ]]; then
             echo "${CWARNING}input error! Please only input number 1~3${CEND}"
           else

@@ -162,14 +162,16 @@ Uninstall_MongoDB() {
 Print_PHP() {
   [ -e "${php_install_dir}" ] && echo "${php_install_dir}"
   [ -e "/etc/init.d/php-fpm" ] && echo "/etc/init.d/php-fpm"
+  [ -e "/lib/systemd/system/php-fpm.service" ] && echo '/lib/systemd/system/php-fpm.service'
   [ -e "${imagick_install_dir}" ] && echo "${imagick_install_dir}"
   [ -e "${gmagick_install_dir}" ] && echo "${gmagick_install_dir}"
   [ -e "${curl_install_dir}" ] && echo "${curl_install_dir}"
 }
 
 Uninstall_PHP() {
-  [ -e "${php_install_dir}/bin/phpize" -a -e "${php_install_dir}/etc/php-fpm.conf" ] && { service php-fpm stop > /dev/null 2>&1; rm -rf ${php_install_dir} /etc/init.d/php-fpm; echo "${CMSG}PHP uninstall completed! ${CEND}"; }
-  [ -e "${php_install_dir}/bin/phpize" -a ! -e "${php_install_dir}/etc/php-fpm.conf" ] && { rm -rf ${php_install_dir}; echo "${CMSG}PHP uninstall completed! ${CEND}"; }
+  [ -e "/etc/init.d/php-fpm" ] && { service php-fpm stop > /dev/null 2>&1; rm -f /etc/init.d/php-fpm; }
+  [ -e "/lib/systemd/system/php-fpm.service" ] && { systemctl stop php-fpm > /dev/null 2>&1; systemctl disable php-fpm > /dev/null 2>&1; rm -f /lib/systemd/system/php-fpm.service; }
+  [ -e "${php_install_dir}" ] && { rm -rf ${php_install_dir}; echo "${CMSG}PHP uninstall completed! ${CEND}"; }
   [ -e "${imagick_install_dir}" ] && rm -rf ${imagick_install_dir}
   [ -e "${gmagick_install_dir}" ] && rm -rf ${gmagick_install_dir}
   [ -e "${curl_install_dir}" ] && rm -rf "${curl_install_dir}"

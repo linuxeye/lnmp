@@ -51,7 +51,7 @@ php73_ver=7.3.0
 php72_ver=7.2.13
 php71_ver=7.1.25
 php70_ver=7.0.33
-php56_ver=5.6.38
+php56_ver=5.6.39
 php55_ver=5.5.38
 php54_ver=5.4.45
 php53_ver=5.3.29
@@ -64,7 +64,7 @@ mhash_ver=0.9.9.9
 libsodium_ver=1.0.16
 argon2_ver=20171227
 libzip_ver=1.3.2
-imagemagick_ver=6.9.10-15
+imagemagick_ver=6.9.10-16
 imagick_ver=3.4.3
 graphicsmagick_ver=1.3.30
 gmagick_for_php7_ver=2.0.5RC1
@@ -89,7 +89,7 @@ pecl_redis_ver=4.2.0
 memcached_ver=1.5.12
 libmemcached_ver=1.0.18
 pecl_memcached_ver=2.2.0
-pecl_memcached_php7_ver=3.0.4
+pecl_memcached_php7_ver=3.1.0
 pecl_memcache_ver=3.0.8
 
 # MongoDB

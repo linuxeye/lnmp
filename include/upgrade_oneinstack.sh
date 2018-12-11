@@ -35,6 +35,10 @@ Upgrade_OneinStack() {
     rm -rf /tmp/{oneinstack.tar.gz,options.conf}
     [ "${ois_flag}" == 'n' ] && rm -f ss.sh LICENSE README.md
     sed -i "s@^oneinstack_md5=.*@oneinstack_md5=${Latest_OneinStack_MD5}@" ./options.conf
+    if [ -e "${php_install_dir}/sbin/php-fpm" ]; then
+      [ -n "`grep ^cgi.fix_pathinfo=0 ${php_install_dir}/etc/php.ini`" ] && sed -i 's@^cgi.fix_pathinfo.*@;&@' ${php_install_dir}/etc/php.ini
+      sed -i 's@^cgi.fix_pathinfo=0@;&@' /usr/local/php{53,54,55,56,70,71,72}/etc/php.ini
+    fi
     echo
     echo "${CSUCCESS}Congratulations! OneinStack upgrade successful! ${CEND}"
     echo

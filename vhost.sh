@@ -40,6 +40,10 @@ ${CMSG}dnsapi${CEND}   --->Use dns API to automatically issue Let's Encrypt Cert
 }
 
 Choose_env() {
+  if [ -e "${apache_install_dir}/bin/apachectl" ];then
+    [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '4' ] && { Apache_flag=24; Apache_grant='Require all granted'; }
+    [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '2' ] && Apache_flag=22
+  fi
   if [ -e "${php_install_dir}/bin/phpize" -a -e "${tomcat_install_dir}/conf/server.xml" -a -e "/usr/bin/hhvm" ]; then
     Number=111
     while :; do echo
@@ -48,7 +52,7 @@ Choose_env() {
       echo -e "\t${CMSG}2${CEND}. Use java"
       echo -e "\t${CMSG}3${CEND}. Use hhvm"
       read -e -p "Please input a number:(Default 1 press Enter) " ENV_FLAG
-      [ -z "${ENV_FLAG}" ] && ENV_FLAG=1
+      ENV_FLAG=${ENV_FLAG:-1}
       if [[ ! ${ENV_FLAG} =~ ^[1-3]$ ]]; then
         echo "${CWARNING}input error! Please only input number 1~3${CEND}"
       else
@@ -73,7 +77,7 @@ Choose_env() {
       echo -e "\t${CMSG}1${CEND}. Use php"
       echo -e "\t${CMSG}2${CEND}. Use java"
       read -e -p "Please input a number:(Default 1 press Enter) " ENV_FLAG
-      [ -z "${ENV_FLAG}" ] && ENV_FLAG=1
+      ENV_FLAG=${ENV_FLAG:-1}
       if [[ ! ${ENV_FLAG} =~ ^[1-2]$ ]]; then
         echo "${CWARNING}input error! Please only input number 1~2${CEND}"
       else
@@ -92,7 +96,7 @@ Choose_env() {
       echo -e "\t${CMSG}1${CEND}. Use php"
       echo -e "\t${CMSG}2${CEND}. Use hhvm"
       read -e -p "Please input a number:(Default 1 press Enter) " ENV_FLAG
-      [ -z "${ENV_FLAG}" ] && ENV_FLAG=1
+      ENV_FLAG=${ENV_FLAG:-1}
       if [[ ! ${ENV_FLAG} =~ ^[1-2]$ ]]; then
         echo "${CWARNING}input error! Please only input number 1~2${CEND}"
       else
@@ -108,7 +112,7 @@ Choose_env() {
       echo -e "\t${CMSG}1${CEND}. Use java"
       echo -e "\t${CMSG}2${CEND}. Use hhvm"
       read -e -p "Please input a number:(Default 1 press Enter) " ENV_FLAG
-      [ -z "${ENV_FLAG}" ] && ENV_FLAG=1
+      ENV_FLAG=${ENV_FLAG:-1}
       if [[ ! ${ENV_FLAG} =~ ^[1-2]$ ]]; then
         echo "${CWARNING}input error! Please only input number 1~2${CEND}"
       else
@@ -153,19 +157,19 @@ If you enter '.', the field will be left blank.
 "
     echo
     read -e -p "Country Name (2 letter code) [CN]: " SELFSIGNEDSSL_C
-    [ -z "${SELFSIGNEDSSL_C}" ] && SELFSIGNEDSSL_C="CN"
+    SELFSIGNEDSSL_C=${SELFSIGNEDSSL_C:-CN}
     echo
     read -e -p "State or Province Name (full name) [Shanghai]: " SELFSIGNEDSSL_ST
-    [ -z "${SELFSIGNEDSSL_ST}" ] && SELFSIGNEDSSL_ST="Shanghai"
+    SELFSIGNEDSSL_ST=${SELFSIGNEDSSL_ST:-Shanghai}
     echo
     read -e -p "Locality Name (eg, city) [Shanghai]: " SELFSIGNEDSSL_L
-    [ -z "${SELFSIGNEDSSL_L}" ] && SELFSIGNEDSSL_L="Shanghai"
+    SELFSIGNEDSSL_L=${SELFSIGNEDSSL_L:-Shanghai}
     echo
     read -e -p "Organization Name (eg, company) [Example Inc.]: " SELFSIGNEDSSL_O
-    [ -z "${SELFSIGNEDSSL_O}" ] && SELFSIGNEDSSL_O="Example Inc."
+    SELFSIGNEDSSL_O=${SELFSIGNEDSSL_O:-"Example Inc."}
     echo
     read -e -p "Organizational Unit Name (eg, section) [IT Dept.]: " SELFSIGNEDSSL_OU
-    [ -z "${SELFSIGNEDSSL_OU}" ] && SELFSIGNEDSSL_OU="IT Dept."
+    SELFSIGNEDSSL_OU=${SELFSIGNEDSSL_OU:-"IT Dept."}
 
     openssl req -new -newkey rsa:2048 -sha256 -nodes -out ${PATH_SSL}/${domain}.csr -keyout ${PATH_SSL}/${domain}.key -subj "/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${domain}" > /dev/null 2>&1
     openssl x509 -req -days 36500 -sha256 -in ${PATH_SSL}/${domain}.csr -signkey ${PATH_SSL}/${domain}.key -out ${PATH_SSL}/${domain}.crt > /dev/null 2>&1
@@ -202,7 +206,6 @@ If you enter '.', the field will be left blank.
         ${web_install_dir}/sbin/nginx -s reload
       fi
       if [ "${apache_ssl_flag}" == 'y' ]; then
-        [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '4' ] && Apache_grant='Require all granted'
         [ ! -d ${apache_install_dir}/conf/vhost ] && mkdir ${apache_install_dir}/conf/vhost
         cat > ${apache_install_dir}/conf/vhost/${domain}.conf << EOF
 <VirtualHost *:80>
@@ -460,8 +463,7 @@ Nginx_rewrite() {
     fi
     echo "You choose rewrite=${CMSG}$rewrite${CEND}"
     [ "${NGX_FLAG}" == 'php' -a "${rewrite}" == "joomla" ] && NGX_CONF=$(echo -e "location ~ \\.php\$ {\n    #fastcgi_pass remote_php_ip:9000;\n    fastcgi_pass unix:/dev/shm/php-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi.conf;\n  }")
-    [ "${NGX_FLAG}" == 'php' -a "${rewrite}" == "thinkphp" ] && NGX_CONF=$(echo -e "location ~ \.php {\n    #fastcgi_pass remote_php_ip:9000;\n    fastcgi_pass unix:/dev/shm/php-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi_params;\n    set \$real_script_name \$fastcgi_script_name;\n    if (\$fastcgi_script_name ~ \"^(.+?\.php)(/.+)\$\") {\n      set \$real_script_name \$1;\n      #set \$path_info \$2;\n    }\n    fastcgi_param SCRIPT_FILENAME \$document_root\$real_script_name;\n    fastcgi_param SCRIPT_NAME \$real_script_name;\n    #fastcgi_param PATH_INFO \$path_info;\n  }")
-    [ "${NGX_FLAG}" == 'php' -a "${rewrite}" == "pathinfo" ] && NGX_CONF=$(echo -e "location / {\n    if (!-e \$request_filename) {\n      rewrite ^(.*)\$ /index.php?s=\$1 last;\n      break;\n    }\n  }\n\n  location ~ [^/]\.php(/|$) {\n    #fastcgi_pass remote_php_ip:9000;\n    fastcgi_pass unix:/dev/shm/php-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi.conf;\n    fastcgi_split_path_info ^(.+?\.php)(/.*)\$;\n    set \$path_info \$fastcgi_path_info;\n    fastcgi_param PATH_INFO \$path_info;\n    try_files \$fastcgi_script_name =404;\n  }")
+    [ "${NGX_FLAG}" == 'php' ] && [[ "${rewrite}" =~ ^thinkphp$|^pathinfo$ ]] && NGX_CONF=$(echo -e "location ~ [^/]\.php(/|\$) {\n    try_files \$uri =404;\n    #fastcgi_pass remote_php_ip:9000;\n    fastcgi_pass unix:/dev/shm/php-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi.conf;\n    set \$real_script_name \$fastcgi_script_name;\n    if (\$fastcgi_script_name ~ \"^(.+?\.php)(/.+)\$\") {\n      set \$real_script_name \$1;\n      set \$path_info \$2;\n    }\n    fastcgi_param SCRIPT_FILENAME \$document_root\$real_script_name;\n    fastcgi_param SCRIPT_NAME \$real_script_name;\n    fastcgi_param PATH_INFO \$path_info;\n  }")
     [ "${NGX_FLAG}" == 'php' -a "${rewrite}" == "typecho" ] && NGX_CONF=$(echo -e "location ~ .*\.php(\/.*)*\$ {\n    #fastcgi_pass remote_php_ip:9000;\n    fastcgi_pass unix:/dev/shm/php-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi.conf;\n    set \$path_info \"\";\n    set \$real_script_name \$fastcgi_script_name;\n    if (\$fastcgi_script_name ~ \"^(.+?\.php)(/.+)\$\") {\n      set \$real_script_name \$1;\n      set \$path_info \$2;\n    }\n    fastcgi_param SCRIPT_FILENAME \$document_root\$real_script_name;\n    fastcgi_param SCRIPT_NAME \$real_script_name;\n    fastcgi_param PATH_INFO \$path_info;\n  }")
     if [[ ! "${rewrite}" =~ ^magento2$|^pathinfo$ ]]; then
       if [ -e "config/${rewrite}.conf" ]; then
@@ -537,7 +539,7 @@ EOF
   if [ $? == 0 ]; then
     echo "Reload Nginx......"
     ${web_install_dir}/sbin/nginx -s reload
-    /etc/init.d/tomcat restart
+    service tomcat restart
   else
     rm -f ${web_install_dir}/conf/vhost/${domain}.conf
     echo "Create virtualhost ... [${CFAILURE}FAILED${CEND}]"
@@ -569,7 +571,7 @@ EOF
   [ -z "$(grep -o "vhost-${domain};" ${tomcat_install_dir}/conf/server.xml)" ] && sed -i "s@vhost-localhost;@&\n      \&vhost-${domain};@" ${tomcat_install_dir}/conf/server.xml
 
   echo
-  /etc/init.d/tomcat restart
+  service tomcat restart
 
   printf "
 #######################################################################
@@ -693,8 +695,7 @@ Apache_log() {
 }
 
 Create_apache_conf() {
-  if [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '4' ]; then
-    Apache_grant='Require all granted'
+  if [ "${Apache_flag}" == '24' ]; then
     if [ -e "/dev/shm/php-cgi.sock" ] && [ -n "`grep -E ^LoadModule.*mod_proxy_fcgi.so ${apache_install_dir}/conf/httpd.conf`" ]; then
       Apache_fcgi=$(echo -e "<Files ~ (\\.user.ini|\\.htaccess|\\.git|\\.svn|\\.project|LICENSE|README.md)\$>\n    Order allow,deny\n    Deny from all\n  </Files>\n  <FilesMatch \\.php\$>\n    SetHandler \"proxy:unix:/dev/shm/php-cgi.sock|fcgi://localhost\"\n  </FilesMatch>")
     fi
@@ -815,8 +816,7 @@ EOF
   fi
 
   # Apache
-  if [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '4' ];then
-    Apache_grant='Require all granted'
+  if [ "${Apache_flag}" == '24' ]; then
     if [ -e "/dev/shm/php-cgi.sock" ] && [ -n "`grep -E ^LoadModule.*mod_proxy_fcgi.so ${apache_install_dir}/conf/httpd.conf`" ]; then
       Apache_fcgi=$(echo -e "<Files ~ (\\.user.ini|\\.htaccess|\\.git|\\.svn|\\.project|LICENSE|README.md)\$>\n    Order allow,deny\n    Deny from all\n  </Files>\n  <FilesMatch \\.php\$>\n    SetHandler \"proxy:unix:/dev/shm/php-cgi.sock|fcgi://localhost\"\n  </FilesMatch>")
     fi
@@ -1009,7 +1009,7 @@ Del_Tomcat_Vhost() {
       if [ -n "$(echo ${domain} | grep '.*\..*')" ] && [ -n "$(grep vhost-${domain} ${tomcat_install_dir}/conf/server.xml)" ]; then
         sed -i /vhost-${domain}/d ${tomcat_install_dir}/conf/server.xml
         rm -f ${tomcat_install_dir}/conf/vhost/${domain}.xml
-        /etc/init.d/tomcat restart
+        service tomcat restart
       fi
     else
       Domain_List=$(ls ${tomcat_install_dir}/conf/vhost | grep -v 'localhost.xml' | sed "s@.xml@@g")
@@ -1025,7 +1025,7 @@ Del_Tomcat_Vhost() {
             if [ -n "$(grep vhost-${domain} ${tomcat_install_dir}/conf/server.xml)" ]; then
               sed -i /vhost-${domain}/d ${tomcat_install_dir}/conf/server.xml
               rm -f ${tomcat_install_dir}/conf/vhost/${domain}.xml
-              /etc/init.d/tomcat restart
+              service tomcat restart
               while :; do echo
                 read -e -p "Do you want to delete Virtul Host directory? [y/n]: " Del_Vhost_wwwroot_flag
                 if [[ ! ${Del_Vhost_wwwroot_flag} =~ ^[y,n]$ ]]; then

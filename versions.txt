@@ -57,7 +57,7 @@ php54_ver=5.4.45
 php53_ver=5.3.29
 
 libiconv_ver=1.15
-curl_ver=7.62.0
+curl_ver=7.63.0
 libmcrypt_ver=2.5.8
 mcrypt_ver=2.6.8
 mhash_ver=0.9.9.9
@@ -82,7 +82,7 @@ xdebug_ver=2.6.1
 pureftpd_ver=1.0.47
 
 # Redis
-redis_ver=5.0.2
+redis_ver=5.0.3
 pecl_redis_ver=4.2.0
 
 # Memcached

@@ -153,6 +153,8 @@ Install_PHP53() {
     # php-fpm Init Script
     if [ -e /bin/systemctl ]; then
       /bin/cp sapi/fpm/php-fpm.service /lib/systemd/system/
+      sed -i "s@\${prefix}@${php_install_dir}@g" /lib/systemd/system/php-fpm.service
+      sed -i "s@\${exec_prefix}@${php_install_dir}@g" /lib/systemd/system/php-fpm.service
       systemctl enable php-fpm
     else
       /bin/cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm

@@ -171,12 +171,11 @@ Upgrade_OpenResty() {
     echo "Press Ctrl+c to cancel or Press any key to continue..."
     char=`get_char`
     tar xzf openresty-${NEW_openresy_ver}.tar.gz
-    [ "${Fedora_ver}" == '28' ] && patch -d openresty-${openresty_ver}/bundle/nginx-1.13.6 -p1 < 0001-unix-ngx_user-Apply-fix-for-really-old-bug-in-glibc-.patch
-    patch -d openresty-${openresty_ver}/bundle/nginx-1.13.6 -p0 < nginx-auto-cc-gcc.patch
+    [ "${Fedora_ver}" == '28' ] && patch -d openresty-${openresty_ver}/bundle/nginx-${NEW_openresy_ver%.*} -p1 < 0001-unix-ngx_user-Apply-fix-for-really-old-bug-in-glibc-.patch
+    patch -d openresty-${openresty_ver}/bundle/nginx-${NEW_openresy_ver%.*} -p0 < nginx-auto-cc-gcc.patch
     pushd openresty-${NEW_openresy_ver}
     make clean
-    openresty_ver_tmp=${NEW_openresy_ver%.*}
-    sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' bundle/nginx-${openresty_ver_tmp}/auto/cc/gcc # close debug
+    sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' bundle/nginx-${NEW_openresy_ver%.*}/auto/cc/gcc # close debug
     ${openresty_install_dir}/nginx/sbin/nginx -V &> $$
     ./configure --prefix=${openresty_install_dir} --user=${run_user} --group=${run_user} --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-openssl=../openssl-${openssl_ver} --with-pcre=../pcre-${pcre_ver} --with-pcre-jit --with-ld-opt='-ljemalloc' ${nginx_modules_options}
     make -j ${THREAD}

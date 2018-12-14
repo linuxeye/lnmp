@@ -746,22 +746,20 @@ checkDownload() {
   fi
 
   # ImageMagick graphicsmagick
-  if [ "${magick_yn}" == 'y' ]; then
-    if [ "${magick_option}" == '1' ]; then
-      echo "Download ImageMagick..."
-      src_url=${mirrorLink}/ImageMagick-${imagemagick_ver}.tar.gz && Download_src
-      echo "Download imagick..."
-      src_url=https://pecl.php.net/get/imagick-${imagick_ver}.tgz && Download_src
+  if [ "${magick_option}" == '1' ]; then
+    echo "Download ImageMagick..."
+    src_url=${mirrorLink}/ImageMagick-${imagemagick_ver}.tar.gz && Download_src
+    echo "Download imagick..."
+    src_url=https://pecl.php.net/get/imagick-${imagick_ver}.tgz && Download_src
+  elif [ "${magick_option}" == '2' ]; then
+    echo "Download graphicsmagick..."
+    src_url=http://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/${graphicsmagick_ver}/GraphicsMagick-${graphicsmagick_ver}.tar.gz && Download_src
+    if [[ "${php_option}" =~ ^[1-4]$ ]]; then
+      echo "Download gmagick for php..."
+      src_url=https://pecl.php.net/get/gmagick-${gmagick_ver}.tgz && Download_src
     else
-      echo "Download graphicsmagick..."
-      src_url=http://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/${graphicsmagick_ver}/GraphicsMagick-${graphicsmagick_ver}.tar.gz && Download_src
-      if [[ "${php_option}" =~ ^[1-4]$ ]]; then
-        echo "Download gmagick for php..."
-        src_url=https://pecl.php.net/get/gmagick-${gmagick_ver}.tgz && Download_src
-      else
-        echo "Download gmagick for php 7.x..."
-        src_url=https://pecl.php.net/get/gmagick-${gmagick_for_php7_ver}.tgz && Download_src
-      fi
+      echo "Download gmagick for php 7.x..."
+      src_url=https://pecl.php.net/get/gmagick-${gmagick_for_php7_ver}.tgz && Download_src
     fi
   fi
 

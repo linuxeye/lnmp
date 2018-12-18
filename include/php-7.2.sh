@@ -162,7 +162,8 @@ EOF
   if [ ! -e "${apache_install_dir}/bin/apxs" -o "${Apache_flag}" == '24' ]; then
     # php-fpm Init Script
     if [ -e /bin/systemctl ]; then
-      /bin/cp sapi/fpm/php-fpm.service /lib/systemd/system/
+      /bin/cp ${oneinstack_dir}/init.d/php-fpm.service /lib/systemd/system/
+      sed -i "s@/usr/local/php@${php_install_dir}@g" /lib/systemd/system/php-fpm.service
       systemctl enable php-fpm
     else
       /bin/cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm

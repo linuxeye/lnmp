@@ -51,7 +51,7 @@ installDepsCentOS() {
   # Uninstall the conflicting packages
   echo "${CMSG}Removing the conflicting packages...${CEND}"
   if [ "${CentOS_ver}" == '7' ]; then
-    yum -y groupremove "Basic Web Server" "MySQL Database server" "MySQL Database client" "File and Print Server"
+    yum -y groupremove "Basic Web Server" "MySQL Database server" "MySQL Database client"
     systemctl mask firewalld.service
     if [ "${iptables_yn}" == 'y' ]; then
       yum -y install iptables-services
@@ -60,7 +60,7 @@ installDepsCentOS() {
   elif [ "${CentOS_ver}" == '6' ]; then
     yum -y groupremove "FTP Server" "PostgreSQL Database client" "PostgreSQL Database server" "MySQL Database server" "MySQL Database client" "Web Server"
   elif [ "${CentOS_ver}" == '5' ]; then
-    yum -y groupremove "FTP Server" "PostgreSQL Database" "News Server" "MySQL Database" "Web Server"
+    yum -y groupremove "FTP Server" "PostgreSQL Database" "MySQL Database" "Web Server"
   fi
 
   echo "${CMSG}Installing dependencies packages...${CEND}"
@@ -120,29 +120,29 @@ installDepsBySrc() {
     if [[ "${Ubuntu_ver}" =~ ^14$|^15$ ]]; then
       # Install bison on ubt 14.x 15.x
       tar xzf bison-${bison_ver}.tar.gz
-      pushd bison-${bison_ver}
+      pushd bison-${bison_ver} > /dev/null
       ./configure
       make -j ${THREAD} && make install
-      popd
+      popd > /dev/null
       rm -rf bison-${bison_ver}
     fi
   elif [ "${OS}" == 'CentOS' ]; then
     # Install tmux
-    if [ ! -e "$(which tmux)" ]; then
+    if ! command -v tmux >/dev/null 2>&1; then
       # Install libevent first
       tar xzf libevent-${libevent_ver}.tar.gz
-      pushd libevent-${libevent_ver}
+      pushd libevent-${libevent_ver} > /dev/null
       ./configure
       make -j ${THREAD} && make install
-      popd
+      popd > /dev/null
       rm -rf libevent-${libevent_ver}
 
       tar xzf tmux-${tmux_ver}.tar.gz
-      pushd tmux-${tmux_ver}
+      pushd tmux-${tmux_ver} > /dev/null
       CFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib" ./configure
       make -j ${THREAD} && make install
       unset LDFLAGS
-      popd
+      popd > /dev/null
       rm -rf tmux-${tmux_ver}
 
       if [ "${OS_BIT}" == "64" ]; then
@@ -153,17 +153,17 @@ installDepsBySrc() {
     fi
 
     # install htop
-    if [ ! -e "$(which htop)" ]; then
+    if ! command -v htop >/dev/null 2>&1; then
       tar xzf htop-${htop_ver}.tar.gz
-      pushd htop-${htop_ver}
+      pushd htop-${htop_ver} > /dev/null
       ./configure
       make -j ${THREAD} && make install
-      popd
+      popd > /dev/null
       rm -rf htop-${htop_ver}
     fi
   else
     echo "No need to install software from source packages."
   fi
   echo 'already initialize' > ~/.oneinstack
-  popd
+  popd > /dev/null
 }

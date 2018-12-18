@@ -138,7 +138,7 @@ service memcached {start|stop|status|restart|reload}
 
 ## Installation
 
-Follow the instructions in [Wiki Installation page](https://github.com/lj2007331/lnmp/wiki/Installation)<br />
+Follow the instructions in [Wiki Installation page](https://github.com/oneinstack/lnmp/wiki/Installation)<br />
 
 For feedback, questions, and to follow the progress of the project: <br />
 [Telegram Group](https://t.me/oneinstack)<br />

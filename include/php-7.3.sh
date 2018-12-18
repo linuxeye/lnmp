@@ -43,16 +43,6 @@ Install_PHP73() {
     rm -rf argon2-${argon2_ver}
   fi
 
-  if [ ! -e "/usr/local/lib/libzip.la" ]; then
-    tar xzf libzip-${libzip_ver}.tar.gz
-    pushd libzip-${libzip_ver} > /dev/null
-    ./configure
-    make -j ${THREAD} && make install
-    /bin/cp /usr/local/lib/libzip/include/zipconf.h /usr/local/include/zipconf.h
-    popd > /dev/null
-    rm -rf libzip-${libzip_ver}
-  fi
-
   if [ ! -e "/usr/local/lib/libsodium.la" ]; then
     tar xzf libsodium-${libsodium_ver}.tar.gz
     pushd libsodium-${libsodium_ver} > /dev/null
@@ -102,7 +92,7 @@ Install_PHP73() {
     --enable-sysvsem --enable-inline-optimization --with-curl=${curl_install_dir} --enable-mbregex \
     --enable-mbstring --with-password-argon2 --with-sodium=/usr/local --with-gd --with-openssl=${openssl_install_dir} \
     --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
-    --with-gettext --enable-zip --enable-soap --disable-debug $php_modules_options
+    --with-gettext --enable-zip --without-libzip --enable-soap --disable-debug $php_modules_options
   else
     ./configure --prefix=${php_install_dir} --with-config-file-path=${php_install_dir}/etc \
     --with-config-file-scan-dir=${php_install_dir}/etc/php.d \
@@ -113,7 +103,7 @@ Install_PHP73() {
     --enable-sysvsem --enable-inline-optimization --with-curl=${curl_install_dir} --enable-mbregex \
     --enable-mbstring --with-password-argon2 --with-sodium=/usr/local --with-gd --with-openssl=${openssl_install_dir} \
     --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
-    --with-gettext --enable-zip --enable-soap --disable-debug $php_modules_options
+    --with-gettext --enable-zip --without-libzip --enable-soap --disable-debug $php_modules_options
   fi
   make ZEND_EXTRA_LIBS='-liconv' -j ${THREAD}
   make install
@@ -172,7 +162,8 @@ EOF
   if [ ! -e "${apache_install_dir}/bin/apxs" -o "${Apache_flag}" == '24' ]; then
     # php-fpm Init Script
     if [ -e /bin/systemctl ]; then
-      /bin/cp sapi/fpm/php-fpm.service /lib/systemd/system/
+      /bin/cp ${oneinstack_dir}/init.d/php-fpm.service /lib/systemd/system/
+      sed -i "s@/usr/local/php@${php_install_dir}@g" /lib/systemd/system/php-fpm.service
       systemctl enable php-fpm
     else
       /bin/cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm

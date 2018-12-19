@@ -1,0 +1,13 @@
+[Unit]
+Description=OneinStack Panel daemon
+After=network.target
+
+[Service]
+PIDFile=/root/git/repo/panel/logs/runconfig.py.pid
+WorkingDirectory=/root/git/repo/panel
+ExecStart=/usr/local/python/bin/gunicorn -c runconfig.py panel.wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+
+[Install]
+WantedBy=multi-user.target

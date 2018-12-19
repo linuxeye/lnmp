@@ -6,7 +6,7 @@
 #
 # Project home page:
 #       https://oneinstack.com
-#       https://github.com/lj2007331/oneinstack
+#       https://github.com/oneinstack/oneinstack
 
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 clear
@@ -57,6 +57,8 @@ IPADDR_COUNTRY=$(./include/get_ipaddr_state.py $PUBLIC_IPADDR)
 . ./include/python.sh
 
 . ./include/ngx_lua_waf.sh
+
+. ./include/panel.sh
 
 # Check PHP
 if [ -e "${php_install_dir}/bin/phpize" ]; then
@@ -211,7 +213,7 @@ What Are You Doing?
 \t${CMSG} q${CEND}. Exit
 "
   read -e -p "Please input the correct option: " Number
-  if [[ ! "${Number}" =~ ^[1-9,q]$|^1[0-1]$ ]]; then
+  if [[ ! "${Number}" =~ ^[1-9,q]$|^1[0-2]$ ]]; then
     echo "${CFAILURE}input error! Please only input 1~11 and q${CEND}"
   else
     case "${Number}" in
@@ -631,6 +633,15 @@ EOF
           enable_lua_waf
         else
           disable_lua_waf
+        fi
+        ;;
+      12)
+        ACTION_FUN
+        if [ "${ACTION}" = '1' ]; then
+          [ ! -e "${python_install_dir}/bin/python" ] && Install_Python
+          Install_Panel
+        else
+          Uninstall_Panel
         fi
         ;;
       q)

@@ -6,7 +6,7 @@
 #
 # Project home page:
 #       https://oneinstack.com
-#       https://github.com/lj2007331/oneinstack
+#       https://github.com/oneinstack/oneinstack
 
 Download_src() {
   [ -s "${src_url##*/}" ] && echo "[${CMSG}${src_url##*/}${CEND}] found" || { wget --limit-rate=10M -4 --tries=6 -c --no-check-certificate ${src_url}; sleep 1; }

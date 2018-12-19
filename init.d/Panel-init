@@ -1,0 +1,72 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          panel
+# Required-Start:    $local_fs $remote_fs $network $syslog
+# Required-Stop:     $local_fs $remote_fs $network $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Startup script for the OneinStack Panel
+# Description:       OneinStack Panel daemon
+### END INIT INFO
+# Startup script for the OneinStack Panel $Revision: 1.3 $
+#
+# chkconfig: 2345 85 15
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# description: OneinStack Panel
+# processname: panel
+# pidfile: /root/git/repo/panel/logs/runconfig.py.pid
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+RETVAL=0
+
+# Path to the panel binaries.
+prog=panel
+WorkingDirectory=/root/git/repo/panel
+
+start() {
+  echo -n $"Starting $prog: "
+  cd ${WorkingDirectory}; /usr/local/python/bin/gunicorn -c runconfig.py panel.wsgi:application --daemon
+  RETVAL=$?
+  [ $RETVAL = 0 ] && touch /var/lock/subsys/$prog
+  echo
+}
+stop() {
+  echo -n $"Stopping $prog: "
+  kill $(cat ${WorkingDirectory}/logs/runconfig.py.pid)
+  RETVAL=$?
+  [ $RETVAL = 0 ] && rm -f /var/lock/subsys/$prog
+  echo
+}
+reload() {
+  echo -n $"Reloading $prog: "
+  kill -s HUP $(cat ${WorkingDirectory}/logs/runconfig.py.pid)
+  RETVAL=$?
+  echo
+}
+
+# See how we were called.
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    stop
+    start
+    ;;
+  reload)
+    reload
+    ;;
+  status)
+    status $prog
+    ;;
+  *)
+    echo $"Usage: $prog {start|stop|restart|reload|status}"
+    RETVAL=1
+esac
+exit $RETVAL

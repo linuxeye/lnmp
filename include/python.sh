@@ -6,7 +6,7 @@
 #
 # Project home page:
 #       https://oneinstack.com
-#       https://github.com/lj2007331/oneinstack
+#       https://github.com/oneinstack/oneinstack
 
 Install_Python() {
   pushd ${oneinstack_dir}/src > /dev/null
@@ -48,12 +48,12 @@ EOF
   if [ ! -e "${python_install_dir}/bin/python" -a ! -e "${python_install_dir}/bin/python3" ] ;then
     src_url=http://mirrors.linuxeye.com/oneinstack/src/Python-${python_ver}.tgz && Download_src
     tar xzf Python-${python_ver}.tgz
-    pushd Python-${python_ver}
+    pushd Python-${python_ver} > /dev/null
     ./configure --prefix=${python_install_dir}
     make && make install
     [ ! -e "${python_install_dir}/bin/python" -a -e "${python_install_dir}/bin/python3" ] && ln -s ${python_install_dir}/bin/python{3,}
     [ ! -e "${python_install_dir}/bin/pip" -a -e "${python_install_dir}/bin/pip3" ] && ln -s ${python_install_dir}/bin/pip{3,}
-    popd
+    popd > /dev/null
     rm -rf Python-${python_ver}
   fi
 
@@ -66,5 +66,5 @@ EOF
       echo -e "[global]\nindex-url = https://pypi.tuna.tsinghua.edu.cn/simple" > /root/.pip/pip.conf
     fi
   fi
-  popd
+  popd > /dev/null
 }

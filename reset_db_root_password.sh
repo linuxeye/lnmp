@@ -95,6 +95,7 @@ Reset_force_dbrootpwd() {
   done
   echo "${CMSG}skip grant tables...${CEND}"
   ${db_install_dir}/bin/mysqld_safe --skip-grant-tables > /dev/null 2>&1 &
+  sleep 5
   while [ -z "`ps -ef | grep 'mysqld ' | grep -v grep | awk '{print $2}'`" ]; do
     sleep 1
   done

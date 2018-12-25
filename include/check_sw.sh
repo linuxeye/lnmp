@@ -44,7 +44,7 @@ installDepsDebian() {
 }
 
 installDepsCentOS() {
-  sed -i 's@^exclude@#exclude@' /etc/yum.conf
+  [ -e '/etc/yum.conf' ] && sed -i 's@^exclude@#exclude@' /etc/yum.conf
   yum clean all
 
   yum makecache
@@ -56,6 +56,7 @@ installDepsCentOS() {
     if [ "${iptables_yn}" == 'y' ]; then
       yum -y install iptables-services
       systemctl enable iptables.service
+      systemctl enable ip6tables.service
     fi
   elif [ "${CentOS_ver}" == '6' ]; then
     yum -y groupremove "FTP Server" "PostgreSQL Database client" "PostgreSQL Database server" "MySQL Database server" "MySQL Database client" "Web Server"

@@ -16,7 +16,7 @@ Upgrade_Memcached() {
   Latest_memcached_ver=${Latest_memcached_ver:-1.5.12}
   echo "Current Memcached Version: ${CMSG}${OLD_memcached_ver}${CEND}"
   while :; do echo
-    read -e -p "Please input upgrade Memcached Version(default: ${Latest_memcached_ver}): " NEW_memcached_ver
+    [ "${memcached_quiet}" != 'y' ] && read -e -p "Please input upgrade Memcached Version(default: ${Latest_memcached_ver}): " NEW_memcached_ver
     NEW_memcached_ver=${NEW_memcached_ver:-${Latest_memcached_ver}}
     if [ "${NEW_memcached_ver}" != "${OLD_memcached_ver}" ]; then
       [ "$IPADDR_COUNTRY"x == "CN"x ] && DOWN_ADDR=http://mirrors.linuxeye.com/oneinstack/src || DOWN_ADDR=http://www.memcached.org/files
@@ -29,13 +29,16 @@ Upgrade_Memcached() {
       fi
     else
       echo "${CWARNING}input error! Upgrade Memcached version is the same as the old version${CEND}"
+      exit
     fi
   done
 
   if [ -e "memcached-${NEW_memcached_ver}.tar.gz" ]; then
     echo "[${CMSG}memcached-${NEW_memcached_ver}.tar.gz${CEND}] found"
-    echo "Press Ctrl+c to cancel or Press any key to continue..."
-    char=`get_char`
+    if [ "${memcached_quiet}" != 'y' ]; then
+      echo "Press Ctrl+c to cancel or Press any key to continue..."
+      char=`get_char`
+    fi
     tar xzf memcached-${NEW_memcached_ver}.tar.gz
     pushd memcached-${NEW_memcached_ver}
     make clean

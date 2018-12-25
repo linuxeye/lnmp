@@ -211,7 +211,7 @@ EOF
   ${mariadb_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "drop database test;"
   ${mariadb_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "reset master;"
   rm -rf /etc/ld.so.conf.d/{mysql,mariadb,percona,alisql}*.conf
-  echo "${mariadb_install_dir}/lib" > /etc/ld.so.conf.d/mariadb.conf
+  echo "${mariadb_install_dir}/lib" > /etc/ld.so.conf.d/z-mariadb.conf
   ldconfig
   service mysqld stop
 }

@@ -215,7 +215,7 @@ EOF
   ${mysql_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "reset master;"
   rm -rf /etc/ld.so.conf.d/{mysql,mariadb,percona,alisql}*.conf
   [ -e "${mysql_install_dir}/my.cnf" ] && rm -f ${mysql_install_dir}/my.cnf
-  echo "${mysql_install_dir}/lib" > /etc/ld.so.conf.d/mysql.conf
+  echo "${mysql_install_dir}/lib" > /etc/ld.so.conf.d/z-mysql.conf
   ldconfig
   service mysqld stop
 }

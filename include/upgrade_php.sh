@@ -17,7 +17,7 @@ Upgrade_PHP() {
   echo
   echo "Current PHP Version: ${CMSG}$OLD_php_ver${CEND}"
   while :; do echo
-    read -e -p "Please input upgrade PHP Version(Default: $Latest_php_ver): " NEW_php_ver
+    [ "${php_quiet}" != 'y' ] && read -e -p "Please input upgrade PHP Version(Default: $Latest_php_ver): " NEW_php_ver
     NEW_php_ver=${NEW_php_ver:-${Latest_php_ver}}
     if [ "${NEW_php_ver%.*}" == "${OLD_php_ver%.*}" ]; then
       [ ! -e "php-${NEW_php_ver}.tar.gz" ] && wget --no-check-certificate -c http://www.php.net/distributions/php-${NEW_php_ver}.tar.gz > /dev/null 2>&1
@@ -34,8 +34,10 @@ Upgrade_PHP() {
 
   if [ -e "php-${NEW_php_ver}.tar.gz" ]; then
     echo "[${CMSG}php-${NEW_php_ver}.tar.gz${CEND}] found"
-    echo "Press Ctrl+c to cancel or Press any key to continue..."
-    char=`get_char`
+    if [ "${php_quiet}" != 'y' ]; then
+      echo "Press Ctrl+c to cancel or Press any key to continue..."
+      char=`get_char`
+    fi
     tar xzf php-${NEW_php_ver}.tar.gz
     src_url=http://mirrors.linuxeye.com/oneinstack/src/fpm-race-condition.patch && Download_src
     patch -d php-${NEW_php_ver} -p0 < fpm-race-condition.patch

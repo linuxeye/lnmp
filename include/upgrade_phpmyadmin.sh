@@ -16,7 +16,7 @@ Upgrade_phpMyAdmin() {
   Latest_phpmyadmin_ver=${Latest_phpmyadmin_ver:-4.8.3}
   echo "Current phpMyAdmin Version: ${CMSG}${OLD_phpmyadmin_ver}${CEND}"
   while :; do echo
-    read -e -p "Please input upgrade phpMyAdmin Version(default: ${Latest_phpmyadmin_ver}): " NEW_phpmyadmin_ver
+    [ "${phpmyadmin_quiet}" != 'y' ] && read -e -p "Please input upgrade phpMyAdmin Version(default: ${Latest_phpmyadmin_ver}): " NEW_phpmyadmin_ver
     NEW_phpmyadmin_ver=${NEW_phpmyadmin_ver:-${Latest_phpmyadmin_ver}}
     if [ "${NEW_phpmyadmin_ver}" != "${OLD_phpmyadmin_ver}" ]; then
       [ ! -e "phpMyAdmin-${NEW_phpmyadmin_ver}-all-languages.tar.gz" ] && wget --no-check-certificate -c https://files.phpmyadmin.net/phpMyAdmin/${NEW_phpmyadmin_ver}/phpMyAdmin-${NEW_phpmyadmin_ver}-all-languages.tar.gz > /dev/null 2>&1
@@ -28,13 +28,16 @@ Upgrade_phpMyAdmin() {
       fi
     else
       echo "${CWARNING}input error! Upgrade phpMyAdmin version is the same as the old version${CEND}"
+      exit
     fi
   done
 
   if [ -e "phpMyAdmin-${NEW_phpmyadmin_ver}-all-languages.tar.gz" ]; then
     echo "[${CMSG}phpMyAdmin-${NEW_phpmyadmin_ver}-all-languages.tar.gz${CEND}] found"
-    echo "Press Ctrl+c to cancel or Press any key to continue..."
-    char=`get_char`
+    if [ "${phpmyadmin_quiet}" != 'y' ]; then
+      echo "Press Ctrl+c to cancel or Press any key to continue..."
+      char=`get_char`
+    fi
     tar xzf phpMyAdmin-${NEW_phpmyadmin_ver}-all-languages.tar.gz
     rm -rf ${wwwroot_dir}/default/phpMyAdmin
     /bin/mv phpMyAdmin-${NEW_phpmyadmin_ver}-all-languages ${wwwroot_dir}/default/phpMyAdmin

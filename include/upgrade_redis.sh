@@ -16,7 +16,7 @@ Upgrade_Redis() {
   Latest_redis_ver=${Latest_redis_ver:-5.0.2}
   echo "Current Redis Version: ${CMSG}$OLD_redis_ver${CEND}"
   while :; do echo
-    read -e -p "Please input upgrade Redis Version(default: ${Latest_redis_ver}): " NEW_redis_ver
+    [ "${redis_quiet}" != 'y' ] && read -e -p "Please input upgrade Redis Version(default: ${Latest_redis_ver}): " NEW_redis_ver
     NEW_redis_ver=${NEW_redis_ver:-${Latest_redis_ver}}
     if [ "$NEW_redis_ver" != "$OLD_redis_ver" ]; then
       [ ! -e "redis-$NEW_redis_ver.tar.gz" ] && wget --no-check-certificate -c http://download.redis.io/releases/redis-$NEW_redis_ver.tar.gz > /dev/null 2>&1
@@ -28,13 +28,16 @@ Upgrade_Redis() {
       fi
     else
       echo "${CWARNING}input error! Upgrade Redis version is the same as the old version${CEND}"
+      exit
     fi
   done
 
   if [ -e "redis-$NEW_redis_ver.tar.gz" ]; then
     echo "[${CMSG}redis-$NEW_redis_ver.tar.gz${CEND}] found"
-    echo "Press Ctrl+c to cancel or Press any key to continue..."
-    char=`get_char`
+    if [ "${redis_quiet}" != 'y' ]; then
+      echo "Press Ctrl+c to cancel or Press any key to continue..."
+      char=`get_char`
+    fi
     tar xzf redis-$NEW_redis_ver.tar.gz
     pushd redis-$NEW_redis_ver
     make clean

@@ -789,7 +789,7 @@ checkDownload() {
       # src_url=https://codeload.github.com/websupport-sk/pecl-memcache/zip/php7 && Download_src
       src_url=${mirrorLink}/pecl-memcache-php7.tgz && Download_src
       echo "Download pecl_memcached for php 7.x..."
-      src_url=${mirrorLink}/memcached-${pecl_memcached_php7_ver}.tgz && Download_src
+      src_url=https://pecl.php.net/get/memcached-${pecl_memcached_php7_ver}.tgz && Download_src
     fi
 
     echo "Download libmemcached..."

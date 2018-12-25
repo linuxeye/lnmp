@@ -27,33 +27,105 @@ pushd ${oneinstack_dir} > /dev/null
 . ./include/get_char.sh
 . ./include/check_dir.sh
 
-Usage(){
-  printf "
-Usage: $0 [  ${CMSG}all${CEND} | ${CMSG}web${CEND} | ${CMSG}mysql${CEND} | ${CMSG}postgresql${CEND} | ${CMSG}mongodb${CEND} | ${CMSG}php${CEND} | ${CMSG}hhvm${CEND} | ${CMSG}pureftpd${CEND} | ${CMSG}redis${CEND} | ${CMSG}memcached${CEND} ]
-${CMSG}all${CEND}            --->Uninstall All
-${CMSG}web${CEND}            --->Uninstall Nginx/Tengine/OpenResty/Apache/Tomcat
-${CMSG}mysql${CEND}          --->Uninstall MySQL/MariaDB/Percona/AliSQL
-${CMSG}postgresql${CEND}     --->Uninstall PostgreSQL
-${CMSG}mongodb${CEND}        --->Uninstall MongoDB
-${CMSG}php${CEND}            --->Uninstall PHP
-${CMSG}hhvm${CEND}           --->Uninstall HHVM
-${CMSG}pureftpd${CEND}       --->Uninstall PureFtpd
-${CMSG}redis${CEND}          --->Uninstall Redis
-${CMSG}memcached${CEND}      --->Uninstall Memcached
-
-"
+showhelp() {
+  echo
+  echo "Usage: $0 command ...
+  --help, -h                  Show this help message, More: https://oneinstack.com
+  --quiet, -q                 quiet operation
+  --all                       Uninstall All
+  --web                       Uninstall Nginx/Tengine/OpenResty/Apache/Tomcat
+  --mysql                     Uninstall MySQL/MariaDB/Percona/AliSQL
+  --postgresql                Uninstall PostgreSQL
+  --mongodb                   Uninstall MongoDB
+  --php                       Uninstall PHP
+  --hhvm                      Uninstall HHVM
+  --pureftpd                  Uninstall PureFtpd
+  --redis                     Uninstall Redis
+  --memcached                 Uninstall Memcached
+  --phpmyadmin                Uninstall phpMyAdmin
+  "
 }
 
+ARG_NUM=$#
+TEMP=`getopt -o hvVq --long help,version,quiet,all,web,mysql,postgresql,mongodb,php,hhvm,pureftpd,redis,memcached,phpmyadmin -- "$@" 2>/dev/null`
+[ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && showhelp && exit 1
+eval set -- "${TEMP}"
+while :; do
+  [ -z "$1" ] && break;
+  case "$1" in
+    -h|--help)
+      showhelp; exit 0
+      ;;
+    -q|--quiet)
+      quiet_yn=y
+      uninstall_yn=y
+      shift 1
+      ;;
+    --all)
+      all_yn=y
+      web_yn=y
+      mysql_yn=y
+      postgresql_yn=y
+      mongodb_yn=y
+      php_yn=y
+      hhvm_yn=y
+      pureftpd_yn=y
+      redis_yn=y
+      memcached_yn=y
+      phpmyadmin_yn=y
+      shift 1
+      ;;
+    --web)
+      web_yn=y; shift 1
+      ;;
+    --mysql)
+      mysql_yn=y; shift 1
+      ;;
+    --postgresql)
+      postgresql_yn=y; shift 1
+      ;;
+    --mongodb)
+      mongodb_yn=y; shift 1
+      ;;
+    --php)
+      php_yn=y; shift 1
+      ;;
+    --hhvm)
+      hhvm_yn=y; shift 1
+      ;;
+    --pureftpd)
+      pureftpd_yn=y; shift 1
+      ;;
+    --redis)
+      redis_yn=y; shift 1
+      ;;
+    --memcached)
+      memcached_yn=y; shift 1
+      ;;
+    --phpmyadmin)
+      phpmyadmin_yn=y; shift 1
+      ;;
+    --)
+      shift
+      ;;
+    *)
+      echo "${CWARNING}ERROR: unknown argument! ${CEND}" && showhelp && exit 1
+      ;;
+  esac
+done
+
 Uninstall_status() {
-  while :; do echo
-    read -e -p "Do you want to uninstall? [y/n]: " uninstall_yn
-    echo
-    if [[ ! ${uninstall_yn} =~ ^[y,n]$ ]]; then
-      echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
-    else
-      break
-    fi
-  done
+  if [ "${quiet_yn}" != 'y' ]; then
+    while :; do echo
+      read -e -p "Do you want to uninstall? [y/n]: " uninstall_yn
+      echo
+      if [[ ! ${uninstall_yn} =~ ^[y,n]$ ]]; then
+        echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
+      else
+        break
+      fi
+    done
+  fi
 }
 
 Print_Warn() {
@@ -119,7 +191,7 @@ Uninstall_MySQL() {
   # uninstall mysql,mariadb,percona,alisql
   if [ -d "${db_install_dir}/support-files" ]; then
     service mysqld stop > /dev/null 2>&1
-    rm -rf ${db_install_dir} /etc/init.d/mysqld /etc/my.cnf /etc/ld.so.conf.d/{mysql,mariadb,percona,alisql}*.conf
+    rm -rf ${db_install_dir} /etc/init.d/mysqld /etc/my.cnf* /etc/ld.so.conf.d/*{mysql,mariadb,percona,alisql}*.conf
     id -u mysql >/dev/null 2>&1 ; [ $? -eq 0 ] && userdel mysql
     [ -e "${db_data_dir}" ] && /bin/mv ${db_data_dir}{,$(date +%Y%m%d%H)}
     sed -i 's@^dbrootpwd=.*@dbrootpwd=@' ./options.conf
@@ -225,6 +297,14 @@ Uninstall_Memcached() {
   [ -e "${memcached_install_dir}" ] && { service memcached stop > /dev/null 2>&1; rm -rf ${memcached_install_dir} /etc/init.d/memcached /usr/bin/memcached; echo "${CMSG}Memcached uninstall completed! ${CEND}"; }
 }
 
+Print_phpMyAdmin() {
+  [ -d "${wwwroot_dir}/default/phpMyAdmin" ] && echo "${wwwroot_dir}/default/phpMyAdmin"
+}
+
+Uninstall_phpMyAdmin() {
+  [ -d "${wwwroot_dir}/default/phpMyAdmin" ] && rm -rf ${wwwroot_dir}/default/phpMyAdmin
+}
+
 Print_openssl() {
   [ -d "${openssl_install_dir}" ] && echo "${openssl_install_dir}"
 }
@@ -237,22 +317,23 @@ Menu(){
 while :; do
   printf "
 What Are You Doing?
-\t${CMSG}0${CEND}. Uninstall All
-\t${CMSG}1${CEND}. Uninstall Nginx/Tengine/OpenResty/Apache/Tomcat
-\t${CMSG}2${CEND}. Uninstall MySQL/MariaDB/Percona/AliSQL
-\t${CMSG}3${CEND}. Uninstall PostgreSQL
-\t${CMSG}4${CEND}. Uninstall MongoDB
-\t${CMSG}5${CEND}. Uninstall PHP
-\t${CMSG}6${CEND}. Uninstall HHVM
-\t${CMSG}7${CEND}. Uninstall PureFtpd
-\t${CMSG}8${CEND}. Uninstall Redis
-\t${CMSG}9${CEND}. Uninstall Memcached
-\t${CMSG}q${CEND}. Exit
+\t${CMSG} 0${CEND}. Uninstall All
+\t${CMSG} 1${CEND}. Uninstall Nginx/Tengine/OpenResty/Apache/Tomcat
+\t${CMSG} 2${CEND}. Uninstall MySQL/MariaDB/Percona/AliSQL
+\t${CMSG} 3${CEND}. Uninstall PostgreSQL
+\t${CMSG} 4${CEND}. Uninstall MongoDB
+\t${CMSG} 5${CEND}. Uninstall PHP
+\t${CMSG} 6${CEND}. Uninstall HHVM
+\t${CMSG} 7${CEND}. Uninstall PureFtpd
+\t${CMSG} 8${CEND}. Uninstall Redis
+\t${CMSG} 9${CEND}. Uninstall Memcached
+\t${CMSG}10${CEND}. Uninstall phpMyAdmin
+\t${CMSG} q${CEND}. Exit
 "
   echo
   read -e -p "Please input the correct option: " Number
-  if [[ ! $Number =~ ^[0-9,q]$ ]]; then
-    echo "${CWARNING}input error! Please only input 0~9 and q${CEND}"
+  if [[ ! "${Number}" =~ ^[0-9,q]$|^10$ ]]; then
+    echo "${CWARNING}input error! Please only input 0~10 and q${CEND}"
   else
     case "$Number" in
     0)
@@ -267,7 +348,7 @@ What Are You Doing?
       Print_Redis
       Print_Memcached
       Print_openssl
-
+      Print_phpMyAdmin
       Uninstall_status
       if [ "${uninstall_yn}" == 'y' ]; then
         Uninstall_Web
@@ -280,6 +361,7 @@ What Are You Doing?
         Uninstall_Redis
         Uninstall_Memcached
         Uninstall_openssl
+        Uninstall_phpMyAdmin
       else
         exit
       fi
@@ -333,6 +415,11 @@ What Are You Doing?
       Uninstall_status
       [ "${uninstall_yn}" == 'y' ] && Uninstall_Memcached || exit
       ;;
+    10)
+      Print_phpMyAdmin
+      Uninstall_status
+      [ "${uninstall_yn}" == 'y' ] && Uninstall_phpMyAdmin || exit
+      ;;
     q)
       exit
       ;;
@@ -341,90 +428,32 @@ What Are You Doing?
 done
 }
 
-if [ $# == 0 ]; then
+if [ ${ARG_NUM} == 0 ]; then
   Menu
-elif [ $# == 1 ]; then
-  case $1 in
-  all)
-    Print_Warn
-    Print_web
-    Print_MySQL
-    Print_PostgreSQL
-    Print_MongoDB
-    Print_PHP
-    Print_HHVM
-    Print_PureFtpd
-    Print_Redis
-    Print_Memcached
-    Print_openssl
-
-    Uninstall_status
-    if [ "${uninstall_yn}" == 'y' ]; then
-      Uninstall_Web
-      Uninstall_MySQL
-      Uninstall_PHP
-      Uninstall_HHVM
-      Uninstall_PureFtpd
-      Uninstall_Redis
-      Uninstall_Memcached
-      Uninstall_openssl
-    else
-      exit
-    fi
-    ;;
-  web)
-    Print_Warn
-    Print_web
-    Uninstall_status
-    [ "${uninstall_yn}" == 'y' ] && Uninstall_Web || exit
-    ;;
-  mysql)
-    Print_Warn
-    Print_MySQL
-    Uninstall_status
-    [ "${uninstall_yn}" == 'y' ] && Uninstall_MySQL || exit
-    ;;
-  postgresql)
-    Print_Warn
-    Print_PostgreSQL
-    Uninstall_status
-    [ "${uninstall_yn}" == 'y' ] && Uninstall_PostgreSQL || exit
-    ;;
-  mongodb)
-    Print_Warn
-    Print_MongoDB
-    Uninstall_status
-    [ "${uninstall_yn}" == 'y' ] && Uninstall_MongoDB || exit
-    ;;
-  php)
-    Print_PHP
-    Uninstall_status
-    [ "${uninstall_yn}" == 'y' ] && Uninstall_PHP || exit
-    ;;
-  hhvm)
-    Print_HHVM
-    Uninstall_status
-    [ "${uninstall_yn}" == 'y' ] && Uninstall_HHVM || exit
-    ;;
-  pureftpd)
-    Print_PureFtpd
-    Uninstall_status
-    [ "${uninstall_yn}" == 'y' ] && Uninstall_PureFtpd || exit
-    ;;
-  redis)
-    Print_Redis
-    Uninstall_status
-    [ "${uninstall_yn}" == 'y' ] && Uninstall_Redis || exit
-    ;;
-  memcached)
-    Print_Memcached
-    Uninstall_status
-    [ "${uninstall_yn}" == 'y' ] && Uninstall_Memcached || exit
-    ;;
-  *)
-    Usage
-    ;;
-  esac
 else
-  Usage
+  [ "${web_yn}" == 'y' ] && Print_web
+  [ "${mysql_yn}" == 'y' ] && Print_MySQL
+  [ "${postgresql_yn}" == 'y' ] && Print_PostgreSQL
+  [ "${mongodb_yn}" == 'y' ] && Print_MongoDB
+  [ "${php_yn}" == 'y' ] && Print_PHP
+  [ "${hhvm_yn}" == 'y' ] && Print_HHVM
+  [ "${pureftpd_yn}" == 'y' ] && Print_PureFtpd
+  [ "${redis_yn}" == 'y' ] && Print_Redis
+  [ "${memcached_yn}" == 'y' ] && Print_Memcached
+  [ "${phpmyadmin_yn}" == 'y' ] && Print_phpMyAdmin
+  [ "${all_yn}" == 'y' ] && Print_openssl
+  Uninstall_status
+  if [ "${uninstall_yn}" == 'y' ]; then
+    [ "${web_yn}" == 'y' ] && Uninstall_Web
+    [ "${mysql_yn}" == 'y' ] && Uninstall_MySQL
+    [ "${postgresql_yn}" == 'y' ] && Uninstall_PostgreSQL
+    [ "${mongodb_yn}" == 'y' ] && Uninstall_MongoDB
+    [ "${php_yn}" == 'y' ] && Uninstall_PHP
+    [ "${hhvm_yn}" == 'y' ] && Uninstall_HHVM
+    [ "${pureftpd_yn}" == 'y' ] && Uninstall_PureFtpd
+    [ "${redis_yn}" == 'y' ] && Uninstall_Redis
+    [ "${memcached_yn}" == 'y' ] && Uninstall_Memcached
+    [ "${phpmyadmin_yn}" == 'y' ] && Uninstall_phpMyAdmin
+    [ "${all_yn}" == 'y' ] && Uninstall_openssl
+  fi
 fi

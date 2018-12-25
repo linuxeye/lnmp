@@ -32,46 +32,193 @@ FTP_tmp_passfile=${pureftpd_install_dir}/etc/pureftpd_psss.tmp
 Puredbfile=${pureftpd_install_dir}/etc/pureftpd.pdb
 Passwdfile=${pureftpd_install_dir}/etc/pureftpd.passwd
 FTP_bin=${pureftpd_install_dir}/bin/pure-pw
-[ -z "`grep ^PureDB $FTP_conf`" ] && { echo "${CFAILURE}pure-ftpd is not own password database${CEND}" ; exit 1; }
+[ -z "`grep ^PureDB ${FTP_conf}`" ] && { echo "${CFAILURE}pure-ftpd is not own password database${CEND}" ; exit 1; }
+
+ARG_NUM=$#
+showhelp() {
+  echo
+  echo "Usage: $0  command ...[parameters]....
+  --help, -h                          Show this help message
+  --useradd,--add                     Add username
+  --usermod                           Modify directory
+  --passwd                            Modify password
+  --userdel,--delete                  Delete User
+  --listalluser,--list                List all User
+  --showuser                          List User details
+  --username,-u     [ftp username]    Ftp username
+  --password,-p     [ftp password]    Ftp password
+  --directory,-d,-D [ftp directory]   Ftp home directory
+  "
+}
+
+TEMP=`getopt -o hu:p:d:D: --long help,useradd,add,usermod,passwd,userdel,delete,listalluser,list,showuser,username:,password:,directory: -- "$@" 2>/dev/null`
+[ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && showhelp && exit 1
+eval set -- "${TEMP}"
+while :; do
+  [ -z "$1" ] && break;
+  case "$1" in
+    -h|--help)
+      showhelp; exit 0
+      ;;
+    --add|--useradd)
+      useradd_quiet=y; shift 1
+      ;;
+    --usermod)
+      usermod_quiet=y; shift 1
+      ;;
+    --passwd)
+      passwd_quiet=y; shift 1
+      ;;
+    --delete|--userdel)
+      userdel_quiet=y; shift 1
+      ;;
+    --list|--listalluser)
+      listalluser_quiet=y; shift 1
+      ;;
+    --showuser)
+      showuser_quiet=y; shift 1
+      ;;
+    -u|--username)
+      username_quiet=y; User=$2; shift 2
+      ;;
+    -p|--password)
+      password_quiet=y; Password=$2; shift 2
+      ;;
+    -d|-D|--directory)
+      directory_quiet=y; Directory=$2; shift 2
+      ;;
+    --)
+      shift
+      ;;
+    *)
+      echo "${CWARNING}ERROR: unknown argument! ${CEND}" && showhelp && exit 1
+      ;;
+  esac
+done
 
 USER() {
-while :; do echo
-  read -e -p "Please input a username: " User
-  if [ -z "${User}" ]; then
-    echo "${CWARNING}username can't be NULL! ${CEND}"
-  else
-    break
-  fi
-done
+  while :; do
+    if [ "${username_quiet}" != 'y' ]; then
+      echo
+      read -e -p "Please input a username: " User
+    fi
+    if [ -z "${User}" ]; then
+      echo "${CWARNING}username can't be NULL! ${CEND}"
+    else
+      break
+    fi
+  done
 }
 
 PASSWORD() {
-while :; do echo
-  read -e -p "Please input the password: " Password
-  [ -n "`echo ${Password} | grep '[+|&]'`" ] && { echo "${CWARNING}input error,not contain a plus sign (+) and &${CEND}"; continue; }
-  if (( ${#Password} >= 5 ));then
-    echo -e "${Password}\n${Password}" > ${FTP_tmp_passfile}
-    break
-  else
-    echo "${CWARNING}Ftp password least 5 characters! ${CEND}"
-  fi
-done
+  while :; do
+    if [ "${password_quiet}" != 'y' ]; then
+      echo
+      read -e -p "Please input the password: " Password
+    fi
+    [ -n "`echo ${Password} | grep '[+|&]'`" ] && { echo "${CWARNING}input error,not contain a plus sign (+) and &${CEND}"; continue; }
+    if (( ${#Password} >= 5 )); then
+      echo -e "${Password}\n${Password}" > ${FTP_tmp_passfile}
+      break
+    else
+      echo "${CWARNING}Ftp password least 5 characters! ${CEND}"
+    fi
+  done
 }
 
 DIRECTORY() {
-while :; do echo
-  read -e -p "Please input the directory(Default directory: ${wwwroot_dir}): " Directory
-  Directory=${Directory:-${wwwroot_dir}}
-  if [ ! -d "${Directory}" ]; then
-    echo "${CWARNING}The directory does not exist${CEND}"
-  else
-    break
-  fi
-done
+  while :; do
+    if [ "${directory_quiet}" != 'y' ]; then
+      echo
+      read -e -p "Please input the directory(Default directory: ${wwwroot_dir}): " Directory
+    fi
+    Directory=${Directory:-${wwwroot_dir}}
+    if [ ! -d "${Directory}" ]; then
+      echo "${CWARNING}The directory does not exist${CEND}"
+    else
+      break
+    fi
+  done
 }
 
-while :; do
-  printf "
+UserAdd() {
+  USER
+  [ -e "${Passwdfile}" ] && [ -n "`grep ^${User}: ${Passwdfile}`" ] && { echo "${CQUESTION}[${User}] is already existed! ${CEND}"; exit 1; }
+  PASSWORD;DIRECTORY
+  ${FTP_bin} useradd ${User} -f ${Passwdfile} -u ${run_user} -g ${run_user} -d ${Directory} -m < ${FTP_tmp_passfile}
+  ${FTP_bin} mkdb ${Puredbfile} -f ${Passwdfile} > /dev/null 2>&1
+  echo "#####################################"
+  echo
+  echo "[${User}] create successful! "
+  echo
+  echo "You user name is : ${CMSG}${User}${CEND}"
+  echo "You Password is : ${CMSG}${Password}${CEND}"
+  echo "You directory is : ${CMSG}${Directory}${CEND}"
+  echo
+}
+
+UserMod() {
+  USER
+  [ -e "${Passwdfile}" ] && [ -z "`grep ^${User}: ${Passwdfile}`" ] && { echo "${CQUESTION}[${User}] was not existed! ${CEND}"; exit 1; }
+  DIRECTORY
+  ${FTP_bin} usermod ${User} -f ${Passwdfile} -d ${Directory} -m
+  ${FTP_bin} mkdb ${Puredbfile} -f ${Passwdfile} > /dev/null 2>&1
+  echo "#####################################"
+  echo
+  echo "[${User}] modify a successful! "
+  echo
+  echo "You user name is : ${CMSG}${User}${CEND}"
+  echo "You new directory is : ${CMSG}${Directory}${CEND}"
+  echo
+}
+
+UserPasswd() {
+  USER
+  [ -e "${Passwdfile}" ] && [ -z "`grep ^${User}: ${Passwdfile}`" ] && { echo "${CQUESTION}[${User}] was not existed! ${CEND}"; exit 1; }
+  PASSWORD
+  ${FTP_bin} passwd ${User} -f ${Passwdfile} -m < ${FTP_tmp_passfile}
+  ${FTP_bin} mkdb ${Puredbfile} -f ${Passwdfile} > /dev/null 2>&1
+  echo "#####################################"
+  echo
+  echo "[${User}] Password changed successfully! "
+  echo
+  echo "You user name is : ${CMSG}${User}${CEND}"
+  echo "You new password is : ${CMSG}${Password}${CEND}"
+  echo
+}
+
+UserDel() {
+  if [ ! -e "${Passwdfile}" ]; then
+    echo "${CQUESTION}User was not existed! ${CEND}"
+  else
+    ${FTP_bin} list
+  fi
+
+  USER
+  [ -e "${Passwdfile}" ] && [ -z "`grep ^${User}: ${Passwdfile}`" ] && { echo "${CQUESTION}[${User}] was not existed! ${CEND}"; exit 1; }
+  ${FTP_bin} userdel ${User} -f ${Passwdfile} -m
+  ${FTP_bin} mkdb ${Puredbfile} -f ${Passwdfile} > /dev/null 2>&1
+  echo
+  echo "[${User}] have been deleted! "
+}
+
+ListAllUser() {
+  if [ ! -e "${Passwdfile}" ]; then
+    echo "${CQUESTION}User was not existed! ${CEND}"
+  else
+    ${FTP_bin} list
+  fi
+}
+
+ShowUser() {
+  USER
+  [ -e "${Passwdfile}" ] && [ -z "`grep ^${User}: ${Passwdfile}`" ] && { echo "${CQUESTION}[${User}] was not existed! ${CEND}"; exit 1; }
+  ${FTP_bin} show ${User}
+}
+
+Menu() {
+  while :; do
+    printf "
 What Are You Doing?
 \t${CMSG}1${CEND}. UserAdd
 \t${CMSG}2${CEND}. UserMod
@@ -81,83 +228,44 @@ What Are You Doing?
 \t${CMSG}6${CEND}. ShowUser
 \t${CMSG}q${CEND}. Exit
 "
-  read -e -p "Please input the correct option: " Number
-  if [[ ! $Number =~ ^[1-6,q]$ ]]; then
-    echo "${CFAILURE}input error! Please only input 1~6 and q${CEND}"
-  else
-    case "$Number" in
-    1)
-      USER
-      [ -e "${Passwdfile}" ] && [ -n "`grep ^${User}: ${Passwdfile}`" ] && { echo "${CQUESTION}[${User}] is already existed! ${CEND}"; continue; }
-      PASSWORD;DIRECTORY
-      ${FTP_bin} useradd ${User} -f ${Passwdfile} -u ${run_user} -g ${run_user} -d ${Directory} -m < ${FTP_tmp_passfile}
-      ${FTP_bin} mkdb ${Puredbfile} -f ${Passwdfile} > /dev/null 2>&1
-      echo "#####################################"
-      echo
-      echo "[${User}] create successful! "
-      echo
-      echo "You user name is : ${CMSG}${User}${CEND}"
-      echo "You Password is : ${CMSG}${Password}${CEND}"
-      echo "You directory is : ${CMSG}${Directory}${CEND}"
-      echo
-      ;;
-    2)
-      USER
-      [ -e "${Passwdfile}" ] && [ -z "`grep ^${User}: ${Passwdfile}`" ] && { echo "${CQUESTION}[${User}] was not existed! ${CEND}"; continue; }
-      DIRECTORY
-      ${FTP_bin} usermod ${User} -f ${Passwdfile} -d ${Directory} -m
-      ${FTP_bin} mkdb ${Puredbfile} -f ${Passwdfile} > /dev/null 2>&1
-      echo "#####################################"
-      echo
-      echo "[${User}] modify a successful! "
-      echo
-      echo "You user name is : ${CMSG}${User}${CEND}"
-      echo "You new directory is : ${CMSG}${Directory}${CEND}"
-      echo
-      ;;
-    3)
-      USER
-      [ -e "${Passwdfile}" ] && [ -z "`grep ^${User}: ${Passwdfile}`" ] && { echo "${CQUESTION}[${User}] was not existed! ${CEND}"; continue; }
-      PASSWORD
-      ${FTP_bin} passwd ${User} -f ${Passwdfile} -m < ${FTP_tmp_passfile}
-      ${FTP_bin} mkdb ${Puredbfile} -f ${Passwdfile} > /dev/null 2>&1
-      echo "#####################################"
-      echo
-      echo "[${User}] Password changed successfully! "
-      echo
-      echo "You user name is : ${CMSG}${User}${CEND}"
-      echo "You new password is : ${CMSG}${Password}${CEND}"
-      echo
-      ;;
-    4)
-      if [ ! -e "${Passwdfile}" ]; then
-        echo "${CQUESTION}User was not existed! ${CEND}"
-      else
-        ${FTP_bin} list
-      fi
+    read -e -p "Please input the correct option: " Number
+    if [[ ! ${Number} =~ ^[1-6,q]$ ]]; then
+      echo "${CFAILURE}input error! Please only input 1~6 and q${CEND}"
+    else
+      case "${Number}" in
+      1)
+        UserAdd
+        ;;
+      2)
+        UserMod
+        ;;
+      3)
+        UserPasswd
+        ;;
+      4)
+        UserDel
+        ;;
+      5)
+        ListAllUser
+        ;;
+      6)
+        ShowUser
+        ;;
+      q)
+        exit
+        ;;
+      esac
+    fi
+  done
+}
 
-      USER
-      [ -e "${Passwdfile}" ] && [ -z "`grep ^${User}: ${Passwdfile}`" ] && { echo "${CQUESTION}[${User}] was not existed! ${CEND}"; continue; }
-      ${FTP_bin} userdel ${User} -f ${Passwdfile} -m
-      ${FTP_bin} mkdb ${Puredbfile} -f ${Passwdfile} > /dev/null 2>&1
-      echo
-      echo "[${User}] have been deleted! "
-      ;;
-    5)
-      if [ ! -e "${Passwdfile}" ]; then
-        echo "${CQUESTION}User was not existed! ${CEND}"
-      else
-        ${FTP_bin} list
-      fi
-      ;;
-    6)
-      USER
-      [ -e "${Passwdfile}" ] && [ -z "`grep ^${User}: ${Passwdfile}`" ] && { echo "${CQUESTION}[${User}] was not existed! ${CEND}"; continue; }
-      ${FTP_bin} show ${User}
-      ;;
-    q)
-      exit
-      ;;
-    esac
-  fi
-done
+if [ ${ARG_NUM} == 0 ]; then
+  Menu
+else
+  [ "${useradd_quiet}" == 'y' ] && UserAdd
+  [ "${usermod_quiet}" == 'y' ] && UserMod
+  [ "${passwd_quiet}" == 'y' ] && UserPasswd
+  [ "${userdel_quiet}" == 'y' ] && UserDel
+  [ "${listalluser_quiet}" == 'y' ] && ListAllUser
+  [ "${showuser_quiet}" == 'y' ] && ShowUser
+fi

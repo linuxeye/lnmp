@@ -55,12 +55,28 @@ Install_PureFTPd() {
           iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
           iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
           service iptables save
+          /bin/cp /etc/sysconfig/{iptables,ip6tables}
+          sed -i 's@icmp@icmpv6@g' /etc/sysconfig/ip6tables
+          ip6tables-restore < /etc/sysconfig/ip6tables
+          service ip6tables save
         fi
       elif [ "${PM}" == 'apt-get' ]; then
-        if [ -z "$(grep '20000:30000' /etc/iptables.up.rules)" ]; then
-          iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
-          iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
-          iptables-save > /etc/iptables.up.rules
+        if [ -e '/etc/iptables/rules.v4' ]; then
+          if [ -z "$(grep '20000:30000' /etc/iptables/rules.v4)" ]; then
+            iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
+            iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
+            iptables-save > /etc/iptables/rules.v4
+            /bin/cp /etc/iptables/rules.v{4,6}
+            sed -i 's@icmp@icmpv6@g' /etc/iptables/rules.v6
+            ip6tables-restore < /etc/iptables/rules.v6
+            ip6tables-save > /etc/iptables/rules.v6
+          fi
+        elif [ -e '/etc/iptables.up.rules' ]; then
+          if [ -z "$(grep '20000:30000' /etc/iptables.up.rules)" ]; then
+            iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
+            iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
+            iptables-save > /etc/iptables.up.rules
+          fi
         fi
       fi
     fi

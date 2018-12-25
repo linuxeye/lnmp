@@ -98,15 +98,18 @@ ntpdate pool.ntp.org
 
 # iptables
 if [ "${iptables_yn}" == 'y' ]; then
-  if [ -e "/etc/iptables.up.rules" ] && [ -n "$(grep '^:INPUT DROP' /etc/iptables.up.rules)" -a -n "$(grep 'NEW -m tcp --dport 22 -j ACCEPT' /etc/iptables.up.rules)" -a -n "$(grep 'NEW -m tcp --dport 80 -j ACCEPT' /etc/iptables.up.rules)" ]; then
+  apt-get -y install debconf-utils
+  echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
+  echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
+  apt-get -y install iptables-persistent
+  if [ -e "/etc/iptables/rules.v4" ] && [ -n "$(grep '^:INPUT DROP' /etc/iptables/rules.v4)" -a -n "$(grep 'NEW -m tcp --dport 22 -j ACCEPT' /etc/iptables/rules.v4)" -a -n "$(grep 'NEW -m tcp --dport 80 -j ACCEPT' /etc/iptables/rules.v4)" ]; then
     IPTABLES_STATUS=yes
   else
     IPTABLES_STATUS=no
   fi
 
   if [ "${IPTABLES_STATUS}" == "no" ]; then
-    [ -e "/etc/iptables.up.rules" ] && /bin/mv /etc/iptables.up.rules{,_bk}
-    cat > /etc/iptables.up.rules << EOF
+    cat > /etc/iptables/rules.v4 << EOF
 # Firewall configuration written by system-config-securitylevel
 # Manual customization of this file is not recommended.
 *filter
@@ -124,14 +127,13 @@ COMMIT
 EOF
   fi
 
-  FW_PORT_FLAG=$(grep -ow "dport ${ssh_port}" /etc/iptables.up.rules)
-  [ -z "${FW_PORT_FLAG}" -a "${ssh_port}" != "22" ] && sed -i "s@dport 22 -j ACCEPT@&\n-A INPUT -p tcp -m state --state NEW -m tcp --dport ${ssh_port} -j ACCEPT@" /etc/iptables.up.rules
-  iptables-restore < /etc/iptables.up.rules
-  cat > /etc/network/if-pre-up.d/iptables << EOF
-#!/bin/bash
-/sbin/iptables-restore < /etc/iptables.up.rules
-EOF
-  chmod +x /etc/network/if-pre-up.d/iptables
+  FW_PORT_FLAG=$(grep -ow "dport ${ssh_port}" /etc/iptables/rules.v4)
+  [ -z "${FW_PORT_FLAG}" -a "${ssh_port}" != "22" ] && sed -i "s@dport 22 -j ACCEPT@&\n-A INPUT -p tcp -m state --state NEW -m tcp --dport ${ssh_port} -j ACCEPT@" /etc/iptables/rules.v4
+  iptables-restore < /etc/iptables/rules.v4
+  /bin/cp /etc/iptables/rules.v{4,6}
+  sed -i 's@icmp@icmpv6@g' /etc/iptables/rules.v6
+  ip6tables-restore < /etc/iptables/rules.v6
+  ip6tables-save > /etc/iptables/rules.v6 
 fi
 service rsyslog restart
 service ssh restart

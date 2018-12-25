@@ -17,10 +17,10 @@ Install_Tomcat9() {
   # install apr
   if [ ! -e "/usr/local/apr/bin/apr-1-config" ]; then
     tar xzf apr-${apr_ver}.tar.gz
-    pushd apr-${apr_ver}
+    pushd apr-${apr_ver} > /dev/null
     ./configure
     make -j ${THREAD} && make install
-    popd
+    popd > /dev/null
     rm -rf apr-${apr_ver}
   fi
 
@@ -46,12 +46,12 @@ Install_Tomcat9() {
   #popd
   #rm -rf ${tomcat_install_dir}/lib/catalina
 
-  pushd ${tomcat_install_dir}/bin
+  pushd ${tomcat_install_dir}/bin > /dev/null
   tar xzf tomcat-native.tar.gz
-  pushd tomcat-native-*-src/native
+  pushd tomcat-native-*-src/native > /dev/null
     ./configure --with-apr=/usr/local/apr --with-ssl=${openssl_install_dir}
     make -j ${THREAD} && make install
-  popd
+  popd > /dev/null
   rm -rf tomcat-native-*
   if [ -e "/usr/local/apr/lib/libtcnative-1.la" ]; then
     [ ${Mem} -le 768 ] && let Xms_Mem="${Mem}/3" || Xms_Mem=256
@@ -76,11 +76,26 @@ EOF
           if [ -z "$(grep -w '8080' /etc/sysconfig/iptables)" ]; then
             iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
             service iptables save
+            /bin/cp /etc/sysconfig/{iptables,ip6tables}
+            sed -i 's@icmp@icmpv6@g' /etc/sysconfig/ip6tables
+            ip6tables-restore < /etc/sysconfig/ip6tables
+            service ip6tables save
           fi
         elif [ "${PM}" == 'apt-get' ]; then
-          if [ -z "$(grep -w '8080' /etc/iptables.up.rules)" ]; then
-            iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
-            iptables-save > /etc/iptables.up.rules
+          if [ -e '/etc/iptables/rules.v4' ]; then
+            if [ -z "$(grep -w '8080' /etc/iptables/rules.v4)" ]; then
+              iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
+              iptables-save > /etc/iptables/rules.v4
+              /bin/cp /etc/iptables/rules.v{4,6}
+              sed -i 's@icmp@icmpv6@g' /etc/iptables/rules.v6
+              ip6tables-restore < /etc/iptables/rules.v6
+              ip6tables-save > /etc/iptables/rules.v6
+            fi
+          elif [ -e '/etc/iptables.up.rules' ]; then
+            if [ -z "$(grep -w '8080' /etc/iptables.up.rules)" ]; then
+              iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
+              iptables-save > /etc/iptables.up.rules
+            fi
           fi
         fi
       fi
@@ -129,9 +144,9 @@ EOF
     echo "${CSUCCESS}Tomcat installed successfully! ${CEND}"
     rm -rf apache-tomcat-${tomcat9_ver}
   else
-    popd
+    popd > /dev/null
     echo "${CFAILURE}Tomcat install failed, Please contact the author! ${CEND}"
   fi
   service tomcat start
-  popd
+  popd > /dev/null
 }

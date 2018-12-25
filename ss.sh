@@ -50,6 +50,8 @@ AddUser_SS() {
 Iptables_set() {
   if [ -e '/etc/sysconfig/iptables' ]; then
     SS_Already_port=$(grep -oE '9[0-9][0-9][0-9]' /etc/sysconfig/iptables | head -n 1)
+  elif [ -e '/etc/iptables/rules.v4' ]; then
+    SS_Already_port=$(grep -oE '9[0-9][0-9][0-9]' /etc/iptables/rules.v4 | head -n 1)
   elif [ -e '/etc/iptables.up.rules' ]; then
     SS_Already_port=$(grep -oE '9[0-9][0-9][0-9]' /etc/iptables.up.rules | head -n 1)
   fi
@@ -75,15 +77,30 @@ Iptables_set() {
       iptables -I INPUT 4 -p udp -m state --state NEW -m udp --dport ${SS_port} -j ACCEPT
       iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport ${SS_port} -j ACCEPT
       service iptables save
+      /bin/cp /etc/sysconfig/{iptables,ip6tables}
+      sed -i 's@icmp@icmpv6@g' /etc/sysconfig/ip6tables
+      ip6tables-restore < /etc/sysconfig/ip6tables
+      service ip6tables save
     fi
   elif [ "${PM}" == 'apt-get' ]; then
-    if [ -n "`grep 'dport 80 ' /etc/iptables.up.rules`" -a -z "$(grep -E ${SS_port} /etc/iptables.up.rules)" ]; then
-      iptables -I INPUT 4 -p udp -m state --state NEW -m udp --dport ${SS_port} -j ACCEPT
-      iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport ${SS_port} -j ACCEPT
-      iptables-save > /etc/iptables.up.rules
+    if [ -e '/etc/iptables/rules.v4' ]; then
+      if [ -n "`grep 'dport 80 ' /etc/iptables/rules.v4`" -a -z "$(grep -E ${SS_port} /etc/iptables/rules.v4)" ]; then
+        iptables -I INPUT 4 -p udp -m state --state NEW -m udp --dport ${SS_port} -j ACCEPT
+        iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport ${SS_port} -j ACCEPT
+        iptables-save > /etc/iptables/rules.v4
+        /bin/cp /etc/iptables/rules.v{4,6}
+        sed -i 's@icmp@icmpv6@g' /etc/iptables/rules.v6
+        ip6tables-restore < /etc/iptables/rules.v6
+        ip6tables-save > /etc/iptables/rules.v6
+      fi
+    elif [ -e '/etc/iptables.up.rules' ]; then
+      if [ -n "`grep 'dport 80 ' /etc/iptables.up.rules`" -a -z "$(grep -E ${SS_port} /etc/iptables.up.rules)" ]; then
+        iptables -I INPUT 4 -p udp -m state --state NEW -m udp --dport ${SS_port} -j ACCEPT
+        iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport ${SS_port} -j ACCEPT
+        iptables-save > /etc/iptables.up.rules
+      fi
     fi
   fi
-
 }
 
 Def_parameter() {
@@ -140,23 +157,23 @@ Install_SS-libev() {
   src_url=http://mirrors.linuxeye.com/oneinstack/src/mbedtls-2.14.1-apache.tgz && Download_src
   if [ ! -e "/usr/local/lib/libsodium.la" ]; then
     tar xzf libsodium-${libsodium_ver}.tar.gz
-    pushd libsodium-${libsodium_ver}
+    pushd libsodium-${libsodium_ver} > /dev/null
     ./configure --disable-dependency-tracking --enable-minimal
     make -j ${THREAD} && make install
-    popd
+    popd > /dev/null
     rm -rf libsodium-${libsodium_ver}
   fi
   tar xzf mbedtls-2.14.1-apache.tgz
-  pushd mbedtls-2.14.1
+  pushd mbedtls-2.14.1 > /dev/null
   make SHARED=1 CFLAGS=-fPIC
   make DESTDIR=/usr install
-  popd
+  popd > /dev/null
   tar xzf shadowsocks-libev-3.2.3.tar.gz
-  pushd shadowsocks-libev-3.2.3
+  pushd shadowsocks-libev-3.2.3 > /dev/null
   make clean
   ./configure
   make -j ${THREAD} && make install
-  popd
+  popd > /dev/null
   [ -z "`grep /usr/local/lib /etc/ld.so.conf.d/*.conf`" ] && echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
   ldconfig
   if [ -f /usr/local/bin/ss-server ]; then

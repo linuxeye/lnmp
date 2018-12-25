@@ -55,7 +55,7 @@ Upgrade_DB() {
   echo
   echo "Current ${DB} Version: ${CMSG}${OLD_db_ver}${CEND}"
   while :; do echo
-    read -e -p "Please input upgrade ${DB} Version(example: ${OLD_db_ver}): " NEW_db_ver
+    [ "${db_quiet}" != 'y' ] && read -e -p "Please input upgrade ${DB} Version(example: ${OLD_db_ver}): " NEW_db_ver
     if [ `echo ${NEW_db_ver} | awk -F. '{print $1"."$2}'` == `echo ${OLD_db_ver} | awk -F. '{print $1"."$2}'` ]; then
       if [ "${DB}" == 'MariaDB' ]; then
         DB_name=mariadb-${NEW_db_ver}-${GLIBC_FLAG}-${SYS_BIT_b}
@@ -85,8 +85,10 @@ Upgrade_DB() {
 
   if [ -e "`ls ${DB_name}.tar.?z 2>/dev/null`" ]; then
     echo "[${CMSG}`ls ${DB_name}.tar.?z 2>/dev/null`${CEND}] found"
-    echo "Press Ctrl+c to cancel or Press any key to continue..."
-    char=`get_char`
+    if [ "${db_quiet}" != 'y' ]; then
+      echo "Press Ctrl+c to cancel or Press any key to continue..."
+      char=`get_char`
+    fi
     if [ "${DB}" == 'MariaDB' ]; then
       service mysqld stop
       mv ${mariadb_install_dir}{,_old_`date +"%Y%m%d_%H%M%S"`}

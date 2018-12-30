@@ -9,21 +9,21 @@
 #       https://github.com/oneinstack/oneinstack
 
 Install_APCU() {
-  pushd ${oneinstack_dir}/src > /dev/null
-  phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
-  if [ "`${php_install_dir}/bin/php -r 'echo PHP_VERSION;' | awk -F. '{print $1}'`" == '7' ]; then
-    tar xzf apcu-${apcu_for_php7_ver}.tgz
-    pushd apcu-${apcu_for_php7_ver}
-  else
-    tar xzf apcu-${apcu_ver}.tgz
-    pushd apcu-${apcu_ver}
-  fi
-
-  ${php_install_dir}/bin/phpize
-  ./configure --with-php-config=${php_install_dir}/bin/php-config
-  make -j ${THREAD} && make install
-  if [ -f "${phpExtensionDir}/apcu.so" ]; then
-    cat > ${php_install_dir}/etc/php.d/02-apcu.ini << EOF
+  if [ -e "${php_install_dir}/bin/phpize" ]; then
+    pushd ${oneinstack_dir}/src > /dev/null
+    phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
+    if [ "`${php_install_dir}/bin/php -r 'echo PHP_VERSION;' | awk -F. '{print $1}'`" == '7' ]; then
+      tar xzf apcu-${apcu_ver}.tgz
+      pushd apcu-${apcu_ver} > /dev/null
+    else
+      tar xzf apcu-${apcu_oldver}.tgz
+      pushd apcu-${apcu_oldver} > /dev/null
+    fi
+    ${php_install_dir}/bin/phpize
+    ./configure --with-php-config=${php_install_dir}/bin/php-config
+    make -j ${THREAD} && make install
+    if [ -f "${phpExtensionDir}/apcu.so" ]; then
+      cat > ${php_install_dir}/etc/php.d/02-apcu.ini << EOF
 [apcu]
 extension=apcu.so
 apc.enabled=1
@@ -31,12 +31,22 @@ apc.shm_size=32M
 apc.ttl=7200
 apc.enable_cli=1
 EOF
-    /bin/cp apc.php ${wwwroot_dir}/default
-    echo "${CSUCCESS}APCU module installed successfully! ${CEND}"
-    popd
-    rm -rf apcu-${apcu_for_php7_ver} apcu-${apcu_ver} package.xml
-  else
-    echo "${CFAILURE}APCU module install failed, Please contact the author! ${CEND}"
+      /bin/cp apc.php ${wwwroot_dir}/default
+      popd > /dev/null
+      echo "${CSUCCESS}PHP apcu module installed successfully! ${CEND}"
+      rm -rf apcu-${apcu_ver} apcu-${apcu_oldver} package.xml
+    else
+      echo "${CFAILURE}PHP apcu module install failed, Please contact the author! ${CEND}"
+    fi
+    popd > /dev/null
   fi
-  popd
+}
+
+Uninstall_APCU() {
+  if [ -e "${php_install_dir}/etc/php.d/02-apcu.ini" ]; then
+    rm -rf ${php_install_dir}/etc/php.d/02-apcu.ini ${wwwroot_dir}/default/apc.php
+    echo; echo "${CMSG}PHP apcu module uninstall completed${CEND}"
+  else
+    echo; echo "${CWARNING}PHP apcu module does not exist! ${CEND}"
+  fi
 }

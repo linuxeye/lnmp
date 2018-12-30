@@ -19,12 +19,43 @@ Install_Panel() {
   if [ -e /bin/systemctl ]; then
     /bin/cp ${oneinstack_dir}/init.d/panel.service /lib/systemd/system/
     sed -i "s@/root/git/repo/panel@`pwd`@g" /lib/systemd/system/panel.service
+    systemctl enable panel
   else
     /bin/cp ${oneinstack_dir}/init.d/Panel-init /etc/init.d/panel
     sed -i "s@/root/git/repo/panel@`pwd`@g" /etc/init.d/panel
     [ "${PM}" == 'yum' ] && { chkconfig --add panel; chkconfig panel on; }
     [ "${PM}" == 'apt-get' ] && update-rc.d panel defaults
   fi
+
+  # Panel iptables
+  Panel_port=`cat data/port.conf`
+  if [ "${PM}" == 'yum' ]; then
+    if [ -n "`grep 'dport 80 ' /etc/sysconfig/iptables`" ] && [ -z "$(grep -w ${Panel_port} /etc/sysconfig/iptables)" ]; then
+      iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport ${Panel_port} -j ACCEPT
+      service iptables save
+      /bin/cp /etc/sysconfig/{iptables,ip6tables}
+      sed -i 's@icmp@icmpv6@g' /etc/sysconfig/ip6tables
+      ip6tables-restore < /etc/sysconfig/ip6tables
+      service ip6tables save
+    fi
+  elif [ "${PM}" == 'apt-get' ]; then
+    if [ -e '/etc/iptables/rules.v4' ]; then
+      if [ -n "`grep 'dport 80 ' /etc/iptables/rules.v4`" ] && [ -z "$(grep -w ${Panel_port} /etc/iptables/rules.v4)" ]; then
+        iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport ${Panel_port} -j ACCEPT
+        iptables-save > /etc/iptables/rules.v4
+        /bin/cp /etc/iptables/rules.v{4,6}
+        sed -i 's@icmp@icmpv6@g' /etc/iptables/rules.v6
+        ip6tables-restore < /etc/iptables/rules.v6
+        ip6tables-save > /etc/iptables/rules.v6
+      fi
+    elif [ -e '/etc/iptables.up.rules' ]; then
+      if [ -n "`grep 'dport 80 ' /etc/iptables.up.rules`" ] && [ -z "$(grep -w ${Panel_port} /etc/iptables.up.rules)" ]; then
+        iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport ${Panel_port} -j ACCEPT
+        iptables-save > /etc/iptables.up.rules
+      fi
+    fi
+  fi
+
   popd > /dev/null
   popd > /dev/null
   service panel start

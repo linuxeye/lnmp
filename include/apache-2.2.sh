@@ -13,15 +13,15 @@ Install_Apache22() {
   id -u ${run_user} >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin ${run_user}
   tar xzf httpd-${apache22_ver}.tar.gz
-  pushd httpd-${apache22_ver}
+  pushd httpd-${apache22_ver} > /dev/null
   [ ! -d "${apache_install_dir}" ] && mkdir -p ${apache_install_dir}
   [ "${Ubuntu_ver}" == "12" ] && sed -i '@SSL_PROTOCOL_SSLV2@d' modules/ssl/ssl_engine_io.c
   LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} --with-mpm=prefork --enable-mpms-shared=all --with-included-apr --enable-headers --enable-mime-magic --enable-deflate --enable-proxy --enable-so --enable-dav --enable-rewrite --enable-expires --enable-static-support --enable-suexec --with-expat=builtin --enable-mods-shared=most --enable-ssl --with-ssl=${openssl_install_dir}
   make -j ${THREAD} && make install
   unset LDFLAGS
-  if [ -e "${apache_install_dir}/conf/httpd.conf" ]; then
+  if [ -e "${apache_install_dir}/bin/httpd" ]; then
     echo "${CSUCCESS}Apache installed successfully! ${CEND}"
-    popd
+    popd > /dev/null
     rm -rf httpd-${apache22_ver}
   else
     rm -rf ${apache_install_dir}
@@ -133,5 +133,5 @@ EOF
   fi
   ldconfig
   service httpd start
-  popd
+  popd > /dev/null
 }

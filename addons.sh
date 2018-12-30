@@ -23,162 +23,76 @@ printf "
 oneinstack_dir=$(dirname "`readlink -f $0`")
 pushd ${oneinstack_dir} > /dev/null
 
-# get the IP information
-PUBLIC_IPADDR=$(./include/get_public_ipaddr.py)
-IPADDR_COUNTRY=$(./include/get_ipaddr_state.py $PUBLIC_IPADDR)
-
 . ./versions.txt
 . ./options.conf
 . ./include/color.sh
-. ./include/memory.sh
 . ./include/check_os.sh
-. ./include/check_download.sh
 . ./include/download.sh
 . ./include/get_char.sh
 
-. ./include/zendopcache.sh
-. ./include/xcache.sh
-. ./include/apcu.sh
-. ./include/eaccelerator.sh
-
-. ./include/ZendGuardLoader.sh
-. ./include/ioncube.sh
-. ./include/sourceguardian.sh
-
-. ./include/ImageMagick.sh
-. ./include/GraphicsMagick.sh
-
-. ./include/pecl_mongodb.sh
-
-. ./include/memcached.sh
-
-. ./include/redis.sh
+. ./include/composer.sh
 
 . ./include/python.sh
 
-. ./include/ngx_lua_waf.sh
+. ./include/fail2ban.sh
 
-. ./include/panel.sh
+. include/ngx_lua_waf.sh
 
-# Check PHP
-if [ -e "${php_install_dir}/bin/phpize" ]; then
-  phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
-  PHP_detail_ver=$(${php_install_dir}/bin/php -r 'echo PHP_VERSION;')
-  PHP_main_ver=${PHP_detail_ver%.*}
-  case "${PHP_main_ver}" in
-    5.3)
-      php_option=1
-    ;;
-    5.4)
-      php_option=2
-    ;;
-    5.5)
-      php_option=3
-    ;;
-    5.6)
-      php_option=4
-    ;;
-    7.0)
-      php_option=5
-    ;;
-    7.1)
-      php_option=6
-    ;;
-    7.2)
-      php_option=7
-    ;;
-    7.3)
-      php_option=8
-    ;;
+. include/panel.sh
+
+showhelp() {
+  echo
+  echo "Usage: $0  command ...
+  --help, -h                  Show this help message
+  --install, -i               Install
+  --uninstall, -u             Uninstall
+  --composer                  Composer
+  --fail2ban                  Fail2ban
+  --ngx_lua_waf               Ngx_lua_waf
+  --python                    Python3.6
+  --panel                     OneinStack Panel
+  "
+}
+
+ARG_NUM=$#
+TEMP=`getopt -o hiu --long help,install,uninstall,composer,fail2ban,ngx_lua_waf,python,panel -- "$@" 2>/dev/null`
+[ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && showhelp && exit 1
+eval set -- "${TEMP}"
+while :; do
+  [ -z "$1" ] && break;
+  case "$1" in
+    -h|--help)
+      showhelp; exit 0
+      ;;
+    -i|--install)
+      install_yn=y; shift 1
+      ;;
+    -u|--uninstall)
+      uninstall_yn=y; shift 1
+      ;;
+    --composer)
+      composer_yn=y; shift 1
+      ;;
+    --fail2ban)
+      fail2ban_yn=y; shift 1
+      ;;
+    --ngx_lua_waf)
+      ngx_lua_waf_yn=y; shift 1
+      ;;
+    --python)
+      python_yn=y; shift 1
+      ;;
+    --panel)
+      panel_yn=y; shift 1
+      ;;
+    --)
+      shift
+      ;;
+    *)
+      echo "${CWARNING}ERROR: unknown argument! ${CEND}" && showhelp && exit 1
+      ;;
   esac
-fi
-
-# Check PHP Extensions
-Check_PHP_Extension() {
-  [ ! -e "${php_install_dir}/bin/phpize" ] && { echo "${CWARNING}PHP was not exist! ${CEND}"; exit 1; }
-  [ -e "`ls ${php_install_dir}/etc/php.d/0?-${PHP_extension}.ini 2> /dev/null`" ] && { echo "${CWARNING}PHP ${PHP_extension} module already installed! ${CEND}"; exit 1; }
-}
-
-# restart PHP
-Restart_PHP() {
-  [ -e "${apache_install_dir}/conf/httpd.conf" ] && service httpd restart || service php-fpm restart
-}
-
-# Check succ
-Check_succ() {
-  [ -f "${phpExtensionDir}/${PHP_extension}.so" ] && { Restart_PHP; echo;echo "${CSUCCESS}PHP ${PHP_extension} module installed successfully! ${CEND}"; }
-}
-
-# Uninstall succ
-Uninstall_succ() {
-  [ -e "`ls ${php_install_dir}/etc/php.d/0?-${PHP_extension}.ini 2> /dev/null`" ] && { rm -rf ${php_install_dir}/etc/php.d/0?-${PHP_extension}.ini; Restart_PHP; echo; echo "${CMSG}PHP ${PHP_extension} module uninstall completed${CEND}"; } || { echo; echo "${CWARNING}${PHP_extension} module does not exist! ${CEND}"; }
-}
-
-Install_fail2ban() {
-  [ ! -e "${python_install_dir}/bin/python" ] && Install_Python
-  pushd ${oneinstack_dir}/src > /dev/null
-  src_url=http://mirrors.linuxeye.com/oneinstack/src/fail2ban-${fail2ban_ver}.tar.gz && Download_src
-  tar xzf fail2ban-${fail2ban_ver}.tar.gz
-  pushd fail2ban-${fail2ban_ver}
-  sed -i 's@for i in xrange(50)@for i in range(50)@' fail2ban/__init__.py
-  ${python_install_dir}/bin/python setup.py install
-  if [ "${PM}" == 'yum' ]; then
-    LOGPATH=/var/log/secure
-    /bin/cp files/redhat-initd /etc/init.d/fail2ban
-    sed -i "s@^FAIL2BAN=.*@FAIL2BAN=${python_install_dir}/bin/fail2ban-client@" /etc/init.d/fail2ban
-    sed -i 's@Starting fail2ban.*@&\n    [ ! -e "/var/run/fail2ban" ] \&\& mkdir /var/run/fail2ban@' /etc/init.d/fail2ban
-    chmod +x /etc/init.d/fail2ban
-    chkconfig --add fail2ban
-    chkconfig fail2ban on
-  fi
-  if [ "${PM}" == 'apt-get' ]; then
-    LOGPATH=/var/log/auth.log
-    /bin/cp files/debian-initd /etc/init.d/fail2ban
-    sed -i 's@2 3 4 5@3 4 5@' /etc/init.d/fail2ban
-    sed -i "s@^DAEMON=.*@DAEMON=${python_install_dir}/bin/\$NAME-client@" /etc/init.d/fail2ban
-    chmod +x /etc/init.d/fail2ban
-    update-rc.d fail2ban defaults
-  fi
-  [ -z "`grep ^Port /etc/ssh/sshd_config`" ] && now_ssh_port=22 || now_ssh_port=`grep ^Port /etc/ssh/sshd_config | awk '{print $2}' | head -1`
-  cat > /etc/fail2ban/jail.local << EOF
-[DEFAULT]
-ignoreip = 127.0.0.1/8
-bantime  = 86400
-findtime = 600
-maxretry = 5
-[ssh-iptables]
-enabled = true
-filter  = sshd
-action  = iptables[name=SSH, port=$now_ssh_port, protocol=tcp]
-logpath = $LOGPATH
-EOF
-  cat > /etc/logrotate.d/fail2ban << EOF
-/var/log/fail2ban.log {
-    missingok
-    notifempty
-    postrotate
-      ${python_install_dir}/bin/fail2ban-client flushlogs >/dev/null || true
-    endscript
-}
-EOF
-  sed -i 's@^iptables = iptables.*@iptables = iptables@' /etc/fail2ban/action.d/iptables-common.conf
-  kill -9 `ps -ef | grep fail2ban | grep -v grep | awk '{print $2}'` > /dev/null 2>&1
-  service fail2ban start
-  popd > /dev/null
-  if [ -e "${python_install_dir}/bin/fail2ban-python" ]; then
-    echo; echo "${CSUCCESS}fail2ban installed successfully! ${CEND}"
-  else
-    echo; echo "${CFAILURE}fail2ban install failed, Please try again! ${CEND}"
-  fi
-  popd > /dev/null
-}
-
-Uninstall_fail2ban() {
-  service fail2ban stop
-  ${python_install_dir}/bin/pip uninstall -y fail2ban > /dev/null 2>&1
-  rm -rf /etc/init.d/fail2ban /etc/fail2ban /etc/logrotate.d/fail2ban /var/log/fail2ban.* /var/run/fail2ban
-  echo; echo "${CMSG}fail2ban uninstall completed${CEND}";
-}
+done
 
 ACTION_FUN() {
   while :; do
@@ -191,462 +105,118 @@ ACTION_FUN() {
     if [[ ! "${ACTION}" =~ ^[1,2]$ ]]; then
       echo "${CWARNING}input error! Please only input number 1~2${CEND}"
     else
+      [ "${ACTION}" == '1' ] && install_yn=y
+      [ "${ACTION}" == '2' ] && uninstall_yn=y
       break
     fi
   done
 }
 
-while :;do
-  printf "
+Menu() {
+  while :;do
+    printf "
 What Are You Doing?
-\t${CMSG} 1${CEND}. Install/Uninstall PHP opcode cache
-\t${CMSG} 2${CEND}. Install/Uninstall ZendGuardLoader/ionCube/SourceGuardian PHP Extension
-\t${CMSG} 3${CEND}. Install/Uninstall ImageMagick/GraphicsMagick PHP Extension
-\t${CMSG} 4${CEND}. Install/Uninstall fileinfo/imap/phalcon/mongodb PHP Extension
-\t${CMSG} 5${CEND}. Install/Uninstall memcached/memcache
-\t${CMSG} 6${CEND}. Install/Uninstall Redis
-\t${CMSG} 7${CEND}. Install/Uninstall swoole PHP Extension
-\t${CMSG} 8${CEND}. Install/Uninstall xdebug PHP Extension
-\t${CMSG} 9${CEND}. Install/Uninstall PHP Composer
-\t${CMSG}10${CEND}. Install/Uninstall fail2ban
-\t${CMSG}11${CEND}. Install/Uninstall ngx_lua_waf
-\t${CMSG} q${CEND}. Exit
+\t${CMSG}1${CEND}. Install/Uninstall PHP Composer
+\t${CMSG}2${CEND}. Install/Uninstall fail2ban
+\t${CMSG}3${CEND}. Install/Uninstall ngx_lua_waf
+\t${CMSG}4${CEND}. Install/Uninstall Python3.6
+\t${CMSG}q${CEND}. Exit
 "
-  read -e -p "Please input the correct option: " Number
-  if [[ ! "${Number}" =~ ^[1-9,q]$|^1[0-2]$ ]]; then
-    echo "${CFAILURE}input error! Please only input 1~11 and q${CEND}"
-  else
-    case "${Number}" in
-      1)
-        ACTION_FUN
-        while :; do echo
-          echo "Please select a opcode cache of the PHP:"
-          echo -e "\t${CMSG}1${CEND}. Zend OPcache"
-          echo -e "\t${CMSG}2${CEND}. XCache"
-          echo -e "\t${CMSG}3${CEND}. APCU"
-          echo -e "\t${CMSG}4${CEND}. eAccelerator"
-          read -e -p "Please input a number:(Default 1 press Enter) " phpcache_option
-          phpcache_option=${phpcache_option:-1}
-          if [[ ! "${phpcache_option}" =~ ^[1-4]$ ]]; then
-            echo "${CWARNING}input error! Please only input number 1~4${CEND}"
-          else
-            case "${phpcache_option}" in
-              1)
-                PHP_extension=opcache
-                ;;
-              2)
-                PHP_extension=xcache
-                ;;
-              3)
-                PHP_extension=apcu
-                ;;
-              4)
-                PHP_extension=eaccelerator
-                ;;
-            esac
-            break
+    read -e -p "Please input the correct option: " Number
+    if [[ ! "${Number}" =~ ^[1-5,q]$ ]]; then
+      echo "${CFAILURE}input error! Please only input 1~4 and q${CEND}"
+    else
+      case "${Number}" in
+        1)
+          ACTION_FUN
+          if [ "${install_yn}" = 'y' ]; then
+            Install_composer
+          elif [ "${uninstall_yn}" = 'y' ]; then
+            Uninstall_composer
           fi
-        done
-        if [ "${ACTION}" = '1' ]; then
-          Check_PHP_Extension
-          case "${phpcache_option}" in
-            1)
-              pushd ${oneinstack_dir}/src > /dev/null
-              if [[ "${PHP_main_ver}" =~ ^5.[3-4]$ ]]; then
-                src_url=https://pecl.php.net/get/zendopcache-${zendopcache_ver}.tgz && Download_src
-                Install_ZendOPcache
-              else
-                src_url=http://www.php.net/distributions/php-${PHP_detail_ver}.tar.gz && Download_src
-                Install_ZendOPcache
-              fi
-              popd > /dev/null
-              Check_succ
-              ;;
-            2)
-              if [[ "${PHP_main_ver}" =~ ^5.[3-6]$ ]]; then
-                while :; do
-                  read -e -p "Please input xcache admin password: " xcachepwd
-                  (( ${#xcachepwd} >= 5 )) && { xcachepwd_md5=$(echo -n "${xcachepwd}" | md5sum | awk '{print $1}') ; break ; } || echo "${CFAILURE}xcache admin password least 5 characters! ${CEND}"
-                done
-                checkDownload
-                Install_XCache
-                Check_succ
-              else
-                echo "${CWARNING}Your php does not support XCache! ${CEND}"; exit 1
-              fi
-              ;;
-            3)
-              if [[ "${PHP_main_ver}" =~ ^5.[3-6]$|^7.[0-3]$ ]]; then
-                checkDownload
-                Install_APCU
-                Check_succ
-              else
-                echo "${CWARNING}Your php does not support APCU! ${CEND}"; exit 1
-              fi
-              ;;
-            4)
-              if [[ "${PHP_main_ver}" =~ ^5.[3-4]$ ]]; then
-                checkDownload
-                Install_eAccelerator
-                Check_succ
-              else
-                echo "${CWARNING}Your php does not support eAccelerator! ${CEND}"; exit 1
-              fi
-              ;;
-          esac
-        else
-          Uninstall_succ
-        fi
-        ;;
-      2)
-        ACTION_FUN
-        while :; do echo
-          echo "Please select ZendGuardLoader/ionCube/SourceGuardian:"
-          echo -e "\t${CMSG}1${CEND}. ZendGuardLoader"
-          echo -e "\t${CMSG}2${CEND}. ionCube Loader"
-          echo -e "\t${CMSG}3${CEND}. SourceGuardian"
-          read -e -p "Please input a number:(Default 1 press Enter) " Loader
-          Loader=${Loader:-1}
-          if [[ ! "${Loader}" =~ ^[1-3]$ ]]; then
-            echo "${CWARNING}input error! Please only input number 1~3${CEND}"
-          else
-            [ "${Loader}" = '1' ] && PHP_extension=ZendGuardLoader
-            [ "${Loader}" = '2' ] && PHP_extension=ioncube
-            [ "${Loader}" = '3' ] && PHP_extension=sourceguardian
-            break
+          ;;
+        2)
+          ACTION_FUN
+          if [ "${install_yn}" = 'y' ]; then
+            Install_fail2ban
+          elif [ "${uninstall_yn}" = 'y' ]; then
+            Uninstall_fail2ban
           fi
-        done
-        if [ "${ACTION}" = '1' ]; then
-          Check_PHP_Extension
-          if [ "${Loader}" = '1' ]; then
-            if [[ "${PHP_main_ver}" =~ ^5.[3-6]$ ]] && [ "${armplatform}" != 'y' ]; then
-              zendguardloader_yn='y' && checkDownload
-              Install_ZendGuardLoader
-              Check_succ
-            else
-              echo; echo "${CWARNING}Your php ${PHP_detail_ver} or platform ${TARGET_ARCH} does not support ${PHP_extension}! ${CEND}";
-            fi
-          elif [ "${Loader}" = '2' ]; then
-            if [[ "${PHP_main_ver}" =~ ^5.[3-6]$|^7.[0-2]$ ]] || [ "${TARGET_ARCH}" != "arm64" ]; then
-              ioncube_yn='y' && checkDownload
-              Install_ionCube
-              Restart_PHP; echo "${CSUCCESS}PHP ioncube module installed successfully! ${CEND}";
-            else
-              echo; echo "${CWARNING}Your php ${PHP_detail_ver} or platform ${TARGET_ARCH} does not support ${PHP_extension}! ${CEND}";
-            fi
-          elif [ "${Loader}" = '3' ]; then
-            if [[ "${PHP_main_ver}" =~ ^5.[3-6]$|^7.[0-2]$ ]] || [ "${TARGET_ARCH}" != "armv8" ]; then
-              sourceguardian_yn='y' && checkDownload
-              Install_SourceGuardian
-              Restart_PHP; echo "${CSUCCESS}PHP SourceGuardian module installed successfully! ${CEND}";
-            else
-              echo; echo "${CWARNING}Your php ${PHP_detail_ver} or platform ${TARGET_ARCH} does not support ${PHP_extension}! ${CEND}";
-            fi
+          ;;
+        3)
+          ACTION_FUN
+          if [ "${install_yn}" = 'y' ]; then
+            [ -e "${nginx_install_dir}/sbin/nginx" ] && Nginx_lua_waf
+            [ -e "${tengine_install_dir}/sbin/nginx" ] && Tengine_lua_waf
+            enable_lua_waf
+          elif [ "${uninstall_yn}" = 'y' ]; then
+            disable_lua_waf
           fi
-        else
-          Uninstall_succ
-        fi
-        ;;
-      3)
-        ACTION_FUN
-        while :; do echo
-          echo "Please select ImageMagick/GraphicsMagick:"
-          echo -e "\t${CMSG}1${CEND}. ImageMagick"
-          echo -e "\t${CMSG}2${CEND}. GraphicsMagick"
-          read -e -p "Please input a number:(Default 1 press Enter) " magick_option
-          magick_option=${magick_option:-1}
-          if [[ ! "${magick_option}" =~ ^[1,2]$ ]]; then
-            echo "${CWARNING}input error! Please only input number 1~2${CEND}"
-          else
-            [ "${magick_option}" = '1' ] && PHP_extension=imagick
-            [ "${magick_option}" = '2' ] && PHP_extension=gmagick
-            break
+          ;;
+        4)
+          ACTION_FUN
+          if [ "${install_yn}" = 'y' ]; then
+            Install_Python
+          elif [ "${uninstall_yn}" = 'y' ]; then
+            Uninstall_Python
           fi
-        done
-        if [ "${ACTION}" = '1' ]; then
-          Check_PHP_Extension
-          magick_yn=y && checkDownload
-          if [ "${magick_option}" = '1' ]; then
-            [ ! -d "${imagick_install_dir}" ] && Install_ImageMagick
-            Install_pecl-imagick
-            Check_succ
-          elif [ "${magick_option}" = '2' ]; then
-            [ ! -d "${gmagick_install_dir}" ] && Install_GraphicsMagick
-            Install_pecl-gmagick
-            Check_succ
+          ;;
+        5)
+          ACTION_FUN
+          if [ "${install_yn}" = 'y' ]; then
+            Install_Python
+            Install_Panel
+          elif [ "${uninstall_yn}" = 'y' ]; then
+            Uninstall_Panel
           fi
-        else
-          Uninstall_succ
-          [ -d "${imagick_install_dir}" ] && rm -rf ${imagick_install_dir}
-          [ -d "${gmagick_install_dir}" ] && rm -rf ${gmagick_install_dir}
-        fi
-        ;;
-      4)
-        ACTION_FUN
-        while :; do echo
-          echo "Please select fileinfo/imap/phalcon/mongodb:"
-          echo -e "\t${CMSG}1${CEND}. fileinfo"
-          echo -e "\t${CMSG}2${CEND}. imap"
-          echo -e "\t${CMSG}3${CEND}. phalcon"
-          echo -e "\t${CMSG}4${CEND}. mongodb"
-          read -e -p "Please input a number:(Default 1 press Enter) " phpext_option
-          phpext_option=${phpext_option:-1}
-          if [[ ! "${phpext_option}" =~ ^[1-4]$ ]]; then
-            echo "${CWARNING}input error! Please only input number 1~4${CEND}"
-          else
-            if [ "${phpext_option}" = '1' ]; then
-              PHP_extension=fileinfo
-            elif [ "${phpext_option}" = '2' ]; then
-              PHP_extension=imap
-              IMAP_ARGS='--with-kerberos --with-imap --with-imap-ssl'
-              if [ "${PM}" == 'yum' ]; then
-                yum -y install libc-client-devel
-                [ "${OS_BIT}" == '64' -a ! -e /usr/lib/libc-client.so ] && ln -s /usr/lib64/libc-client.so /usr/lib/libc-client.so
-              else
-                apt-get -y install libc-client2007e-dev
-              fi
-            elif [ "${phpext_option}" = '3' ]; then
-              PHP_extension=phalcon
-            elif [ "${phpext_option}" = '4' ]; then
-              if [[ "${PHP_main_ver}" =~ ^5.[3-4]$ ]]; then
-                PHP_extension=mongo
-              else
-                PHP_extension=mongodb
-              fi
-            fi
-            break
-          fi
-        done
+          ;;
+        q)
+          exit
+          ;;
+      esac
+    fi
+  done
+}
 
-        if [ "${ACTION}" = '1' ]; then
-          Check_PHP_Extension
-          pushd ${oneinstack_dir}/src > /dev/null
-          if [[ "${phpext_option}" =~ ^[1-2]$ ]]; then
-            src_url=http://www.php.net/distributions/php-${PHP_detail_ver}.tar.gz && Download_src
-            tar xzf php-${PHP_detail_ver}.tar.gz
-            pushd php-${PHP_detail_ver}/ext/${PHP_extension}
-            ${php_install_dir}/bin/phpize
-            ./configure --with-php-config=${php_install_dir}/bin/php-config ${IMAP_ARGS}
-            make -j ${THREAD} && make install
-            [ -f "${phpExtensionDir}/${PHP_extension}.so" ] && echo "extension=${PHP_extension}.so" > ${php_install_dir}/etc/php.d/04-${PHP_extension}.ini
-            popd > /dev/null
-            rm -rf php-${PHP_detail_ver}
-          elif [ "${phpext_option}" = '3' ]; then
-            if [[ "${PHP_main_ver}" =~ ^5.[5-6]$|^7.[0-2]$ ]]; then
-              src_url=http://mirrors.linuxeye.com/oneinstack/src/cphalcon-${phalcon_ver}.tar.gz && Download_src
-              tar xzf cphalcon-${phalcon_ver}.tar.gz
-              pushd cphalcon-${phalcon_ver}/build
-              ./install --phpize ${php_install_dir}/bin/phpize --php-config ${php_install_dir}/bin/php-config --arch ${OS_BIT}bits
-              [ -f "${phpExtensionDir}/${PHP_extension}.so" ] && echo "extension=${PHP_extension}.so" > ${php_install_dir}/etc/php.d/04-${PHP_extension}.ini
-              popd > /dev/null
-              rm -rf cphalcon-${phalcon_ver}
-            else
-              echo; echo "${CWARNING}Your php ${PHP_detail_ver} does not support ${PHP_extension}! ${CEND}";
-            fi
-          elif [ "${phpext_option}" = '4' ]; then
-            if [ "${PHP_extension}" == 'mongo' ]; then
-              echo "Download pecl mongo for php..."
-              src_url=https://pecl.php.net/get/mongo-${pecl_mongo_ver}.tgz && Download_src
-            elif [ "${PHP_extension}" == 'mongo' ]; then
-              echo "Download pecl mongodb for php..."
-              src_url=https://pecl.php.net/get/mongodb-${pecl_mongodb_ver}.tgz && Download_src
-            fi
-            Install_pecl-mongodb
-          fi
-          popd > /dev/null
-          Check_succ
-        else
-          Uninstall_succ
-        fi
-        ;;
-      5)
-        ACTION_FUN
-        while :; do echo
-          echo "Please select memcache/memcached PHP Extension:"
-          echo -e "\t${CMSG}1${CEND}. memcache PHP Extension"
-          echo -e "\t${CMSG}2${CEND}. memcached PHP Extension"
-          echo -e "\t${CMSG}3${CEND}. memcache/memcached PHP Extension"
-          read -e -p "Please input a number:(Default 1 press Enter) " Memcache
-          Memcache=${Memcache:-1}
-          if [[ ! "${Memcache}" =~ ^[1-3]$ ]]; then
-            echo "${CWARNING}input error! Please only input number 1~3${CEND}"
-          else
-            [ "${Memcache}" = '1' ] && PHP_extension=memcache
-            [ "${Memcache}" = '2' ] && PHP_extension=memcached
-            break
-          fi
-        done
-        if [ "${ACTION}" = '1' ]; then
-          memcached_yn=y && checkDownload
-          case "${Memcache}" in
-            1)
-              [ ! -d "${memcached_install_dir}/include/memcached" ] && Install_memcached
-              Check_PHP_Extension
-              Install_pecl-memcache
-              Check_succ
-              ;;
-            2)
-              [ ! -d "${memcached_install_dir}/include/memcached" ] && Install_memcached
-              Check_PHP_Extension
-              Install_pecl-memcached
-              Check_succ
-              ;;
-            3)
-              [ ! -d "${memcached_install_dir}/include/memcached" ] && Install_memcached
-              PHP_extension=memcache && Check_PHP_Extension
-              Install_pecl-memcache
-              PHP_extension=memcached && Check_PHP_Extension
-              Install_pecl-memcached
-              [ -f "${phpExtensionDir}/memcache.so" -a "${phpExtensionDir}/memcached.so" ] && { Restart_PHP; echo;echo "${CSUCCESS}PHP memcache/memcached module installed successfully! ${CEND}"; }
-              ;;
-          esac
-        else
-          PHP_extension=memcache && Uninstall_succ
-          PHP_extension=memcached && Uninstall_succ
-          [ -e "${memcached_install_dir}" ] && { service memcached stop > /dev/null 2>&1; rm -rf ${memcached_install_dir} /etc/init.d/memcached /usr/bin/memcached; }
-        fi
-        ;;
-      6)
-        ACTION_FUN
-        PHP_extension=redis
-        redis_yn=y && checkDownload
-        if [ "${ACTION}" = '1' ]; then
-          [ ! -d "${redis_install_dir}" ] && Install_redis-server
-          Check_PHP_Extension
-          Install_pecl-redis
-        else
-          Uninstall_succ
-          [ -e "${redis_install_dir}" ] && { service redis-server stop > /dev/null 2>&1; rm -rf ${redis_install_dir} /etc/init.d/redis-server /usr/local/bin/redis-*; }
-        fi
-        ;;
-      7)
-        ACTION_FUN
-        PHP_extension=swoole
-        if [ "${ACTION}" = '1' ]; then
-          Check_PHP_Extension
-          pushd ${oneinstack_dir}/src > /dev/null
-          if [[ "${PHP_main_ver}" =~ ^5\.[3-6]$ ]]; then
-            src_url=https://pecl.php.net/get/swoole-1.10.5.tgz && Download_src
-            tar xzf swoole-1.10.5.tgz
-            pushd swoole-1.10.5
-          else
-            src_url=https://pecl.php.net/get/swoole-${swoole_ver}.tgz && Download_src
-            tar xzf swoole-${swoole_ver}.tgz
-            pushd swoole-${swoole_ver}
-          fi
-          ${php_install_dir}/bin/phpize
-          ./configure --with-php-config=${php_install_dir}/bin/php-config --enable-openssl --with-openssl-dir=${openssl_install_dir}
-          make -j ${THREAD} && make install
-          popd > /dev/null
-          rm -rf swoole-${swoole_ver}
-          popd > /dev/null
-          echo 'extension=swoole.so' > ${php_install_dir}/etc/php.d/06-swoole.ini
-          Check_succ
-        else
-          Uninstall_succ
-        fi
-        ;;
-      8)
-        ACTION_FUN
-        PHP_extension=xdebug
-        if [ "${ACTION}" = '1' ]; then
-          Check_PHP_Extension
-          pushd ${oneinstack_dir}/src > /dev/null
-          if [[ "${PHP_main_ver}" =~ ^7\.[0-3]$ ]]; then
-            src_url=https://pecl.php.net/get/xdebug-${xdebug_ver}.tgz && Download_src
-            src_url=http://mirrors.linuxeye.com/oneinstack/src/webgrind-master.zip && Download_src
-            tar xzf xdebug-${xdebug_ver}.tgz
-            unzip -q webgrind-master.zip
-            /bin/mv webgrind-master ${wwwroot_dir}/default/webgrind
-            pushd xdebug-${xdebug_ver}
-          elif [[ "${PHP_main_ver}" =~ ^5\.[5-6]$ ]]; then
-            src_url=https://pecl.php.net/get/xdebug-2.5.5.tgz && Download_src
-            src_url=http://mirrors.linuxeye.com/oneinstack/src/webgrind-master.zip && Download_src
-            tar xzf xdebug-2.5.5.tgz
-            unzip -q webgrind-master.zip
-            /bin/mv webgrind-master ${wwwroot_dir}/default/webgrind
-            pushd xdebug-2.5.5
-          else
-            echo "${CWARNING}Need a PHP version >= 5.5.0 and <= 7.2.0${CEND}"
-            exit 1
-          fi
-          ${php_install_dir}/bin/phpize
-          ./configure --with-php-config=${php_install_dir}/bin/php-config
-          make -j ${THREAD} && make install
-          popd > /dev/null
-          rm -rf xdebug-${xdebug_ver}
-          popd > /dev/null
-          [ ! -e /tmp/xdebug ] && { mkdir /tmp/xdebug; chown ${run_user}.${run_user} /tmp/xdebug; }
-          [ ! -e /tmp/webgrind ] && { mkdir /tmp/webgrind; chown ${run_user}.${run_user} /tmp/webgrind; }
-          chown -R ${run_user}.${run_user} ${wwwroot_dir}/default/webgrind
-          sed -i 's@static $storageDir.*@static $storageDir = "/tmp/webgrind";@' ${wwwroot_dir}/default/webgrind/config.php
-          sed -i 's@static $profilerDir.*@static $profilerDir = "/tmp/xdebug";@' ${wwwroot_dir}/default/webgrind/config.php
-          cat > ${php_install_dir}/etc/php.d/08-xdebug.ini << EOF
-[xdebug]
-zend_extension=xdebug.so
-xdebug.trace_output_dir=/tmp/xdebug
-xdebug.profiler_output_dir = /tmp/xdebug
-xdebug.profiler_enable = On
-xdebug.profiler_enable_trigger = 1
-EOF
-          Check_succ
-          echo; echo "Webgrind URL: ${CMSG}http://{Public IP}/webgrind ${CEND}"
-        else
-          rm -rf /tmp/{xdebug,webgrind} ${wwwroot_dir}/default/webgrind
-          Uninstall_succ
-        fi
-        ;;
-      9)
-        ACTION_FUN
-        if [ "${ACTION}" = '1' ]; then
-          [ -e "/usr/local/bin/composer" ] && { echo "${CWARNING}PHP Composer already installed! ${CEND}"; exit 1; }
-          if [ "$IPADDR_COUNTRY"x == "CN"x ]; then
-            wget -c https://dl.laravel-china.org/composer.phar -O /usr/local/bin/composer > /dev/null 2>&1
-            ${php_install_dir}/bin/php /usr/local/bin/composer config -g repo.packagist composer https://packagist.phpcomposer.com
-          else
-            wget -c https://getcomposer.org/composer.phar -O /usr/local/bin/composer > /dev/null 2>&1
-          fi
-          chmod +x /usr/local/bin/composer
-          if [ -e "/usr/local/bin/composer" ]; then
-            echo; echo "${CSUCCESS}Composer installed successfully! ${CEND}"
-          else
-            echo; echo "${CFAILURE}Composer install failed, Please try again! ${CEND}"
-          fi
-        else
-          rm -rf /usr/local/bin/composer
-          echo; echo "${CMSG}composer uninstall completed${CEND}";
-        fi
-        ;;
-      10)
-        ACTION_FUN
-        if [ "${ACTION}" = '1' ]; then
-          Install_fail2ban
-        else
-          Uninstall_fail2ban
-        fi
-        ;;
-      11)
-        ACTION_FUN
-        if [ "${ACTION}" = '1' ]; then
-          [ -e "${nginx_install_dir}/sbin/nginx" ] && Nginx_lua_waf
-          [ -e "${tengine_install_dir}/sbin/nginx" ] && Tengine_lua_waf
-          enable_lua_waf
-        else
-          disable_lua_waf
-        fi
-        ;;
-      12)
-        ACTION_FUN
-        if [ "${ACTION}" = '1' ]; then
-          [ ! -e "${python_install_dir}/bin/python" ] && Install_Python
-          Install_Panel
-        else
-          Uninstall_Panel
-        fi
-        ;;
-      q)
-        exit
-        ;;
-    esac
+if [ ${ARG_NUM} == 0 ]; then
+  Menu
+else
+  if [ "${composer_yn}" == 'y' ]; then
+    if [ "${install_yn}" = 'y' ]; then
+      Install_composer
+    elif [ "${uninstall_yn}" = 'y' ]; then
+      Uninstall_composer
+    fi
   fi
-done
+  if [ "${fail2ban_yn}" == 'y' ]; then
+    if [ "${install_yn}" = 'y' ]; then
+      Install_fail2ban
+    elif [ "${uninstall_yn}" = 'y' ]; then
+      Uninstall_fail2ban
+    fi
+  fi
+  if [ "${ngx_lua_waf_yn}" == 'y' ]; then
+    if [ "${install_yn}" = 'y' ]; then
+      [ -e "${nginx_install_dir}/sbin/nginx" ] && Nginx_lua_waf
+      [ -e "${tengine_install_dir}/sbin/nginx" ] && Tengine_lua_waf
+      enable_lua_waf
+    elif [ "${uninstall_yn}" = 'y' ]; then
+      disable_lua_waf
+    fi
+  fi
+  if [ "${python_yn}" == 'y' ]; then
+    if [ "${install_yn}" = 'y' ]; then
+      Install_Python
+    elif [ "${uninstall_yn}" = 'y' ]; then
+      Uninstall_Python
+    fi
+  fi
+  if [ "${panel_yn}" == 'y' ]; then
+    if [ "${install_yn}" = 'y' ]; then
+      Install_Python
+      Install_Panel
+    elif [ "${uninstall_yn}" = 'y' ]; then
+      Uninstall_Panel
+    fi
+  fi
+fi

@@ -4,7 +4,7 @@ class Get_public_ip:
   socket.setdefaulttimeout(5)
   def getip(self):
     try:
-      myip = self.visit("http://ip.taobao.com/ipSearch.html")
+      myip = self.visit("http://ip-api.com/json")
     except:
       try:
         myip = self.visit("http://ipv4.icanhazip.com/")

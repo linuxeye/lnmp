@@ -11,7 +11,7 @@
 Install_redis-server() {
   pushd ${oneinstack_dir}/src > /dev/null
   tar xzf redis-${redis_ver}.tar.gz
-  pushd redis-${redis_ver}
+  pushd redis-${redis_ver} > /dev/null
   if [ "${OS_BIT}" == '32' -a "${armplatform}" != 'y' ]; then
     sed -i '1i\CFLAGS= -march=i686' src/Makefile
     sed -i 's@^OPT=.*@OPT=-O2 -march=i686@' src/.make-settings
@@ -30,7 +30,7 @@ Install_redis-server() {
     redis_maxmemory=`expr $Mem / 8`000000
     [ -z "`grep ^maxmemory ${redis_install_dir}/etc/redis.conf`" ] && sed -i "s@maxmemory <bytes>@maxmemory <bytes>\nmaxmemory `expr $Mem / 8`000000@" ${redis_install_dir}/etc/redis.conf
     echo "${CSUCCESS}Redis-server installed successfully! ${CEND}"
-    popd
+    popd > /dev/null
     rm -rf redis-${redis_ver}
     id -u redis >/dev/null 2>&1
     [ $? -ne 0 ] && useradd -M -s /sbin/nologin redis
@@ -54,12 +54,12 @@ Install_redis-server() {
     echo "${CFAILURE}Redis-server install failed, Please contact the author! ${CEND}"
     kill -9 $$
   fi
-  popd
+  popd > /dev/null
 }
 
 Install_pecl-redis() {
-  pushd ${oneinstack_dir}/src > /dev/null
   if [ -e "${php_install_dir}/bin/phpize" ]; then
+    pushd ${oneinstack_dir}/src > /dev/null
     phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
     tar xzf redis-${pecl_redis_ver}.tgz
     pushd redis-${pecl_redis_ver} > /dev/null
@@ -74,6 +74,15 @@ Install_pecl-redis() {
     else
       echo "${CFAILURE}PHP Redis module install failed, Please contact the author! ${CEND}"
     fi
+    popd > /dev/null
   fi
-  popd > /dev/null
+}
+
+Uninstall_pecl-redis() {
+  if [ -e "${php_install_dir}/etc/php.d/05-redis.ini" ]; then
+    rm -f ${php_install_dir}/etc/php.d/05-redis.ini
+    echo; echo "${CMSG}PHP redis module uninstall completed${CEND}"
+  else
+    echo; echo "${CWARNING}PHP redis module does not exist! ${CEND}"
+  fi
 }

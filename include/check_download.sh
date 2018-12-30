@@ -11,10 +11,12 @@ checkDownload() {
   mirrorLink=http://mirrors.linuxeye.com/oneinstack/src
   pushd ${oneinstack_dir}/src > /dev/null
   # General system utils
-  echo "Download openSSL..."
-  src_url=https://www.openssl.org/source/openssl-${openssl_ver}.tar.gz && Download_src
-  echo "Download cacert.pem..."
-  src_url=https://curl.haxx.se/ca/cacert.pem && Download_src
+  if [[ ${tomcat_option} =~ ^[1-4]$ ]] || [[ ${apache_option} =~ ^[1-2]$ ]] || [[ ${php_option} =~ ^[1-8]$ ]]; then
+    echo "Download openSSL..."
+    src_url=https://www.openssl.org/source/openssl-${openssl_ver}.tar.gz && Download_src
+    echo "Download cacert.pem..."
+    src_url=https://curl.haxx.se/ca/cacert.pem && Download_src
+  fi
 
   # jemalloc
   if [[ ${nginx_option} =~ ^[1-3]$ ]] || [ "${db_yn}" == 'y' ]; then
@@ -685,9 +687,9 @@ checkDownload() {
       # php 5.3 5.4 5.5 5.6 7.0 7.1 7.2
       echo "Download apcu..."
       if [[ "${php_option}" =~ ^[1-4]$ ]]; then
-        src_url=https://pecl.php.net/get/apcu-${apcu_ver}.tgz && Download_src
+        src_url=https://pecl.php.net/get/apcu-${apcu_oldver}.tgz && Download_src
       else
-        src_url=https://pecl.php.net/get/apcu-${apcu_for_php7_ver}.tgz && Download_src
+        src_url=https://pecl.php.net/get/apcu-${apcu_ver}.tgz && Download_src
       fi
       ;;
     4)
@@ -703,7 +705,7 @@ checkDownload() {
   esac
 
   # Zend Guard Loader
-  if [ "${zendguardloader_yn}" == 'y' -a "${armplatform}" != 'y' ]; then
+  if [ "${pecl_zendguardloader}" == '1' -a "${armplatform}" != 'y' ]; then
     case "${php_option}" in
       4)
         echo "Download zend loader for php 5.6..."
@@ -725,7 +727,7 @@ checkDownload() {
   fi
 
   # ioncube
-  if [ "${ioncube_yn}" == 'y' ]; then
+  if [ "${pecl_ioncube}" == '1' ]; then
     echo "Download ioncube..."
     if [ "${TARGET_ARCH}" == "armv7" ]; then
       src_url=https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_armv7l.tar.gz && Download_src
@@ -735,7 +737,7 @@ checkDownload() {
   fi
 
   # SourceGuardian
-  if [ "${sourceguardian_yn}" == 'y' ]; then
+  if [ "${pecl_sourceguardian}" == '1' ]; then
     echo "Download SourceGuardian..."
     if [ "${TARGET_ARCH}" == "armv8" ]; then
       src_url=https://www.sourceguardian.com/loaders/download/loaders.linux-aarch64.tar.gz && Download_src
@@ -744,60 +746,77 @@ checkDownload() {
     fi
   fi
 
-  # ImageMagick graphicsmagick
-  if [ "${magick_option}" == '1' ]; then
+  # imageMagick
+  if [ "${pecl_imagick}" == '1' ]; then
     echo "Download ImageMagick..."
     src_url=${mirrorLink}/ImageMagick-${imagemagick_ver}.tar.gz && Download_src
     echo "Download imagick..."
     src_url=https://pecl.php.net/get/imagick-${imagick_ver}.tgz && Download_src
-  elif [ "${magick_option}" == '2' ]; then
+  fi
+
+  # graphicsmagick
+  if [ "${pecl_gmagick}" == '1' ]; then
     echo "Download graphicsmagick..."
     src_url=http://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/${graphicsmagick_ver}/GraphicsMagick-${graphicsmagick_ver}.tar.gz && Download_src
     if [[ "${php_option}" =~ ^[1-4]$ ]]; then
       echo "Download gmagick for php..."
-      src_url=https://pecl.php.net/get/gmagick-${gmagick_ver}.tgz && Download_src
+      src_url=https://pecl.php.net/get/gmagick-${gmagick_oldver}.tgz && Download_src
     else
       echo "Download gmagick for php 7.x..."
-      src_url=https://pecl.php.net/get/gmagick-${gmagick_for_php7_ver}.tgz && Download_src
+      src_url=https://pecl.php.net/get/gmagick-${gmagick_ver}.tgz && Download_src
     fi
   fi
 
-  # redis-server pecl_redis
-  if [ "${redis_yn}" == 'y' -o "${pecl_redis}" == '1' ]; then
-    echo "Download redis..."
+  # redis-server
+  if [ "${redis_yn}" == 'y' ]; then
+    echo "Download redis-server..."
     src_url=http://download.redis.io/releases/redis-${redis_ver}.tar.gz && Download_src
-    echo "Download pecl_redis..."
-    src_url=https://pecl.php.net/get/redis-${pecl_redis_ver}.tgz && Download_src
     if [ "${PM}" == 'yum' ]; then
       echo "Download start-stop-daemon.c for CentOS..."
       src_url=${mirrorLink}/start-stop-daemon.c && Download_src
     fi
   fi
 
-  # memcached-server pecl_memcached pecl_memcache
-  if [ "${memcached_yn}" == 'y' -o "${pecl_memcached}" == '1' -o "${pecl_memcache}" == '1' ]; then
-    echo "Download memcached..."
-    [ "$IPADDR_COUNTRY"x == "CN"x ] && DOWN_ADDR=${mirrorLink} || DOWN_ADDR=http://www.memcached.org/files
+  # pecl_redis
+  if [ "${pecl_redis}" == '1' ]; then
+    echo "Download pecl_redis..."
+    src_url=https://pecl.php.net/get/redis-${pecl_redis_ver}.tgz && Download_src
+  fi
+
+  # memcached-server
+  if [ "${memcached_yn}" == 'y' ]; then
+    echo "Download memcached-server..."
+    [ "${IPADDR_COUNTRY}"x == "CN"x ] && DOWN_ADDR=${mirrorLink} || DOWN_ADDR=http://www.memcached.org/files
     src_url=${DOWN_ADDR}/memcached-${memcached_ver}.tar.gz && Download_src
+  fi
+
+  # pecl_memcached
+  if [ "${pecl_memcached}" == '1' ]; then
+    echo "Download libmemcached..."
+    src_url=https://launchpad.net/libmemcached/1.0/${libmemcached_ver}/+download/libmemcached-${libmemcached_ver}.tar.gz && Download_src
+    if [[ "${php_option}" =~ ^[1-4]$ ]]; then
+      echo "Download pecl_memcached for php..."
+      src_url=https://pecl.php.net/get/memcached-${pecl_memcached_oldver}.tgz && Download_src
+    else
+      echo "Download pecl_memcached for php 7.x..."
+      src_url=https://pecl.php.net/get/memcached-${pecl_memcached_ver}.tgz && Download_src
+    fi
+  fi
+
+  # memcached-server pecl_memcached pecl_memcache
+  if [ "${pecl_memcache}" == '1' ]; then
     if [[ "${php_option}" =~ ^[1-4]$ ]]; then
       echo "Download pecl_memcache for php..."
       src_url=https://pecl.php.net/get/memcache-${pecl_memcache_ver}.tgz && Download_src
-      echo "Download pecl_memcached for php..."
-      src_url=https://pecl.php.net/get/memcached-${pecl_memcached_ver}.tgz && Download_src
     else
       echo "Download pecl_memcache for php 7.x..."
       # src_url=https://codeload.github.com/websupport-sk/pecl-memcache/zip/php7 && Download_src
       src_url=${mirrorLink}/pecl-memcache-php7.tgz && Download_src
-      echo "Download pecl_memcached for php 7.x..."
-      src_url=https://pecl.php.net/get/memcached-${pecl_memcached_php7_ver}.tgz && Download_src
     fi
-
-    echo "Download libmemcached..."
-    src_url=https://launchpad.net/libmemcached/1.0/${libmemcached_ver}/+download/libmemcached-${libmemcached_ver}.tar.gz && Download_src
   fi
 
   # pecl_mongodb
-  if [ -e "${mongo_install_dir}/bin/mongo" -o "${db_option}" == '14' -o "${pecl_mongodb}" == '1' ]; then
+  if [ "${pecl_mongodb}" == '1' ]; then
     echo "Download pecl mongo for php..."
     src_url=https://pecl.php.net/get/mongo-${pecl_mongo_ver}.tgz && Download_src
     echo "Download pecl mongodb for php..."

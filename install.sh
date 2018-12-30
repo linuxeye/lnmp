@@ -50,7 +50,9 @@ showhelp() {
   --apache_option [1-2]       Install Apache server version
   --php_option [1-8]          Install PHP version
   --phpcache_option [1-4]     Install PHP opcode cache, default: 1 opcache
-  --php_extensions [ext name] Install PHP extension, include zendguardloader,ioncube,sourceguardian,imagick,gmagick,redis,memcached,memcache,mongodb
+  --php_extensions [ext name] Install PHP extensions, include zendguardloader,ioncube,
+                              sourceguardian,imagick,gmagick,fileinfo,imap,phalcon,
+                              redis,memcached,memcache,mongodb,swoole,xdebug
   --tomcat_option [1-4]       Install Tomcat version
   --jdk_option [1-4]          Install JDK version
   --db_option [1-15]          Install DB version
@@ -91,7 +93,7 @@ while :; do
       apache_option=$2; shift 2
       [[ ! ${apache_option} =~ ^[1-2]$ ]] && { echo "${CWARNING}apache_option input error! Please only input number 1~2${CEND}"; exit 1; }
       web_yn=y
-      [ -e "${apache_install_dir}/conf/httpd.conf" ] && { echo "${CWARNING}Aapche already installed! ${CEND}"; apache_option=Other; }
+      [ -e "${apache_install_dir}/bin/httpd" ] && { echo "${CWARNING}Aapche already installed! ${CEND}"; apache_option=Other; }
       ;;
     --php_option)
       php_option=$2; shift 2
@@ -104,15 +106,20 @@ while :; do
       ;;
     --php_extensions)
       php_extensions=$2; shift 2
-      [ -n "`echo ${php_extensions} | grep -w zendguardloader`" ] && zendguardloader_yn=y
-      [ -n "`echo ${php_extensions} | grep -w ioncube`" ] && ioncube_yn=y
-      [ -n "`echo ${php_extensions} | grep -w sourceguardian`" ] && sourceguardian_yn=y
-      [ -n "`echo ${php_extensions} | grep -w imagick`" ] && magick_option=1
-      [ -n "`echo ${php_extensions} | grep -w gmagick`" ] && magick_option=2
+      [ -n "`echo ${php_extensions} | grep -w zendguardloader`" ] && pecl_zendguardloader=1
+      [ -n "`echo ${php_extensions} | grep -w ioncube`" ] && pecl_ioncube=1
+      [ -n "`echo ${php_extensions} | grep -w sourceguardian`" ] && pecl_sourceguardian=1
+      [ -n "`echo ${php_extensions} | grep -w imagick`" ] && pecl_imagick=1
+      [ -n "`echo ${php_extensions} | grep -w gmagick`" ] && pecl_gmagick=1
+      [ -n "`echo ${php_extensions} | grep -w fileinfo`" ] && pecl_fileinfo=1
+      [ -n "`echo ${php_extensions} | grep -w imap`" ] && pecl_imap=1
+      [ -n "`echo ${php_extensions} | grep -w phalcon`" ] && pecl_phalcon=1
       [ -n "`echo ${php_extensions} | grep -w redis`" ] && pecl_redis=1
       [ -n "`echo ${php_extensions} | grep -w memcached`" ] && pecl_memcached=1
       [ -n "`echo ${php_extensions} | grep -w memcache`" ] && pecl_memcache=1
       [ -n "`echo ${php_extensions} | grep -w mongodb`" ] && pecl_mongodb=1
+      [ -n "`echo ${php_extensions} | grep -w swoole`" ] && pecl_swoole=1
+      [ -n "`echo ${php_extensions} | grep -w xdebug`" ] && pecl_xdebug=1
       ;;
     --tomcat_option)
       tomcat_option=$2; shift 2
@@ -153,9 +160,11 @@ while :; do
       ;;
     --redis)
       redis_yn=y; shift 1
+      [ -e "${redis_install_dir}/bin/redis-server" ] && { echo "${CWARNING}redis-server already installed! ${CEND}"; redis_yn=Other; }
       ;;
     --memcached)
       memcached_yn=y; shift 1
+      [ -e "${memcached_install_dir}/bin/memcached" ] && { echo "${CWARNING}memcached-server already installed! ${CEND}"; memcached_yn=Other; }
       ;;
     --phpmyadmin)
       phpmyadmin_yn=y; shift 1
@@ -209,15 +218,17 @@ if [ -e "/etc/ssh/sshd_config" ]; then
 fi
 
 if [ ${ARG_NUM} == 0 ]; then
-  # check iptables
-  while :; do echo
-    read -e -p "Do you want to enable iptables? [y/n]: " iptables_yn
-    if [[ ! ${iptables_yn} =~ ^[y,n]$ ]]; then
-      echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
-    else
-      break
-    fi
-  done
+  if [ ! -e ~/.oneinstack ]; then
+    # check iptables
+    while :; do echo
+      read -e -p "Do you want to enable iptables? [y/n]: " iptables_yn
+      if [[ ! ${iptables_yn} =~ ^[y,n]$ ]]; then
+        echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
+      else
+        break
+      fi
+    done
+  fi
 
   # check Web server
   while :; do echo
@@ -255,7 +266,7 @@ if [ ${ARG_NUM} == 0 ]; then
           if [[ ! ${apache_option} =~ ^[1-3]$ ]]; then
             echo "${CWARNING}input error! Please only input number 1~3${CEND}"
           else
-            [ "${apache_option}" != '3' -a -e "${apache_install_dir}/conf/httpd.conf" ] && { echo "${CWARNING}Aapche already installed! ${CEND}"; apache_option=Other; }
+            [ "${apache_option}" != '3' -a -e "${apache_install_dir}/bin/httpd" ] && { echo "${CWARNING}Aapche already installed! ${CEND}"; apache_option=Other; }
             break
           fi
         done
@@ -422,7 +433,7 @@ if [ ${ARG_NUM} == 0 ]; then
     fi
   done
 
-  # check PHP
+  # choice php
   while :; do echo
     read -e -p "Do you want to install PHP? [y/n]: " php_yn
     if [[ ! ${php_yn} =~ ^[y,n]$ ]]; then
@@ -445,146 +456,6 @@ if [ ${ARG_NUM} == 0 ]; then
           if [[ ! ${php_option} =~ ^[1-8]$ ]]; then
             echo "${CWARNING}input error! Please only input number 1~8${CEND}"
           else
-            while :; do echo
-              read -e -p "Do you want to install opcode cache of the PHP? [y/n]: " phpcache_yn
-              if [[ ! ${phpcache_yn} =~ ^[y,n]$ ]]; then
-                echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
-              else
-                if [ "${phpcache_yn}" == 'y' ]; then
-                  if [ ${php_option} == 1 ]; then
-                    while :; do
-                      echo 'Please select a opcode cache of the PHP:'
-                      echo -e "\t${CMSG}1${CEND}. Install Zend OPcache"
-                      echo -e "\t${CMSG}2${CEND}. Install XCache"
-                      echo -e "\t${CMSG}3${CEND}. Install APCU"
-                      echo -e "\t${CMSG}4${CEND}. Install eAccelerator-0.9"
-                      read -e -p "Please input a number:(Default 1 press Enter) " phpcache_option
-                      phpcache_option=${phpcache_option:-1}
-                      if [[ ! ${phpcache_option} =~ ^[1-4]$ ]]; then
-                        echo "${CWARNING}input error! Please only input number 1~4${CEND}"
-                      else
-                        break
-                      fi
-                    done
-                  fi
-                  if [ ${php_option} == 2 ]; then
-                    while :; do
-                      echo 'Please select a opcode cache of the PHP:'
-                      echo -e "\t${CMSG}1${CEND}. Install Zend OPcache"
-                      echo -e "\t${CMSG}2${CEND}. Install XCache"
-                      echo -e "\t${CMSG}3${CEND}. Install APCU"
-                      echo -e "\t${CMSG}4${CEND}. Install eAccelerator-1.0-dev"
-                      read -e -p "Please input a number:(Default 1 press Enter) " phpcache_option
-                      phpcache_option=${phpcache_option:-1}
-                      if [[ ! ${phpcache_option} =~ ^[1-4]$ ]]; then
-                        echo "${CWARNING}input error! Please only input number 1~4${CEND}"
-                      else
-                        break
-                      fi
-                    done
-                  fi
-                  if [ ${php_option} == 3 ]; then
-                    while :; do
-                      echo 'Please select a opcode cache of the PHP:'
-                      echo -e "\t${CMSG}1${CEND}. Install Zend OPcache"
-                      echo -e "\t${CMSG}2${CEND}. Install XCache"
-                      echo -e "\t${CMSG}3${CEND}. Install APCU"
-                      read -e -p "Please input a number:(Default 1 press Enter) " phpcache_option
-                      phpcache_option=${phpcache_option:-1}
-                      if [[ ! ${phpcache_option} =~ ^[1-3]$ ]]; then
-                        echo "${CWARNING}input error! Please only input number 1~3${CEND}"
-                      else
-                        break
-                      fi
-                    done
-                  fi
-                  if [ ${php_option} == 4 ]; then
-                    while :; do
-                      echo 'Please select a opcode cache of the PHP:'
-                      echo -e "\t${CMSG}1${CEND}. Install Zend OPcache"
-                      echo -e "\t${CMSG}2${CEND}. Install XCache"
-                      echo -e "\t${CMSG}3${CEND}. Install APCU"
-                      read -e -p "Please input a number:(Default 1 press Enter) " phpcache_option
-                      phpcache_option=${phpcache_option:-1}
-                      if [[ ! ${phpcache_option} =~ ^[1-3]$ ]]; then
-                        echo "${CWARNING}input error! Please only input number 1~3${CEND}"
-                      else
-                        break
-                      fi
-                    done
-                  fi
-                  if [[ ${php_option} =~ ^[5-6]$ ]]; then
-                    while :; do
-                      echo 'Please select a opcode cache of the PHP:'
-                      echo -e "\t${CMSG}1${CEND}. Install Zend OPcache"
-                      echo -e "\t${CMSG}3${CEND}. Install APCU"
-                      read -e -p "Please input a number:(Default 1 press Enter) " phpcache_option
-                      phpcache_option=${phpcache_option:-1}
-                      if [[ ! ${phpcache_option} =~ ^[1,3]$ ]]; then
-                        echo "${CWARNING}input error! Please only input number 1,3${CEND}"
-                      else
-                        break
-                      fi
-                    done
-                  fi
-                  [[ ${php_option} =~ ^[7-8]$ ]] && phpcache_option=1
-                fi
-                break
-              fi
-            done
-            if [ "${phpcache_option}" == '2' ]; then
-              while :; do
-                read -e -p "Please input xcache admin password: " xcachepwd
-                (( ${#xcachepwd} >= 5 )) && { xcachepwd_md5=$(echo -n "${xcachepwd}" | md5sum | awk '{print $1}') ; break ; } || echo "${CFAILURE}xcache admin password least 5 characters! ${CEND}"
-              done
-            fi
-            if [[ ${php_option} =~ ^[1-4]$ ]] && [ "${phpcache_option}" != '1' -a "${armplatform}" != "y" ]; then
-              while :; do echo
-                read -e -p "Do you want to install ZendGuardLoader? [y/n]: " zendguardloader_yn
-                if [[ ! ${zendguardloader_yn} =~ ^[y,n]$ ]]; then
-                  echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
-                else
-                  break
-                fi
-              done
-            fi
-
-            # ionCube
-            if [ "${TARGET_ARCH}" != "arm64" ]; then
-              while :; do echo
-                read -e -p "Do you want to install ionCube? [y/n]: " ioncube_yn
-                if [[ ! ${ioncube_yn} =~ ^[y,n]$ ]]; then
-                  echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
-                else
-                  break
-                fi
-              done
-            fi
-
-            # ImageMagick or GraphicsMagick
-            while :; do echo
-              read -e -p "Do you want to install ImageMagick or GraphicsMagick? [y/n]: " magick_yn
-              if [[ ! ${magick_yn} =~ ^[y,n]$ ]]; then
-                echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
-              else
-                break
-              fi
-            done
-
-            if [ "${magick_yn}" == 'y' ]; then
-              while :; do
-                echo 'Please select ImageMagick or GraphicsMagick:'
-                echo -e "\t${CMSG}1${CEND}. Install ImageMagick"
-                echo -e "\t${CMSG}2${CEND}. Install GraphicsMagick"
-                read -e -p "Please input a number:(Default 1 press Enter) " magick_option
-                magick_option=${magick_option:-1}
-                if [[ ! ${magick_option} =~ ^[1-2]$ ]]; then
-                  echo "${CWARNING}input error! Please only input number 1~2${CEND}"
-                else
-                  break
-                fi
-              done
-            fi
             break
           fi
         done
@@ -592,6 +463,159 @@ if [ ${ARG_NUM} == 0 ]; then
       break
     fi
   done
+
+  # check php ver
+  if [ -e "${php_install_dir}/bin/phpize" ]; then
+    PHP_detail_ver=$(${php_install_dir}/bin/php -r 'echo PHP_VERSION;')
+    PHP_main_ver=${PHP_detail_ver%.*}
+  fi
+
+  # PHP opcode cache and extensions
+  if [[ ${php_option} =~ ^[1-8]$ ]] || [ -e "${php_install_dir}/bin/phpize" ]; then
+    while :; do echo
+      read -e -p "Do you want to install opcode cache of the PHP? [y/n]: " phpcache_yn
+      if [[ ! ${phpcache_yn} =~ ^[y,n]$ ]]; then
+        echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
+      else
+        if [ "${phpcache_yn}" == 'y' ]; then
+          if [ "${php_option}" == '1' -o "${PHP_main_ver}" == '5.3' ]; then
+            while :; do
+              echo 'Please select a opcode cache of the PHP:'
+              echo -e "\t${CMSG}1${CEND}. Install Zend OPcache"
+              echo -e "\t${CMSG}2${CEND}. Install XCache"
+              echo -e "\t${CMSG}3${CEND}. Install APCU"
+              echo -e "\t${CMSG}4${CEND}. Install eAccelerator-0.9"
+              read -e -p "Please input a number:(Default 1 press Enter) " phpcache_option
+              phpcache_option=${phpcache_option:-1}
+              if [[ ! ${phpcache_option} =~ ^[1-4]$ ]]; then
+                echo "${CWARNING}input error! Please only input number 1~4${CEND}"
+              else
+                break
+              fi
+            done
+          fi
+          if [ "${php_option}" == '2' -o "${PHP_main_ver}" == '5.4' ]; then
+            while :; do
+              echo 'Please select a opcode cache of the PHP:'
+              echo -e "\t${CMSG}1${CEND}. Install Zend OPcache"
+              echo -e "\t${CMSG}2${CEND}. Install XCache"
+              echo -e "\t${CMSG}3${CEND}. Install APCU"
+              echo -e "\t${CMSG}4${CEND}. Install eAccelerator-1.0-dev"
+              read -e -p "Please input a number:(Default 1 press Enter) " phpcache_option
+              phpcache_option=${phpcache_option:-1}
+              if [[ ! ${phpcache_option} =~ ^[1-4]$ ]]; then
+                echo "${CWARNING}input error! Please only input number 1~4${CEND}"
+              else
+                break
+              fi
+            done
+          fi
+          if [ "${php_option}" == '3' -o "${PHP_main_ver}" == '5.5' ]; then
+            while :; do
+              echo 'Please select a opcode cache of the PHP:'
+              echo -e "\t${CMSG}1${CEND}. Install Zend OPcache"
+              echo -e "\t${CMSG}2${CEND}. Install XCache"
+              echo -e "\t${CMSG}3${CEND}. Install APCU"
+              read -e -p "Please input a number:(Default 1 press Enter) " phpcache_option
+              phpcache_option=${phpcache_option:-1}
+              if [[ ! ${phpcache_option} =~ ^[1-3]$ ]]; then
+                echo "${CWARNING}input error! Please only input number 1~3${CEND}"
+              else
+                break
+              fi
+            done
+          fi
+          if [ "${php_option}" == '4' -o "${PHP_main_ver}" == '5.6' ]; then
+            while :; do
+              echo 'Please select a opcode cache of the PHP:'
+              echo -e "\t${CMSG}1${CEND}. Install Zend OPcache"
+              echo -e "\t${CMSG}2${CEND}. Install XCache"
+              echo -e "\t${CMSG}3${CEND}. Install APCU"
+              read -e -p "Please input a number:(Default 1 press Enter) " phpcache_option
+              phpcache_option=${phpcache_option:-1}
+              if [[ ! ${phpcache_option} =~ ^[1-3]$ ]]; then
+                echo "${CWARNING}input error! Please only input number 1~3${CEND}"
+              else
+                break
+              fi
+            done
+          fi
+          if [[ ${php_option} =~ ^[5-8]$ ]] || [[ "${PHP_main_ver}" =~ ^7.[0-3]$ ]]; then 
+            while :; do
+              echo 'Please select a opcode cache of the PHP:'
+              echo -e "\t${CMSG}1${CEND}. Install Zend OPcache"
+              echo -e "\t${CMSG}3${CEND}. Install APCU"
+              read -e -p "Please input a number:(Default 1 press Enter) " phpcache_option
+              phpcache_option=${phpcache_option:-1}
+              if [[ ! ${phpcache_option} =~ ^[1,3]$ ]]; then
+                echo "${CWARNING}input error! Please only input number 1,3${CEND}"
+              else
+                break
+              fi
+            done
+          fi
+        fi
+        break
+      fi
+    done
+    # set xcache passwd
+    if [ "${phpcache_option}" == '2' ]; then
+      while :; do
+        read -e -p "Please input xcache admin password: " xcachepwd
+        (( ${#xcachepwd} >= 5 )) && { xcachepwd_md5=$(echo -n "${xcachepwd}" | md5sum | awk '{print $1}') ; break ; } || echo "${CFAILURE}xcache admin password least 5 characters! ${CEND}"
+      done
+    fi
+    # PHP extension
+    while :; do
+      echo
+      echo 'Please select PHP extensions:'
+      echo -e "\t${CMSG} 0${CEND}. Do not install"
+      echo -e "\t${CMSG} 1${CEND}. Install zendguardloader(PHP<=5.6)"
+      echo -e "\t${CMSG} 2${CEND}. Install ioncube"
+      echo -e "\t${CMSG} 3${CEND}. Install sourceguardian(PHP<=7.2)"
+      echo -e "\t${CMSG} 4${CEND}. Install imagick"
+      echo -e "\t${CMSG} 5${CEND}. Install gmagick"
+      echo -e "\t${CMSG} 6${CEND}. Install fileinfo"
+      echo -e "\t${CMSG} 7${CEND}. Install imap"
+      echo -e "\t${CMSG} 8${CEND}. Install phalcon(PHP>=5.5)"
+      echo -e "\t${CMSG} 9${CEND}. Install redis"
+      echo -e "\t${CMSG}10${CEND}. Install memcached"
+      echo -e "\t${CMSG}11${CEND}. Install memcache(PHP<=7.2)"
+      echo -e "\t${CMSG}12${CEND}. Install mongodb"
+      echo -e "\t${CMSG}13${CEND}. Install swoole"
+      echo -e "\t${CMSG}14${CEND}. Install xdebug(PHP>=5.5)"
+      read -e -p "Please input numbers:(Default '4 9 10 11' press Enter) " phpext_option
+      phpext_option=${phpext_option:-'4 9 10 11'}
+      [ "${phpext_option}" == '0' ] && break
+      array_phpext=(${phpext_option})
+      array_all=(1 2 3 4 5 6 7 8 9 10 11 12 13 14)
+      for v in ${array_phpext[@]}
+      do
+        [ -z "`echo ${array_all[@]} | grep -w ${v}`" ] && phpext_flag=1
+      done
+      if [ "${phpext_flag}" == '1' ]; then
+        unset phpext_flag
+        echo; echo "${CWARNING}input error! Please only input number 4 9 10 11 and so on${CEND}"; echo
+        continue
+      else
+        [ -n "`echo ${array_phpext[@]} | grep -w 1`" ] && pecl_zendguardloader=1
+        [ -n "`echo ${array_phpext[@]} | grep -w 2`" ] && pecl_ioncube=1
+        [ -n "`echo ${array_phpext[@]} | grep -w 3`" ] && pecl_sourceguardian=1
+        [ -n "`echo ${array_phpext[@]} | grep -w 4`" ] && pecl_imagick=1
+        [ -n "`echo ${array_phpext[@]} | grep -w 5`" ] && pecl_gmagick=1
+        [ -n "`echo ${array_phpext[@]} | grep -w 6`" ] && pecl_fileinfo=1
+        [ -n "`echo ${array_phpext[@]} | grep -w 7`" ] && pecl_imap=1
+        [ -n "`echo ${array_phpext[@]} | grep -w 8`" ] && pecl_phalcon=1
+        [ -n "`echo ${array_phpext[@]} | grep -w 9`" ] && pecl_redis=1
+        [ -n "`echo ${array_phpext[@]} | grep -w 10`" ] && pecl_memcached=1
+        [ -n "`echo ${array_phpext[@]} | grep -w 11`" ] && pecl_memcache=1
+        [ -n "`echo ${array_phpext[@]} | grep -w 12`" ] && pecl_mongodb=1
+        [ -n "`echo ${array_phpext[@]} | grep -w 13`" ] && pecl_swoole=1
+        [ -n "`echo ${array_phpext[@]} | grep -w 14`" ] && pecl_xdebug=1
+        break
+      fi
+    done
+  fi
 
   # check Pureftpd
   while :; do echo
@@ -619,20 +643,22 @@ if [ ${ARG_NUM} == 0 ]; then
 
   # check redis
   while :; do echo
-    read -e -p "Do you want to install redis? [y/n]: " redis_yn
+    read -e -p "Do you want to install redis-server? [y/n]: " redis_yn
     if [[ ! ${redis_yn} =~ ^[y,n]$ ]]; then
       echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
+      [ "${redis_yn}" == 'y' -a -e "${redis_install_dir}/bin/redis-server" ] && { echo "${CWARNING}redis-server already installed! ${CEND}"; redis_yn=Other; }
       break
     fi
   done
 
   # check memcached
   while :; do echo
-    read -e -p "Do you want to install memcached? [y/n]: " memcached_yn
+    read -e -p "Do you want to install memcached-server? [y/n]: " memcached_yn
     if [[ ! ${memcached_yn} =~ ^[y,n]$ ]]; then
       echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
+      [ "${memcached_yn}" == 'y' -a -e "${memcached_install_dir}/bin/memcached" ] && { echo "${CWARNING}memcached-server already installed! ${CEND}"; memcached_yn=Other; }
       break
     fi
   done
@@ -660,12 +686,12 @@ if [ ${ARG_NUM} == 0 ]; then
 fi
 
 # install wget gcc curl python
-${PM} -y -q install wget gcc curl python
+[ ! -e ~/.oneinstack ] && ${PM} -y -q install wget gcc curl python
 
 # get the IP information
 IPADDR=$(./include/get_ipaddr.py)
 PUBLIC_IPADDR=$(./include/get_public_ipaddr.py)
-IPADDR_COUNTRY=$(./include/get_ipaddr_state.py $PUBLIC_IPADDR)
+IPADDR_COUNTRY=$(./include/get_ipaddr_state.py ${PUBLIC_IPADDR})
 
 # Check download source packages
 . ./include/check_download.sh
@@ -711,8 +737,8 @@ if [[ ${nginx_option} =~ ^[1-3]$ ]] || [ "${db_yn}" == 'y' ]; then
 fi
 
 # openSSL
-. ./include/openssl.sh
 if [[ ${tomcat_option} =~ ^[1-4]$ ]] || [[ ${apache_option} =~ ^[1-2]$ ]] || [[ ${php_option} =~ ^[1-8]$ ]]; then
+  . include/openssl.sh
   Install_openSSL | tee -a ${oneinstack_dir}/install.log
 fi
 
@@ -845,10 +871,8 @@ esac
 # PHP opcode cache
 case "${phpcache_option}" in
   1)
-    if [[ "${php_option}" =~ ^[1-2]$ ]]; then
-      . include/zendopcache.sh
-      Install_ZendOPcache 2>&1 | tee -a ${oneinstack_dir}/install.log
-    fi
+    . include/zendopcache.sh
+    Install_ZendOPcache 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   2)
     . include/xcache.sh
@@ -859,40 +883,59 @@ case "${phpcache_option}" in
     Install_APCU 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   4)
-    if [[ "${php_option}" =~ ^[1-2]$ ]]; then
-      . include/eaccelerator.sh
-      Install_eAccelerator 2>&1 | tee -a ${oneinstack_dir}/install.log
-    fi
+    . include/eaccelerator.sh
+    Install_eAccelerator 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
 esac
 
-# ZendGuardLoader (php <= 5.6)
-if [ "${zendguardloader_yn}" == 'y' ]; then
+# ZendGuardLoader
+if [ "${pecl_zendguardloader}" == '1' ]; then
   . include/ZendGuardLoader.sh
   Install_ZendGuardLoader 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
-# ionCube
-if [ "${ioncube_yn}" == 'y' ]; then
+# ioncube
+if [ "${pecl_ioncube}" == '1' ]; then
   . include/ioncube.sh
   Install_ionCube 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # SourceGuardian
-if [ "${sourceguardian_yn}" == 'y' ]; then
+if [ "${pecl_sourceguardian}" == '1' ]; then
   . include/sourceguardian.sh
   Install_SourceGuardian 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
-# ImageMagick or GraphicsMagick
-if [ "${magick_option}" == '1' ]; then
+# imagick
+if [ "${pecl_imagick}" == '1' ]; then
   . include/ImageMagick.sh
-  [ ! -d "${imagick_install_dir}" ] && Install_ImageMagick 2>&1 | tee -a ${oneinstack_dir}/install.log
+  Install_ImageMagick 2>&1 | tee -a ${oneinstack_dir}/install.log
   Install_pecl-imagick 2>&1 | tee -a ${oneinstack_dir}/install.log
-elif [ "${magick_option}" == '2' ]; then
+fi
+
+# gmagick
+if [ "${pecl_gmagick}" == '1' ]; then
   . include/GraphicsMagick.sh
-  [ ! -d "${gmagick_install_dir}" ] && Install_GraphicsMagick 2>&1 | tee -a ${oneinstack_dir}/install.log
+  Install_GraphicsMagick 2>&1 | tee -a ${oneinstack_dir}/install.log
   Install_pecl-gmagick 2>&1 | tee -a ${oneinstack_dir}/install.log
+fi
+
+# fileinfo
+if [ "${pecl_fileinfo}" == '1' ]; then
+  . include/pecl_fileinfo.sh
+  Install_pecl-fileinfo 2>&1 | tee -a ${oneinstack_dir}/install.log
+fi
+
+# imap
+if [ "${pecl_imap}" == '1' ]; then
+  . include/pecl_imap.sh
+  Install_pecl-imap 2>&1 | tee -a ${oneinstack_dir}/install.log
+fi
+
+# phalcon
+if [ "${pecl_phalcon}" == '1' ]; then
+  . include/pecl_phalcon.sh
+  Install_pecl-phalcon 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # pecl_memcached
@@ -914,9 +957,21 @@ if [ "${pecl_redis}" == '1' ]; then
 fi
 
 # pecl_mongodb
-if [ -e "${mongo_install_dir}/bin/mongo" -o "${pecl_mongodb}" == '1' ]; then
+if [ "${pecl_mongodb}" == '1' ]; then
   . include/pecl_mongodb.sh
   Install_pecl-mongodb 2>&1 | tee -a ${oneinstack_dir}/install.log
+fi
+
+# swoole
+if [ "${pecl_swoole}" == '1' ]; then
+  . include/pecl_swoole.sh
+  Install_pecl-swoole 2>&1 | tee -a ${oneinstack_dir}/install.log
+fi
+
+# xdebug
+if [ "${pecl_xdebug}" == '1' ]; then
+  . include/pecl_xdebug.sh
+  Install_pecl-xdebug 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # pecl_pgsql
@@ -979,16 +1034,13 @@ fi
 # redis
 if [ "${redis_yn}" == 'y' ]; then
   . include/redis.sh
-  [ ! -d "${redis_install_dir}" ] && Install_redis-server 2>&1 | tee -a ${oneinstack_dir}/install.log
-  Install_pecl-redis 2>&1 | tee -a ${oneinstack_dir}/install.log
+  Install_redis-server 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # memcached
 if [ "${memcached_yn}" == 'y' ]; then
   . include/memcached.sh
-  [ ! -d "${memcached_install_dir}/include/memcached" ] && Install_memcached 2>&1 | tee -a ${oneinstack_dir}/install.log
-  Install_pecl-memcached 2>&1 | tee -a ${oneinstack_dir}/install.log
-  Install_pecl-memcache 2>&1 | tee -a ${oneinstack_dir}/install.log
+  Install_memcached-server 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # index example
@@ -1009,6 +1061,11 @@ fi
 # Starting DB
 [ -d "/etc/mysql" ] && /bin/mv /etc/mysql{,_bk}
 [ -d "${db_install_dir}/support-files" ] && service mysqld start
+
+# reload php
+[ -e "${php_install_dir}/sbin/php-fpm" ] && service php-fpm reload
+[ -e "${apache_install_dir}/bin/apachectl" ] && ${apache_install_dir}/bin/apachectl -k graceful
+
 endTime=`date +%s`
 ((installTime=($endTime-$startTime)/60))
 echo "####################Congratulations########################"
@@ -1030,13 +1087,13 @@ echo "Total OneinStack Install Time: ${CQUESTION}${installTime}${CEND} minutes"
 [ "${db_option}" == '15' ] && echo "$(printf "%-32s" "MongoDB password:")${CMSG}${dbmongopwd}${CEND}"
 [ "${php_yn}" == 'y' ] && echo -e "\n$(printf "%-32s" "PHP install dir:")${CMSG}${php_install_dir}${CEND}"
 [ "${php_yn}" == 'y' -a "${phpcache_option}" == '1' ] && echo "$(printf "%-32s" "Opcache Control Panel URL:")${CMSG}http://${IPADDR}/ocp.php${CEND}"
-[ "${phpcache_option}" == '2' ] && echo "$(printf "%-32s" "xcache Control Panel URL:")${CMSG}http://${IPADDR}/xcache${CEND}"
-[ "${phpcache_option}" == '2' ] && echo "$(printf "%-32s" "xcache user:")${CMSG}admin${CEND}"
-[ "${phpcache_option}" == '2' ] && echo "$(printf "%-32s" "xcache password:")${CMSG}${xcachepwd}${CEND}"
+[ "${phpcache_option}" == '2' -a -e "${php_install_dir}/etc/php.d/04-xcache.ini" ] && echo "$(printf "%-32s" "xcache Control Panel URL:")${CMSG}http://${IPADDR}/xcache${CEND}"
+[ "${phpcache_option}" == '2' -a -e "${php_install_dir}/etc/php.d/04-xcache.ini" ] && echo "$(printf "%-32s" "xcache user:")${CMSG}admin${CEND}"
+[ "${phpcache_option}" == '2' -a -e "${php_install_dir}/etc/php.d/04-xcache.ini" ] && echo "$(printf "%-32s" "xcache password:")${CMSG}${xcachepwd}${CEND}"
 [ "${phpcache_option}" == '3' ] && echo "$(printf "%-32s" "APC Control Panel URL:")${CMSG}http://${IPADDR}/apc.php${CEND}"
-[ "${phpcache_option}" == '4' ] && echo "$(printf "%-32s" "eAccelerator Control Panel URL:")${CMSG}http://${IPADDR}/control.php${CEND}"
-[ "${phpcache_option}" == '4' ] && echo "$(printf "%-32s" "eAccelerator user:")${CMSG}admin${CEND}"
-[ "${phpcache_option}" == '4' ] && echo "$(printf "%-32s" "eAccelerator password:")${CMSG}eAccelerator${CEND}"
+[ "${phpcache_option}" == '4' -a -e "${php_install_dir}/etc/php.d/02-eaccelerator.ini" ] && echo "$(printf "%-32s" "eAccelerator Control Panel URL:")${CMSG}http://${IPADDR}/control.php${CEND}"
+[ "${phpcache_option}" == '4' -a -e "${php_install_dir}/etc/php.d/02-eaccelerator.ini" ] && echo "$(printf "%-32s" "eAccelerator user:")${CMSG}admin${CEND}"
+[ "${phpcache_option}" == '4' -a -e "${php_install_dir}/etc/php.d/02-eaccelerator.ini" ] && echo "$(printf "%-32s" "eAccelerator password:")${CMSG}eAccelerator${CEND}"
 [ "${ftp_yn}" == 'y' ] && echo -e "\n$(printf "%-32s" "Pure-FTPd install dir:")${CMSG}${pureftpd_install_dir}${CEND}"
 [ "${ftp_yn}" == 'y' ] && echo "$(printf "%-32s" "Create FTP virtual script:")${CMSG}./pureftpd_vhost.sh${CEND}"
 [ "${phpmyadmin_yn}" == 'y' ] && echo -e "\n$(printf "%-32s" "phpMyAdmin dir:")${CMSG}${wwwroot_dir}/default/phpMyAdmin${CEND}"

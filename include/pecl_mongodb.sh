@@ -9,10 +9,11 @@
 #       https://github.com/oneinstack/oneinstack
 
 Install_pecl-mongodb() {
-  pushd ${oneinstack_dir}/src > /dev/null
   if [ -e "${php_install_dir}/bin/phpize" ]; then
+    pushd ${oneinstack_dir}/src > /dev/null
     phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
     if [[ "$(${php_install_dir}/bin/php -r 'echo PHP_VERSION;' | awk -F. '{print $1$2}')" =~ ^5[3-4]$ ]]; then
+      src_url=https://pecl.php.net/get/mongo-${pecl_mongo_ver}.tgz && Download_src
       tar xzf mongo-${pecl_mongo_ver}.tgz
       pushd mongo-${pecl_mongo_ver} > /dev/null
       ${php_install_dir}/bin/phpize
@@ -27,6 +28,7 @@ Install_pecl-mongodb() {
         echo "${CFAILURE}PHP mongo module install failed, Please contact the author! ${CEND}"
       fi
     else
+      src_url=https://pecl.php.net/get/mongodb-${pecl_mongodb_ver}.tgz && Download_src
       tar xzf mongodb-${pecl_mongodb_ver}.tgz
       pushd mongodb-${pecl_mongodb_ver} > /dev/null
       ${php_install_dir}/bin/phpize
@@ -35,12 +37,27 @@ Install_pecl-mongodb() {
       popd > /dev/null
       if [ -f "${phpExtensionDir}/mongodb.so" ]; then
         echo 'extension=mongodb.so' > ${php_install_dir}/etc/php.d/07-mongodb.ini
-        rm -rf mongodb-${pecl_mongodb_ver}
         echo "${CSUCCESS}PHP mongodb module installed successfully! ${CEND}"
+        rm -rf mongodb-${pecl_mongodb_ver}
       else
         echo "${CFAILURE}PHP mongodb module install failed, Please contact the author! ${CEND}"
       fi
     fi
+    popd > /dev/null
   fi
-  popd > /dev/null
+}
+
+Uninstall_pecl-mongodb() {
+  if [ -e "${php_install_dir}/etc/php.d/07-mongo.ini" ]; then
+    rm -f ${php_install_dir}/etc/php.d/07-mongo.ini
+    echo; echo "${CMSG}PHP mongo module uninstall completed${CEND}"
+  else
+    echo; echo "${CWARNING}PHP mongo module does not exist! ${CEND}"
+  fi
+  if [ -e "${php_install_dir}/etc/php.d/07-mongodb.ini" ]; then
+    rm -f ${php_install_dir}/etc/php.d/07-mongodb.ini
+    echo; echo "${CMSG}PHP mongodb module uninstall completed${CEND}"
+  else
+    echo; echo "${CWARNING}PHP mongodb module does not exist! ${CEND}"
+  fi
 }

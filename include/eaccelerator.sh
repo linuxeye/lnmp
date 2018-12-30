@@ -9,31 +9,27 @@
 #       https://github.com/oneinstack/oneinstack
 
 Install_eAccelerator() {
-  pushd ${oneinstack_dir}/src > /dev/null
-  PHP_detail_ver=$(${php_install_dir}/bin/php -r 'echo PHP_VERSION;')
-  PHP_main_ver=${PHP_detail_ver%.*}
-  phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
-  case "${PHP_main_ver}" in
-    5.3)
-      tar jxf eaccelerator-${eaccelerator_ver}.tar.bz2
-      pushd eaccelerator-${eaccelerator_ver}
-      ;;
-    5.4)
-      /bin/mv master eaccelerator-eaccelerator-42067ac.tar.gz
-      tar xzf eaccelerator-eaccelerator-42067ac.tar.gz
-      pushd eaccelerator-eaccelerator-42067ac
-      ;;
-    *)
-      echo "${CWARNING}Your php does not support eAccelerator! ${CEND}"
-      kill -9 $$
-  esac
-  ${php_install_dir}/bin/phpize
-  ./configure --enable-eaccelerator=shared --with-php-config=${php_install_dir}/bin/php-config
-  make -j ${THREAD} && make install
-  popd
-  if [ -f "${phpExtensionDir}/eaccelerator.so" ]; then
-    mkdir /var/eaccelerator_cache;chown -R ${run_user}.${run_user} /var/eaccelerator_cache
-    cat > ${php_install_dir}/etc/php.d/02-eaccelerator.ini << EOF
+  if [ -e "${php_install_dir}/bin/phpize" ]; then
+    pushd ${oneinstack_dir}/src > /dev/null
+    PHP_detail_ver=$(${php_install_dir}/bin/php -r 'echo PHP_VERSION;')
+    PHP_main_ver=${PHP_detail_ver%.*}
+    phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
+    if [[ "${PHP_main_ver}" =~ ^5.[3-4]$ ]]; then
+      if [ "${PHP_main_ver}" == '5.3' ]; then
+        tar jxf eaccelerator-${eaccelerator_ver}.tar.bz2
+        pushd eaccelerator-${eaccelerator_ver} > /dev/null
+      elif [ "${PHP_main_ver}" == '5.4' ]; then
+        /bin/mv master eaccelerator-eaccelerator-42067ac.tar.gz
+        tar xzf eaccelerator-eaccelerator-42067ac.tar.gz
+        pushd eaccelerator-eaccelerator-42067ac > /dev/null
+      fi
+      ${php_install_dir}/bin/phpize
+      ./configure --enable-eaccelerator=shared --with-php-config=${php_install_dir}/bin/php-config
+      make -j ${THREAD} && make install
+      popd > /dev/null
+      if [ -f "${phpExtensionDir}/eaccelerator.so" ]; then
+        mkdir /var/eaccelerator_cache;chown -R ${run_user}.${run_user} /var/eaccelerator_cache
+        cat > ${php_install_dir}/etc/php.d/02-eaccelerator.ini << EOF
 [eaccelerator]
 zend_extension=${phpExtensionDir}/eaccelerator.so
 eaccelerator.shm_size=64
@@ -53,12 +49,25 @@ eaccelerator.keys=disk_only
 eaccelerator.sessions=disk_only
 eaccelerator.content=disk_only
 EOF
-    echo "${CSUCCESS}Accelerator module installed successfully! ${CEND}"
-    [ -z "$(grep 'kernel.shmmax = 67108864' /etc/sysctl.conf)" ] && echo "kernel.shmmax = 67108864" >> /etc/sysctl.conf
-    sysctl -p
-    rm -rf eaccelerator-${eaccelerator_ver} eaccelerator-eaccelerator-42067ac
-  else
-    echo "${CFAILURE}Accelerator module install failed, Please contact the author! ${CEND}"
+        [ -z "$(grep 'kernel.shmmax = 67108864' /etc/sysctl.conf)" ] && echo "kernel.shmmax = 67108864" >> /etc/sysctl.conf
+        sysctl -p
+        echo "${CSUCCESS}PHP eaccelerator module installed successfully! ${CEND}"
+        rm -rf eaccelerator-${eaccelerator_ver} eaccelerator-eaccelerator-42067ac
+      else
+        echo "${CFAILURE}PHP eaccelerator module install failed, Please contact the author! ${CEND}"
+      fi
+    else
+      echo; echo "${CWARNING}Your php ${PHP_detail_ver} does not support eAccelerator! ${CEND}";
+    fi
+    popd > /dev/null
   fi
-  popd
+}
+
+Uninstall_eAccelerator() {
+  if [ -e "${php_install_dir}/etc/php.d/02-eaccelerator.ini" ]; then
+    rm -rf ${php_install_dir}/etc/php.d/02-eaccelerator.ini /var/eaccelerator_cache
+    echo; echo "${CMSG}PHP eaccelerator module uninstall completed${CEND}"
+  else
+    echo; echo "${CWARNING}PHP eaccelerator module does not exist! ${CEND}"
+  fi
 }

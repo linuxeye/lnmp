@@ -73,7 +73,7 @@ Iptables_set() {
   done
 
   if [ "${PM}" == 'yum' ]; then
-    if [ -n "`grep 'dport 80 ' /etc/sysconfig/iptables`" -a -z "$(grep -E ${SS_port} /etc/sysconfig/iptables)" ]; then
+    if [ -n "`grep 'dport 80 ' /etc/sysconfig/iptables`" ] && [ -z "$(grep -E ${SS_port} /etc/sysconfig/iptables)" ]; then
       iptables -I INPUT 4 -p udp -m state --state NEW -m udp --dport ${SS_port} -j ACCEPT
       iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport ${SS_port} -j ACCEPT
       service iptables save
@@ -84,7 +84,7 @@ Iptables_set() {
     fi
   elif [ "${PM}" == 'apt-get' ]; then
     if [ -e '/etc/iptables/rules.v4' ]; then
-      if [ -n "`grep 'dport 80 ' /etc/iptables/rules.v4`" -a -z "$(grep -E ${SS_port} /etc/iptables/rules.v4)" ]; then
+      if [ -n "`grep 'dport 80 ' /etc/iptables/rules.v4`" ] && [ -z "$(grep -E ${SS_port} /etc/iptables/rules.v4)" ]; then
         iptables -I INPUT 4 -p udp -m state --state NEW -m udp --dport ${SS_port} -j ACCEPT
         iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport ${SS_port} -j ACCEPT
         iptables-save > /etc/iptables/rules.v4
@@ -94,7 +94,7 @@ Iptables_set() {
         ip6tables-save > /etc/iptables/rules.v6
       fi
     elif [ -e '/etc/iptables.up.rules' ]; then
-      if [ -n "`grep 'dport 80 ' /etc/iptables.up.rules`" -a -z "$(grep -E ${SS_port} /etc/iptables.up.rules)" ]; then
+      if [ -n "`grep 'dport 80 ' /etc/iptables.up.rules`" ] && [ -z "$(grep -E ${SS_port} /etc/iptables.up.rules)" ]; then
         iptables -I INPUT 4 -p udp -m state --state NEW -m udp --dport ${SS_port} -j ACCEPT
         iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport ${SS_port} -j ACCEPT
         iptables-save > /etc/iptables.up.rules
@@ -133,7 +133,7 @@ Def_parameter() {
 }
 
 Install_SS-python() {
-  [ ! -e "${python_install_dir}/bin/python" ] && Install_Python
+  Install_Python
   ${python_install_dir}/bin/pip install M2Crypto
   ${python_install_dir}/bin/pip install greenlet
   ${python_install_dir}/bin/pip install gevent
@@ -154,7 +154,7 @@ Install_SS-python() {
 Install_SS-libev() {
   src_url=http://mirrors.linuxeye.com/oneinstack/src/shadowsocks-libev-3.2.3.tar.gz && Download_src
   src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
-  src_url=http://mirrors.linuxeye.com/oneinstack/src/mbedtls-2.14.1-apache.tgz && Download_src
+  src_url=http://mirrors.linuxeye.com/oneinstack/src/mbedtls-2.16.0-apache.tgz && Download_src
   if [ ! -e "/usr/local/lib/libsodium.la" ]; then
     tar xzf libsodium-${libsodium_ver}.tar.gz
     pushd libsodium-${libsodium_ver} > /dev/null
@@ -163,8 +163,8 @@ Install_SS-libev() {
     popd > /dev/null
     rm -rf libsodium-${libsodium_ver}
   fi
-  tar xzf mbedtls-2.14.1-apache.tgz
-  pushd mbedtls-2.14.1 > /dev/null
+  tar xzf mbedtls-2.16.0-apache.tgz
+  pushd mbedtls-2.16.0 > /dev/null
   make SHARED=1 CFLAGS=-fPIC
   make DESTDIR=/usr install
   popd > /dev/null

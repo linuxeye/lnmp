@@ -38,23 +38,30 @@ while :; do echo
   echo -e "\t${CMSG}4${CEND}. Qcloud COS"
   echo -e "\t${CMSG}5${CEND}. UPYUN"
   echo -e "\t${CMSG}6${CEND}. QINIU"
-  read -e -p "Please input a number:(Default 1 press Enter) " desc_bk
-  desc_bk=${desc_bk:-1}
-  ary=(1 2 3 4 5 6 12 13 14 15 16 23 24 25 26 34 35 36 45 46 56 123 124 125 126 134 135 136 145 146 156 234 235 236 245 246 256 345 346 456 1234 1235 1236 2345 2346 3456 12345 12346 13456 23456 123456)
-  if [[ "${ary[@]}" =~ "${desc_bk}" ]]; then
-    break
+  read -e -p "Please input numbers:(Default 1 press Enter) " desc_bk
+  desc_bk=${desc_bk:-'1'}
+  array_desc=(${desc_bk})
+  array_all=(1 2 3 4 5 6)
+  for v in ${array_desc[@]}
+  do
+    [ -z "`echo ${array_all[@]} | grep -w ${v}`" ] && desc_flag=1
+  done
+  if [ "${desc_flag}" == '1' ]; then
+    unset desc_flag
+    echo; echo "${CWARNING}input error! Please only input number 1 3 4 and so on${CEND}"; echo
+    continue
   else
-    echo "${CWARNING}input error! Please only input number 1,2,12,23,234 and so on${CEND}"
+    break
   fi
 done
 
 sed -i 's@^backup_destination=.*@backup_destination=@' ./options.conf
-[ `echo ${desc_bk} | grep -e 1` ] && sed -i 's@^backup_destination=.*@backup_destination=local@' ./options.conf
-[ `echo ${desc_bk} | grep -e 2` ] && sed -i 's@^backup_destination=.*@&,remote@' ./options.conf
-[ `echo ${desc_bk} | grep -e 3` ] && sed -i 's@^backup_destination=.*@&,oss@' ./options.conf
-[ `echo ${desc_bk} | grep -e 4` ] && sed -i 's@^backup_destination=.*@&,cos@' ./options.conf
-[ `echo ${desc_bk} | grep -e 5` ] && sed -i 's@^backup_destination=.*@&,upyun@' ./options.conf
-[ `echo ${desc_bk} | grep -e 6` ] && sed -i 's@^backup_destination=.*@&,qiniu@' ./options.conf
+[ `echo ${desc_bk} | grep -w 1` ] && sed -i 's@^backup_destination=.*@backup_destination=local@' ./options.conf
+[ `echo ${desc_bk} | grep -w 2` ] && sed -i 's@^backup_destination=.*@&,remote@' ./options.conf
+[ `echo ${desc_bk} | grep -w 3` ] && sed -i 's@^backup_destination=.*@&,oss@' ./options.conf
+[ `echo ${desc_bk} | grep -w 4` ] && sed -i 's@^backup_destination=.*@&,cos@' ./options.conf
+[ `echo ${desc_bk} | grep -w 5` ] && sed -i 's@^backup_destination=.*@&,upyun@' ./options.conf
+[ `echo ${desc_bk} | grep -w 6` ] && sed -i 's@^backup_destination=.*@&,qiniu@' ./options.conf
 sed -i 's@^backup_destination=,@backup_destination=@' ./options.conf
 
 while :; do echo
@@ -233,7 +240,7 @@ if [ `echo ${desc_bk} | grep -e 3` ]; then
 fi
 
 if [ `echo ${desc_bk} | grep -e 4` ]; then
-  [ ! -e "${python_install_dir}/bin/python" ] && Install_Python
+  Install_Python
   [ ! -e "${python_install_dir}/lib/coscmd" ] && ${python_install_dir}/bin/pip install coscmd >/dev/null 2>&1
   while :; do echo
     echo 'Please select your backup qcloud datacenter:'
@@ -282,7 +289,7 @@ if [ `echo ${desc_bk} | grep -e 4` ]; then
     [ -z "${SECRET_KEY}" ] && continue
     echo
     read -e -p "Please enter the Qcloud COS BUCKET: " BUCKET
-    if [[ ${BUCKET} =~ "-${APPID}"$ ]]; then 
+    if [[ ${BUCKET} =~ "-${APPID}"$ ]]; then
       Bucket=${BUCKET}
     else
       [ -z "${BUCKET}" ] && continue

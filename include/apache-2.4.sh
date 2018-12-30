@@ -41,7 +41,7 @@ Install_Apache24() {
   make -j ${THREAD} && make install
   popd > /dev/null
   unset LDFLAGS
-  if [ -e "${apache_install_dir}/conf/httpd.conf" ]; then
+  if [ -e "${apache_install_dir}/bin/httpd" ]; then
     echo "${CSUCCESS}Apache installed successfully! ${CEND}"
     rm -rf httpd-${apache24_ver} pcre-${pcre_ver} apr-${apr_ver} apr-util-${apr_util_ver}
   else

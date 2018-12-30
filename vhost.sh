@@ -242,11 +242,11 @@ EOF
       [ -e "${PATH_SSL}/${domain}.crt" ] && rm -f ${PATH_SSL}/${domain}.{crt,key}
       [ -e /bin/systemctl -a -e /lib/systemd/system/nginx.service ] && Nginx_cmd='/bin/systemctl restart nginx' || Nginx_cmd='/etc/init.d/nginx force-reload'
       Apache_cmd="${apache_install_dir}/bin/apachectl -k graceful"
-      if [ -e "${web_install_dir}/sbin/nginx" -a -e "${apache_install_dir}/conf/httpd.conf" ]; then
+      if [ -e "${web_install_dir}/sbin/nginx" -a -e "${apache_install_dir}/bin/httpd" ]; then
         Command="${Nginx_cmd};${Apache_cmd}"
-      elif [ -e "${web_install_dir}/sbin/nginx" -a ! -e "${apache_install_dir}/conf/httpd.conf" ]; then
+      elif [ -e "${web_install_dir}/sbin/nginx" -a ! -e "${apache_install_dir}/bin/httpd" ]; then
         Command="${Nginx_cmd}"
-      elif [ ! -e "${web_install_dir}/sbin/nginx" -a -e "${apache_install_dir}/conf/httpd.conf" ]; then
+      elif [ ! -e "${web_install_dir}/sbin/nginx" -a -e "${apache_install_dir}/bin/httpd" ]; then
         Command="${Apache_cmd}"
       fi
       ~/.acme.sh/acme.sh --install-cert -d ${domain} --fullchain-file ${PATH_SSL}/${domain}.crt --key-file ${PATH_SSL}/${domain}.key --reloadcmd "${Command}" > /dev/null
@@ -303,7 +303,7 @@ What Are You Doing?
       nginx_ssl_flag=y
       PATH_SSL=${web_install_dir}/conf/ssl
       [ ! -d "${PATH_SSL}" ] && mkdir ${PATH_SSL}
-    elif [ ! -e "${web_install_dir}/sbin/nginx" -a -e "${apache_install_dir}/bin/apachectl" ]; then
+    elif [ ! -e "${web_install_dir}/sbin/nginx" -a -e "${apache_install_dir}/bin/httpd" ]; then
       apache_ssl_flag=y
       PATH_SSL=${apache_install_dir}/conf/ssl
       [ ! -d "${PATH_SSL}" ] && mkdir ${PATH_SSL}
@@ -870,7 +870,7 @@ EOF
 }
 
 Add_Vhost() {
-  if [ -e "${web_install_dir}/sbin/nginx" -a ! -e "${apache_install_dir}/conf/httpd.conf" ]; then
+  if [ -e "${web_install_dir}/sbin/nginx" -a ! -e "${apache_install_dir}/bin/httpd" ]; then
     Choose_env
     Input_Add_domain
     Nginx_anti_hotlinking
@@ -882,16 +882,16 @@ Add_Vhost() {
       Nginx_log
       Create_nginx_php-fpm_hhvm_conf
     fi
-  elif [ ! -e "${web_install_dir}/sbin/nginx" -a -e "${apache_install_dir}/conf/httpd.conf" ]; then
+  elif [ ! -e "${web_install_dir}/sbin/nginx" -a -e "${apache_install_dir}/bin/httpd" ]; then
     Choose_env
     Input_Add_domain
     Apache_log
     Create_apache_conf
-  elif [ ! -e "${web_install_dir}/sbin/nginx" -a ! -e "${apache_install_dir}/conf/httpd.conf" -a -e "${tomcat_install_dir}/conf/server.xml" ]; then
+  elif [ ! -e "${web_install_dir}/sbin/nginx" -a ! -e "${apache_install_dir}/bin/httpd" -a -e "${tomcat_install_dir}/conf/server.xml" ]; then
     Choose_env
     Input_Add_domain
     Create_tomcat_conf
-  elif [ -e "${web_install_dir}/sbin/nginx" -a -e "${apache_install_dir}/conf/httpd.conf" ]; then
+  elif [ -e "${web_install_dir}/sbin/nginx" -a -e "${apache_install_dir}/bin/httpd" ]; then
     Choose_env
     Input_Add_domain
     Nginx_anti_hotlinking
@@ -958,7 +958,7 @@ Del_NGX_Vhost() {
 }
 
 Del_Apache_Vhost() {
-  if [ -e "${apache_install_dir}/conf/httpd.conf" ]; then
+  if [ -e "${apache_install_dir}/bin/httpd" ]; then
     if [ -e "${web_install_dir}/sbin/nginx" ]; then
       rm -f ${apache_install_dir}/conf/vhost/${domain}.conf
       ${apache_install_dir}/bin/apachectl -k graceful
@@ -1061,7 +1061,7 @@ Del_Tomcat_Vhost() {
 
 List_Vhost() {
   [ -d "${web_install_dir}/conf/vhost" ] && Domain_List=$(ls ${web_install_dir}/conf/vhost | sed "s@.conf@@g")
-  [ -e "${apache_install_dir}/conf/httpd.conf" -a ! -d "${web_install_dir}/conf/vhost" ] && Domain_List=$(ls ${apache_install_dir}/conf/vhost | grep -v '0.conf' | sed "s@.conf@@g")
+  [ -e "${apache_install_dir}/bin/httpd" -a ! -d "${web_install_dir}/conf/vhost" ] && Domain_List=$(ls ${apache_install_dir}/conf/vhost | grep -v '0.conf' | sed "s@.conf@@g")
   [ -e "${tomcat_install_dir}/conf/server.xml" -a ! -d "${web_install_dir}/sbin/nginx" ] && Domain_List=$(ls ${tomcat_install_dir}/conf/vhost | grep -v 'localhost.xml' | sed "s@.xml@@g")
   if [ -n "${Domain_List}" ]; then
     echo

@@ -14,11 +14,11 @@ Install_PureFTPd() {
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin ${run_user}
 
   tar xzf pure-ftpd-${pureftpd_ver}.tar.gz
-  pushd pure-ftpd-${pureftpd_ver}
+  pushd pure-ftpd-${pureftpd_ver} > /dev/null
   [ ! -d "${pureftpd_install_dir}" ] && mkdir -p ${pureftpd_install_dir}
   ./configure --prefix=${pureftpd_install_dir} CFLAGS=-O2 --with-puredb --with-quotas --with-cookie --with-virtualhosts --with-virtualchroot --with-diraliases --with-sysquotas --with-ratios --with-altlog --with-paranoidmsg --with-shadow --with-welcomemsg --with-throttling --with-uploadscript --with-language=english --with-rfc2640 --with-tls
   make -j ${THREAD} && make install
-  popd
+  popd > /dev/null
   if [ -e "${pureftpd_install_dir}/sbin/pure-ftpwho" ]; then
     if [ -e /bin/systemctl ]; then
       /bin/cp ../init.d/pureftpd.service /lib/systemd/system/
@@ -49,34 +49,32 @@ Install_PureFTPd() {
     service pureftpd start
 
     # iptables Ftp
-    if [ "${iptables_yn}" == 'y' ]; then
-      if [ "${PM}" == 'yum' ]; then
-        if [ -z "$(grep '20000:30000' /etc/sysconfig/iptables)" ]; then
+    if [ "${PM}" == 'yum' ]; then
+      if [ -n "`grep 'dport 80 ' /etc/sysconfig/iptables`" ] && [ -z "$(grep '20000:30000' /etc/sysconfig/iptables)" ]; then
+        iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
+        iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
+        service iptables save
+        /bin/cp /etc/sysconfig/{iptables,ip6tables}
+        sed -i 's@icmp@icmpv6@g' /etc/sysconfig/ip6tables
+        ip6tables-restore < /etc/sysconfig/ip6tables
+        service ip6tables save
+      fi
+    elif [ "${PM}" == 'apt-get' ]; then
+      if [ -e '/etc/iptables/rules.v4' ]; then
+        if [ -n "`grep 'dport 80 ' /etc/iptables/rules.v4`" ] && [ -z "$(grep '20000:30000' /etc/iptables/rules.v4)" ]; then
           iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
           iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
-          service iptables save
-          /bin/cp /etc/sysconfig/{iptables,ip6tables}
-          sed -i 's@icmp@icmpv6@g' /etc/sysconfig/ip6tables
-          ip6tables-restore < /etc/sysconfig/ip6tables
-          service ip6tables save
+          iptables-save > /etc/iptables/rules.v4
+          /bin/cp /etc/iptables/rules.v{4,6}
+          sed -i 's@icmp@icmpv6@g' /etc/iptables/rules.v6
+          ip6tables-restore < /etc/iptables/rules.v6
+          ip6tables-save > /etc/iptables/rules.v6
         fi
-      elif [ "${PM}" == 'apt-get' ]; then
-        if [ -e '/etc/iptables/rules.v4' ]; then
-          if [ -z "$(grep '20000:30000' /etc/iptables/rules.v4)" ]; then
-            iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
-            iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
-            iptables-save > /etc/iptables/rules.v4
-            /bin/cp /etc/iptables/rules.v{4,6}
-            sed -i 's@icmp@icmpv6@g' /etc/iptables/rules.v6
-            ip6tables-restore < /etc/iptables/rules.v6
-            ip6tables-save > /etc/iptables/rules.v6
-          fi
-        elif [ -e '/etc/iptables.up.rules' ]; then
-          if [ -z "$(grep '20000:30000' /etc/iptables.up.rules)" ]; then
-            iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
-            iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
-            iptables-save > /etc/iptables.up.rules
-          fi
+      elif [ -e '/etc/iptables.up.rules' ]; then
+        if [ -n "`grep 'dport 80 ' /etc/iptables.up.rules`" ] && [ -z "$(grep '20000:30000' /etc/iptables.up.rules)" ]; then
+          iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
+          iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
+          iptables-save > /etc/iptables.up.rules
         fi
       fi
     fi
@@ -88,5 +86,5 @@ Install_PureFTPd() {
     echo "${CFAILURE}Pure-Ftpd install failed, Please contact the author! ${CEND}"
     kill -9 $$
   fi
-  popd
+  popd > /dev/null
 }

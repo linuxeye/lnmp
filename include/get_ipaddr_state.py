@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 #coding:utf-8
-import sys,urllib2,socket
+import sys,urllib2,socket,json
 try:
   socket.setdefaulttimeout(5)
-  apiurl = "http://ip.taobao.com/service/getIpInfo.php?ip=%s" % sys.argv[1]
+  if len(sys.argv) == 1:
+    apiurl = "http://ip-api.com/json"
+  elif len(sys.argv) == 2:
+    apiurl = "http://ip-api.com/json/%s" % sys.argv[1]
   content = urllib2.urlopen(apiurl).read()
-  data = eval(content)['data']
-  code = eval(content)['code']
-  if code == 0:
-    print(data['country_id'])
+  content = json.JSONDecoder().decode(content)
+  if content['status'] == 'success':
+    print(content['countryCode'])
   else:
-    print(data)
+    print("CN")
 except:
   print("Usage:%s IP" % sys.argv[0])

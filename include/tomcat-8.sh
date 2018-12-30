@@ -70,32 +70,30 @@ EOF
     /bin/cp ${oneinstack_dir}/config/server.xml ${tomcat_install_dir}/conf
     sed -i "s@/usr/local/tomcat@${tomcat_install_dir}@g" ${tomcat_install_dir}/conf/server.xml
 
-    if [ ! -e "${nginx_install_dir}/sbin/nginx" -a ! -e "${tengine_install_dir}/sbin/nginx" -a ! -e "${openresty_install_dir}/nginx/sbin/nginx" -a ! -e "${apache_install_dir}/conf/httpd.conf" ]; then
-      if [ "${iptables_yn}" == 'y' ]; then
-        if [ "${PM}" == 'yum' ]; then
-          if [ -z "$(grep -w '8080' /etc/sysconfig/iptables)" ]; then
+    if [ ! -e "${nginx_install_dir}/sbin/nginx" -a ! -e "${tengine_install_dir}/sbin/nginx" -a ! -e "${openresty_install_dir}/nginx/sbin/nginx" -a ! -e "${apache_install_dir}/bin/httpd" ]; then
+      if [ "${PM}" == 'yum' ]; then
+        if [ -n "`grep 'dport 80 ' /etc/sysconfig/iptables`" ] && [ -z "$(grep -w '8080' /etc/sysconfig/iptables)" ]; then
+          iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
+          service iptables save
+          /bin/cp /etc/sysconfig/{iptables,ip6tables}
+          sed -i 's@icmp@icmpv6@g' /etc/sysconfig/ip6tables
+          ip6tables-restore < /etc/sysconfig/ip6tables
+          service ip6tables save
+        fi
+      elif [ "${PM}" == 'apt-get' ]; then
+        if [ -e '/etc/iptables/rules.v4' ]; then
+          if [ -n "`grep 'dport 80 ' /etc/iptables/rules.v4`" ] && [ -z "$(grep -w '8080' /etc/iptables/rules.v4)" ]; then
             iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
-            service iptables save
-            /bin/cp /etc/sysconfig/{iptables,ip6tables}
-            sed -i 's@icmp@icmpv6@g' /etc/sysconfig/ip6tables
-            ip6tables-restore < /etc/sysconfig/ip6tables
-            service ip6tables save
+            iptables-save > /etc/iptables/rules.v4
+            /bin/cp /etc/iptables/rules.v{4,6}
+            sed -i 's@icmp@icmpv6@g' /etc/iptables/rules.v6
+            ip6tables-restore < /etc/iptables/rules.v6
+            ip6tables-save > /etc/iptables/rules.v6
           fi
-        elif [ "${PM}" == 'apt-get' ]; then
-          if [ -e '/etc/iptables/rules.v4' ]; then
-            if [ -z "$(grep -w '8080' /etc/iptables/rules.v4)" ]; then
-              iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
-              iptables-save > /etc/iptables/rules.v4
-              /bin/cp /etc/iptables/rules.v{4,6}
-              sed -i 's@icmp@icmpv6@g' /etc/iptables/rules.v6
-              ip6tables-restore < /etc/iptables/rules.v6
-              ip6tables-save > /etc/iptables/rules.v6
-            fi
-          elif [ -e '/etc/iptables.up.rules' ]; then
-            if [ -z "$(grep -w '8080' /etc/iptables.up.rules)" ]; then
-              iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
-              iptables-save > /etc/iptables.up.rules
-            fi
+        elif [ -e '/etc/iptables.up.rules' ]; then
+          if [ -n "`grep 'dport 80 ' /etc/iptables.up.rules`" ] && [ -z "$(grep -w '8080' /etc/iptables.up.rules)" ]; then
+            iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
+            iptables-save > /etc/iptables.up.rules
           fi
         fi
       fi

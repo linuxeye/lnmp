@@ -19,7 +19,7 @@ Upgrade_Memcached() {
     [ "${memcached_quiet}" != 'y' ] && read -e -p "Please input upgrade Memcached Version(default: ${Latest_memcached_ver}): " NEW_memcached_ver
     NEW_memcached_ver=${NEW_memcached_ver:-${Latest_memcached_ver}}
     if [ "${NEW_memcached_ver}" != "${OLD_memcached_ver}" ]; then
-      [ "$IPADDR_COUNTRY"x == "CN"x ] && DOWN_ADDR=http://mirrors.linuxeye.com/oneinstack/src || DOWN_ADDR=http://www.memcached.org/files
+      [ "${IPADDR_COUNTRY}"x == "CN"x ] && DOWN_ADDR=http://mirrors.linuxeye.com/oneinstack/src || DOWN_ADDR=http://www.memcached.org/files
       [ ! -e "memcached-${NEW_memcached_ver}.tar.gz" ] && wget --no-check-certificate -c ${DOWN_ADDR}/memcached-${NEW_memcached_ver}.tar.gz > /dev/null 2>&1
       if [ -e "memcached-${NEW_memcached_ver}.tar.gz" ]; then
         echo "Download [${CMSG}memcached-${NEW_memcached_ver}.tar.gz${CEND}] successfully! "

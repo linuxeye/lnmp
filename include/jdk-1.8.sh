@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/oneinstack/oneinstack
 
-Install-JDK18() {
+Install_JDK18() {
   pushd ${oneinstack_dir}/src > /dev/null
   JDK_FILE="jdk-`echo ${jdk18_ver} | awk -F. '{print $2}'`u`echo ${jdk18_ver} | awk -F_ '{print $NF}'`-linux-${SYS_BIT_j}.tar.gz"
   JAVA_dir=/usr/java

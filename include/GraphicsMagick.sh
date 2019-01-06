@@ -30,7 +30,7 @@ Uninstall_GraphicsMagick() {
   fi
 }
 
-Install_pecl-gmagick() {
+Install_pecl_gmagick() {
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     pushd ${oneinstack_dir}/src > /dev/null
     phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
@@ -57,7 +57,7 @@ Install_pecl-gmagick() {
   fi
 }
 
-Uninstall_pecl-gmagick() {
+Uninstall_pecl_gmagick() {
   if [ -e "${php_install_dir}/etc/php.d/03-gmagick.ini" ]; then
     rm -f ${php_install_dir}/etc/php.d/03-gmagick.ini
     echo; echo "${CMSG}PHP gmagick module uninstall completed${CEND}"

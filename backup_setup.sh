@@ -38,10 +38,11 @@ while :; do echo
   echo -e "\t${CMSG}4${CEND}. Qcloud COS"
   echo -e "\t${CMSG}5${CEND}. UPYUN"
   echo -e "\t${CMSG}6${CEND}. QINIU"
+  echo -e "\t${CMSG}7${CEND}. Google Drive"
   read -e -p "Please input numbers:(Default 1 press Enter) " desc_bk
   desc_bk=${desc_bk:-'1'}
   array_desc=(${desc_bk})
-  array_all=(1 2 3 4 5 6)
+  array_all=(1 2 3 4 5 6 7)
   for v in ${array_desc[@]}
   do
     [ -z "`echo ${array_all[@]} | grep -w ${v}`" ] && desc_flag=1
@@ -51,17 +52,18 @@ while :; do echo
     echo; echo "${CWARNING}input error! Please only input number 1 3 4 and so on${CEND}"; echo
     continue
   else
+    sed -i 's@^backup_destination=.*@backup_destination=@' ./options.conf
     break
   fi
 done
 
-sed -i 's@^backup_destination=.*@backup_destination=@' ./options.conf
-[ `echo ${desc_bk} | grep -w 1` ] && sed -i 's@^backup_destination=.*@backup_destination=local@' ./options.conf
-[ `echo ${desc_bk} | grep -w 2` ] && sed -i 's@^backup_destination=.*@&,remote@' ./options.conf
-[ `echo ${desc_bk} | grep -w 3` ] && sed -i 's@^backup_destination=.*@&,oss@' ./options.conf
-[ `echo ${desc_bk} | grep -w 4` ] && sed -i 's@^backup_destination=.*@&,cos@' ./options.conf
-[ `echo ${desc_bk} | grep -w 5` ] && sed -i 's@^backup_destination=.*@&,upyun@' ./options.conf
-[ `echo ${desc_bk} | grep -w 6` ] && sed -i 's@^backup_destination=.*@&,qiniu@' ./options.conf
+[ -n "`echo ${desc_bk} | grep -w 1`" ] && sed -i 's@^backup_destination=.*@backup_destination=local@' ./options.conf
+[ -n "`echo ${desc_bk} | grep -w 2`" ] && sed -i 's@^backup_destination=.*@&,remote@' ./options.conf
+[ -n "`echo ${desc_bk} | grep -w 3`" ] && sed -i 's@^backup_destination=.*@&,oss@' ./options.conf
+[ -n "`echo ${desc_bk} | grep -w 4`" ] && sed -i 's@^backup_destination=.*@&,cos@' ./options.conf
+[ -n "`echo ${desc_bk} | grep -w 5`" ] && sed -i 's@^backup_destination=.*@&,upyun@' ./options.conf
+[ -n "`echo ${desc_bk} | grep -w 6`" ] && sed -i 's@^backup_destination=.*@&,qiniu@' ./options.conf
+[ -n "`echo ${desc_bk} | grep -w 7`" ] && sed -i 's@^backup_destination=.*@&,gdrive@' ./options.conf
 sed -i 's@^backup_destination=,@backup_destination=@' ./options.conf
 
 while :; do echo
@@ -82,7 +84,7 @@ done
 [ "${content_bk}" == '2' ] && sed -i 's@^backup_content=.*@backup_content=web@' ./options.conf
 [ "${content_bk}" == '3' ] && sed -i 's@^backup_content=.*@backup_content=db,web@' ./options.conf
 
-if [[ ${desc_bk} =~ ^[1,2]$ ]]; then
+if [ -n "`echo ${desc_bk} | grep -Ew '1|2'`" ]; then
   while :; do echo
     echo "Please enter the directory for save the backup file: "
     read -e -p "(Default directory: ${backup_dir}): " new_backup_dir
@@ -143,11 +145,11 @@ echo "You have to backup the content:"
 [ "${content_bk}" != '2' ] && echo "Database: ${CMSG}${db_name}${CEND}"
 [ "${content_bk}" != '1' ] && echo "Website: ${CMSG}${website_name}${CEND}"
 
-if [ `echo ${desc_bk} | grep -e 2` ]; then
+if [ -n "`echo ${desc_bk} | grep -w 2`" ]; then
   > tools/iplist.txt
   while :; do echo
-    read -e -p "Please enter the remote host ip: " remote_ip
-    [ -z "${remote_ip}" -o "${remote_ip}" == '127.0.0.1' ] && continue
+    read -e -p "Please enter the remote host address: " remote_address
+    [ -z "${remote_address}" -o "${remote_address}" == '127.0.0.1' ] && continue
     echo
     read -e -p "Please enter the remote host port(Default: 22) : " remote_port
     remote_port=${remote_port:-22}
@@ -156,13 +158,13 @@ if [ `echo ${desc_bk} | grep -e 2` ]; then
     remote_user=${remote_user:-root}
     echo
     read -e -p "Please enter the remote host password: " remote_password
-    IPcode=$(echo "ibase=16;$(echo "${remote_ip}" | xxd -ps -u)"|bc|tr -d '\\'|tr -d '\n')
+    IPcode=$(echo "ibase=16;$(echo "${remote_address}" | xxd -ps -u)"|bc|tr -d '\\'|tr -d '\n')
     Portcode=$(echo "ibase=16;$(echo "${remote_port}" | xxd -ps -u)"|bc|tr -d '\\'|tr -d '\n')
     PWcode=$(echo "ibase=16;$(echo "$remote_password" | xxd -ps -u)"|bc|tr -d '\\'|tr -d '\n')
-    [ -e "~/.ssh/known_hosts" ] && grep ${remote_ip} ~/.ssh/known_hosts | sed -i "/${remote_ip}/d" ~/.ssh/known_hosts
+    [ -e "~/.ssh/known_hosts" ] && grep ${remote_address} ~/.ssh/known_hosts | sed -i "/${remote_address}/d" ~/.ssh/known_hosts
     ./tools/mssh.exp ${IPcode}P ${remote_user} ${PWcode}P ${Portcode}P true 10
     if [ $? -eq 0 ]; then
-      [ -z "`grep ${remote_ip} tools/iplist.txt`" ] && echo "${remote_ip} ${remote_port} ${remote_user} $remote_password" >> tools/iplist.txt || echo "${CWARNING}${remote_ip} has been added! ${CEND}"
+      [ -z "`grep ${remote_address} tools/iplist.txt`" ] && echo "${remote_address} ${remote_port} ${remote_user} $remote_password" >> tools/iplist.txt || echo "${CWARNING}${remote_address} has been added! ${CEND}"
       while :; do
         read -e -p "Do you want to add more host ? [y/n]: " morehost_yn
         if [[ ! ${morehost_yn} =~ ^[y,n]$ ]]; then
@@ -176,7 +178,7 @@ if [ `echo ${desc_bk} | grep -e 2` ]; then
   done
 fi
 
-if [ `echo ${desc_bk} | grep -e 3` ]; then
+if [ -n "`echo ${desc_bk} | grep -w 3`" ]; then
   if [ ! -e "/usr/local/bin/ossutil" ]; then
     wget -qc http://gosspublic.alicdn.com/ossutil/1.4.2/ossutil${OS_BIT} -O /usr/local/bin/ossutil
     chmod +x /usr/local/bin/ossutil
@@ -239,7 +241,7 @@ if [ `echo ${desc_bk} | grep -e 3` ]; then
   done
 fi
 
-if [ `echo ${desc_bk} | grep -e 4` ]; then
+if [ -n "`echo ${desc_bk} | grep -w 4`" ]; then
   Install_Python
   [ ! -e "${python_install_dir}/lib/coscmd" ] && ${python_install_dir}/bin/pip install coscmd >/dev/null 2>&1
   while :; do echo
@@ -316,7 +318,7 @@ if [ `echo ${desc_bk} | grep -e 4` ]; then
   done
 fi
 
-if [ `echo ${desc_bk} | grep -e 5` ]; then
+if [ -n "`echo ${desc_bk} | grep -w 5`" ]; then
   if [ ! -e "/usr/local/bin/upx" ]; then
     if [ "${OS_BIT}" == '64' ]; then
       wget -qc http://collection.b0.upaiyun.com/softwares/upx/upx-linux-amd64-v0.2.3 -O /usr/local/bin/upx
@@ -346,7 +348,7 @@ if [ `echo ${desc_bk} | grep -e 5` ]; then
   done
 fi
 
-if [ `echo ${desc_bk} | grep -e 6` ]; then
+if [ -n "`echo ${desc_bk} | grep -w 6`" ]; then
   if [ ! -e "/usr/local/bin/qrsctl" ]; then
     if [ "${OS_BIT}" == '64' ]; then
       wget -qc http://devtools.qiniu.com/linux/amd64/qrsctl -O /usr/local/bin/qrsctl
@@ -356,8 +358,8 @@ if [ `echo ${desc_bk} | grep -e 6` ]; then
     chmod +x /usr/local/bin/qrsctl
   fi
   if [ ! -e "/usr/local/bin/qshell" ]; then
-    wget -qc http://devtools.qiniu.com/qshell-v2.1.8.zip -O /tmp/qshell-v2.1.8.zip
-    unzip -q /tmp/qshell-v2.1.8.zip -d /tmp/
+    wget -qc http://devtools.qiniu.com/qshell-v2.3.5.zip -O /tmp/qshell-v2.3.5.zip
+    unzip -q /tmp/qshell-v2.3.5.zip -d /tmp/
     if [ "${OS_BIT}" == '64' ]; then
       /bin/cp /tmp/qshell-linux-x64 /usr/local/bin/qshell
     elif [ "${OS_BIT}" == '32' ]; then
@@ -410,6 +412,22 @@ if [ `echo ${desc_bk} | grep -e 6` ]; then
       break
     else
       echo "${CWARNING}input error! AccessKey/SecretKey invalid${CEND}"
+    fi
+  done
+fi
+
+if [ -n "`echo ${desc_bk} | grep -w 7`" ]; then
+  if [ ! -e "/usr/local/bin/gdrive" ]; then
+    if [ "${OS_BIT}" == '64' ]; then
+      wget -qc http://mirrors.linuxeye.com/oneinstack/src/gdrive-linux-x64 -O /usr/local/bin/gdrive
+    elif [ "${OS_BIT}" == '32' ]; then
+      wget -qc http://mirrors.linuxeye.com/oneinstack/src/gdrive-linux-386 -O /usr/local/bin/gdrive
+    fi
+    chmod +x /usr/local/bin/gdrive
+  fi
+  while :; do echo
+    if gdrive about; then
+      break
     fi
   done
 fi

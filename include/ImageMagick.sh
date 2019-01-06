@@ -30,7 +30,7 @@ Uninstall_ImageMagick() {
   fi
 }
 
-Install_pecl-imagick() {
+Install_pecl_imagick() {
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     pushd ${oneinstack_dir}/src > /dev/null
     phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
@@ -52,7 +52,7 @@ Install_pecl-imagick() {
   fi
 }
 
-Uninstall_pecl-imagick() {
+Uninstall_pecl_imagick() {
   if [ -e "${php_install_dir}/etc/php.d/03-imagick.ini" ]; then
     rm -f ${php_install_dir}/etc/php.d/03-imagick.ini
     echo; echo "${CMSG}PHP imagick module uninstall completed${CEND}"

@@ -75,9 +75,7 @@ EOF
         if [ -n "`grep 'dport 80 ' /etc/sysconfig/iptables`" ] && [ -z "$(grep -w '8080' /etc/sysconfig/iptables)" ]; then
           iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
           service iptables save
-          /bin/cp /etc/sysconfig/{iptables,ip6tables}
-          sed -i 's@icmp@icmpv6@g' /etc/sysconfig/ip6tables
-          ip6tables-restore < /etc/sysconfig/ip6tables
+          ip6tables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
           service ip6tables save
         fi
       elif [ "${PM}" == 'apt-get' ]; then
@@ -85,9 +83,7 @@ EOF
           if [ -n "`grep 'dport 80 ' /etc/iptables/rules.v4`" ] && [ -z "$(grep -w '8080' /etc/iptables/rules.v4)" ]; then
             iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
             iptables-save > /etc/iptables/rules.v4
-            /bin/cp /etc/iptables/rules.v{4,6}
-            sed -i 's@icmp@icmpv6@g' /etc/iptables/rules.v6
-            ip6tables-restore < /etc/iptables/rules.v6
+            ip6tables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
             ip6tables-save > /etc/iptables/rules.v6
           fi
         elif [ -e '/etc/iptables.up.rules' ]; then

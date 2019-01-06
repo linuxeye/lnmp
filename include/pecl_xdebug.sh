@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/oneinstack/oneinstack
 
-Install_pecl-xdebug() {
+Install_pecl_xdebug() {
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     pushd ${oneinstack_dir}/src > /dev/null
     PHP_detail_ver=$(${php_install_dir}/bin/php -r 'echo PHP_VERSION;')
@@ -57,7 +57,7 @@ EOF
   fi
 }
 
-Uninstall_pecl-xdebug() {
+Uninstall_pecl_xdebug() {
   if [ -e "${php_install_dir}/etc/php.d/08-xdebug.ini" ]; then
     rm -rf ${php_install_dir}/etc/php.d/08-xdebug.ini /tmp/{xdebug,webgrind} ${wwwroot_dir}/default/webgrind
     echo; echo "${CMSG}PHP xdebug module uninstall completed${CEND}"

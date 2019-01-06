@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/oneinstack/oneinstack
 
-Install_pecl-mongodb() {
+Install_pecl_mongodb() {
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     pushd ${oneinstack_dir}/src > /dev/null
     phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
@@ -47,7 +47,7 @@ Install_pecl-mongodb() {
   fi
 }
 
-Uninstall_pecl-mongodb() {
+Uninstall_pecl_mongodb() {
   if [ -e "${php_install_dir}/etc/php.d/07-mongo.ini" ]; then
     rm -f ${php_install_dir}/etc/php.d/07-mongo.ini
     echo; echo "${CMSG}PHP mongo module uninstall completed${CEND}"

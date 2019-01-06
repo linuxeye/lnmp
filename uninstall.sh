@@ -27,7 +27,7 @@ pushd ${oneinstack_dir} > /dev/null
 . ./include/get_char.sh
 . ./include/check_dir.sh
 
-showhelp() {
+Show_Help() {
   echo
   echo "Usage: $0  command ...[parameters]....
   --help, -h                    Show this help message, More: https://oneinstack.com
@@ -52,13 +52,13 @@ showhelp() {
 
 ARG_NUM=$#
 TEMP=`getopt -o hvVq --long help,version,quiet,all,web,mysql,postgresql,mongodb,php,phpcache,php_extensions:,hhvm,pureftpd,redis,memcached,phpmyadmin -- "$@" 2>/dev/null`
-[ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && showhelp && exit 1
+[ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && Show_Help && exit 1
 eval set -- "${TEMP}"
 while :; do
   [ -z "$1" ] && break;
   case "$1" in
     -h|--help)
-      showhelp; exit 0
+      Show_Help; exit 0
       ;;
     -q|--quiet)
       quiet_yn=y
@@ -133,7 +133,7 @@ while :; do
       shift
       ;;
     *)
-      echo "${CWARNING}ERROR: unknown argument! ${CEND}" && showhelp && exit 1
+      echo "${CWARNING}ERROR: unknown argument! ${CEND}" && Show_Help && exit 1
       ;;
   esac
 done
@@ -310,68 +310,68 @@ Uninstall_PHPext() {
   if [ "${pecl_imagick}" == '1' ]; then
     . include/ImageMagick.sh
     Uninstall_ImageMagick
-    Uninstall_pecl-imagick
+    Uninstall_pecl_imagick
   fi
 
   # gmagick
   if [ "${pecl_gmagick}" == '1' ]; then
     . include/GraphicsMagick.sh
     Uninstall_GraphicsMagick
-    Uninstall_pecl-gmagick
+    Uninstall_pecl_gmagick
   fi
 
   # fileinfo
   if [ "${pecl_fileinfo}" == '1' ]; then
     . include/pecl_fileinfo.sh
-    Uninstall_pecl-fileinfo
+    Uninstall_pecl_fileinfo
   fi
 
   # imap
   if [ "${pecl_imap}" == '1' ]; then
     . include/pecl_imap.sh
-    Uninstall_pecl-imap
+    Uninstall_pecl_imap
   fi
 
   # phalcon
   if [ "${pecl_phalcon}" == '1' ]; then
     . include/pecl_phalcon.sh
-    Uninstall_pecl-phalcon
+    Uninstall_pecl_phalcon
   fi
 
   # pecl_memcached
   if [ "${pecl_memcached}" == '1' ]; then
     . include/memcached.sh
-    Uninstall_pecl-memcached
+    Uninstall_pecl_memcached
   fi
 
   # pecl_memcache
   if [ "${pecl_memcache}" == '1' ]; then
     . include/memcached.sh
-    Uninstall_pecl-memcache
+    Uninstall_pecl_memcache
   fi
 
   # pecl_redis
   if [ "${pecl_redis}" == '1' ]; then
     . include/redis.sh
-    Uninstall_pecl-redis
+    Uninstall_pecl_redis
   fi
 
   # pecl_mongodb
   if [ "${pecl_mongodb}" == '1' ]; then
     . include/pecl_mongodb.sh
-    Uninstall_pecl-mongodb
+    Uninstall_pecl_mongodb
   fi
 
   # swoole
   if [ "${pecl_swoole}" == '1' ]; then
     . include/pecl_swoole.sh
-    Uninstall_pecl-swoole
+    Uninstall_pecl_swoole
   fi
 
   # xdebug
   if [ "${pecl_xdebug}" == '1' ]; then
     . include/pecl_xdebug.sh
-    Uninstall_pecl-xdebug
+    Uninstall_pecl_xdebug
   fi
 
   # reload php
@@ -456,24 +456,24 @@ Uninstall_PureFtpd() {
   [ -e "/lib/systemd/system/pureftpd.service" ] && { systemctl disable pureftpd > /dev/null 2>&1; rm -f /lib/systemd/system/pureftpd.service; }
 }
 
-Print_Redis-server() {
+Print_Redis_server() {
   [ -e "${redis_install_dir}" ] && echo "${redis_install_dir}"
   [ -e "/etc/init.d/redis-server" ] && echo "/etc/init.d/redis-server"
   [ -e "/lib/systemd/system/redis-server.service" ] && echo '/lib/systemd/system/redis-server.service'
 }
 
-Uninstall_Redis-server() {
+Uninstall_Redis_server() {
   [ -e "${redis_install_dir}" ] && { service redis-server stop > /dev/null 2>&1; rm -rf ${redis_install_dir} /etc/init.d/redis-server /usr/local/bin/redis-*; echo "${CMSG}Redis uninstall completed! ${CEND}"; }
   [ -e "/lib/systemd/system/redis-server.service" ] && { systemctl disable redis-server > /dev/null 2>&1; rm -f /lib/systemd/system/redis-server.service; }
 }
 
-Print_Memcached-server() {
+Print_Memcached_server() {
   [ -e "${memcached_install_dir}" ] && echo "${memcached_install_dir}"
   [ -e "/etc/init.d/memcached" ] && echo "/etc/init.d/memcached"
   [ -e "/usr/bin/memcached" ] && echo "/usr/bin/memcached"
 }
 
-Uninstall_Memcached-server() {
+Uninstall_Memcached_server() {
   [ -e "${memcached_install_dir}" ] && { service memcached stop > /dev/null 2>&1; rm -rf ${memcached_install_dir} /etc/init.d/memcached /usr/bin/memcached; echo "${CMSG}Memcached uninstall completed! ${CEND}"; }
 }
 
@@ -527,8 +527,8 @@ What Are You Doing?
       Print_PHP
       Print_HHVM
       Print_PureFtpd
-      Print_Redis-server
-      Print_Memcached-server
+      Print_Redis_server
+      Print_Memcached_server
       Print_openssl
       Print_phpMyAdmin
       Uninstall_status
@@ -540,8 +540,8 @@ What Are You Doing?
         Uninstall_PHP
         Uninstall_HHVM
         Uninstall_PureFtpd
-        Uninstall_Redis-server
-        Uninstall_Memcached-server
+        Uninstall_Redis_server
+        Uninstall_Memcached_server
         Uninstall_openssl
         Uninstall_phpMyAdmin
       else
@@ -597,14 +597,14 @@ What Are You Doing?
       [ "${uninstall_yn}" == 'y' ] && Uninstall_PureFtpd || exit
       ;;
     10)
-      Print_Redis-server
+      Print_Redis_server
       Uninstall_status
-      [ "${uninstall_yn}" == 'y' ] && Uninstall_Redis-server || exit
+      [ "${uninstall_yn}" == 'y' ] && Uninstall_Redis_server || exit
       ;;
     11)
-      Print_Memcached-server
+      Print_Memcached_server
       Uninstall_status
-      [ "${uninstall_yn}" == 'y' ] && Uninstall_Memcached-server || exit
+      [ "${uninstall_yn}" == 'y' ] && Uninstall_Memcached_server || exit
       ;;
     12)
       Print_phpMyAdmin
@@ -629,8 +629,8 @@ else
   [ "${php_yn}" == 'y' ] && Print_PHP
   [ "${hhvm_yn}" == 'y' ] && Print_HHVM
   [ "${pureftpd_yn}" == 'y' ] && Print_PureFtpd
-  [ "${redis_yn}" == 'y' ] && Print_Redis-server
-  [ "${memcached_yn}" == 'y' ] && Print_Memcached-server
+  [ "${redis_yn}" == 'y' ] && Print_Redis_server
+  [ "${memcached_yn}" == 'y' ] && Print_Memcached_server
   [ "${phpmyadmin_yn}" == 'y' ] && Print_phpMyAdmin
   [ "${all_yn}" == 'y' ] && Print_openssl
   Uninstall_status
@@ -644,8 +644,8 @@ else
     [ "${php_yn}" == 'y' ] && Uninstall_PHP
     [ "${hhvm_yn}" == 'y' ] && Uninstall_HHVM
     [ "${pureftpd_yn}" == 'y' ] && Uninstall_PureFtpd
-    [ "${redis_yn}" == 'y' ] && Uninstall_Redis-server
-    [ "${memcached_yn}" == 'y' ] && Uninstall_Memcached-server
+    [ "${redis_yn}" == 'y' ] && Uninstall_Redis_server
+    [ "${memcached_yn}" == 'y' ] && Uninstall_Memcached_server
     [ "${phpmyadmin_yn}" == 'y' ] && Uninstall_phpMyAdmin
     [ "${all_yn}" == 'y' ] && Uninstall_openssl
   fi

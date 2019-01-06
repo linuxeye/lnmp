@@ -1,4 +1,4 @@
-[![PayPal donate button](https://img.shields.io/badge/paypal-donate-green.svg)](https://paypal.me/yeho)[![支付宝捐助按钮](https://img.shields.io/badge/%E6%94%AF%E4%BB%98%E5%AE%9D-%E5%90%91TA%E6%8D%90%E5%8A%A9-green.svg)](https://static.oneinstack.com/images/alipay.png)[![微信捐助按钮](https://img.shields.io/badge/%E5%BE%AE%E4%BF%A1-%E5%90%91TA%E6%8D%90%E5%8A%A9-green.svg)](https://static.oneinstack.com/images/weixin.png)
+[![PayPal donate button](https://img.shields.io/badge/paypal-donate-green.svg)](https://paypal.me/yeho) [![支付宝捐助按钮](https://img.shields.io/badge/%E6%94%AF%E4%BB%98%E5%AE%9D-%E5%90%91TA%E6%8D%90%E5%8A%A9-green.svg)](https://static.oneinstack.com/images/alipay.png) [![微信捐助按钮](https://img.shields.io/badge/%E5%BE%AE%E4%BF%A1-%E5%90%91TA%E6%8D%90%E5%8A%A9-green.svg)](https://static.oneinstack.com/images/weixin.png)
 
 This script is written using the shell, in order to quickly deploy `LEMP`/`LAMP`/`LNMP`/`LNMPA`(Linux, Nginx/Tengine/OpenResty, MySQL in a production environment/MariaDB/Percona, PHP), applicable to CentOS 6~7(including redhat), Debian 6~9, Ubuntu 12~18, Fedora 27~28 of 32 and 64 
 
@@ -23,59 +23,54 @@ Script properties:
 
 If your server system: CentOS/Redhat (Do not enter "//" and "// subsequent sentence)
 ```bash
-yum -y install wget screen python   // For CentOS / Redhat
+yum -y install wget screen   // For CentOS / Redhat
 wget http://mirrors.linuxeye.com/lnmp-full.tar.gz   // Contains the source code
 tar xzf lnmp-full.tar.gz
 cd lnmp    // If you need to modify the directory (installation, data storage, Nginx logs), modify options.conf file
 screen -S lnmp    // if network interruption, you can execute the command `screen -r lnmp` reconnect install window
-./install.sh   // Do not sh install.sh or bash install.sh such execution
+./install.sh
 ```
 If your server system: Debian/Ubuntu (Do not enter "//" and "// subsequent sentence)
 ```bash
-apt-get -y install wget screen python   // For Debian / Ubuntu
+apt-get -y install wget screen   // For Debian / Ubuntu
 wget http://mirrors.linuxeye.com/lnmp-full.tar.gz   // Contains the source code
 tar xzf lnmp-full.tar.gz
 cd lnmp    // If you need to modify the directory (installation, data storage, Nginx logs), modify options.conf file
 screen -S lnmp    // if network interruption, you can execute the command `screen -r lnmp` reconnect install window
-./install.sh   // Do not sh install.sh or bash install.sh such execution
+./install.sh
 ```
 
 ## How to add Extensions
 
 ```bash
-cd ~/lnmp    // Must enter the directory execution under lnmp
-./addons.sh    // Do not sh addons.sh or bash addons.sh such execution
+~/lnmp/addons.sh
 ```
 
 ## How to add a virtual host
 
 ```bash
-cd ~/lnmp    // Must enter the directory execution under lnmp
-./vhost.sh    // Do not sh vhost.sh or bash vhost.sh such execution
+~/lnmp/vhost.sh
 ```
 
 ## How to delete a virtual host
 
 ```bash
-cd ~/lnmp
-./vhost.sh del
+~/lnmp/vhost.sh --del
 ```
 
 ## How to add FTP virtual user 
 
 ```bash
-cd ~/lnmp
-./pureftpd_vhost.sh
+~/lnmp/pureftpd_vhost.sh
 ```
 
 ## How to backup
 
 ```bash
-cd ~/lnmp
-./backup_setup.sh    // Backup parameters 
-./backup.sh    // Perform the backup immediately 
+~/lnmp/backup_setup.sh    // Backup parameters 
+~/lnmp/backup.sh    // Perform the backup immediately 
 crontab -l    // Can be added to scheduled tasks, such as automatic backups every day 1:00 
-  0 1 * * * cd ~/lnmp;./backup.sh  > /dev/null 2>&1 &
+  0 1 * * * ~/lnmp/backup.sh  > /dev/null 2>&1 &
 ```
 
 ## How to manage service
@@ -127,13 +122,13 @@ service memcached {start|stop|status|restart|reload}
 ## How to upgrade 
 
 ```bash
-./upgrade.sh
+~/lnmp/upgrade.sh
 ```
 
 ## How to uninstall 
 
 ```bash
-./uninstall.sh
+~/lnmp/uninstall.sh
 ```
 
 ## Installation

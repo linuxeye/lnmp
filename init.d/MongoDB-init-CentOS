@@ -82,7 +82,7 @@ stop()
   [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/mongod
 }
 
-restart () {
+restart() {
         stop
         start
 }

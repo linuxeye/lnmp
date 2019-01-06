@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/oneinstack/oneinstack
 
-Install_pecl-swoole() {
+Install_pecl_swoole() {
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     pushd ${oneinstack_dir}/src > /dev/null
     phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
@@ -38,7 +38,7 @@ Install_pecl-swoole() {
   fi
 }
 
-Uninstall_pecl-swoole() {
+Uninstall_pecl_swoole() {
   if [ -e "${php_install_dir}/etc/php.d/06-swoole.ini" ]; then
     rm -f ${php_install_dir}/etc/php.d/06-swoole.ini
     echo; echo "${CMSG}PHP swoole module uninstall completed${CEND}"

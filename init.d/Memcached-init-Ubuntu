@@ -45,7 +45,7 @@ stop_instance() {
     rm -f /var/run/memcached/memcached.$1.pid
   fi
 }
-start () {
+start() {
   # insure that /var/run/memcached has proper permissions
   mkdir -p /var/run/memcached
   if [ "$(stat -c %U /var/run/memcached)" != "$USER" ]; then
@@ -62,7 +62,7 @@ start () {
   #start_instance update 8;
   #start_instance views 8;
 }
-stop () {
+stop() {
   stop_instance default;
   #stop_instance block;
   #stop_instance content;
@@ -74,7 +74,7 @@ stop () {
   #stop_instance views;
 }
 
-restart () {
+restart() {
   stop
   start
 }

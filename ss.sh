@@ -32,6 +32,63 @@ pushd ${oneinstack_dir}/src > /dev/null
 
 PUBLIC_IPADDR=$(../include/get_public_ipaddr.py)
 
+Show_Help() {
+  echo
+  echo "Usage: $0  command ...[parameters]....
+  --help, -h                  Show this help message
+  --quiet, -q                 quiet operation
+  --install, -i               Install
+  --uninstall, -u             Uninstall
+  --libev                     shadowsocks-libev
+  --python                    shadowsocks-python
+  --adduser                   Add shadowsocks account
+  --password [password]       shadowsocks password
+  --port [port]               shadowsocks port
+  "
+}
+ARG_NUM=$#
+TEMP=`getopt -o hqiu --long help,quiet,install,uninstall,libev,python,adduser,password:,port: -- "$@" 2>/dev/null`
+[ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && Show_Help && exit 1
+eval set -- "${TEMP}"
+while :; do
+  [ -z "$1" ] && break;
+  case "$1" in
+    -h|--help)
+      Show_Help; exit 0
+      ;;
+    -q|--quiet)
+      quiet_yn=y; shift 1
+      ;;
+    -i|--install)
+      install_yn=y; shift 1
+      ;;
+    -u|--uninstall)
+      uninstall_yn=y; shift 1
+      ;;
+    --libev)
+      libev_queit=y; ss_option=1; shift 1
+      ;;
+    --python)
+      python_queit=y; ss_option=2; shift 1
+      ;;
+    --adduser)
+      adduser_yn=y; shift 1
+      ;;
+    --password)
+      password_queit=y; SS_password=$2; shift 2
+      ;;
+    --port)
+      port_queit=y; SS_port=$2; shift 2
+      ;;
+    --)
+      shift
+      ;;
+    *)
+      echo "${CWARNING}ERROR: unknown argument! ${CEND}" && Show_Help && exit 1
+      ;;
+  esac
+done
+
 [ "${CentOS_ver}" == '5' ] && { echo "${CWARNING}SS only support CentOS6,7 or Debian or Ubuntu! ${CEND}"; exit 1; }
 
 Check_SS() {
@@ -41,13 +98,13 @@ Check_SS() {
 
 AddUser_SS() {
   while :; do echo
-    read -e -p "Please input password for SS: " SS_password
+    [ ${password_queit} != 'y' ] && read -e -p "Please input password for SS: " SS_password
     [ -n "$(echo ${SS_password} | grep '[+|&]')" ] && { echo "${CWARNING}input error,not contain a plus sign (+) and & ${CEND}"; continue; }
     (( ${#SS_password} >= 5 )) && break || echo "${CWARNING}SS password least 5 characters! ${CEND}"
   done
 }
 
-Iptables_set() {
+Iptables() {
   if [ -e '/etc/sysconfig/iptables' ]; then
     SS_Already_port=$(grep -oE '9[0-9][0-9][0-9]' /etc/sysconfig/iptables | head -n 1)
   elif [ -e '/etc/iptables/rules.v4' ]; then
@@ -63,7 +120,7 @@ Iptables_set() {
   fi
 
   while :; do echo
-    read -e -p "Please input SS port(Default: ${SS_Default_port}): " SS_port
+    [ ${port_queit} != 'y' ] && read -e -p "Please input SS port(Default: ${SS_Default_port}): " SS_port
     SS_port=${SS_port:-${SS_Default_port}}
     if [ ${SS_port} -ge 1 >/dev/null 2>&1 -a ${SS_port} -le 65535 >/dev/null 2>&1 ]; then
       [ -z "$(netstat -tpln | grep :${SS_port}$)" ] && break || echo "${CWARNING}This port is already used! ${CEND}"
@@ -77,9 +134,8 @@ Iptables_set() {
       iptables -I INPUT 4 -p udp -m state --state NEW -m udp --dport ${SS_port} -j ACCEPT
       iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport ${SS_port} -j ACCEPT
       service iptables save
-      /bin/cp /etc/sysconfig/{iptables,ip6tables}
-      sed -i 's@icmp@icmpv6@g' /etc/sysconfig/ip6tables
-      ip6tables-restore < /etc/sysconfig/ip6tables
+      ip6tables -I INPUT 4 -p udp -m state --state NEW -m udp --dport ${SS_port} -j ACCEPT
+      ip6tables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport ${SS_port} -j ACCEPT
       service ip6tables save
     fi
   elif [ "${PM}" == 'apt-get' ]; then
@@ -88,9 +144,8 @@ Iptables_set() {
         iptables -I INPUT 4 -p udp -m state --state NEW -m udp --dport ${SS_port} -j ACCEPT
         iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport ${SS_port} -j ACCEPT
         iptables-save > /etc/iptables/rules.v4
-        /bin/cp /etc/iptables/rules.v{4,6}
-        sed -i 's@icmp@icmpv6@g' /etc/iptables/rules.v6
-        ip6tables-restore < /etc/iptables/rules.v6
+        ip6tables -I INPUT 4 -p udp -m state --state NEW -m udp --dport ${SS_port} -j ACCEPT
+        ip6tables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport ${SS_port} -j ACCEPT
         ip6tables-save > /etc/iptables/rules.v6
       fi
     elif [ -e '/etc/iptables.up.rules' ]; then
@@ -105,10 +160,12 @@ Iptables_set() {
 
 Def_parameter() {
   while :; do echo
-    echo "Please select SS server version:"
-    echo -e "\t${CMSG}1${CEND}. Install SS-libev"
-    echo -e "\t${CMSG}2${CEND}. Install SS-python"
-    read -e -p "Please input a number:(Default 1 press Enter) " ss_option
+    if [ "${libev_queit}" != 'y' -a "${python_queit}" != 'y' ]; then
+      echo "Please select SS server version:"
+      echo -e "\t${CMSG}1${CEND}. Install SS-libev"
+      echo -e "\t${CMSG}2${CEND}. Install SS-python"
+      read -e -p "Please input a number:(Default 1 press Enter) " ss_option
+    fi
     ss_option=${ss_option:-1}
     if [[ ! "${ss_option}" =~ ^[1-2]$ ]]; then
       echo "${CWARNING}input error! Please only input number 1~2${CEND}"
@@ -117,7 +174,7 @@ Def_parameter() {
     fi
   done
   AddUser_SS
-  Iptables_set
+  Iptables
   if [ "${PM}" == 'yum' ]; then
     pkgList="wget unzip openssl-devel gcc swig autoconf libtool libevent automake make curl curl-devel zlib-devel perl perl-devel cpio expat-devel gettext-devel git asciidoc xmlto c-ares-devel pcre-devel udns-devel libev-devel"
     for Package in ${pkgList}; do
@@ -132,18 +189,25 @@ Def_parameter() {
   fi
 }
 
-Install_SS-python() {
+Install_SS_python() {
   Install_Python
   ${python_install_dir}/bin/pip install M2Crypto
   ${python_install_dir}/bin/pip install greenlet
   ${python_install_dir}/bin/pip install gevent
   ${python_install_dir}/bin/pip install shadowsocks
   if [ -f ${python_install_dir}/bin/ssserver ]; then
-    /bin/cp ../init.d/SS-python-init /etc/init.d/shadowsocks
-    chmod +x /etc/init.d/shadowsocks
-    sed -i "s@SS_bin=.*@SS_bin=${python_install_dir}/bin/ssserver@" /etc/init.d/shadowsocks
-    [ "${PM}" == 'yum' ] && { chkconfig --add shadowsocks; chkconfig shadowsocks on; }
-    [ "${PM}" == 'apt-get' ] && update-rc.d shadowsocks defaults
+    sed -i 's@libcrypto.EVP_CIPHER_CTX_cleanup@libcrypto.EVP_CIPHER_CTX_reset@g' ${python_install_dir}/lib/python3.6/site-packages/shadowsocks/crypto/openssl.py
+    if [ -e /bin/systemctl ]; then
+      /bin/cp ../init.d/SS-python.service /lib/systemd/system/shadowsocks.service
+      sed -i "s@/usr/local/python@${python_install_dir}@g" /lib/systemd/system/shadowsocks.service
+      systemctl enable shadowsocks
+    else
+      /bin/cp ../init.d/SS-python-init /etc/init.d/shadowsocks
+      sed -i "s@SS_bin=.*@SS_bin=${python_install_dir}/bin/ssserver@" /etc/init.d/shadowsocks
+      chmod +x /etc/init.d/shadowsocks
+      [ "${PM}" == 'yum' ] && { chkconfig --add shadowsocks; chkconfig shadowsocks on; }
+      [ "${PM}" == 'apt-get' ] && update-rc.d shadowsocks defaults
+    fi
   else
     echo
     echo "${CQUESTION}SS-python install failed! Please visit https://oneinstack.com${CEND}"
@@ -151,7 +215,7 @@ Install_SS-python() {
   fi
 }
 
-Install_SS-libev() {
+Install_SS_libev() {
   src_url=http://mirrors.linuxeye.com/oneinstack/src/shadowsocks-libev-3.2.3.tar.gz && Download_src
   src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
   src_url=http://mirrors.linuxeye.com/oneinstack/src/mbedtls-2.16.0-apache.tgz && Download_src
@@ -177,13 +241,18 @@ Install_SS-libev() {
   [ -z "`grep /usr/local/lib /etc/ld.so.conf.d/*.conf`" ] && echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
   ldconfig
   if [ -f /usr/local/bin/ss-server ]; then
-    if [ "${PM}" == 'yum' ]; then
-      /bin/cp ../init.d/SS-libev-init-CentOS /etc/init.d/shadowsocks
-      chkconfig --add shadowsocks
-      chkconfig shadowsocks on
-    elif [ "${PM}" == 'apt-get' ]; then
-      /bin/cp ../init.d/SS-libev-init-Ubuntu /etc/init.d/shadowsocks
-      update-rc.d shadowsocks defaults
+    if [ -e /bin/systemctl ]; then
+      /bin/cp ../init.d/SS-libev.service /lib/systemd/system/shadowsocks.service
+      systemctl enable shadowsocks
+    else
+      if [ "${PM}" == 'yum' ]; then
+        /bin/cp ../init.d/SS-libev-init-CentOS /etc/init.d/shadowsocks
+        chkconfig --add shadowsocks
+        chkconfig shadowsocks on
+      elif [ "${PM}" == 'apt-get' ]; then
+        /bin/cp ../init.d/SS-libev-init-Ubuntu /etc/init.d/shadowsocks
+        update-rc.d shadowsocks defaults
+      fi
     fi
   else
     echo
@@ -194,16 +263,17 @@ Install_SS-libev() {
 
 Uninstall_SS() {
   while :; do echo
-    read -e -p "Do you want to uninstall SS? [y/n]: " SS_yn
-    if [[ ! "${SS_yn}" =~ ^[y,n]$ ]]; then
+    [ "${quiet_yn}" != 'y' ] && read -e -p "Do you want to uninstall SS? [y/n]: " uninstall_yn
+    if [[ ! "${uninstall_yn}" =~ ^[y,n]$ ]]; then
       echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
       break
     fi
   done
 
-  if [ "${SS_yn}" == 'y' ]; then
-    [ -n "$(ps -ef | grep -v grep | grep -iE "ssserver|ss-server")" ] && /etc/init.d/shadowsocks stop
+  if [ "${uninstall_yn}" == 'y' ]; then
+    [ -n "$(ps -ef | grep -v grep | grep -iE "ssserver|ss-server")" ] && service shadowsocks stop
+    [ -e /lib/systemd/system/shadowsocks.service ] && { systemctl disable shadowsocks; rm -f /lib/systemd/system/shadowsocks.service; }
     [ "${PM}" == 'yum' ] && chkconfig --del shadowsocks
     [ "${PM}" == 'apt-get' ] && update-rc.d -f shadowsocks remove
     rm -rf /etc/shadowsocks /var/run/shadowsocks.pid /etc/init.d/shadowsocks
@@ -273,38 +343,33 @@ Your Encryption Method: ${CMSG}aes-256-cfb${CEND}
 "
 }
 
-case "$1" in
-install)
+if [ "${install_yn}" == 'y' -o "${ARG_NUM}" == '0' ]; then
   Def_parameter
-  [ "${ss_option}" == '1' ] && Install_SS-libev
-  [ "${ss_option}" == '2' ] && Install_SS-python
+  [ "${ss_option}" == '1' ] && Install_SS_libev
+  [ "${ss_option}" == '2' ] && Install_SS_python
   Config_SS
   service shadowsocks start
   Print_User_SS
-  ;;
-adduser)
+fi
+
+if [ "${adduser_yn}" == 'y' ]; then
   Check_SS
   if [ "${ss_option}" == '2' ]; then
     AddUser_SS
-    Iptables_set
+    Iptables
     AddUser_Config_SS
     service shadowsocks restart
     Print_User_SS
-  else
+  elif [ "${ss_option}" == '2' ]; then
     printf "
     Sorry, we have no plan to support multi port configuration. Actually you can use multiple instances instead. For example:
     ss-server -c /etc/shadowsocks/config1.json -f /var/run/shadowsocks-server/pid1
     ss-server -c /etc/shadowsocks/config2.json -f /var/run/shadowsocks-server/pid2
     "
   fi
-  ;;
-uninstall)
+fi
+
+if [ "${uninstall_yn}" == 'y' ]; then
   Check_SS
   Uninstall_SS
-  ;;
-*)
-  echo
-  echo "Usage: ${CMSG}$0${CEND} { ${CMSG}install${CEND} | ${CMSG}adduser${CEND} | ${CMSG}uninstall${CEND} }"
-  echo
-  exit 1
-esac
+fi

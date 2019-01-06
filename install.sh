@@ -37,11 +37,11 @@ xcachepwd=`< /dev/urandom tr -dc A-Za-z0-9 | head -c8`
 dbinstallmethod=1
 
 version() {
-  echo "version: 1.7"
-  echo "updated date: 2018-04-20"
+  echo "version: 2.0"
+  echo "updated date: 2019-01-04"
 }
 
-showhelp() {
+Show_Help() {
   version
   echo "Usage: $0  command ...[parameters]....
   --help, -h                  Show this help message, More: https://oneinstack.com/auto
@@ -70,13 +70,13 @@ showhelp() {
 }
 ARG_NUM=$#
 TEMP=`getopt -o hvV --long help,version,nginx_option:,apache_option:,php_option:,phpcache_option:,php_extensions:,tomcat_option:,jdk_option:,db_option:,dbrootpwd:,dbinstallmethod:,pureftpd,redis,memcached,phpmyadmin,hhvm,ssh_port:,iptables,reboot -- "$@" 2>/dev/null`
-[ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && showhelp && exit 1
+[ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && Show_Help && exit 1
 eval set -- "${TEMP}"
 while :; do
   [ -z "$1" ] && break;
   case "$1" in
     -h|--help)
-      showhelp; exit 0
+      Show_Help; exit 0
       ;;
     -v|-V|--version)
       version; exit 0
@@ -188,7 +188,7 @@ while :; do
       shift
       ;;
     *)
-      echo "${CWARNING}ERROR: unknown argument! ${CEND}" && showhelp && exit 1
+      echo "${CWARNING}ERROR: unknown argument! ${CEND}" && Show_Help && exit 1
       ;;
   esac
 done
@@ -910,93 +910,93 @@ fi
 if [ "${pecl_imagick}" == '1' ]; then
   . include/ImageMagick.sh
   Install_ImageMagick 2>&1 | tee -a ${oneinstack_dir}/install.log
-  Install_pecl-imagick 2>&1 | tee -a ${oneinstack_dir}/install.log
+  Install_pecl_imagick 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # gmagick
 if [ "${pecl_gmagick}" == '1' ]; then
   . include/GraphicsMagick.sh
   Install_GraphicsMagick 2>&1 | tee -a ${oneinstack_dir}/install.log
-  Install_pecl-gmagick 2>&1 | tee -a ${oneinstack_dir}/install.log
+  Install_pecl_gmagick 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # fileinfo
 if [ "${pecl_fileinfo}" == '1' ]; then
   . include/pecl_fileinfo.sh
-  Install_pecl-fileinfo 2>&1 | tee -a ${oneinstack_dir}/install.log
+  Install_pecl_fileinfo 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # imap
 if [ "${pecl_imap}" == '1' ]; then
   . include/pecl_imap.sh
-  Install_pecl-imap 2>&1 | tee -a ${oneinstack_dir}/install.log
+  Install_pecl_imap 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # phalcon
 if [ "${pecl_phalcon}" == '1' ]; then
   . include/pecl_phalcon.sh
-  Install_pecl-phalcon 2>&1 | tee -a ${oneinstack_dir}/install.log
+  Install_pecl_phalcon 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # pecl_memcached
 if [ "${pecl_memcached}" == '1' ]; then
   . include/memcached.sh
-  Install_pecl-memcached 2>&1 | tee -a ${oneinstack_dir}/install.log
+  Install_pecl_memcached 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # pecl_memcache
 if [ "${pecl_memcache}" == '1' ]; then
   . include/memcached.sh
-  Install_pecl-memcache 2>&1 | tee -a ${oneinstack_dir}/install.log
+  Install_pecl_memcache 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # pecl_redis
 if [ "${pecl_redis}" == '1' ]; then
   . include/redis.sh
-  Install_pecl-redis 2>&1 | tee -a ${oneinstack_dir}/install.log
+  Install_pecl_redis 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # pecl_mongodb
 if [ "${pecl_mongodb}" == '1' ]; then
   . include/pecl_mongodb.sh
-  Install_pecl-mongodb 2>&1 | tee -a ${oneinstack_dir}/install.log
+  Install_pecl_mongodb 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # swoole
 if [ "${pecl_swoole}" == '1' ]; then
   . include/pecl_swoole.sh
-  Install_pecl-swoole 2>&1 | tee -a ${oneinstack_dir}/install.log
+  Install_pecl_swoole 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # xdebug
 if [ "${pecl_xdebug}" == '1' ]; then
   . include/pecl_xdebug.sh
-  Install_pecl-xdebug 2>&1 | tee -a ${oneinstack_dir}/install.log
+  Install_pecl_xdebug 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # pecl_pgsql
 if [ -e "${pgsql_install_dir}/bin/psql" ]; then
   . include/pecl_pgsql.sh
-  Install_pecl-pgsql 2>&1 | tee -a ${oneinstack_dir}/install.log
+  Install_pecl_pgsql 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # JDK
 case "${jdk_option}" in
   1)
     . include/jdk-11.0.sh
-    Install-JDK110 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install_JDK110 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   2)
     . include/jdk-1.8.sh
-    Install-JDK18 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install_JDK18 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   3)
     . include/jdk-1.7.sh
-    Install-JDK17 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install_JDK17 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   4)
     . include/jdk-1.6.sh
-    Install-JDK16 2>&1 | tee -a ${oneinstack_dir}/install.log
+    Install_JDK16 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
 esac
 
@@ -1034,13 +1034,13 @@ fi
 # redis
 if [ "${redis_yn}" == 'y' ]; then
   . include/redis.sh
-  Install_redis-server 2>&1 | tee -a ${oneinstack_dir}/install.log
+  Install_redis_server 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # memcached
 if [ "${memcached_yn}" == 'y' ]; then
   . include/memcached.sh
-  Install_memcached-server 2>&1 | tee -a ${oneinstack_dir}/install.log
+  Install_memcached_server 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # index example

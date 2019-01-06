@@ -40,7 +40,7 @@ pushd ${oneinstack_dir} > /dev/null
 
 . include/panel.sh
 
-showhelp() {
+Show_Help() {
   echo
   echo "Usage: $0  command ...
   --help, -h                  Show this help message
@@ -50,19 +50,18 @@ showhelp() {
   --fail2ban                  Fail2ban
   --ngx_lua_waf               Ngx_lua_waf
   --python                    Python3.6
-  --panel                     OneinStack Panel
   "
 }
 
 ARG_NUM=$#
 TEMP=`getopt -o hiu --long help,install,uninstall,composer,fail2ban,ngx_lua_waf,python,panel -- "$@" 2>/dev/null`
-[ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && showhelp && exit 1
+[ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && Show_Help && exit 1
 eval set -- "${TEMP}"
 while :; do
   [ -z "$1" ] && break;
   case "$1" in
     -h|--help)
-      showhelp; exit 0
+      Show_Help; exit 0
       ;;
     -i|--install)
       install_yn=y; shift 1
@@ -89,7 +88,7 @@ while :; do
       shift
       ;;
     *)
-      echo "${CWARNING}ERROR: unknown argument! ${CEND}" && showhelp && exit 1
+      echo "${CWARNING}ERROR: unknown argument! ${CEND}" && Show_Help && exit 1
       ;;
   esac
 done
@@ -138,6 +137,7 @@ What Are You Doing?
         2)
           ACTION_FUN
           if [ "${install_yn}" = 'y' ]; then
+            Install_Python
             Install_fail2ban
           elif [ "${uninstall_yn}" = 'y' ]; then
             Uninstall_fail2ban
@@ -190,6 +190,7 @@ else
   fi
   if [ "${fail2ban_yn}" == 'y' ]; then
     if [ "${install_yn}" = 'y' ]; then
+      Install_Python
       Install_fail2ban
     elif [ "${uninstall_yn}" = 'y' ]; then
       Uninstall_fail2ban

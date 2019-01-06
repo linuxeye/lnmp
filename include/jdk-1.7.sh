@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/oneinstack/oneinstack
 
-Install-JDK17() {
+Install_JDK17() {
   pushd ${oneinstack_dir}/src > /dev/null
   JDK_FILE="jdk-`echo ${jdk17_ver} | awk -F. '{print $2}'`u`echo ${jdk17_ver} | awk -F_ '{print $NF}'`-linux-${SYS_BIT_j}.tar.gz"
   JAVA_dir=/usr/java

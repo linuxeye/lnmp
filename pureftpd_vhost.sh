@@ -35,7 +35,7 @@ FTP_bin=${pureftpd_install_dir}/bin/pure-pw
 [ -z "`grep ^PureDB ${FTP_conf}`" ] && { echo "${CFAILURE}pure-ftpd is not own password database${CEND}" ; exit 1; }
 
 ARG_NUM=$#
-showhelp() {
+Show_Help() {
   echo
   echo "Usage: $0  command ...[parameters]....
   --help, -h                          Show this help message
@@ -52,13 +52,13 @@ showhelp() {
 }
 
 TEMP=`getopt -o hu:p:d:D: --long help,useradd,add,usermod,passwd,userdel,delete,listalluser,list,showuser,username:,password:,directory: -- "$@" 2>/dev/null`
-[ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && showhelp && exit 1
+[ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && Show_Help && exit 1
 eval set -- "${TEMP}"
 while :; do
   [ -z "$1" ] && break;
   case "$1" in
     -h|--help)
-      showhelp; exit 0
+      Show_Help; exit 0
       ;;
     --add|--useradd)
       useradd_quiet=y; shift 1
@@ -91,7 +91,7 @@ while :; do
       shift
       ;;
     *)
-      echo "${CWARNING}ERROR: unknown argument! ${CEND}" && showhelp && exit 1
+      echo "${CWARNING}ERROR: unknown argument! ${CEND}" && Show_Help && exit 1
       ;;
   esac
 done

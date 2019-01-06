@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/oneinstack/oneinstack
 
-Install-JDK16() {
+Install_JDK16() {
   pushd ${oneinstack_dir}/src > /dev/null
   JDK_FILE="jdk-`echo ${jdk16_ver} | awk -F. '{print $2}'`u`echo ${jdk16_ver} | awk -F_ '{print $NF}'`-linux-${SYS_BIT_j}.bin"
   JAVA_dir=/usr/java

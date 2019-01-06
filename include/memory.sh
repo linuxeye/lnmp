@@ -37,21 +37,11 @@ elif [ $Mem -gt 8000 ]; then
   Memory_limit=448
 fi
 
-Make-swapfile() {
-  dd if=/dev/zero of=/swapfile count=$COUNT bs=1M
+# add swapfile
+if [ "${Swap}" == '0' ] && [ ${Mem} -le 2048 ]; then
+  dd if=/dev/zero of=/swapfile count=2048 bs=1M
   mkswap /swapfile
   swapon /swapfile
   chmod 600 /swapfile
   [ -z "`grep swapfile /etc/fstab`" ] && echo '/swapfile    swap    swap    defaults    0 0' >> /etc/fstab
-}
-
-# add swapfile
-if [ "$Swap" == '0' ]; then
-  if [ $Mem -le 1024 ]; then
-    COUNT=1024
-    Make-swapfile
-  elif [ $Mem -gt 1024 -a $Mem -le 2048 ]; then
-    COUNT=2048
-    Make-swapfile
-  fi
 fi

@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/oneinstack/oneinstack
 
-Install_pecl-pgsql() {
+Install_pecl_pgsql() {
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     pushd ${oneinstack_dir}/src > /dev/null
     phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
@@ -36,7 +36,7 @@ Install_pecl-pgsql() {
   fi
 }
 
-Uninstall_pecl-pgsql() {
+Uninstall_pecl_pgsql() {
   if [ -e "${php_install_dir}/etc/php.d/07-pgsql.ini" ]; then
     rm -f ${php_install_dir}/etc/php.d/07-pgsql.ini
     echo; echo "${CMSG}PHP pgsql module uninstall completed${CEND}"

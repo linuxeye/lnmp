@@ -30,7 +30,7 @@ Upgrade_OneinStack() {
       IFS=$IFS_old
       Key="`echo ${L%%=*}`"
       Value="`echo ${L#*=}`"
-      sed -i "s@^${Key}=.*@${Key}=${Value}@" ./options.conf
+      sed -i "s|^${Key}=.*|${Key}=${Value}|" ./options.conf
     done
     rm -rf /tmp/{oneinstack.tar.gz,options.conf}
     [ "${ois_flag}" == 'n' ] && rm -f ss.sh LICENSE README.md

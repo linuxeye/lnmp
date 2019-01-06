@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/oneinstack/oneinstack
 
-Install_pecl-imap() {
+Install_pecl_imap() {
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     pushd ${oneinstack_dir}/src > /dev/null
     if [ "${PM}" == 'yum' ]; then
@@ -37,7 +37,7 @@ Install_pecl-imap() {
   fi
 }
 
-Uninstall_pecl-imap() {
+Uninstall_pecl_imap() {
   if [ -e "${php_install_dir}/etc/php.d/04-imap.ini" ]; then
     rm -f ${php_install_dir}/etc/php.d/04-imap.ini
     echo; echo "${CMSG}PHP imap module uninstall completed${CEND}"

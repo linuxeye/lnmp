@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/oneinstack/oneinstack
 
-Install_memcached-server() {
+Install_memcached_server() {
   pushd ${oneinstack_dir}/src > /dev/null
   # memcached server
   id -u memcached >/dev/null 2>&1
@@ -42,7 +42,7 @@ Install_memcached-server() {
   popd > /dev/null
 }
 
-Install_pecl-memcache() {
+Install_pecl_memcache() {
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     pushd ${oneinstack_dir}/src > /dev/null
     phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
@@ -76,7 +76,7 @@ Install_pecl-memcache() {
   fi
 }
 
-Install_pecl-memcached() {
+Install_pecl_memcached() {
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     pushd ${oneinstack_dir}/src > /dev/null
     phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
@@ -116,7 +116,7 @@ EOF
   fi
 }
 
-Uninstall_pecl-memcache() {
+Uninstall_pecl_memcache() {
   if [ -e "${php_install_dir}/etc/php.d/05-memcache.ini" ]; then
     rm -f ${php_install_dir}/etc/php.d/05-memcache.ini
     echo; echo "${CMSG}PHP memcache module uninstall completed${CEND}"
@@ -125,7 +125,7 @@ Uninstall_pecl-memcache() {
   fi
 }
 
-Uninstall_pecl-memcached() {
+Uninstall_pecl_memcached() {
   if [ -e "${php_install_dir}/etc/php.d/05-memcached.ini" ]; then
     rm -f ${php_install_dir}/etc/php.d/05-memcached.ini
     echo; echo "${CMSG}PHP memcached module uninstall completed${CEND}"

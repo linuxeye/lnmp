@@ -23,7 +23,7 @@ SS_USAGE="Usage: $0 {\e[00;32mstart\e[00m|\e[00;31mstop\e[00m|\e[00;32mstatus\e[
 #SHUTDOWN_WAIT is wait time in seconds for SS proccess to stop
 SHUTDOWN_WAIT=20
 
-SS_pid(){
+SS_pid() {
   echo `ps -ef | grep $SS_bin | grep -v grep | tr -s " "|cut -d" " -f2`
 }
 
@@ -44,7 +44,7 @@ start() {
   return 0
 }
 
-status(){
+status() {
   pid=$(SS_pid)
   if [ -n "$pid" ]; then
     echo -e "\e[00;32mSS is running with pid: $pid\e[00m"
@@ -53,7 +53,7 @@ status(){
   fi
 }
 
-stop(){
+stop() {
   pid=$(SS_pid)
   if [ -n "$pid" ]; then
     echo -e "\e[00;31mStoping SS\e[00m"

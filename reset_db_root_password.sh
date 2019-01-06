@@ -24,7 +24,7 @@ pushd ${oneinstack_dir} > /dev/null
 . ./include/check_dir.sh
 [ ! -d "${db_install_dir}" ] && { echo "${CFAILURE}Database is not installed on your system! ${CEND}"; exit 1; }
 
-showhelp() {
+Show_Help() {
   echo "Usage: $0  command ...[parameters]....
   -h,  --help                  print this help.
   -q,  --quiet                 quiet operation.
@@ -35,13 +35,13 @@ showhelp() {
 
 New_dbrootpwd="`< /dev/urandom tr -dc A-Za-z0-9 | head -c8`"
 TEMP=`getopt -o hqfp: --long help,quiet,force,password: -- "$@" 2>/dev/null`
-[ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && showhelp && exit 1
+[ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && Show_Help && exit 1
 eval set -- "${TEMP}"
 while :; do
   [ -z "$1" ] && break;
   case "$1" in
     -h|--help)
-      showhelp; exit 0
+      Show_Help; exit 0
       ;;
     -q|--quiet)
       quiet_yn=y; shift 1
@@ -57,7 +57,7 @@ while :; do
       shift
       ;;
     *)
-      echo "${CWARNING}ERROR: unknown argument! ${CEND}" && showhelp && exit 1
+      echo "${CWARNING}ERROR: unknown argument! ${CEND}" && Show_Help && exit 1
       ;;
   esac
 done

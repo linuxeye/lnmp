@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/oneinstack/oneinstack
 
-Install_pecl-fileinfo() {
+Install_pecl_fileinfo() {
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     pushd ${oneinstack_dir}/src > /dev/null
     phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
@@ -31,7 +31,7 @@ Install_pecl-fileinfo() {
   fi
 }
 
-Uninstall_pecl-fileinfo() {
+Uninstall_pecl_fileinfo() {
   if [ -e "${php_install_dir}/etc/php.d/04-fileinfo.ini" ]; then
     rm -f ${php_install_dir}/etc/php.d/04-fileinfo.ini
     echo; echo "${CMSG}PHP fileinfo module uninstall completed${CEND}"

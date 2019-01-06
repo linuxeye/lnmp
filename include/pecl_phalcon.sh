@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/oneinstack/oneinstack
 
-Install_pecl-phalcon() {
+Install_pecl_phalcon() {
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     pushd ${oneinstack_dir}/src > /dev/null
     PHP_detail_ver=$(${php_install_dir}/bin/php -r 'echo PHP_VERSION;')
@@ -35,7 +35,7 @@ Install_pecl-phalcon() {
   fi
 }
 
-Uninstall_pecl-phalcon() {
+Uninstall_pecl_phalcon() {
   if [ -e "${php_install_dir}/etc/php.d/04-phalcon.ini" ]; then
     rm -f ${php_install_dir}/etc/php.d/04-phalcon.ini
     echo; echo "${CMSG}PHP phalcon module uninstall completed${CEND}"

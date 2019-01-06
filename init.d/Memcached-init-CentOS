@@ -25,7 +25,7 @@ fi
 RETVAL=0
 prog="memcached"
 
-start () {
+start() {
   echo -n $"Starting $prog: "
   # Make sure the default pidfile directory exists
   if [ ! -d $PIDDIR ]; then
@@ -36,7 +36,7 @@ start () {
   echo
   [ $RETVAL -eq 0 ] && touch /var/lock/subsys/memcached
 }
-stop () {
+stop() {
   echo -n $"Stopping $prog: "
   killproc memcached
   RETVAL=$?
@@ -47,7 +47,7 @@ stop () {
   fi
 }
 
-restart () {
+restart() {
   stop
   start
 }

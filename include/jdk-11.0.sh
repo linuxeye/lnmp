@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/oneinstack/oneinstack
 
-Install-JDK110() {
+Install_JDK110() {
   pushd ${oneinstack_dir}/src > /dev/null
   JDK_FILE="jdk-${jdk110_ver}_linux-${SYS_BIT_j}_bin.tar.gz"
   JAVA_dir=/usr/java

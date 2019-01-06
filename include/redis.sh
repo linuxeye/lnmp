@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/oneinstack/oneinstack
 
-Install_redis-server() {
+Install_redis_server() {
   pushd ${oneinstack_dir}/src > /dev/null
   tar xzf redis-${redis_ver}.tar.gz
   pushd redis-${redis_ver} > /dev/null
@@ -57,7 +57,7 @@ Install_redis-server() {
   popd > /dev/null
 }
 
-Install_pecl-redis() {
+Install_pecl_redis() {
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     pushd ${oneinstack_dir}/src > /dev/null
     phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
@@ -78,7 +78,7 @@ Install_pecl-redis() {
   fi
 }
 
-Uninstall_pecl-redis() {
+Uninstall_pecl_redis() {
   if [ -e "${php_install_dir}/etc/php.d/05-redis.ini" ]; then
     rm -f ${php_install_dir}/etc/php.d/05-redis.ini
     echo; echo "${CMSG}PHP redis module uninstall completed${CEND}"

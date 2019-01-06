@@ -41,7 +41,7 @@ pushd ${oneinstack_dir} > /dev/null
 PUBLIC_IPADDR=$(./include/get_public_ipaddr.py)
 IPADDR_COUNTRY=$(./include/get_ipaddr_state.py ${PUBLIC_IPADDR})
 
-showhelp() {
+Show_Help() {
   echo
   echo "Usage: $0  command ...[version]....
   --help, -h                  Show this help message
@@ -62,13 +62,13 @@ showhelp() {
 
 ARG_NUM=$#
 TEMP=`getopt -o h --long help,nginx:,tengine:,openresty:,apache:,tomcat:,db:,php:,redis:,memcached:,phpmyadmin:,oneinstack,acme.sh -- "$@" 2>/dev/null`
-[ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && showhelp && exit 1
+[ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && Show_Help && exit 1
 eval set -- "${TEMP}"
 while :; do
   [ -z "$1" ] && break;
   case "$1" in
     -h|--help)
-      showhelp; exit 0
+      Show_Help; exit 0
       ;;
     --nginx)
       nginx_quiet=y; NEW_nginx_ver=$2; shift 2
@@ -107,12 +107,12 @@ while :; do
       shift
       ;;
     *)
-      echo "${CWARNING}ERROR: unknown argument! ${CEND}" && showhelp && exit 1
+      echo "${CWARNING}ERROR: unknown argument! ${CEND}" && Show_Help && exit 1
       ;;
   esac
 done
 
-Menu(){
+Menu() {
   while :; do
     printf "
 What Are You Doing?

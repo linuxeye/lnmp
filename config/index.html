@@ -188,7 +188,7 @@
 			            <h1 class="card-title pricing-card-title">Create<small class="text-muted"> website</small></h1>
 			            <ul class="list-unstyled mt-3 mb-4">
 			              <li>Add virtual host: ./vhost.sh</li>
-			              <li>Del virtual host: ./vhost.sh del</li>
+			              <li>Del virtual host: ./vhost.sh --del</li>
 			              <li>Manage FTP account: ./pureftpd_vhost.sh</li>
 			            </ul>
 			            <a href="https://lempstack.com/install/" target="_blank" type="button" class="btn btn-lg btn-block btn-primary">BROWSE DOCS</a>
@@ -219,7 +219,7 @@
 	          <img class="img-fluid" src="https://static.oneinstack.com/images/vhost.png" alt="《Interactive install》">
 	          <h2 class="mt-5">How to delete a virtual host?</h2>
 	          <div class="alert alert-primary" role="alert">
-	          	<code>./vhost.sh del</code>
+	          	<code>./vhost.sh --del</code>
 	          </div>
 	          <img class="img-fluid" src="https://static.oneinstack.com/images/vhost_del.png" alt="《Interactive install》">
 			</section>
@@ -249,7 +249,7 @@
 	          <img class="img-fluid" src="https://static.oneinstack.com/images/backup_setup.png" alt="《Interactive install》">
 	          <div class="alert alert-primary" role="alert"><pre><code>./backup.sh # Start backup, You can add cron jobs
    # crontab -l # Examples
-     0 1 * * * cd ~/oneinstack;./backup.sh  &gt; /dev/null 2&gt;&amp;1 &amp;</code></pre></div>
+     0 1 * * * ~/oneinstack/backup.sh  &gt; /dev/null 2&gt;&amp;1 &amp;</code></pre></div>
 			</section>
 
 			<section class="section" id="manage_section">	

@@ -53,39 +53,39 @@ while :; do
       Show_Help; exit 0
       ;;
     -q|--quiet)
-      quiet_yn=y; shift 1
+      quiet_flag=y; shift 1
       ;;
     -l|--list)
-      list_yn=y; shift 1
+      list_flag=y; shift 1
       ;;
     --add)
-      add_yn=y; shift 1
+      add_flag=y; shift 1
       ;;
     --delete|--del)
-      delete_yn=y; shift 1
+      delete_flag=y; shift 1
       ;;
     --httponly)
-      sslquiet_yn=y
-      httponly_yn=y
+      sslquiet_flag=y
+      httponly_flag=y
       Domian_Mode=1
       shift 1
       ;;
     --selfsigned)
-      sslquiet_yn=y
-      selfsigned_yn=y
+      sslquiet_flag=y
+      selfsigned_flag=y
       Domian_Mode=2
       shift 1
       ;;
     --letsencrypt)
-      sslquiet_yn=y
-      letsencrypt_yn=y
+      sslquiet_flag=y
+      letsencrypt_flag=y
       Domian_Mode=3
       shift 1
       ;;
     --dnsapi)
-      sslquiet_yn=y
-      dnsapi_yn=y
-      letsencrypt_yn=y
+      sslquiet_flag=y
+      dnsapi_flag=y
+      letsencrypt_flag=y
       shift 1
       ;;
     --)
@@ -99,8 +99,8 @@ done
 
 Choose_ENV() {
   if [ -e "${apache_install_dir}/bin/apachectl" ];then
-    [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '4' ] && { Apache_flag=24; Apache_grant='Require all granted'; }
-    [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '2' ] && Apache_flag=22
+    [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '4' ] && { Apache_main_ver=24; Apache_grant='Require all granted'; }
+    [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '2' ] && Apache_main_ver=22
   fi
   if [ -e "${php_install_dir}/bin/phpize" -a -e "${tomcat_install_dir}/conf/server.xml" -a -e "/usr/bin/hhvm" ]; then
     Number=111
@@ -232,8 +232,8 @@ If you enter '.', the field will be left blank.
 
     openssl req -new -newkey rsa:2048 -sha256 -nodes -out ${PATH_SSL}/${domain}.csr -keyout ${PATH_SSL}/${domain}.key -subj "/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${domain}" > /dev/null 2>&1
     openssl x509 -req -days 36500 -sha256 -in ${PATH_SSL}/${domain}.csr -signkey ${PATH_SSL}/${domain}.key -out ${PATH_SSL}/${domain}.crt > /dev/null 2>&1
-  elif [ "${Domian_Mode}" == '3' -o "${dnsapi_yn}" == 'y' ]; then
-    if [ "${moredomain}" == "*.${domain}" -o "${dnsapi_yn}" == 'y' ]; then
+  elif [ "${Domian_Mode}" == '3' -o "${dnsapi_flag}" == 'y' ]; then
+    if [ "${moredomain}" == "*.${domain}" -o "${dnsapi_flag}" == 'y' ]; then
       while :; do echo
         echo 'Please select DNS provider:'
         echo "${CMSG}dp${CEND},${CMSG}cx${CEND},${CMSG}ali${CEND},${CMSG}cf${CEND},${CMSG}aws${CEND},${CMSG}linode${CEND},${CMSG}he${CEND},${CMSG}namesilo${CEND},${CMSG}dgon${CEND},${CMSG}freedns${CEND},${CMSG}gd${CEND},${CMSG}namecom${CEND} and so on."
@@ -322,14 +322,14 @@ Print_SSL() {
     echo "$(printf "%-30s" "Self-signed SSL Certificate:")${CMSG}${PATH_SSL}/${domain}.crt${CEND}"
     echo "$(printf "%-30s" "SSL Private Key:")${CMSG}${PATH_SSL}/${domain}.key${CEND}"
     echo "$(printf "%-30s" "SSL CSR File:")${CMSG}${PATH_SSL}/${domain}.csr${CEND}"
-  elif [ "${Domian_Mode}" == '3' -o "${dnsapi_yn}" == 'y' ]; then
+  elif [ "${Domian_Mode}" == '3' -o "${dnsapi_flag}" == 'y' ]; then
     echo "$(printf "%-30s" "Let's Encrypt SSL Certificate:")${CMSG}${PATH_SSL}/${domain}.crt${CEND}"
     echo "$(printf "%-30s" "SSL Private Key:")${CMSG}${PATH_SSL}/${domain}.key${CEND}"
   fi
 }
 
 Input_Add_domain() {
-  if [ "${sslquiet_yn}" != 'y' ]; then
+  if [ "${sslquiet_flag}" != 'y' ]; then
     while :;do
       printf "
 What Are You Doing?
@@ -346,7 +346,7 @@ What Are You Doing?
       fi
     done
   fi
-  if [ "${Domian_Mode}" == '3' -o "${dnsapi_yn}" == 'y' ] && [ ! -e ~/.acme.sh/acme.sh ]; then
+  if [ "${Domian_Mode}" == '3' -o "${dnsapi_flag}" == 'y' ] && [ ! -e ~/.acme.sh/acme.sh ]; then
     pushd ${oneinstack_dir}/src > /dev/null
     [ ! -e acme.sh-master.tar.gz ] && wget -qc http://mirrors.linuxeye.com/oneinstack/src/acme.sh-master.tar.gz
     tar xzf acme.sh-master.tar.gz
@@ -356,7 +356,7 @@ What Are You Doing?
     popd > /dev/null
   fi
   [ -e ~/.acme.sh/account.conf ] && sed -i '/^CERT_HOME=/d' ~/.acme.sh/account.conf
-  if [[ "${Domian_Mode}" =~ ^[2-3]$ ]] || [ "${dnsapi_yn}" == 'y' ]; then
+  if [[ "${Domian_Mode}" =~ ^[2-3]$ ]] || [ "${dnsapi_flag}" == 'y' ]; then
     if [ -e "${web_install_dir}/sbin/nginx" ]; then
       nginx_ssl_flag=y
       PATH_SSL=${web_install_dir}/conf/ssl
@@ -755,7 +755,7 @@ Apache_log() {
 }
 
 Create_apache_conf() {
-  if [ "${Apache_flag}" == '24' ]; then
+  if [ "${Apache_main_ver}" == '24' ]; then
     if [ -e "/dev/shm/php-cgi.sock" ] && [ -n "`grep -E ^LoadModule.*mod_proxy_fcgi.so ${apache_install_dir}/conf/httpd.conf`" ]; then
       Apache_fcgi=$(echo -e "<Files ~ (\\.user.ini|\\.htaccess|\\.git|\\.svn|\\.project|LICENSE|README.md)\$>\n    Order allow,deny\n    Deny from all\n  </Files>\n  <FilesMatch \\.php\$>\n    SetHandler \"proxy:unix:/dev/shm/php-cgi.sock|fcgi://localhost\"\n  </FilesMatch>")
     fi
@@ -876,7 +876,7 @@ EOF
   fi
 
   # Apache
-  if [ "${Apache_flag}" == '24' ]; then
+  if [ "${Apache_main_ver}" == '24' ]; then
     if [ -e "/dev/shm/php-cgi.sock" ] && [ -n "`grep -E ^LoadModule.*mod_proxy_fcgi.so ${apache_install_dir}/conf/httpd.conf`" ]; then
       Apache_fcgi=$(echo -e "<Files ~ (\\.user.ini|\\.htaccess|\\.git|\\.svn|\\.project|LICENSE|README.md)\$>\n    Order allow,deny\n    Deny from all\n  </Files>\n  <FilesMatch \\.php\$>\n    SetHandler \"proxy:unix:/dev/shm/php-cgi.sock|fcgi://localhost\"\n  </FilesMatch>")
     fi
@@ -996,7 +996,7 @@ Del_NGX_Vhost() {
                 fi
               done
               if [ "${Del_Vhost_wwwroot_flag}" == 'y' ]; then
-		if [ "${quiet_yn}" != 'y' ]; then
+		if [ "${quiet_flag}" != 'y' ]; then
                   echo "Press Ctrl+c to cancel or Press any key to continue..."
                   char=$(get_char)
 		fi
@@ -1048,7 +1048,7 @@ Del_Apache_Vhost() {
               done
 
               if [ "${Del_Vhost_wwwroot_flag}" == 'y' ]; then
-		if [ "${quiet_yn}" != 'y' ]; then
+		if [ "${quiet_flag}" != 'y' ]; then
                   echo "Press Ctrl+c to cancel or Press any key to continue..."
                   char=$(get_char)
 		fi
@@ -1102,7 +1102,7 @@ Del_Tomcat_Vhost() {
               done
 
               if [ "${Del_Vhost_wwwroot_flag}" == 'y' ]; then
-		if [ "${quiet_yn}" != 'y' ]; then
+		if [ "${quiet_flag}" != 'y' ]; then
                   echo "Press Ctrl+c to cancel or Press any key to continue..."
                   char=$(get_char)
 		fi
@@ -1139,7 +1139,7 @@ List_Vhost() {
 if [ ${ARG_NUM} == 0 ]; then
   Add_Vhost
 else
-  [ "${add_yn}" == 'y' -o "${sslquiet_yn}" == 'y' ] && Add_Vhost
-  [ "${list_yn}" == 'y' ] && List_Vhost
-  [ "${delete_yn}" == 'y' ] && { Del_NGX_Vhost; Del_Apache_Vhost; Del_Tomcat_Vhost; }
+  [ "${add_flag}" == 'y' -o "${sslquiet_flag}" == 'y' ] && Add_Vhost
+  [ "${list_flag}" == 'y' ] && List_Vhost
+  [ "${delete_flag}" == 'y' ] && { Del_NGX_Vhost; Del_Apache_Vhost; Del_Tomcat_Vhost; }
 fi

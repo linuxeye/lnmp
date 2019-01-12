@@ -18,7 +18,7 @@ Upgrade_Nginx() {
   echo
   echo "Current Nginx Version: ${CMSG}${OLD_nginx_ver}${CEND}"
   while :; do echo
-    [ "${nginx_quiet}" != 'y' ] && read -e -p "Please input upgrade Nginx Version(default: ${Latest_nginx_ver}): " NEW_nginx_ver
+    [ "${nginx_flag}" != 'y' ] && read -e -p "Please input upgrade Nginx Version(default: ${Latest_nginx_ver}): " NEW_nginx_ver
     NEW_nginx_ver=${NEW_nginx_ver:-${Latest_nginx_ver}}
     if [ "${NEW_nginx_ver}" != "${OLD_nginx_ver}" ]; then
       [ ! -e "nginx-${NEW_nginx_ver}.tar.gz" ] && wget --no-check-certificate -c http://nginx.org/download/nginx-${NEW_nginx_ver}.tar.gz > /dev/null 2>&1
@@ -40,7 +40,7 @@ Upgrade_Nginx() {
 
   if [ -e "nginx-${NEW_nginx_ver}.tar.gz" ]; then
     echo "[${CMSG}nginx-${NEW_nginx_ver}.tar.gz${CEND}] found"
-    if [ "${nginx_quiet}" != 'y' ]; then
+    if [ "${nginx_flag}" != 'y' ]; then
       echo "Press Ctrl+c to cancel or Press any key to continue..."
       char=`get_char`
     fi
@@ -83,7 +83,7 @@ Upgrade_Tengine() {
   echo
   echo "Current Tengine Version: ${CMSG}${OLD_tengine_ver}${CEND}"
   while :; do echo
-    [ "${tengine_quiet}" != 'y' ] && read -e -p "Please input upgrade Tengine Version(default: ${Latest_tengine_ver}): " NEW_tengine_ver
+    [ "${tengine_flag}" != 'y' ] && read -e -p "Please input upgrade Tengine Version(default: ${Latest_tengine_ver}): " NEW_tengine_ver
     NEW_tengine_ver=${NEW_tengine_ver:-${Latest_tengine_ver}}
     if [ "${NEW_tengine_ver}" != "${OLD_tengine_ver}" ]; then
       [ ! -e "tengine-${NEW_tengine_ver}.tar.gz" ] && wget --no-check-certificate -c http://tengine.taobao.org/download/tengine-${NEW_tengine_ver}.tar.gz > /dev/null 2>&1
@@ -105,7 +105,7 @@ Upgrade_Tengine() {
 
   if [ -e "tengine-${NEW_tengine_ver}.tar.gz" ]; then
     echo "[${CMSG}tengine-${NEW_tengine_ver}.tar.gz${CEND}] found"
-    if [ "${tengine_quiet}" != 'y' ]; then
+    if [ "${tengine_flag}" != 'y' ]; then
       echo "Press Ctrl+c to cancel or Press any key to continue..."
       char=`get_char`
     fi
@@ -153,7 +153,7 @@ Upgrade_OpenResty() {
   echo
   echo "Current OpenResty Version: ${CMSG}${OLD_openresy_ver}${CEND}"
   while :; do echo
-    [ "${openresty_quiet}" != 'y' ] && read -e -p "Please input upgrade OpenResty Version(default: ${Latest_openresy_ver}): " NEW_openresy_ver
+    [ "${openresty_flag}" != 'y' ] && read -e -p "Please input upgrade OpenResty Version(default: ${Latest_openresy_ver}): " NEW_openresy_ver
     NEW_openresy_ver=${NEW_openresy_ver:-${Latest_openresy_ver}}
     if [ "${NEW_openresy_ver}" != "${OLD_openresy_ver}" ]; then
       [ ! -e "openresty-${NEW_openresy_ver}.tar.gz" ] && wget --no-check-certificate -c https://openresty.org/download/openresty-${NEW_openresy_ver}.tar.gz > /dev/null 2>&1
@@ -175,7 +175,7 @@ Upgrade_OpenResty() {
 
   if [ -e "openresty-${NEW_openresy_ver}.tar.gz" ]; then
     echo "[${CMSG}openresty-${NEW_openresy_ver}.tar.gz${CEND}] found"
-    if [ "${openresty_quiet}" != 'y' ]; then
+    if [ "${openresty_flag}" != 'y' ]; then
       echo "Press Ctrl+c to cancel or Press any key to continue..."
       char=`get_char`
     fi
@@ -208,17 +208,17 @@ Upgrade_Apache() {
   pushd ${oneinstack_dir}/src > /dev/null
   [ ! -e "${apache_install_dir}/bin/httpd" ] && echo "${CWARNING}Apache is not installed on your system! ${CEND}" && exit 1
   OLD_apache_ver="`${apache_install_dir}/bin/httpd -v | grep version | awk -F'/| ' '{print $4}'`"
-  Apache_flag="`echo ${OLD_apache_ver} | awk -F. '{print $1 $2}'`"
-  Latest_apache_ver=`curl --connect-timeout 2 -m 3 -s http://httpd.apache.org/download.cgi | awk "/#apache${Apache_flag}/{print $2}" | head -1 | grep -oE "2\.[24]\.[0-9]+"`
+  Apache_main_ver="`echo ${OLD_apache_ver} | awk -F. '{print $1 $2}'`"
+  Latest_apache_ver=`curl --connect-timeout 2 -m 3 -s http://httpd.apache.org/download.cgi | awk "/#apache${Apache_main_ver}/{print $2}" | head -1 | grep -oE "2\.[24]\.[0-9]+"`
   Latest_apache_ver=${Latest_apache_ver:-${apache22_ver}}
   echo
   echo "Current Apache Version: ${CMSG}${OLD_apache_ver}${CEND}"
   while :; do echo
-    [ "${apache_quiet}" != 'y' ] && read -e -p "Please input upgrade Apache Version(Default: ${Latest_apache_ver}): " NEW_apache_ver
+    [ "${apache_flag}" != 'y' ] && read -e -p "Please input upgrade Apache Version(Default: ${Latest_apache_ver}): " NEW_apache_ver
     NEW_apache_ver=${NEW_apache_ver:-${Latest_apache_ver}}
-    if [ `echo ${NEW_apache_ver} | awk -F. '{print $1$2}'` == "${Apache_flag}" ]; then
+    if [ `echo ${NEW_apache_ver} | awk -F. '{print $1$2}'` == "${Apache_main_ver}" ]; then
       if [ "${NEW_apache_ver}" != "${OLD_apache_ver}" ]; then
-        if [ "${Apache_flag}" == '24' ]; then
+        if [ "${Apache_main_ver}" == '24' ]; then
           src_url=http://archive.apache.org/dist/apr/apr-${apr_ver}.tar.gz && Download_src
           src_url=http://archive.apache.org/dist/apr/apr-util-${apr_util_ver}.tar.gz && Download_src
           tar xzf apr-${apr_ver}.tar.gz
@@ -242,18 +242,18 @@ Upgrade_Apache() {
 
   if [ -e "httpd-${NEW_apache_ver}.tar.gz" ]; then
     echo "[${CMSG}httpd-${NEW_apache_ver}.tar.gz${CEND}] found"
-    if [ "${apache_quiet}" != 'y' ]; then
+    if [ "${apache_flag}" != 'y' ]; then
       echo "Press Ctrl+c to cancel or Press any key to continue..."
       char=`get_char`
     fi
     tar xzf httpd-${NEW_apache_ver}.tar.gz
     pushd httpd-${NEW_apache_ver}
     make clean
-    if [ "${Apache_flag}" == '24' ]; then
+    if [ "${Apache_main_ver}" == '24' ]; then
       /bin/cp -R ../apr-${apr_ver} ./srclib/apr
       /bin/cp -R ../apr-util-${apr_util_ver} ./srclib/apr-util
       LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} --enable-mpms-shared=all --with-pcre --with-included-apr --enable-headers --enable-mime-magic --enable-deflate --enable-proxy --enable-so --enable-dav --enable-rewrite --enable-remoteip --enable-expires --enable-static-support --enable-suexec --enable-mods-shared=most --enable-nonportable-atomics=yes --enable-ssl --with-ssl=${openssl_install_dir} --enable-http2 --with-nghttp2=/usr/local
-    elif [ "${Apache_flag}" == '22' ]; then
+    elif [ "${Apache_main_ver}" == '22' ]; then
       [ "${Ubuntu_ver}" == "12" ] && sed -i '@SSL_PROTOCOL_SSLV2@d' modules/ssl/ssl_engine_io.c
       LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} --with-mpm=prefork --enable-mpms-shared=all --with-included-apr --enable-headers --enable-mime-magic --enable-deflate --enable-proxy --enable-so --enable-dav --enable-rewrite --enable-expires --enable-static-support --enable-suexec --with-expat=builtin --enable-mods-shared=most --enable-ssl --with-ssl=${openssl_install_dir}
     fi
@@ -284,7 +284,7 @@ Upgrade_Tomcat() {
   echo
   echo "Current Tomcat Version: ${CMSG}${OLD_tomcat_ver}${CEND}"
   while :; do echo
-    [ "${tomcat_quiet}" != 'y' ] && read -e -p "Please input upgrade Tomcat Version(Default: ${Latest_tomcat_ver}): " NEW_tomcat_ver
+    [ "${tomcat_flag}" != 'y' ] && read -e -p "Please input upgrade Tomcat Version(Default: ${Latest_tomcat_ver}): " NEW_tomcat_ver
     NEW_tomcat_ver=${NEW_tomcat_ver:-${Latest_tomcat_ver}}
     if [ "`echo ${NEW_tomcat_ver} | awk -F. '{print $1}'`" == "${Tomcat_flag}" ]; then
       rm -f catalina-jmx-remote.jar
@@ -306,7 +306,7 @@ Upgrade_Tomcat() {
 
   if [ -e "apache-tomcat-${NEW_tomcat_ver}.tar.gz" ]; then
     echo "[${CMSG}apache-tomcat-${NEW_tomcat_ver}.tar.gz${CEND}] found"
-    if [ "${tomcat_quiet}" != 'y' ]; then
+    if [ "${tomcat_flag}" != 'y' ]; then
       echo "Press Ctrl+c to cancel or Press any key to continue..."
       char=`get_char`
     fi

@@ -61,31 +61,31 @@ while :; do
       Show_Help; exit 0
       ;;
     --add|--useradd)
-      useradd_quiet=y; shift 1
+      useradd_flag=y; shift 1
       ;;
     --usermod)
-      usermod_quiet=y; shift 1
+      usermod_flag=y; shift 1
       ;;
     --passwd)
-      passwd_quiet=y; shift 1
+      passwd_flag=y; shift 1
       ;;
     --delete|--userdel)
-      userdel_quiet=y; shift 1
+      userdel_flag=y; shift 1
       ;;
     --list|--listalluser)
-      listalluser_quiet=y; shift 1
+      listalluser_flag=y; shift 1
       ;;
     --showuser)
-      showuser_quiet=y; shift 1
+      showuser_flag=y; shift 1
       ;;
     -u|--username)
-      username_quiet=y; User=$2; shift 2
+      username_flag=y; User=$2; shift 2
       ;;
     -p|--password)
-      password_quiet=y; Password=$2; shift 2
+      password_flag=y; Password=$2; shift 2
       ;;
     -d|-D|--directory)
-      directory_quiet=y; Directory=$2; shift 2
+      directory_flag=y; Directory=$2; shift 2
       ;;
     --)
       shift
@@ -98,7 +98,7 @@ done
 
 USER() {
   while :; do
-    if [ "${username_quiet}" != 'y' ]; then
+    if [ "${username_flag}" != 'y' ]; then
       echo
       read -e -p "Please input a username: " User
     fi
@@ -112,7 +112,7 @@ USER() {
 
 PASSWORD() {
   while :; do
-    if [ "${password_quiet}" != 'y' ]; then
+    if [ "${password_flag}" != 'y' ]; then
       echo
       read -e -p "Please input the password: " Password
     fi
@@ -128,7 +128,7 @@ PASSWORD() {
 
 DIRECTORY() {
   while :; do
-    if [ "${directory_quiet}" != 'y' ]; then
+    if [ "${directory_flag}" != 'y' ]; then
       echo
       read -e -p "Please input the directory(Default directory: ${wwwroot_dir}): " Directory
     fi
@@ -262,10 +262,10 @@ What Are You Doing?
 if [ ${ARG_NUM} == 0 ]; then
   Menu
 else
-  [ "${useradd_quiet}" == 'y' ] && UserAdd
-  [ "${usermod_quiet}" == 'y' ] && UserMod
-  [ "${passwd_quiet}" == 'y' ] && UserPasswd
-  [ "${userdel_quiet}" == 'y' ] && UserDel
-  [ "${listalluser_quiet}" == 'y' ] && ListAllUser
-  [ "${showuser_quiet}" == 'y' ] && ShowUser
+  [ "${useradd_flag}" == 'y' ] && UserAdd
+  [ "${usermod_flag}" == 'y' ] && UserMod
+  [ "${passwd_flag}" == 'y' ] && UserPasswd
+  [ "${userdel_flag}" == 'y' ] && UserDel
+  [ "${listalluser_flag}" == 'y' ] && ListAllUser
+  [ "${showuser_flag}" == 'y' ] && ShowUser
 fi

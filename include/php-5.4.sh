@@ -11,8 +11,8 @@
 Install_PHP54() {
   pushd ${oneinstack_dir}/src > /dev/null
   if [ -e "${apache_install_dir}/bin/apachectl" ];then
-    [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '4' ] && Apache_flag=24
-    [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '2' ] && Apache_flag=22
+    [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '4' ] && Apache_main_ver=24
+    [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '2' ] && Apache_main_ver=22
   fi
   if [ ! -e "/usr/local/lib/libiconv.la" ]; then
     tar xzf libiconv-${libiconv_ver}.tar.gz
@@ -87,7 +87,7 @@ Install_PHP54() {
   pushd php-${php54_ver} > /dev/null
   make clean
   [ ! -d "${php_install_dir}" ] && mkdir -p ${php_install_dir}
-  if [ "${apache_option}" == '2' ] || [ "${Apache_flag}" == '22' ]; then
+  if [ "${apache_option}" == '2' ] || [ "${Apache_main_ver}" == '22' ]; then
     ./configure --prefix=${php_install_dir} --with-config-file-path=${php_install_dir}/etc \
     --with-config-file-scan-dir=${php_install_dir}/etc/php.d \
     --with-apxs2=${apache_install_dir}/bin/apxs --disable-fileinfo \
@@ -144,7 +144,7 @@ Install_PHP54() {
   sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,stream_socket_server,fsocket,popen@' ${php_install_dir}/etc/php.ini
   [ -e /usr/sbin/sendmail ] && sed -i 's@^;sendmail_path.*@sendmail_path = /usr/sbin/sendmail -t -i@' ${php_install_dir}/etc/php.ini
 
-  if [ ! -e "${apache_install_dir}/bin/apxs" -o "${Apache_flag}" == '24' ]; then
+  if [ ! -e "${apache_install_dir}/bin/apxs" -o "${Apache_main_ver}" == '24' ]; then
     # php-fpm Init Script
     if [ -e /bin/systemctl ]; then
       /bin/cp ${oneinstack_dir}/init.d/php-fpm.service /lib/systemd/system/
@@ -240,10 +240,9 @@ EOF
       sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 80@" ${php_install_dir}/etc/php-fpm.conf
     fi
 
-    #[ "$web_yn" == 'n' ] && sed -i "s@^listen =.*@listen = $IPADDR:9000@" ${php_install_dir}/etc/php-fpm.conf
     service php-fpm start
 
-  elif [ "${apache_option}" == '2' ] || [ "${Apache_flag}" == '22' ]; then
+  elif [ "${apache_option}" == '2' ] || [ "${Apache_main_ver}" == '22' ]; then
     service httpd restart
   fi
   popd > /dev/null

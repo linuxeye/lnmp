@@ -19,101 +19,102 @@ checkDownload() {
   fi
 
   # jemalloc
-  if [[ ${nginx_option} =~ ^[1-3]$ ]] || [ "${db_yn}" == 'y' ]; then
+  if [[ ${nginx_option} =~ ^[1-3]$ ]] || [[ "${db_option}" =~ ^[1-9]$|^1[0-3]$ ]]; then
     echo "Download jemalloc..."
     src_url=${mirrorLink}/jemalloc-${jemalloc_ver}.tar.bz2 && Download_src
   fi
 
-  # Web
-  if [ "${web_yn}" == 'y' ]; then
-    case "${nginx_option}" in
-      1)
-        echo "Download openSSL1.1..."
-        src_url=https://www.openssl.org/source/openssl-${openssl11_ver}.tar.gz && Download_src
-        echo "Download nginx..."
-        src_url=http://nginx.org/download/nginx-${nginx_ver}.tar.gz && Download_src
-        ;;
-      2)
-        echo "Download tengine..."
-        src_url=http://tengine.taobao.org/download/tengine-${tengine_ver}.tar.gz && Download_src
-        ;;
-      3)
-        echo "Download openresty..."
-        src_url=https://openresty.org/download/openresty-${openresty_ver}.tar.gz && Download_src
-        ;;
-    esac
+  # nginx/tengine/openresty
+  case "${nginx_option}" in
+    1)
+      echo "Download openSSL1.1..."
+      src_url=https://www.openssl.org/source/openssl-${openssl11_ver}.tar.gz && Download_src
+      echo "Download nginx..."
+      src_url=http://nginx.org/download/nginx-${nginx_ver}.tar.gz && Download_src
+      ;;
+    2)
+      echo "Download tengine..."
+      src_url=http://tengine.taobao.org/download/tengine-${tengine_ver}.tar.gz && Download_src
+      ;;
+    3)
+      echo "Download openresty..."
+      src_url=https://openresty.org/download/openresty-${openresty_ver}.tar.gz && Download_src
+      ;;
+  esac
 
-    if [[ "${nginx_option}" =~ ^[1-3]$ || ${apache_option} == '1' ]]; then
-      echo "Download pcre..."
-      src_url=https://ftp.pcre.org/pub/pcre/pcre-${pcre_ver}.tar.gz && Download_src
-    fi
+  # pcre
+  if [[ "${nginx_option}" =~ ^[1-3]$ || ${apache_option} == '1' ]]; then
+    echo "Download pcre..."
+    src_url=https://ftp.pcre.org/pub/pcre/pcre-${pcre_ver}.tar.gz && Download_src
+  fi
 
-    # apache
-    if [ "${apache_option}" == '1' ]; then
+  # apache
+  case "${apache_option}" in
+    1)
       echo "Download apache 2.4..."
       src_url=http://archive.apache.org/dist/httpd/httpd-${apache24_ver}.tar.gz && Download_src
       src_url=http://archive.apache.org/dist/apr/apr-${apr_ver}.tar.gz && Download_src
       src_url=http://archive.apache.org/dist/apr/apr-util-${apr_util_ver}.tar.gz && Download_src
       src_url=http://mirrors.linuxeye.com/apache/httpd/nghttp2-${nghttp2_ver}.tar.gz && Download_src
-    fi
-    if [ "${apache_option}" == '2' ]; then
+      ;;
+    2)
       echo "Download apache 2.2..."
       src_url=http://archive.apache.org/dist/httpd/httpd-${apache22_ver}.tar.gz && Download_src
-
       echo "Download mod_remoteip.c for apache 2.2..."
       src_url=${mirrorLink}/mod_remoteip.c && Download_src
-    fi
+      ;;
+  esac
 
-    # tomcat
-    case "${tomcat_option}" in
+  # tomcat
+  case "${tomcat_option}" in
+    1)
+      echo "Download tomcat 9..."
+      src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat9_ver}/apache-tomcat-${tomcat9_ver}.tar.gz && Download_src
+      src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat9_ver}/catalina-jmx-remote.jar && Download_src
+      ;;
+    2)
+      echo "Download tomcat 8..."
+      src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat8_ver}/apache-tomcat-${tomcat8_ver}.tar.gz && Download_src
+      src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat8_ver}/catalina-jmx-remote.jar && Download_src
+      ;;
+    3)
+      echo "Download tomcat 7..."
+      src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat7_ver}/apache-tomcat-${tomcat7_ver}.tar.gz && Download_src
+      src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat7_ver}/catalina-jmx-remote.jar && Download_src
+      ;;
+    4)
+      echo "Download tomcat 6..."
+      src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat6_ver}/apache-tomcat-${tomcat6_ver}.tar.gz && Download_src
+      src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat6_ver}/catalina-jmx-remote.jar && Download_src
+      ;;
+  esac
+
+  # jdk
+  if [[ "${jdk_option}"  =~ ^[1-4]$ ]]; then
+    case "${jdk_option}" in
       1)
-        echo "Download tomcat 9..."
-        src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat9_ver}/apache-tomcat-${tomcat9_ver}.tar.gz && Download_src
-        src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat9_ver}/catalina-jmx-remote.jar && Download_src
+        echo "Download JDK 11.0..."
+        JDK_FILE="jdk-${jdk110_ver}_linux-${SYS_BIT_j}_bin.tar.gz"
         ;;
       2)
-        echo "Download tomcat 8..."
-        src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat8_ver}/apache-tomcat-${tomcat8_ver}.tar.gz && Download_src
-        src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat8_ver}/catalina-jmx-remote.jar && Download_src
+        echo "Download JDK 1.8..."
+        JDK_FILE="jdk-$(echo ${jdk18_ver} | awk -F. '{print $2}')u$(echo ${jdk18_ver} | awk -F_ '{print $NF}')-linux-${SYS_BIT_j}.tar.gz"
         ;;
       3)
-        echo "Download tomcat 7..."
-        src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat7_ver}/apache-tomcat-${tomcat7_ver}.tar.gz && Download_src
-        src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat7_ver}/catalina-jmx-remote.jar && Download_src
+        echo "Download JDK 1.7..."
+        JDK_FILE="jdk-$(echo ${jdk17_ver} | awk -F. '{print $2}')u$(echo ${jdk17_ver} | awk -F_ '{print $NF}')-linux-${SYS_BIT_j}.tar.gz"
         ;;
       4)
-        echo "Download tomcat 6..."
-        src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat6_ver}/apache-tomcat-${tomcat6_ver}.tar.gz && Download_src
-        src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat6_ver}/catalina-jmx-remote.jar && Download_src
+        echo "Download JDK 1.6..."
+        JDK_FILE="jdk-$(echo ${jdk16_ver} | awk -F. '{print $2}')u$(echo ${jdk16_ver} | awk -F_ '{print $NF}')-linux-${SYS_BIT_j}.bin"
         ;;
     esac
-
-    if [[ "${jdk_option}"  =~ ^[1-4]$ ]]; then
-      case "${jdk_option}" in
-        1)
-          echo "Download JDK 11.0..."
-          JDK_FILE="jdk-${jdk110_ver}_linux-${SYS_BIT_j}_bin.tar.gz"
-          ;;
-        2)
-          echo "Download JDK 1.8..."
-          JDK_FILE="jdk-$(echo ${jdk18_ver} | awk -F. '{print $2}')u$(echo ${jdk18_ver} | awk -F_ '{print $NF}')-linux-${SYS_BIT_j}.tar.gz"
-          ;;
-        3)
-          echo "Download JDK 1.7..."
-          JDK_FILE="jdk-$(echo ${jdk17_ver} | awk -F. '{print $2}')u$(echo ${jdk17_ver} | awk -F_ '{print $NF}')-linux-${SYS_BIT_j}.tar.gz"
-          ;;
-        4)
-          echo "Download JDK 1.6..."
-          JDK_FILE="jdk-$(echo ${jdk16_ver} | awk -F. '{print $2}')u$(echo ${jdk16_ver} | awk -F_ '{print $NF}')-linux-${SYS_BIT_j}.bin"
-          ;;
-      esac
-      src_url=http://mirrors.linuxeye.com/jdk/${JDK_FILE} && Download_src
-      echo "Download apr..."
-      src_url=http://archive.apache.org/dist/apr/apr-${apr_ver}.tar.gz && Download_src
-    fi
+    src_url=http://mirrors.linuxeye.com/jdk/${JDK_FILE} && Download_src
+    echo "Download apr..."
+    src_url=http://archive.apache.org/dist/apr/apr-${apr_ver}.tar.gz && Download_src
   fi
 
-  if [ "${db_yn}" == 'y' ]; then
+  if [[ "${db_option}" =~ ^[1-9]$|^1[0-5]$ ]]; then
     if [[ "${db_option}" =~ ^[1,2,5,6,9]$ ]] && [ "${dbinstallmethod}" == "2" ]; then
       [[ "${db_option}" =~ ^[2,5,6,9]$ ]] && boost_ver=${boost_oldver}
       echo "Download boost..."
@@ -619,53 +620,52 @@ checkDownload() {
   fi
 
   # PHP
-  if [ "${php_yn}" == 'y' ]; then
-    # php 5.3 5.4 5.5 5.6 5.7
+  if [[ "${php_option}" =~ ^[1-8]$ ]]; then
     echo "PHP common..."
     src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-${libiconv_ver}.tar.gz && Download_src
-    src_url=https://curl.haxx.se/download/curl-${curl_ver}.tar.gz && Download_src
-    src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/${libmcrypt_ver}/libmcrypt-${libmcrypt_ver}.tar.gz && Download_src
-    src_url=http://downloads.sourceforge.net/project/mhash/mhash/${mhash_ver}/mhash-${mhash_ver}.tar.gz && Download_src
-    src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/${mcrypt_ver}/mcrypt-${mcrypt_ver}.tar.gz && Download_src
     src_url=${mirrorLink}/libiconv-glibc-2.16.patch && Download_src
-
-    case "${php_option}" in
-      1)
-        # php 5.3
-        src_url=${mirrorLink}/debian_patches_disable_SSLv2_for_openssl_1_0_0.patch && Download_src
-        src_url=${mirrorLink}/php5.3patch && Download_src
-        src_url=http://www.php.net/distributions/php-${php53_ver}.tar.gz && Download_src
-        src_url=${mirrorLink}/fpm-race-condition.patch && Download_src
-        ;;
-      2)
-        src_url=http://www.php.net/distributions/php-${php54_ver}.tar.gz && Download_src
-        src_url=${mirrorLink}/fpm-race-condition.patch && Download_src
-        ;;
-      3)
-        src_url=http://www.php.net/distributions/php-${php55_ver}.tar.gz && Download_src
-        src_url=${mirrorLink}/fpm-race-condition.patch && Download_src
-        ;;
-      4)
-        src_url=http://www.php.net/distributions/php-${php56_ver}.tar.gz && Download_src
-        ;;
-      5)
-        src_url=http://www.php.net/distributions/php-${php70_ver}.tar.gz && Download_src
-        ;;
-      6)
-        src_url=http://www.php.net/distributions/php-${php71_ver}.tar.gz && Download_src
-        ;;
-      7)
-        src_url=http://www.php.net/distributions/php-${php72_ver}.tar.gz && Download_src
-        src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
-        src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
-        ;;
-      8)
-        src_url=http://www.php.net/distributions/php-${php73_ver}.tar.gz && Download_src
-        src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
-        src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
-        ;;
-    esac
+    src_url=https://curl.haxx.se/download/curl-${curl_ver}.tar.gz && Download_src
+    src_url=http://downloads.sourceforge.net/project/mhash/mhash/${mhash_ver}/mhash-${mhash_ver}.tar.gz && Download_src
+    src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/${libmcrypt_ver}/libmcrypt-${libmcrypt_ver}.tar.gz && Download_src
+    src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/${mcrypt_ver}/mcrypt-${mcrypt_ver}.tar.gz && Download_src
   fi
+
+  case "${php_option}" in
+    1)
+      # php 5.3
+      src_url=${mirrorLink}/debian_patches_disable_SSLv2_for_openssl_1_0_0.patch && Download_src
+      src_url=${mirrorLink}/php5.3patch && Download_src
+      src_url=http://www.php.net/distributions/php-${php53_ver}.tar.gz && Download_src
+      src_url=${mirrorLink}/fpm-race-condition.patch && Download_src
+      ;;
+    2)
+      src_url=http://www.php.net/distributions/php-${php54_ver}.tar.gz && Download_src
+      src_url=${mirrorLink}/fpm-race-condition.patch && Download_src
+      ;;
+    3)
+      src_url=http://www.php.net/distributions/php-${php55_ver}.tar.gz && Download_src
+      src_url=${mirrorLink}/fpm-race-condition.patch && Download_src
+      ;;
+    4)
+      src_url=http://www.php.net/distributions/php-${php56_ver}.tar.gz && Download_src
+      ;;
+    5)
+      src_url=http://www.php.net/distributions/php-${php70_ver}.tar.gz && Download_src
+      ;;
+    6)
+      src_url=http://www.php.net/distributions/php-${php71_ver}.tar.gz && Download_src
+      ;;
+    7)
+      src_url=http://www.php.net/distributions/php-${php72_ver}.tar.gz && Download_src
+      src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
+      src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
+      ;;
+    8)
+      src_url=http://www.php.net/distributions/php-${php73_ver}.tar.gz && Download_src
+      src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
+      src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
+      ;;
+  esac
 
   # PHP OPCache
   case "${phpcache_option}" in
@@ -768,7 +768,7 @@ checkDownload() {
   fi
 
   # redis-server
-  if [ "${redis_yn}" == 'y' ]; then
+  if [ "${redis_flag}" == 'y' ]; then
     echo "Download redis-server..."
     src_url=http://download.redis.io/releases/redis-${redis_ver}.tar.gz && Download_src
     if [ "${PM}" == 'yum' ]; then
@@ -784,7 +784,7 @@ checkDownload() {
   fi
 
   # memcached-server
-  if [ "${memcached_yn}" == 'y' ]; then
+  if [ "${memcached_flag}" == 'y' ]; then
     echo "Download memcached-server..."
     [ "${IPADDR_COUNTRY}"x == "CN"x ] && DOWN_ADDR=${mirrorLink} || DOWN_ADDR=http://www.memcached.org/files
     src_url=${DOWN_ADDR}/memcached-${memcached_ver}.tar.gz && Download_src
@@ -824,13 +824,13 @@ checkDownload() {
   fi
 
   # pureftpd
-  if [ "${ftp_yn}" == 'y' ]; then
+  if [ "${pureftpd_flag}" == 'y' ]; then
     echo "Download pureftpd..."
     src_url=https://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-${pureftpd_ver}.tar.gz && Download_src
   fi
 
   # phpMyAdmin
-  if [ "${phpmyadmin_yn}" == 'y' ]; then
+  if [ "${phpmyadmin_flag}" == 'y' ]; then
     echo "Download phpMyAdmin..."
     if [[ "${php_option}" =~ ^[1-2]$ ]]; then
       src_url=https://files.phpmyadmin.net/phpMyAdmin/${phpmyadmin_oldver}/phpMyAdmin-${phpmyadmin_oldver}-all-languages.tar.gz && Download_src

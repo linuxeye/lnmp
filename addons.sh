@@ -64,25 +64,25 @@ while :; do
       Show_Help; exit 0
       ;;
     -i|--install)
-      install_yn=y; shift 1
+      install_flag=y; shift 1
       ;;
     -u|--uninstall)
-      uninstall_yn=y; shift 1
+      uninstall_flag=y; shift 1
       ;;
     --composer)
-      composer_yn=y; shift 1
+      composer_flag=y; shift 1
       ;;
     --fail2ban)
-      fail2ban_yn=y; shift 1
+      fail2ban_flag=y; shift 1
       ;;
     --ngx_lua_waf)
-      ngx_lua_waf_yn=y; shift 1
+      ngx_lua_waf_flag=y; shift 1
       ;;
     --python)
-      python_yn=y; shift 1
+      python_flag=y; shift 1
       ;;
     --panel)
-      panel_yn=y; shift 1
+      panel_flag=y; shift 1
       ;;
     --)
       shift
@@ -104,8 +104,8 @@ ACTION_FUN() {
     if [[ ! "${ACTION}" =~ ^[1,2]$ ]]; then
       echo "${CWARNING}input error! Please only input number 1~2${CEND}"
     else
-      [ "${ACTION}" == '1' ] && install_yn=y
-      [ "${ACTION}" == '2' ] && uninstall_yn=y
+      [ "${ACTION}" == '1' ] && install_flag=y
+      [ "${ACTION}" == '2' ] && uninstall_flag=y
       break
     fi
   done
@@ -128,45 +128,45 @@ What Are You Doing?
       case "${Number}" in
         1)
           ACTION_FUN
-          if [ "${install_yn}" = 'y' ]; then
+          if [ "${install_flag}" = 'y' ]; then
             Install_composer
-          elif [ "${uninstall_yn}" = 'y' ]; then
+          elif [ "${uninstall_flag}" = 'y' ]; then
             Uninstall_composer
           fi
           ;;
         2)
           ACTION_FUN
-          if [ "${install_yn}" = 'y' ]; then
+          if [ "${install_flag}" = 'y' ]; then
             Install_Python
             Install_fail2ban
-          elif [ "${uninstall_yn}" = 'y' ]; then
+          elif [ "${uninstall_flag}" = 'y' ]; then
             Uninstall_fail2ban
           fi
           ;;
         3)
           ACTION_FUN
-          if [ "${install_yn}" = 'y' ]; then
+          if [ "${install_flag}" = 'y' ]; then
             [ -e "${nginx_install_dir}/sbin/nginx" ] && Nginx_lua_waf
             [ -e "${tengine_install_dir}/sbin/nginx" ] && Tengine_lua_waf
             enable_lua_waf
-          elif [ "${uninstall_yn}" = 'y' ]; then
+          elif [ "${uninstall_flag}" = 'y' ]; then
             disable_lua_waf
           fi
           ;;
         4)
           ACTION_FUN
-          if [ "${install_yn}" = 'y' ]; then
+          if [ "${install_flag}" = 'y' ]; then
             Install_Python
-          elif [ "${uninstall_yn}" = 'y' ]; then
+          elif [ "${uninstall_flag}" = 'y' ]; then
             Uninstall_Python
           fi
           ;;
         5)
           ACTION_FUN
-          if [ "${install_yn}" = 'y' ]; then
+          if [ "${install_flag}" = 'y' ]; then
             Install_Python
             Install_Panel
-          elif [ "${uninstall_yn}" = 'y' ]; then
+          elif [ "${uninstall_flag}" = 'y' ]; then
             Uninstall_Panel
           fi
           ;;
@@ -181,42 +181,42 @@ What Are You Doing?
 if [ ${ARG_NUM} == 0 ]; then
   Menu
 else
-  if [ "${composer_yn}" == 'y' ]; then
-    if [ "${install_yn}" = 'y' ]; then
+  if [ "${composer_flag}" == 'y' ]; then
+    if [ "${install_flag}" = 'y' ]; then
       Install_composer
-    elif [ "${uninstall_yn}" = 'y' ]; then
+    elif [ "${uninstall_flag}" = 'y' ]; then
       Uninstall_composer
     fi
   fi
-  if [ "${fail2ban_yn}" == 'y' ]; then
-    if [ "${install_yn}" = 'y' ]; then
+  if [ "${fail2ban_flag}" == 'y' ]; then
+    if [ "${install_flag}" = 'y' ]; then
       Install_Python
       Install_fail2ban
-    elif [ "${uninstall_yn}" = 'y' ]; then
+    elif [ "${uninstall_flag}" = 'y' ]; then
       Uninstall_fail2ban
     fi
   fi
-  if [ "${ngx_lua_waf_yn}" == 'y' ]; then
-    if [ "${install_yn}" = 'y' ]; then
+  if [ "${ngx_lua_waf_flag}" == 'y' ]; then
+    if [ "${install_flag}" = 'y' ]; then
       [ -e "${nginx_install_dir}/sbin/nginx" ] && Nginx_lua_waf
       [ -e "${tengine_install_dir}/sbin/nginx" ] && Tengine_lua_waf
       enable_lua_waf
-    elif [ "${uninstall_yn}" = 'y' ]; then
+    elif [ "${uninstall_flag}" = 'y' ]; then
       disable_lua_waf
     fi
   fi
-  if [ "${python_yn}" == 'y' ]; then
-    if [ "${install_yn}" = 'y' ]; then
+  if [ "${python_flag}" == 'y' ]; then
+    if [ "${install_flag}" = 'y' ]; then
       Install_Python
-    elif [ "${uninstall_yn}" = 'y' ]; then
+    elif [ "${uninstall_flag}" = 'y' ]; then
       Uninstall_Python
     fi
   fi
-  if [ "${panel_yn}" == 'y' ]; then
-    if [ "${install_yn}" = 'y' ]; then
+  if [ "${panel_flag}" == 'y' ]; then
+    if [ "${install_flag}" = 'y' ]; then
       Install_Python
       Install_Panel
-    elif [ "${uninstall_yn}" = 'y' ]; then
+    elif [ "${uninstall_flag}" = 'y' ]; then
       Uninstall_Panel
     fi
   fi

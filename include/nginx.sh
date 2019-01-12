@@ -18,7 +18,7 @@ Install_Nginx() {
   tar xzf openssl-${openssl11_ver}.tar.gz
   [ "${Fedora_ver}" == '28' ] && patch -d nginx-${nginx_ver} -p1 < 0001-unix-ngx_user-Apply-fix-for-really-old-bug-in-glibc-.patch
   patch -d nginx-${nginx_ver} -p0 < nginx-auto-cc-gcc.patch
-  pushd nginx-${nginx_ver}
+  pushd nginx-${nginx_ver} > /dev/null
   # Modify Nginx version
   #sed -i 's@#define NGINX_VERSION.*$@#define NGINX_VERSION      "1.2"@' src/core/nginx.h
   #sed -i 's@#define NGINX_VER.*NGINX_VERSION$@#define NGINX_VER          "Linuxeye/" NGINX_VERSION@' src/core/nginx.h
@@ -31,10 +31,8 @@ Install_Nginx() {
   ./configure --prefix=${nginx_install_dir} --user=${run_user} --group=${run_user} --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-openssl=../openssl-${openssl11_ver} --with-pcre=../pcre-${pcre_ver} --with-pcre-jit --with-ld-opt='-ljemalloc' ${nginx_modules_options}
   make -j ${THREAD} && make install
   if [ -e "${nginx_install_dir}/conf/nginx.conf" ]; then
-    popd
-    rm -rf pcre-${pcre_ver}
-    rm -rf openssl-${openssl11_ver}
-    rm -rf nginx-${nginx_ver}
+    popd > /dev/null
+    rm -rf pcre-${pcre_ver} openssl-${openssl11_ver} nginx-${nginx_ver}
     echo "${CSUCCESS}Nginx installed successfully! ${CEND}"
   else
     rm -rf ${nginx_install_dir}
@@ -56,13 +54,13 @@ Install_Nginx() {
   fi
 
   mv ${nginx_install_dir}/conf/nginx.conf{,_bk}
-  if [[ ${apache_option} =~ ^[1-2]$ ]]; then
+  if [[ ${apache_option} =~ ^[1-2]$ ]] || [ -e "${apache_install_dir}/bin/apachectl" ]; then
     /bin/cp ../config/nginx_apache.conf ${nginx_install_dir}/conf/nginx.conf
-  elif [[ ${tomcat_option} =~ ^[1-2]$ ]] && [ ! -e "${php_install_dir}/bin/php" ]; then
+  elif { [[ ${tomcat_option} =~ ^[1-4]$ ]] || [ -e "${tomcat_install_dir}/conf/server.xml" ]; } && { [[ ! ${php_option} =~ ^[1-8]$ ]] && [ ! -e "${php_install_dir}/bin/php" ]; }; then
     /bin/cp ../config/nginx_tomcat.conf ${nginx_install_dir}/conf/nginx.conf
   else
     /bin/cp ../config/nginx.conf ${nginx_install_dir}/conf/nginx.conf
-    [ "${php_yn}" == 'y' ] && [ -z "`grep '/php-fpm_status' ${nginx_install_dir}/conf/nginx.conf`" ] &&  sed -i "s@index index.html index.php;@index index.html index.php;\n    location ~ /php-fpm_status {\n        #fastcgi_pass remote_php_ip:9000;\n        fastcgi_pass unix:/dev/shm/php-cgi.sock;\n        fastcgi_index index.php;\n        include fastcgi.conf;\n        allow 127.0.0.1;\n        deny all;\n        }@" ${nginx_install_dir}/conf/nginx.conf
+    [[ "${php_option}" =~ ^[1-8]$ ]] && [ -z "`grep '/php-fpm_status' ${nginx_install_dir}/conf/nginx.conf`" ] &&  sed -i "s@index index.html index.php;@index index.html index.php;\n    location ~ /php-fpm_status {\n        #fastcgi_pass remote_php_ip:9000;\n        fastcgi_pass unix:/dev/shm/php-cgi.sock;\n        fastcgi_index index.php;\n        include fastcgi.conf;\n        allow 127.0.0.1;\n        deny all;\n        }@" ${nginx_install_dir}/conf/nginx.conf
   fi
   cat > ${nginx_install_dir}/conf/proxy.conf << EOF
 proxy_connect_timeout 300s;
@@ -100,7 +98,7 @@ ${wwwlogs_dir}/*nginx.log {
   endscript
 }
 EOF
-  popd
+  popd > /dev/null
   ldconfig
   service nginx start
 }

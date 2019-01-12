@@ -38,11 +38,13 @@ while :; do echo
   echo -e "\t${CMSG}4${CEND}. Qcloud COS"
   echo -e "\t${CMSG}5${CEND}. UPYUN"
   echo -e "\t${CMSG}6${CEND}. QINIU"
-  echo -e "\t${CMSG}7${CEND}. Google Drive"
+  echo -e "\t${CMSG}7${CEND}. Amazon S3"
+  echo -e "\t${CMSG}8${CEND}. Google Drive"
+  echo -e "\t${CMSG}9${CEND}. Dropbox"
   read -e -p "Please input numbers:(Default 1 press Enter) " desc_bk
   desc_bk=${desc_bk:-'1'}
   array_desc=(${desc_bk})
-  array_all=(1 2 3 4 5 6 7)
+  array_all=(1 2 3 4 5 6 7 8 9)
   for v in ${array_desc[@]}
   do
     [ -z "`echo ${array_all[@]} | grep -w ${v}`" ] && desc_flag=1
@@ -63,7 +65,9 @@ done
 [ -n "`echo ${desc_bk} | grep -w 4`" ] && sed -i 's@^backup_destination=.*@&,cos@' ./options.conf
 [ -n "`echo ${desc_bk} | grep -w 5`" ] && sed -i 's@^backup_destination=.*@&,upyun@' ./options.conf
 [ -n "`echo ${desc_bk} | grep -w 6`" ] && sed -i 's@^backup_destination=.*@&,qiniu@' ./options.conf
-[ -n "`echo ${desc_bk} | grep -w 7`" ] && sed -i 's@^backup_destination=.*@&,gdrive@' ./options.conf
+[ -n "`echo ${desc_bk} | grep -w 7`" ] && sed -i 's@^backup_destination=.*@&,s3@' ./options.conf
+[ -n "`echo ${desc_bk} | grep -w 8`" ] && sed -i 's@^backup_destination=.*@&,gdrive@' ./options.conf
+[ -n "`echo ${desc_bk} | grep -w 9`" ] && sed -i 's@^backup_destination=.*@&,dropbox@' ./options.conf
 sed -i 's@^backup_destination=,@backup_destination=@' ./options.conf
 
 while :; do echo
@@ -166,14 +170,14 @@ if [ -n "`echo ${desc_bk} | grep -w 2`" ]; then
     if [ $? -eq 0 ]; then
       [ -z "`grep ${remote_address} tools/iplist.txt`" ] && echo "${remote_address} ${remote_port} ${remote_user} $remote_password" >> tools/iplist.txt || echo "${CWARNING}${remote_address} has been added! ${CEND}"
       while :; do
-        read -e -p "Do you want to add more host ? [y/n]: " morehost_yn
-        if [[ ! ${morehost_yn} =~ ^[y,n]$ ]]; then
+        read -e -p "Do you want to add more host ? [y/n]: " morehost_flag
+        if [[ ! ${morehost_flag} =~ ^[y,n]$ ]]; then
           echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
         else
           break
         fi
       done
-      [ "${morehost_yn}" == 'n' ] && break
+      [ "${morehost_flag}" == 'n' ] && break
     fi
   done
 fi
@@ -228,13 +232,19 @@ if [ -n "`echo ${desc_bk} | grep -w 3`" ]; then
     echo
     read -e -p "Please enter the aliyun oss Access Key Secret: " KeySecret
     [ -z "${KeySecret}" ] && continue
-    /usr/local/bin/ossutil ls -e ${Host} -i ${KeyID} -k ${KeySecret} >/dev/null 2>&1
-    if [ $? -eq 0 ];then
-      /usr/local/bin/ossutil config -e ${Host} -i ${KeyID} -k ${KeySecret} >/dev/null 2>&1
+    /usr/local/bin/ossutil ls -e ${Host} -i ${KeyID} -k ${KeySecret} > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+      /usr/local/bin/ossutil config -e ${Host} -i ${KeyID} -k ${KeySecret} > /dev/null 2>&1
       while :; do echo
-        read -e -p "Please enter the aliyun oss bucket: " Bucket
-        /usr/local/bin/ossutil mb oss://${Bucket} >/dev/null 2>&1
-        [ $? -eq 0 ] && { echo "${CMSG}[${Bucket}] createbucket OK${CEND}"; sed -i "s@^oss_bucket=.*@oss_bucket=${Bucket}@" ./options.conf; break; } || echo "${CWARNING}[${Bucket}] already exists, You need to use the OSS Console to create a bucket for storing.${CEND}"
+        read -e -p "Please enter the aliyun oss bucket: " OSS_BUCKET
+        /usr/local/bin/ossutil mb oss://${OSS_BUCKET} > /dev/null 2>&1
+        if [ $? -eq 0 ]; then
+          echo "${CMSG}Bucket oss://${OSS_BUCKET}/ created${CEND}"
+          sed -i "s@^oss_bucket=.*@oss_bucket=${OSS_BUCKET}@" ./options.conf
+          break
+        else
+          echo "${CWARNING}[${OSS_BUCKET}] already exists, You need to use the OSS Console to create a bucket for storing.${CEND}"
+        fi
       done
       break
     fi
@@ -243,7 +253,7 @@ fi
 
 if [ -n "`echo ${desc_bk} | grep -w 4`" ]; then
   Install_Python
-  [ ! -e "${python_install_dir}/lib/coscmd" ] && ${python_install_dir}/bin/pip install coscmd >/dev/null 2>&1
+  [ ! -e "${python_install_dir}/bin/coscmd" ] && ${python_install_dir}/bin/pip install coscmd > /dev/null 2>&1
   while :; do echo
     echo 'Please select your backup qcloud datacenter:'
     echo -e "\t ${CMSG} 1${CEND}. ap-beijing-1-北京一区(华北)  ${CMSG}2${CEND}. ap-beijing-北京"
@@ -290,24 +300,24 @@ if [ -n "`echo ${desc_bk} | grep -w 4`" ]; then
     read -e -p "Please enter the Qcloud COS SECRET_KEY: " SECRET_KEY
     [ -z "${SECRET_KEY}" ] && continue
     echo
-    read -e -p "Please enter the Qcloud COS BUCKET: " BUCKET
-    if [[ ${BUCKET} =~ "-${APPID}"$ ]]; then
-      Bucket=${BUCKET}
+    read -e -p "Please enter the Qcloud COS BUCKET: " COS_BUCKET
+    if [[ ${COS_BUCKET} =~ "-${APPID}"$ ]]; then
+      COS_BUCKET=${COS_BUCKET}
     else
-      [ -z "${BUCKET}" ] && continue
+      [ -z "${COS_BUCKET}" ] && continue
       echo
-      Bucket=${BUCKET}-${APPID}
+      COS_BUCKET=${COS_BUCKET}-${APPID}
     fi
-    ${python_install_dir}/bin/coscmd config -u ${APPID} -a ${SECRET_ID} -s ${SECRET_KEY} -r ${REGION} -b ${Bucket} >/dev/null 2>&1
-    ${python_install_dir}/bin/coscmd list >/dev/null 2>&1
-    if [ $? -eq 0 ];then
+    ${python_install_dir}/bin/coscmd config -u ${APPID} -a ${SECRET_ID} -s ${SECRET_KEY} -r ${REGION} -b ${COS_BUCKET} > /dev/null 2>&1
+    ${python_install_dir}/bin/coscmd list > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
       echo "${CMSG}APPID/SECRET_ID/SECRET_KEY/REGION/BUCKET OK${CEND}"
       echo
       break
     else
-      ${python_install_dir}/bin/coscmd -b ${Bucket} createbucket >/dev/null 2>&1
-      if [ $? -eq 0 ];then
-        echo "${CMSG}APPID/SECRET_ID/SECRET_KEY/REGION OK, You createbucket ${Bucket}${CEND}"
+      ${python_install_dir}/bin/coscmd -b ${COS_BUCKET} createbucket > /dev/null 2>&1
+      if [ $? -eq 0 ]; then
+        echo "${CMSG}Bucket ${COS_BUCKET} created${CEND}"
         echo
         break
       else
@@ -337,7 +347,7 @@ if [ -n "`echo ${desc_bk} | grep -w 5`" ]; then
     read -e -p "Please enter the upyun Password: " Password
     [ -z "${Password}" ] && continue
     echo
-    /usr/local/bin/upx login ${ServiceName} ${Operator} ${Password} >/dev/null 2>&1
+    /usr/local/bin/upx login ${ServiceName} ${Operator} ${Password} > /dev/null 2>&1
     if [ $? = 0 ]; then
       echo "${CMSG}ServiceName/Operator/Password OK${CEND}"
       echo
@@ -393,20 +403,20 @@ if [ -n "`echo ${desc_bk} | grep -w 6`" ]; then
     read -e -p "Please enter the qiniu SecretKey: " SecretKey
     [ -z "${SecretKey}" ] && continue
     echo
-    read -e -p "Please enter the qiniu bucket: " Bucket
-    [ -z "${Bucket}" ] && continue
+    read -e -p "Please enter the qiniu bucket: " QINIU_BUCKET
+    [ -z "${QINIU_BUCKET}" ] && continue
     echo
     /usr/local/bin/qshell account ${AccessKey} ${SecretKey}
     /usr/local/bin/qrsctl login ${AccessKey} ${SecretKey}
-    if /usr/local/bin/qrsctl bucketinfo ${Bucket} > /dev/null 2>&1; then
-      sed -i "s@^qiniu_bucket=.*@qiniu_bucket=${Bucket}@" ./options.conf
+    if /usr/local/bin/qrsctl bucketinfo ${QINIU_BUCKET} > /dev/null 2>&1; then
+      sed -i "s@^qiniu_bucket=.*@qiniu_bucket=${QINIU_BUCKET}@" ./options.conf
       echo "${CMSG}AccessKey/SecretKey OK${CEND}"
       echo
       break
-    elif /usr/local/bin/qrsctl mkbucket ${Bucket} ${zone} > /dev/null 2>&1; then
-      /usr/local/bin/qrsctl private ${Bucket} 1
-      echo "${CMSG}[${Bucket}] createbucket OK${CEND}"
-      sed -i "s@^qiniu_bucket=.*@qiniu_bucket=${Bucket}@" ./options.conf
+    elif /usr/local/bin/qrsctl mkbucket ${QINIU_BUCKET} ${zone} > /dev/null 2>&1; then
+      /usr/local/bin/qrsctl private ${QINIU_BUCKET} 1
+      echo "${CMSG}Bucket ${QINIU_BUCKET} created${CEND}"
+      sed -i "s@^qiniu_bucket=.*@qiniu_bucket=${QINIU_BUCKET}@" ./options.conf
       echo "${CMSG}AccessKey/SecretKey OK${CEND}"
       echo
       break
@@ -417,6 +427,89 @@ if [ -n "`echo ${desc_bk} | grep -w 6`" ]; then
 fi
 
 if [ -n "`echo ${desc_bk} | grep -w 7`" ]; then
+  Install_Python
+  [ ! -e "${python_install_dir}/bin/s3cmd" ] && ${python_install_dir}/bin/pip install s3cmd > /dev/null 2>&1
+  while :; do echo
+    echo 'Please select your backup amazon datacenter:'
+    echo -e "\t ${CMSG} 1${CEND}. us-east-2                    ${CMSG} 2${CEND}. us-east-1"
+    echo -e "\t ${CMSG} 3${CEND}. us-west-1                    ${CMSG} 4${CEND}. us-west-2"
+    echo -e "\t ${CMSG} 5${CEND}. ap-south-1                   ${CMSG} 6${CEND}. ap-northeast-3"
+    echo -e "\t ${CMSG} 7${CEND}. ap-northeast-2               ${CMSG} 8${CEND}. ap-southeast-1"
+    echo -e "\t ${CMSG} 9${CEND}. ap-southeast-2               ${CMSG}10${CEND}. ap-northeast-1"
+    echo -e "\t ${CMSG}11${CEND}. ca-central-1                 ${CMSG}12${CEND}. cn-north-1"
+    echo -e "\t ${CMSG}13${CEND}. cn-northwest-1               ${CMSG}14${CEND}. eu-central-1"
+    echo -e "\t ${CMSG}15${CEND}. eu-west-1                    ${CMSG}16${CEND}. eu-west-2"
+    echo -e "\t ${CMSG}17${CEND}. eu-west-3                    ${CMSG}18${CEND}. eu-north-1"
+    echo -e "\t ${CMSG}19${CEND}. sa-east-1                    ${CMSG}20${CEND}. us-gov-east-1"
+    echo -e "\t ${CMSG}21${CEND}. us-gov-west-1"
+    read -e -p "Please input a number:(Default 1 press Enter) " Location
+    Location=${Location:-1}
+    if [[ "${Location}" =~ ^[1-9]$|^1[0-9]$|^2[0-1]$ ]]; then
+      break
+    else
+      echo "${CWARNING}input error! Please only input number 1~21${CEND}"
+    fi
+  done
+  [ "${Location}" == '1' ] && REGION='us-east-2'
+  [ "${Location}" == '2' ] && REGION='us-east-1'
+  [ "${Location}" == '3' ] && REGION='us-west-1'
+  [ "${Location}" == '4' ] && REGION='us-west-2'
+  [ "${Location}" == '5' ] && REGION='ap-south-1'
+  [ "${Location}" == '6' ] && REGION='ap-northeast-3'
+  [ "${Location}" == '7' ] && REGION='ap-northeast-2'
+  [ "${Location}" == '8' ] && REGION='ap-southeast-1'
+  [ "${Location}" == '9' ] && REGION='ap-southeast-2'
+  [ "${Location}" == '10' ] && REGION='ap-northeast-1'
+  [ "${Location}" == '11' ] && REGION='ca-central-1'
+  [ "${Location}" == '12' ] && REGION='cn-north-1'
+  [ "${Location}" == '13' ] && REGION='cn-northwest-1'
+  [ "${Location}" == '14' ] && REGION='eu-central-1'
+  [ "${Location}" == '15' ] && REGION='eu-west-1'
+  [ "${Location}" == '16' ] && REGION='eu-west-2'
+  [ "${Location}" == '17' ] && REGION='eu-west-3'
+  [ "${Location}" == '18' ] && REGION='eu-north-1'
+  [ "${Location}" == '19' ] && REGION='sa-east-1'
+  [ "${Location}" == '20' ] && REGION='us-gov-east-1'
+  [ "${Location}" == '21' ] && REGION='us-gov-west-1'
+  while :; do echo
+    read -e -p "Please enter the AWS Access Key: " ACCESS_KEY
+    [ -z "${ACCESS_KEY}" ] && continue
+    echo
+    read -e -p "Please enter the AWS Access Key: " SECRET_KEY
+    [ -z "${SECRET_KEY}" ] && continue
+    ${python_install_dir}/bin/s3cmd --access_key=${ACCESS_KEY} --secret_key=${SECRET_KEY} --region=${REGION} la > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+      ${python_install_dir}/bin/s3cmd --configure --access_key=${ACCESS_KEY} --secret_key=${SECRET_KEY} --region=${REGION} --dump-config > ~/.s3cfg
+      echo "${CMSG}ACCESS_KEY/SECRET_KEY OK${CEND}"
+      while :; do echo
+        read -e -p "Please enter the Amazon S3 bucket: " S3_BUCKET
+        [ -z "${S3_BUCKET}" ] && continue
+        ${python_install_dir}/bin/s3cmd ls s3://${S3_BUCKET} > /dev/null 2>&1
+        if [ $? -eq 0 ]; then
+          echo "${CMSG}Bucket s3://${S3_BUCKET}/ existed${CEND}"
+          sed -i "s@^s3_bucket=.*@s3_bucket=${S3_BUCKET}@" ./options.conf
+          break
+        else
+          ${python_install_dir}/bin/s3cmd mb s3://${S3_BUCKET} > /dev/null 2>&1
+          if [ $? -eq 0 ]; then
+            echo "${CMSG}Bucket s3://${S3_BUCKET}/ created${CEND}"
+            sed -i "s@^s3_bucket=.*@s3_bucket=${S3_BUCKET}@" ./options.conf
+            break
+          else
+            echo "${CWARNING}The requested bucket name is not available. The bucket namespace is shared by all users of the system. Please select a different name and try again.${CEND}"
+            continue
+          fi
+        fi
+      done
+      break
+    else
+      echo "${CWARNING}input error! ACCESS_KEY/SECRET_KEY invalid${CEND}"
+      continue
+    fi
+  done
+fi
+
+if [ -n "`echo ${desc_bk} | grep -w 8`" ]; then
   if [ ! -e "/usr/local/bin/gdrive" ]; then
     if [ "${OS_BIT}" == '64' ]; then
       wget -qc http://mirrors.linuxeye.com/oneinstack/src/gdrive-linux-x64 -O /usr/local/bin/gdrive
@@ -427,6 +520,20 @@ if [ -n "`echo ${desc_bk} | grep -w 7`" ]; then
   fi
   while :; do echo
     if gdrive about; then
+      break
+    fi
+  done
+fi
+
+if [ -n "`echo ${desc_bk} | grep -w 9`" ]; then
+  if [ ! -e "/usr/local/bin/dbxcli" ]; then
+    if [ "${OS_BIT}" == '64' ]; then
+      wget -qc http://mirrors.linuxeye.com/oneinstack/src/dbxcli-linux-amd64 -O /usr/local/bin/dbxcli
+    fi
+    chmod +x /usr/local/bin/dbxcli
+  fi
+  while :; do echo
+    if dbxcli account; then
       break
     fi
   done

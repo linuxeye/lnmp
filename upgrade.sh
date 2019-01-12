@@ -71,31 +71,34 @@ while :; do
       Show_Help; exit 0
       ;;
     --nginx)
-      nginx_quiet=y; NEW_nginx_ver=$2; shift 2
+      nginx_flag=y; NEW_nginx_ver=$2; shift 2
       ;;
     --tengine)
-      tengine_quiet=y; NEW_tengine_ver=$2; shift 2
+      tengine_flag=y; NEW_tengine_ver=$2; shift 2
       ;;
     --openresty)
-      openresty_quiet=y; NEW_openresy_ver=$2; shift 2
+      openresty_flag=y; NEW_openresy_ver=$2; shift 2
       ;;
     --apache)
-      apache_quiet=y; NEW_apache_ver=$2; shift 2
+      apache_flag=y; NEW_apache_ver=$2; shift 2
       ;;
     --tomcat)
-      tomcat_quiet=y; NEW_tomcat_ver=$2; shift 2
+      tomcat_flag=y; NEW_tomcat_ver=$2; shift 2
+      ;;
+    --db)
+      db_flag=y; NEW_db_ver=$2; shift 2
       ;;
     --php)
-      php_quiet=y; NEW_php_ver=$2; shift 2
+      php_flag=y; NEW_php_ver=$2; shift 2
       ;;
     --redis)
-      redis_quiet=y; NEW_redis_ver=$2; shift 2
+      redis_flag=y; NEW_redis_ver=$2; shift 2
       ;;
     --memcached)
-      memcached_quiet=y; NEW_memcached_ver=$2; shift 2
+      memcached_flag=y; NEW_memcached_ver=$2; shift 2
       ;;
     --phpmyadmin)
-      phpmyadmin_quiet=y; NEW_phpmyadmin_ver=$2; shift 2
+      phpmyadmin_flag=y; NEW_phpmyadmin_ver=$2; shift 2
       ;;
     --oneinstack)
       NEW_oneinstack_ver=latest; shift 1
@@ -177,16 +180,16 @@ What Are You Doing?
 if [ ${ARG_NUM} == 0 ]; then
   Menu
 else
-  [ "${nginx_quiet}" == 'y' ] && Upgrade_Nginx
-  [ "${tengine_quiet}" == 'y' ] && Upgrade_Tengine
-  [ "${openresty_quiet}" == 'y' ] && Upgrade_OpenResty
-  [ "${apache_quiet}" == 'y' ] && Upgrade_Apache
-  [ "${tomcat_quiet}" == 'y' ] && Upgrade_Tomcat
-  [ "${db_quiet}" == 'y' ] && Upgrade_DB
-  [ "${php_quiet}" == 'y' ] && Upgrade_PHP
-  [ "${redis_quiet}" == 'y' ] && Upgrade_Redis
-  [ "${memcached_quiet}" == 'y' ] && Upgrade_Memcached
-  [ "${phpmyadmin_quiet}" == 'y' ] && Upgrade_phpMyAdmin
+  [ "${nginx_flag}" == 'y' ] && Upgrade_Nginx
+  [ "${tengine_flag}" == 'y' ] && Upgrade_Tengine
+  [ "${openresty_flag}" == 'y' ] && Upgrade_OpenResty
+  [ "${apache_flag}" == 'y' ] && Upgrade_Apache
+  [ "${tomcat_flag}" == 'y' ] && Upgrade_Tomcat
+  [ "${db_flag}" == 'y' ] && Upgrade_DB
+  [ "${php_flag}" == 'y' ] && Upgrade_PHP
+  [ "${redis_flag}" == 'y' ] && Upgrade_Redis
+  [ "${memcached_flag}" == 'y' ] && Upgrade_Memcached
+  [ "${phpmyadmin_flag}" == 'y' ] && Upgrade_phpMyAdmin
   [ "${NEW_oneinstack_ver}" == 'latest' ] && Upgrade_OneinStack
   [ "${NEW_acme_ver}" == 'latest' ] && [ -e ~/.acme.sh/acme.sh ] && { ~/.acme.sh/acme.sh --upgrade; ~/.acme.sh/acme.sh --version; }
 fi

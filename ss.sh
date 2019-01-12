@@ -57,13 +57,13 @@ while :; do
       Show_Help; exit 0
       ;;
     -q|--quiet)
-      quiet_yn=y; shift 1
+      quiet_flag=y; shift 1
       ;;
     -i|--install)
-      install_yn=y; shift 1
+      install_flag=y; shift 1
       ;;
     -u|--uninstall)
-      uninstall_yn=y; shift 1
+      uninstall_flag=y; shift 1
       ;;
     --libev)
       libev_queit=y; ss_option=1; shift 1
@@ -72,7 +72,7 @@ while :; do
       python_queit=y; ss_option=2; shift 1
       ;;
     --adduser)
-      adduser_yn=y; shift 1
+      adduser_flag=y; shift 1
       ;;
     --password)
       password_queit=y; SS_password=$2; shift 2
@@ -263,15 +263,15 @@ Install_SS_libev() {
 
 Uninstall_SS() {
   while :; do echo
-    [ "${quiet_yn}" != 'y' ] && read -e -p "Do you want to uninstall SS? [y/n]: " uninstall_yn
-    if [[ ! "${uninstall_yn}" =~ ^[y,n]$ ]]; then
+    [ "${quiet_flag}" != 'y' ] && read -e -p "Do you want to uninstall SS? [y/n]: " uninstall_flag
+    if [[ ! "${uninstall_flag}" =~ ^[y,n]$ ]]; then
       echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
       break
     fi
   done
 
-  if [ "${uninstall_yn}" == 'y' ]; then
+  if [ "${uninstall_flag}" == 'y' ]; then
     [ -n "$(ps -ef | grep -v grep | grep -iE "ssserver|ss-server")" ] && service shadowsocks stop
     [ -e /lib/systemd/system/shadowsocks.service ] && { systemctl disable shadowsocks; rm -f /lib/systemd/system/shadowsocks.service; }
     [ "${PM}" == 'yum' ] && chkconfig --del shadowsocks
@@ -343,7 +343,7 @@ Your Encryption Method: ${CMSG}aes-256-cfb${CEND}
 "
 }
 
-if [ "${install_yn}" == 'y' -o "${ARG_NUM}" == '0' ]; then
+if [ "${install_flag}" == 'y' -o "${ARG_NUM}" == '0' ]; then
   Def_parameter
   [ "${ss_option}" == '1' ] && Install_SS_libev
   [ "${ss_option}" == '2' ] && Install_SS_python
@@ -352,7 +352,7 @@ if [ "${install_yn}" == 'y' -o "${ARG_NUM}" == '0' ]; then
   Print_User_SS
 fi
 
-if [ "${adduser_yn}" == 'y' ]; then
+if [ "${adduser_flag}" == 'y' ]; then
   Check_SS
   if [ "${ss_option}" == '2' ]; then
     AddUser_SS
@@ -369,7 +369,7 @@ if [ "${adduser_yn}" == 'y' ]; then
   fi
 fi
 
-if [ "${uninstall_yn}" == 'y' ]; then
+if [ "${uninstall_flag}" == 'y' ]; then
   Check_SS
   Uninstall_SS
 fi

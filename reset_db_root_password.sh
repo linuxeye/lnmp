@@ -44,10 +44,10 @@ while :; do
       Show_Help; exit 0
       ;;
     -q|--quiet)
-      quiet_yn=y; shift 1
+      quiet_flag=y; shift 1
       ;;
     -f|--force)
-      force_yn=y; shift 1
+      force_flag=y; shift 1
       ;;
     -p|--password)
       New_dbrootpwd=$2; shift 2
@@ -126,9 +126,9 @@ EOF
   fi
 }
 
-[ "${password_flag}" == 'y' ] && quiet_yn=y
-if [ "${quiet_yn}" == 'y' ]; then
-  if [ "${force_yn}" == 'y' ]; then
+[ "${password_flag}" == 'y' ] && quiet_flag=y
+if [ "${quiet_flag}" == 'y' ]; then
+  if [ "${force_flag}" == 'y' ]; then
     Reset_force_dbrootpwd
   else
     sleep 2 && [ ! -e /tmp/mysql.sock ] && service mysqld start
@@ -136,7 +136,7 @@ if [ "${quiet_yn}" == 'y' ]; then
   fi
 else
   Input_dbrootpwd
-  if [ "${force_yn}" == 'y' ]; then
+  if [ "${force_flag}" == 'y' ]; then
     Reset_force_dbrootpwd
   else
     Reset_Interaction_dbrootpwd

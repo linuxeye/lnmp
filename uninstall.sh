@@ -61,41 +61,41 @@ while :; do
       Show_Help; exit 0
       ;;
     -q|--quiet)
-      quiet_yn=y
-      uninstall_yn=y
+      quiet_flag=y
+      uninstall_flag=y
       shift 1
       ;;
     --all)
-      all_yn=y
-      web_yn=y
-      mysql_yn=y
-      postgresql_yn=y
-      mongodb_yn=y
-      php_yn=y
-      hhvm_yn=y
-      pureftpd_yn=y
-      redis_yn=y
-      memcached_yn=y
-      phpmyadmin_yn=y
+      all_flag=y
+      web_flag=y
+      mysql_flag=y
+      postgresql_flag=y
+      mongodb_flag=y
+      php_flag=y
+      hhvm_flag=y
+      pureftpd_flag=y
+      redis_flag=y
+      memcached_flag=y
+      phpmyadmin_flag=y
       shift 1
       ;;
     --web)
-      web_yn=y; shift 1
+      web_flag=y; shift 1
       ;;
     --mysql)
-      mysql_yn=y; shift 1
+      mysql_flag=y; shift 1
       ;;
     --postgresql)
-      postgresql_yn=y; shift 1
+      postgresql_flag=y; shift 1
       ;;
     --mongodb)
-      mongodb_yn=y; shift 1
+      mongodb_flag=y; shift 1
       ;;
     --php)
-      php_yn=y; shift 1
+      php_flag=y; shift 1
       ;;
     --phpcache)
-      phpcache_yn=y; shift 1
+      phpcache_flag=y; shift 1
       ;;
     --php_extensions)
       php_extensions=$2; shift 2
@@ -115,19 +115,19 @@ while :; do
       [ -n "`echo ${php_extensions} | grep -w xdebug`" ] && pecl_xdebug=1
       ;;
     --hhvm)
-      hhvm_yn=y; shift 1
+      hhvm_flag=y; shift 1
       ;;
     --pureftpd)
-      pureftpd_yn=y; shift 1
+      pureftpd_flag=y; shift 1
       ;;
     --redis)
-      redis_yn=y; shift 1
+      redis_flag=y; shift 1
       ;;
     --memcached)
-      memcached_yn=y; shift 1
+      memcached_flag=y; shift 1
       ;;
     --phpmyadmin)
-      phpmyadmin_yn=y; shift 1
+      phpmyadmin_flag=y; shift 1
       ;;
     --)
       shift
@@ -139,10 +139,10 @@ while :; do
 done
 
 Uninstall_status() {
-  if [ "${quiet_yn}" != 'y' ]; then
+  if [ "${quiet_flag}" != 'y' ]; then
     while :; do echo
-      read -e -p "Do you want to uninstall? [y/n]: " uninstall_yn
-      if [[ ! ${uninstall_yn} =~ ^[y,n]$ ]]; then
+      read -e -p "Do you want to uninstall? [y/n]: " uninstall_flag
+      if [[ ! ${uninstall_flag} =~ ^[y,n]$ ]]; then
         echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
       else
         break
@@ -187,8 +187,7 @@ Uninstall_Web() {
   [ -d "/usr/java" ] && { rm -rf /usr/java; sed -i '/export JAVA_HOME=/d' /etc/profile; sed -i '/export CLASSPATH=/d' /etc/profile; sed -i 's@\$JAVA_HOME/bin:@@' /etc/profile; }
   [ -e "${wwwroot_dir}" ] && /bin/mv ${wwwroot_dir}{,$(date +%Y%m%d%H)}
   sed -i 's@^website_name=.*@website_name=@' ./options.conf
-  sed -i 's@^local_bankup_yn=.*@local_bankup_yn=y@' ./options.conf
-  sed -i 's@^remote_bankup_yn=.*@remote_bankup_yn=n@' ./options.conf
+  sed -i 's@^backup_content=.*@backup_content=@' ./options.conf
 }
 
 Print_MySQL() {
@@ -532,7 +531,7 @@ What Are You Doing?
       Print_openssl
       Print_phpMyAdmin
       Uninstall_status
-      if [ "${uninstall_yn}" == 'y' ]; then
+      if [ "${uninstall_flag}" == 'y' ]; then
         Uninstall_Web
         Uninstall_MySQL
         Uninstall_PostgreSQL
@@ -552,64 +551,64 @@ What Are You Doing?
       Print_Warn
       Print_web
       Uninstall_status
-      [ "${uninstall_yn}" == 'y' ] && Uninstall_Web || exit
+      [ "${uninstall_flag}" == 'y' ] && Uninstall_Web || exit
       ;;
     2)
       Print_Warn
       Print_MySQL
       Uninstall_status
-      [ "${uninstall_yn}" == 'y' ] && Uninstall_MySQL || exit
+      [ "${uninstall_flag}" == 'y' ] && Uninstall_MySQL || exit
       ;;
     3)
       Print_Warn
       Print_PostgreSQL
       Uninstall_status
-      [ "${uninstall_yn}" == 'y' ] && Uninstall_PostgreSQL || exit
+      [ "${uninstall_flag}" == 'y' ] && Uninstall_PostgreSQL || exit
       ;;
     4)
       Print_Warn
       Print_MongoDB
       Uninstall_status
-      [ "${uninstall_yn}" == 'y' ] && Uninstall_MongoDB || exit
+      [ "${uninstall_flag}" == 'y' ] && Uninstall_MongoDB || exit
       ;;
     5)
       Print_PHP
       Uninstall_status
-      [ "${uninstall_yn}" == 'y' ] && Uninstall_PHP || exit
+      [ "${uninstall_flag}" == 'y' ] && Uninstall_PHP || exit
       ;;
     6)
       Uninstall_status
-      [ "${uninstall_yn}" == 'y' ] && Uninstall_PHPcache || exit
+      [ "${uninstall_flag}" == 'y' ] && Uninstall_PHPcache || exit
       ;;
     7)
       Menu_PHPext
       [ "${phpext_option}" != '0' ] && Uninstall_status
-      [ "${uninstall_yn}" == 'y' ] && Uninstall_PHPext || exit
+      [ "${uninstall_flag}" == 'y' ] && Uninstall_PHPext || exit
       ;;
     8)
       Print_HHVM
       Uninstall_status
-      [ "${uninstall_yn}" == 'y' ] && Uninstall_HHVM || exit
+      [ "${uninstall_flag}" == 'y' ] && Uninstall_HHVM || exit
       ;;
     9)
       Print_PureFtpd
       Uninstall_status
-      [ "${uninstall_yn}" == 'y' ] && Uninstall_PureFtpd || exit
+      [ "${uninstall_flag}" == 'y' ] && Uninstall_PureFtpd || exit
       ;;
     10)
       Print_Redis_server
       Uninstall_status
-      [ "${uninstall_yn}" == 'y' ] && Uninstall_Redis_server || exit
+      [ "${uninstall_flag}" == 'y' ] && Uninstall_Redis_server || exit
       ;;
     11)
       Print_Memcached_server
       Uninstall_status
-      [ "${uninstall_yn}" == 'y' ] && Uninstall_Memcached_server || exit
+      [ "${uninstall_flag}" == 'y' ] && Uninstall_Memcached_server || exit
       ;;
     12)
       Print_phpMyAdmin
       Uninstall_status
-      [ "${uninstall_yn}" == 'y' ] && Uninstall_phpMyAdmin || exit
+      [ "${uninstall_flag}" == 'y' ] && Uninstall_phpMyAdmin || exit
       ;;
     q)
       exit
@@ -622,31 +621,31 @@ done
 if [ ${ARG_NUM} == 0 ]; then
   Menu
 else
-  [ "${web_yn}" == 'y' ] && Print_web
-  [ "${mysql_yn}" == 'y' ] && Print_MySQL
-  [ "${postgresql_yn}" == 'y' ] && Print_PostgreSQL
-  [ "${mongodb_yn}" == 'y' ] && Print_MongoDB
-  [ "${php_yn}" == 'y' ] && Print_PHP
-  [ "${hhvm_yn}" == 'y' ] && Print_HHVM
-  [ "${pureftpd_yn}" == 'y' ] && Print_PureFtpd
-  [ "${redis_yn}" == 'y' ] && Print_Redis_server
-  [ "${memcached_yn}" == 'y' ] && Print_Memcached_server
-  [ "${phpmyadmin_yn}" == 'y' ] && Print_phpMyAdmin
-  [ "${all_yn}" == 'y' ] && Print_openssl
+  [ "${web_flag}" == 'y' ] && Print_web
+  [ "${mysql_flag}" == 'y' ] && Print_MySQL
+  [ "${postgresql_flag}" == 'y' ] && Print_PostgreSQL
+  [ "${mongodb_flag}" == 'y' ] && Print_MongoDB
+  [ "${php_flag}" == 'y' ] && Print_PHP
+  [ "${hhvm_flag}" == 'y' ] && Print_HHVM
+  [ "${pureftpd_flag}" == 'y' ] && Print_PureFtpd
+  [ "${redis_flag}" == 'y' ] && Print_Redis_server
+  [ "${memcached_flag}" == 'y' ] && Print_Memcached_server
+  [ "${phpmyadmin_flag}" == 'y' ] && Print_phpMyAdmin
+  [ "${all_flag}" == 'y' ] && Print_openssl
   Uninstall_status
-  if [ "${uninstall_yn}" == 'y' ]; then
-    [ "${web_yn}" == 'y' ] && Uninstall_Web
-    [ "${mysql_yn}" == 'y' ] && Uninstall_MySQL
-    [ "${postgresql_yn}" == 'y' ] && Uninstall_PostgreSQL
-    [ "${mongodb_yn}" == 'y' ] && Uninstall_MongoDB
-    [ "${phpcache_yn}" == 'y' ] && Uninstall_PHPcache
+  if [ "${uninstall_flag}" == 'y' ]; then
+    [ "${web_flag}" == 'y' ] && Uninstall_Web
+    [ "${mysql_flag}" == 'y' ] && Uninstall_MySQL
+    [ "${postgresql_flag}" == 'y' ] && Uninstall_PostgreSQL
+    [ "${mongodb_flag}" == 'y' ] && Uninstall_MongoDB
+    [ "${phpcache_flag}" == 'y' ] && Uninstall_PHPcache
     Uninstall_PHPext
-    [ "${php_yn}" == 'y' ] && Uninstall_PHP
-    [ "${hhvm_yn}" == 'y' ] && Uninstall_HHVM
-    [ "${pureftpd_yn}" == 'y' ] && Uninstall_PureFtpd
-    [ "${redis_yn}" == 'y' ] && Uninstall_Redis_server
-    [ "${memcached_yn}" == 'y' ] && Uninstall_Memcached_server
-    [ "${phpmyadmin_yn}" == 'y' ] && Uninstall_phpMyAdmin
-    [ "${all_yn}" == 'y' ] && Uninstall_openssl
+    [ "${php_flag}" == 'y' ] && Uninstall_PHP
+    [ "${hhvm_flag}" == 'y' ] && Uninstall_HHVM
+    [ "${pureftpd_flag}" == 'y' ] && Uninstall_PureFtpd
+    [ "${redis_flag}" == 'y' ] && Uninstall_Redis_server
+    [ "${memcached_flag}" == 'y' ] && Uninstall_Memcached_server
+    [ "${phpmyadmin_flag}" == 'y' ] && Uninstall_phpMyAdmin
+    [ "${all_flag}" == 'y' ] && Uninstall_openssl
   fi
 fi

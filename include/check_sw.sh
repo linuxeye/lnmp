@@ -53,7 +53,7 @@ installDepsCentOS() {
   if [ "${CentOS_ver}" == '7' ]; then
     yum -y groupremove "Basic Web Server" "MySQL Database server" "MySQL Database client"
     systemctl mask firewalld.service
-    if [ "${iptables_yn}" == 'y' ]; then
+    if [ "${iptables_flag}" == 'y' ]; then
       yum -y install iptables-services
       systemctl enable iptables.service
       systemctl enable ip6tables.service

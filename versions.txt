@@ -41,8 +41,8 @@ pgsql_ver=11.1
 mongodb_ver=4.0.5
 
 # JDK
-jdk110_ver=11.0.1
-jdk18_ver=1.8.0_192
+jdk110_ver=11.0.2
+jdk18_ver=1.8.0_202
 jdk17_ver=1.7.0_80
 jdk16_ver=1.6.0_45
 
@@ -114,4 +114,6 @@ tmux_ver=2.8
 htop_ver=2.2.0
 bison_ver=2.7.1
 python_ver=3.6.8
+setuptools_ver=40.6.3
+pip_ver=18.1
 fail2ban_ver=0.10.4

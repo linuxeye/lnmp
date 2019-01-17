@@ -37,7 +37,7 @@ dbinstallmethod=1
 
 version() {
   echo "version: 2.0"
-  echo "updated date: 2019-01-04"
+  echo "updated date: 2019-01-17"
 }
 
 Show_Help() {
@@ -47,6 +47,8 @@ Show_Help() {
   --version, -v               Show version info
   --nginx_option [1-3]        Install Nginx server version
   --apache_option [1-2]       Install Apache server version
+  --apache_mode_option [1-2]  Apache2.4 mode, 1(default): php-fpm, 2: mod_php
+  --apache_mpm_option [1-3]   Apache2.4 MPM, 1(default): event, 2: prefork, 3: worker 
   --php_option [1-8]          Install PHP version
   --php_vn [53~73]            Install another version of php in OneinStack
   --phpcache_option [1-4]     Install PHP opcode cache, default: 1 opcache
@@ -63,13 +65,14 @@ Show_Help() {
   --memcached                 Install Memcached
   --phpmyadmin                Install phpMyAdmin
   --hhvm                      Install HHVM
+  --python                    Install Python (PATH: ${python_install_dir})
   --ssh_port [No.]            SSH port
   --iptables                  Enable iptables
   --reboot                    Restart the server after installation
   "
 }
 ARG_NUM=$#
-TEMP=`getopt -o hvV --long help,version,nginx_option:,apache_option:,php_option:,php_vn:,phpcache_option:,php_extensions:,tomcat_option:,jdk_option:,db_option:,dbrootpwd:,dbinstallmethod:,pureftpd,redis,memcached,phpmyadmin,hhvm,ssh_port:,iptables,reboot -- "$@" 2>/dev/null`
+TEMP=`getopt -o hvV --long help,version,nginx_option:,apache_option:,apache_mode_option:,apache_mpm_option:,php_option:,php_vn:,phpcache_option:,php_extensions:,tomcat_option:,jdk_option:,db_option:,dbrootpwd:,dbinstallmethod:,pureftpd,redis,memcached,phpmyadmin,hhvm,python,ssh_port:,iptables,reboot -- "$@" 2>/dev/null`
 [ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && Show_Help && exit 1
 eval set -- "${TEMP}"
 while :; do
@@ -92,6 +95,14 @@ while :; do
       apache_option=$2; shift 2
       [[ ! ${apache_option} =~ ^[1-2]$ ]] && { echo "${CWARNING}apache_option input error! Please only input number 1~2${CEND}"; exit 1; }
       [ -e "${apache_install_dir}/bin/httpd" ] && { echo "${CWARNING}Aapche already installed! ${CEND}"; unset apache_option; }
+      ;;
+    --apache_mode_option)
+      apache_mode_option=$2; shift 2
+      [[ ! ${apache_mode_option} =~ ^[1-2]$ ]] && { echo "${CWARNING}apache_mode_option input error! Please only input number 1~2${CEND}"; exit 1; }
+      ;;
+    --apache_mpm_option)
+      apache_mpm_option=$2; shift 2
+      [[ ! ${apache_mpm_option} =~ ^[1-3]$ ]] && { echo "${CWARNING}apache_mpm_option input error! Please only input number 1~3${CEND}"; exit 1; }
       ;;
     --php_option)
       php_option=$2; shift 2
@@ -173,6 +184,9 @@ while :; do
     --hhvm)
       hhvm_flag=y; shift 1
       [ -e "/usr/bin/hhvm" ] && { echo "${CWARNING}HHVM already installed! ${CEND}"; unset hhvm_flag; }
+      ;;
+    --python)
+      python_flag=y; shift 1
       ;;
     --ssh_port)
       ssh_port=$2; shift 2
@@ -270,6 +284,34 @@ if [ ${ARG_NUM} == 0 ]; then
             break
           fi
         done
+        # Apache2.4 mode and Apache2.4 MPM
+        if [ "${apache_option}" == '1' ]; then
+          while :; do echo
+            echo 'Please select Apache2.4 mode:'
+            echo -e "\t${CMSG}1${CEND}. php-fpm"
+            echo -e "\t${CMSG}2${CEND}. mod_php"
+            read -e -p "Please input a number:(Default 1 press Enter) " apache_mode_option
+            apache_mode_option=${apache_mode_option:-1}
+            if [[ ! ${apache_mode_option} =~ ^[1-2]$ ]]; then
+              echo "${CWARNING}input error! Please only input number 1~2${CEND}"
+            else
+              break
+            fi
+          done
+          while :; do echo
+            echo 'Please select Apache2.4 MPM:'
+            echo -e "\t${CMSG}1${CEND}. event"
+            echo -e "\t${CMSG}2${CEND}. prefork"
+            echo -e "\t${CMSG}3${CEND}. worker"
+            read -e -p "Please input a number:(Default 1 press Enter) " apache_mpm_option
+            apache_mpm_option=${apache_mpm_option:-1}
+            if [[ ! ${apache_mpm_option} =~ ^[1-3]$ ]]; then
+              echo "${CWARNING}input error! Please only input number 1~3${CEND}"
+            else
+              break
+            fi
+          done
+        fi
         # Tomcat
         #while :; do echo
         #  echo 'Please select tomcat server:'
@@ -1062,6 +1104,12 @@ fi
 if [ "${hhvm_flag}" == 'y' ] && [ "${PM}" == 'yum' -a "${OS_BIT}" == '64' ] && [ -n "`grep -E ' 7\.| 6\.[5-9]' /etc/redhat-release`" ]; then
   . include/hhvm_CentOS.sh
   Install_hhvm_CentOS 2>&1 | tee -a ${oneinstack_dir}/install.log
+fi
+
+# Python
+if [ "${python_flag}" == 'y' ]; then
+  . include/python.sh
+  Install_Python 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # Starting DB

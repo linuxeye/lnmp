@@ -57,7 +57,7 @@ Install_Apache24() {
   if [ -e /bin/systemctl ]; then
     /bin/cp ../init.d/httpd.service /lib/systemd/system/
     sed -i "s@/usr/local/apache@${apache_install_dir}@g" /lib/systemd/system/httpd.service
-    systemctl enable httpd 
+    systemctl enable httpd
   else
     /bin/cp ${apache_install_dir}/bin/apachectl /etc/init.d/httpd
     sed -i '2a # chkconfig: - 85 15' /etc/init.d/httpd
@@ -79,19 +79,26 @@ Install_Apache24() {
   fi
   sed -i "s@AddType\(.*\)Z@AddType\1Z\n    AddType application/x-httpd-php .php .phtml\n    AddType application/x-httpd-php-source .phps@" ${apache_install_dir}/conf/httpd.conf
   sed -i "s@#AddHandler cgi-script .cgi@AddHandler cgi-script .cgi .pl@" ${apache_install_dir}/conf/httpd.conf
-  sed -ri 's@^#(.*mod_proxy.so)@\1@' ${apache_install_dir}/conf/httpd.conf
-  sed -ri 's@^#(.*mod_proxy_fcgi.so)@\1@' ${apache_install_dir}/conf/httpd.conf
-  sed -ri 's@^#(.*mod_suexec.so)@\1@' ${apache_install_dir}/conf/httpd.conf
-  sed -ri 's@^#(.*mod_vhost_alias.so)@\1@' ${apache_install_dir}/conf/httpd.conf
-  sed -ri 's@^#(.*mod_rewrite.so)@\1@' ${apache_install_dir}/conf/httpd.conf
-  sed -ri 's@^#(.*mod_deflate.so)@\1@' ${apache_install_dir}/conf/httpd.conf
-  sed -ri 's@^#(.*mod_expires.so)@\1@' ${apache_install_dir}/conf/httpd.conf
-  sed -ri 's@^#(.*mod_ssl.so)@\1@' ${apache_install_dir}/conf/httpd.conf
-  sed -ri 's@^#(.*mod_http2.so)@\1@' ${apache_install_dir}/conf/httpd.conf
+  sed -ri 's@^#(LoadModule.*mod_proxy.so)@\1@' ${apache_install_dir}/conf/httpd.conf
+  sed -ri 's@^#(LoadModule.*mod_proxy_fcgi.so)@\1@' ${apache_install_dir}/conf/httpd.conf
+  sed -ri 's@^#(LoadModule.*mod_suexec.so)@\1@' ${apache_install_dir}/conf/httpd.conf
+  sed -ri 's@^#(LoadModule.*mod_vhost_alias.so)@\1@' ${apache_install_dir}/conf/httpd.conf
+  sed -ri 's@^#(LoadModule.*mod_rewrite.so)@\1@' ${apache_install_dir}/conf/httpd.conf
+  sed -ri 's@^#(LoadModule.*mod_deflate.so)@\1@' ${apache_install_dir}/conf/httpd.conf
+  sed -ri 's@^#(LoadModule.*mod_expires.so)@\1@' ${apache_install_dir}/conf/httpd.conf
+  sed -ri 's@^#(LoadModule.*mod_ssl.so)@\1@' ${apache_install_dir}/conf/httpd.conf
+  sed -ri 's@^#(LoadModule.*mod_http2.so)@\1@' ${apache_install_dir}/conf/httpd.conf
   sed -i 's@DirectoryIndex index.html@DirectoryIndex index.html index.php@' ${apache_install_dir}/conf/httpd.conf
   sed -i "s@^DocumentRoot.*@DocumentRoot \"${wwwroot_dir}/default\"@" ${apache_install_dir}/conf/httpd.conf
   sed -i "s@^<Directory \"${apache_install_dir}/htdocs\">@<Directory \"${wwwroot_dir}/default\">@" ${apache_install_dir}/conf/httpd.conf
   sed -i "s@^#Include conf/extra/httpd-mpm.conf@Include conf/extra/httpd-mpm.conf@" ${apache_install_dir}/conf/httpd.conf
+  if [ "${apache_mpm_option}" == '2' ]; then 
+    sed -ri 's@^(LoadModule.*mod_mpm_event.so)@#\1@' ${apache_install_dir}/conf/httpd.conf
+    sed -i 's@^#LoadModule mpm_prefork_module@LoadModule mpm_prefork_module@' ${apache_install_dir}/conf/httpd.conf
+  elif [ "${apache_mpm_option}" == '3' ]; then 
+    sed -ri 's@^(LoadModule.*mod_mpm_event.so)@#\1@' ${apache_install_dir}/conf/httpd.conf
+    sed -i 's@^#LoadModule mpm_worker_module@LoadModule mpm_worker_module@' ${apache_install_dir}/conf/httpd.conf
+  fi
 
   #logrotate apache log
   cat > /etc/logrotate.d/apache << EOF
@@ -110,6 +117,7 @@ ${wwwlogs_dir}/*apache.log {
 EOF
 
   mkdir ${apache_install_dir}/conf/vhost
+  [ "${apache_mode_option}" != '2' ] && Apache_fcgi=$(echo -e "<Files ~ (\\.user.ini|\\.htaccess|\\.git|\\.svn|\\.project|LICENSE|README.md)\$>\n    Order allow,deny\n    Deny from all\n  </Files>\n  <FilesMatch \\.php\$>\n    SetHandler \"proxy:unix:/dev/shm/php-cgi.sock|fcgi://localhost\"\n  </FilesMatch>")
   cat > ${apache_install_dir}/conf/vhost/0.conf << EOF
 <VirtualHost *:$TMP_PORT>
   ServerAdmin admin@example.com
@@ -121,9 +129,7 @@ EOF
     Order allow,deny
     Deny from all
   </Files>
-  <FilesMatch \.php$>
-    SetHandler "proxy:unix:/dev/shm/php-cgi.sock|fcgi://localhost"
-  </FilesMatch>
+  ${Apache_fcgi}
 <Directory "${wwwroot_dir}/default">
   SetOutputFilter DEFLATE
   Options FollowSymLinks ExecCGI

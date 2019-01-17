@@ -368,8 +368,8 @@ if [ -n "`echo ${desc_bk} | grep -w 6`" ]; then
     chmod +x /usr/local/bin/qrsctl
   fi
   if [ ! -e "/usr/local/bin/qshell" ]; then
-    wget -qc http://devtools.qiniu.com/qshell-v2.3.5.zip -O /tmp/qshell-v2.3.5.zip
-    unzip -q /tmp/qshell-v2.3.5.zip -d /tmp/
+    wget -qc http://devtools.qiniu.com/qshell-v2.3.6.zip -O /tmp/qshell-v2.3.6.zip
+    unzip -q /tmp/qshell-v2.3.6.zip -d /tmp/
     if [ "${OS_BIT}" == '64' ]; then
       /bin/cp /tmp/qshell-linux-x64 /usr/local/bin/qshell
     elif [ "${OS_BIT}" == '32' ]; then

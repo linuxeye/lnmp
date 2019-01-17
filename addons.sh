@@ -49,7 +49,7 @@ Show_Help() {
   --composer                  Composer
   --fail2ban                  Fail2ban
   --ngx_lua_waf               Ngx_lua_waf
-  --python                    Python3.6
+  --python                    Python (PATH: ${python_install_dir})
   "
 }
 

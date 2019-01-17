@@ -82,7 +82,7 @@ Install_PHP72() {
   ./buildconf
   [ ! -d "${php_install_dir}" ] && mkdir -p ${php_install_dir}
   [ "${phpcache_option}" == '1' ] && phpcache_arg='--enable-opcache' || phpcache_arg='--disable-opcache'
-  if [ "${apache_option}" == '2' ] || [ "${Apache_main_ver}" == '22' ]; then
+  if [ "${apache_option}" == '2' ] || [ "${Apache_main_ver}" == '22' ] || [ "${apache_mode_option}" == '2' ]; then
     ./configure --prefix=${php_install_dir} --with-config-file-path=${php_install_dir}/etc \
     --with-config-file-scan-dir=${php_install_dir}/etc/php.d \
     --with-apxs2=${apache_install_dir}/bin/apxs ${phpcache_arg} --disable-fileinfo \
@@ -159,7 +159,7 @@ opcache.consistency_checks=0
 ;opcache.optimization_level=0
 EOF
 
-  if [ ! -e "${apache_install_dir}/bin/apxs" -o "${Apache_main_ver}" == '24' ]; then
+  if [ ! -e "${apache_install_dir}/bin/apxs" -o "${Apache_main_ver}" == '24' ] && [ "${apache_mode_option}" != '2' ]; then
     # php-fpm Init Script
     if [ -e /bin/systemctl ]; then
       /bin/cp ${oneinstack_dir}/init.d/php-fpm.service /lib/systemd/system/
@@ -257,7 +257,7 @@ EOF
 
     service php-fpm start
 
-  elif [ "${apache_option}" == '2' ] || [ "${Apache_main_ver}" == '22' ]; then
+  elif [ "${apache_option}" == '2' ] || [ "${Apache_main_ver}" == '22' ] || [ "${apache_mode_option}" == '2' ]; then
     service httpd restart
   fi
   popd > /dev/null

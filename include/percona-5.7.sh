@@ -56,7 +56,7 @@ Install_Percona57() {
     if [ "${dbinstallmethod}" == "1" ]; then
       rm -rf Percona-Server-${percona57_ver}-Linux.${SYS_BIT_b}.${sslLibVer}
     elif [ "${dbinstallmethod}" == "2" ]; then
-      rm -rf percona-server-${percona57_ver}
+      rm -rf percona-server-${percona57_ver} boost_${boostVersion2}
     fi
   else
     rm -rf ${percona_install_dir}

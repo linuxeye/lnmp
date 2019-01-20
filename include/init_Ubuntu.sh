@@ -93,8 +93,8 @@ EOF
 sed -i 's@^@#@g' /etc/init/control-alt-delete.conf
 
 # Update time
-ntpdate pool.ntp.org
-[ ! -e "/var/spool/cron/crontabs/root" -o -z "$(grep ntpdate /var/spool/cron/crontabs/root 2>/dev/null)" ] && { echo "*/20 * * * * $(which ntpdate) pool.ntp.org > /dev/null 2>&1" >> /var/spool/cron/crontabs/root;chmod 600 /var/spool/cron/crontabs/root; }
+ntpdate -u pool.ntp.org
+[ ! -e "/var/spool/cron/crontabs/root" -o -z "$(grep ntpdate /var/spool/cron/crontabs/root 2>/dev/null)" ] && { echo "*/20 * * * * $(which ntpdate) -u pool.ntp.org > /dev/null 2>&1" >> /var/spool/cron/crontabs/root;chmod 600 /var/spool/cron/crontabs/root; }
 
 # iptables
 if [ "${iptables_flag}" == 'y' ]; then

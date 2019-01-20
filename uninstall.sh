@@ -40,7 +40,7 @@ Show_Help() {
   --php                         Uninstall PHP
   --phpcache                    Uninstall PHP opcode cache
   --php_extensions [ext name]   Uninstall PHP extensions, include zendguardloader,ioncube,
-                                sourceguardian,imagick,gmagick,fileinfo,imap,phalcon,
+                                sourceguardian,imagick,gmagick,fileinfo,imap,ldap,phalcon,
                                 redis,memcached,memcache,mongodb,swoole,xdebug
   --hhvm                        Uninstall HHVM
   --pureftpd                    Uninstall PureFtpd
@@ -108,6 +108,7 @@ while :; do
       [ -n "`echo ${php_extensions} | grep -w gmagick`" ] && pecl_gmagick=1
       [ -n "`echo ${php_extensions} | grep -w fileinfo`" ] && pecl_fileinfo=1
       [ -n "`echo ${php_extensions} | grep -w imap`" ] && pecl_imap=1
+      [ -n "`echo ${php_extensions} | grep -w ldap`" ] && pecl_ldap=1
       [ -n "`echo ${php_extensions} | grep -w phalcon`" ] && pecl_phalcon=1
       [ -n "`echo ${php_extensions} | grep -w redis`" ] && pecl_redis=1
       [ -n "`echo ${php_extensions} | grep -w memcached`" ] && pecl_memcached=1
@@ -335,6 +336,12 @@ Uninstall_PHPext() {
   if [ "${pecl_imap}" == '1' ]; then
     . include/pecl_imap.sh
     Uninstall_pecl_imap
+  fi
+
+  # ldap 
+  if [ "${pecl_ldap}" == '1' ]; then
+    . include/pecl_ldap.sh
+    Uninstall_pecl_ldap
   fi
 
   # phalcon

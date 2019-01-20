@@ -98,7 +98,7 @@ Check_SS() {
 
 AddUser_SS() {
   while :; do echo
-    [ ${password_queit} != 'y' ] && read -e -p "Please input password for SS: " SS_password
+    [ "${password_queit}" != 'y' ] && read -e -p "Please input password for SS: " SS_password
     [ -n "$(echo ${SS_password} | grep '[+|&]')" ] && { echo "${CWARNING}input error,not contain a plus sign (+) and & ${CEND}"; continue; }
     (( ${#SS_password} >= 5 )) && break || echo "${CWARNING}SS password least 5 characters! ${CEND}"
   done
@@ -120,7 +120,7 @@ Iptables() {
   fi
 
   while :; do echo
-    [ ${port_queit} != 'y' ] && read -e -p "Please input SS port(Default: ${SS_Default_port}): " SS_port
+    [ "${port_queit}" != 'y' ] && read -e -p "Please input SS port(Default: ${SS_Default_port}): " SS_port
     SS_port=${SS_port:-${SS_Default_port}}
     if [ ${SS_port} -ge 1 >/dev/null 2>&1 -a ${SS_port} -le 65535 >/dev/null 2>&1 ]; then
       [ -z "$(netstat -tpln | grep :${SS_port}$)" ] && break || echo "${CWARNING}This port is already used! ${CEND}"

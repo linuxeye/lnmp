@@ -110,8 +110,8 @@ elif [ "${CentOS_ver}" == '7' ]; then
 fi
 
 # Update time
-ntpdate pool.ntp.org
-[ ! -e "/var/spool/cron/root" -o -z "$(grep 'ntpdate' /var/spool/cron/root)" ] && { echo "*/20 * * * * $(which ntpdate) pool.ntp.org > /dev/null 2>&1" >> /var/spool/cron/root;chmod 600 /var/spool/cron/root; }
+ntpdate -u pool.ntp.org
+[ ! -e "/var/spool/cron/root" -o -z "$(grep 'ntpdate' /var/spool/cron/root)" ] && { echo "*/20 * * * * $(which ntpdate) -u pool.ntp.org > /dev/null 2>&1" >> /var/spool/cron/root;chmod 600 /var/spool/cron/root; }
 
 # iptables
 if [ "${iptables_flag}" == 'y' ]; then

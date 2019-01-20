@@ -115,8 +115,8 @@ checkDownload() {
   fi
 
   if [[ "${db_option}" =~ ^[1-9]$|^1[0-5]$ ]]; then
-    if [[ "${db_option}" =~ ^[1,2,5,6,9]$ ]] && [ "${dbinstallmethod}" == "2" ]; then
-      [[ "${db_option}" =~ ^[2,5,6,9]$ ]] && boost_ver=${boost_oldver}
+    if [[ "${db_option}" =~ ^[1,2,5,6,9]$|^10$ ]] && [ "${dbinstallmethod}" == "2" ]; then
+      [[ "${db_option}" =~ ^[2,5,6]$|^10$ ]] && boost_ver=${boost_oldver}
       echo "Download boost..."
       [ "${IPADDR_COUNTRY}"x == "CN"x ] && DOWN_ADDR_BOOST=${mirrorLink} || DOWN_ADDR_BOOST=http://downloads.sourceforge.net/project/boost/boost/${boost_ver}
       boostVersion2=$(echo ${boost_ver} | awk -F. '{print $1"_"$2"_"$3}')
@@ -418,37 +418,31 @@ checkDownload() {
         fi
         ;;
       9)
-        # MariaDB 5.5
+        # Percona 8.0
         if [ "${dbinstallmethod}" == '1' ]; then
-          echo "Download MariaDB 5.5 binary package..."
-          FILE_NAME=mariadb-${mariadb55_ver}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
-          if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            DOWN_ADDR_MARIADB=http://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb55_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            DOWN_ADDR_MARIADB_BK=http://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb55_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-          else
-            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb55_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb55_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-          fi
+          echo "Download Percona 8.0 binary package..."
+          FILE_NAME=Percona-Server-${percona80_ver}-Linux.${SYS_BIT_b}.${sslLibVer}.tar.gz
+          DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-8.0/Percona-Server-${percona80_ver}/binary/tarball
         elif [ "${dbinstallmethod}" == '2' ]; then
-          echo "Download MariaDB 5.5 source package..."
-          FILE_NAME=mariadb-${mariadb55_ver}.tar.gz
+          echo "Download Percona 8.0 source package..."
+          FILE_NAME=percona-server-${percona80_ver}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            DOWN_ADDR_MARIADB=http://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb55_ver}/source
-            DOWN_ADDR_MARIADB_BK=http://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb55_ver}/source
+            DOWN_ADDR_PERCONA=${mirrorLink}
           else
-            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb55_ver}/source
-            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb55_ver}/source
+            DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-8.0/Percona-Server-${percona80_ver}/source/tarball
           fi
         fi
-        src_url=${DOWN_ADDR_MARIADB}/${FILE_NAME} && Download_src
-        wget -4 --tries=6 -c --no-check-certificate ${DOWN_ADDR_MARIADB}/md5sums.txt -O ${FILE_NAME}.md5
-        MARAIDB_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
-        [ -z "${MARAIDB_TAR_MD5}" ] && MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB_BK}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
+        # start download
+        src_url=${DOWN_ADDR_PERCONA}/${FILE_NAME} && Download_src
+        src_url=${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum && Download_src
+        # verifying download
+        PERCONA_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5sum)
+        [ -z "${PERCONA_TAR_MD5}" ] && PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
         tryDlCount=0
-        while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${MARAIDB_TAR_MD5}" ]; do
-          wget -c --no-check-certificate ${DOWN_ADDR_MARIADB_BK}/${FILE_NAME};sleep 1
+        while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${PERCONA_TAR_MD5}" ]; do
+          wget -c --no-check-certificate ${DOWN_ADDR_PERCONA}/${FILE_NAME}; sleep 1
           let "tryDlCount++"
-          [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${MARAIDB_TAR_MD5}" -o "${tryDlCount}" == '6' ] && break || continue
+          [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${PERCONA_TAR_MD5}" -o "${tryDlCount}" == '6' ] && break || continue
         done
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"

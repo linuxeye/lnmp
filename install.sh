@@ -48,12 +48,12 @@ Show_Help() {
   --nginx_option [1-3]        Install Nginx server version
   --apache_option [1-2]       Install Apache server version
   --apache_mode_option [1-2]  Apache2.4 mode, 1(default): php-fpm, 2: mod_php
-  --apache_mpm_option [1-3]   Apache2.4 MPM, 1(default): event, 2: prefork, 3: worker 
+  --apache_mpm_option [1-3]   Apache2.4 MPM, 1(default): event, 2: prefork, 3: worker
   --php_option [1-8]          Install PHP version
   --php_vn [53~73]            Install another version of php in OneinStack
   --phpcache_option [1-4]     Install PHP opcode cache, default: 1 opcache
   --php_extensions [ext name] Install PHP extensions, include zendguardloader,ioncube,
-                              sourceguardian,imagick,gmagick,fileinfo,imap,phalcon,
+                              sourceguardian,imagick,gmagick,fileinfo,imap,ldap,phalcon,
                               redis,memcached,memcache,mongodb,swoole,xdebug
   --tomcat_option [1-4]       Install Tomcat version
   --jdk_option [1-4]          Install JDK version
@@ -126,6 +126,7 @@ while :; do
       [ -n "`echo ${php_extensions} | grep -w gmagick`" ] && pecl_gmagick=1
       [ -n "`echo ${php_extensions} | grep -w fileinfo`" ] && pecl_fileinfo=1
       [ -n "`echo ${php_extensions} | grep -w imap`" ] && pecl_imap=1
+      [ -n "`echo ${php_extensions} | grep -w ldap`" ] && pecl_ldap=1
       [ -n "`echo ${php_extensions} | grep -w phalcon`" ] && pecl_phalcon=1
       [ -n "`echo ${php_extensions} | grep -w redis`" ] && pecl_redis=1
       [ -n "`echo ${php_extensions} | grep -w memcached`" ] && pecl_memcached=1
@@ -406,7 +407,7 @@ if [ ${ARG_NUM} == 0 ]; then
           echo -e "\t${CMSG} 6${CEND}. Install MariaDB-10.2"
           echo -e "\t${CMSG} 7${CEND}. Install MariaDB-10.1"
           echo -e "\t${CMSG} 8${CEND}. Install MariaDB-10.0"
-          echo -e "\t${CMSG} 9${CEND}. Install MariaDB-5.5"
+          echo -e "\t${CMSG} 9${CEND}. Install Percona-8.0"
           echo -e "\t${CMSG}10${CEND}. Install Percona-5.7"
           echo -e "\t${CMSG}11${CEND}. Install Percona-5.6"
           echo -e "\t${CMSG}12${CEND}. Install Percona-5.5"
@@ -415,7 +416,7 @@ if [ ${ARG_NUM} == 0 ]; then
           echo -e "\t${CMSG}15${CEND}. Install MongoDB"
           read -e -p "Please input a number:(Default 2 press Enter) " db_option
           db_option=${db_option:-2}
-          [[ "${db_option}" =~ ^5$|^15$ ]] && [ "${OS_BIT}" == '32' ] && { echo "${CWARNING}By not supporting 32-bit! ${CEND}"; continue; }
+          [[ "${db_option}" =~ ^[1,5,9]$|^15$ ]] && [ "${OS_BIT}" == '32' ] && { echo "${CWARNING}By not supporting 32-bit! ${CEND}"; continue; }
           if [[ "${db_option}" =~ ^[1-9]$|^1[0-5]$ ]]; then
             if [ "${db_option}" == '14' ]; then
               [ -e "${pgsql_install_dir}/bin/psql" ] && { echo "${CWARNING}PostgreSQL already installed! ${CEND}"; unset db_option; break; }
@@ -460,7 +461,7 @@ if [ ${ARG_NUM} == 0 ]; then
                 if [[ ! ${dbinstallmethod} =~ ^[1-2]$ ]]; then
                   echo "${CWARNING}input error! Please only input number 1~2${CEND}"
                 else
-                  [ "${db_option}" == '5' -a "${LIBC_YN}" != '0' -a "$dbinstallmethod" == '1' ] && { echo "${CWARNING}MariaDB-10.3 binaries require GLIBC 2.14 or higher! ${CEND}"; continue; }
+                  [ "${db_option}" == '5' -a "${LIBC_YN}" != '0' -a "${dbinstallmethod}" == '1' ] && { echo "${CWARNING}MariaDB-10.3 binaries require GLIBC 2.14 or higher! ${CEND}"; continue; }
                   break
                 fi
               done
@@ -619,25 +620,26 @@ if [ ${ARG_NUM} == 0 ]; then
       echo -e "\t${CMSG} 5${CEND}. Install gmagick"
       echo -e "\t${CMSG} 6${CEND}. Install fileinfo"
       echo -e "\t${CMSG} 7${CEND}. Install imap"
-      echo -e "\t${CMSG} 8${CEND}. Install phalcon(PHP>=5.5)"
-      echo -e "\t${CMSG} 9${CEND}. Install redis"
-      echo -e "\t${CMSG}10${CEND}. Install memcached"
-      echo -e "\t${CMSG}11${CEND}. Install memcache(PHP<=7.2)"
-      echo -e "\t${CMSG}12${CEND}. Install mongodb"
-      echo -e "\t${CMSG}13${CEND}. Install swoole"
-      echo -e "\t${CMSG}14${CEND}. Install xdebug(PHP>=5.5)"
-      read -e -p "Please input numbers:(Default '4 9 10 11' press Enter) " phpext_option
-      phpext_option=${phpext_option:-'4 9 10 11'}
+      echo -e "\t${CMSG} 8${CEND}. Install ldap"
+      echo -e "\t${CMSG} 9${CEND}. Install phalcon(PHP>=5.5)"
+      echo -e "\t${CMSG}10${CEND}. Install redis"
+      echo -e "\t${CMSG}11${CEND}. Install memcached"
+      echo -e "\t${CMSG}12${CEND}. Install memcache(PHP<=7.2)"
+      echo -e "\t${CMSG}13${CEND}. Install mongodb"
+      echo -e "\t${CMSG}14${CEND}. Install swoole"
+      echo -e "\t${CMSG}15${CEND}. Install xdebug(PHP>=5.5)"
+      read -e -p "Please input numbers:(Default '4 10 11' press Enter) " phpext_option
+      phpext_option=${phpext_option:-'4 10 11'}
       [ "${phpext_option}" == '0' ] && break
       array_phpext=(${phpext_option})
-      array_all=(1 2 3 4 5 6 7 8 9 10 11 12 13 14)
+      array_all=(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
       for v in ${array_phpext[@]}
       do
         [ -z "`echo ${array_all[@]} | grep -w ${v}`" ] && phpext_flag=1
       done
       if [ "${phpext_flag}" == '1' ]; then
         unset phpext_flag
-        echo; echo "${CWARNING}input error! Please only input number 4 9 10 11 and so on${CEND}"; echo
+        echo; echo "${CWARNING}input error! Please only input number 4 10 11 and so on${CEND}"; echo
         continue
       else
         [ -n "`echo ${array_phpext[@]} | grep -w 1`" ] && pecl_zendguardloader=1
@@ -647,13 +649,14 @@ if [ ${ARG_NUM} == 0 ]; then
         [ -n "`echo ${array_phpext[@]} | grep -w 5`" ] && pecl_gmagick=1
         [ -n "`echo ${array_phpext[@]} | grep -w 6`" ] && pecl_fileinfo=1
         [ -n "`echo ${array_phpext[@]} | grep -w 7`" ] && pecl_imap=1
-        [ -n "`echo ${array_phpext[@]} | grep -w 8`" ] && pecl_phalcon=1
-        [ -n "`echo ${array_phpext[@]} | grep -w 9`" ] && pecl_redis=1
-        [ -n "`echo ${array_phpext[@]} | grep -w 10`" ] && pecl_memcached=1
-        [ -n "`echo ${array_phpext[@]} | grep -w 11`" ] && pecl_memcache=1
-        [ -n "`echo ${array_phpext[@]} | grep -w 12`" ] && pecl_mongodb=1
-        [ -n "`echo ${array_phpext[@]} | grep -w 13`" ] && pecl_swoole=1
-        [ -n "`echo ${array_phpext[@]} | grep -w 14`" ] && pecl_xdebug=1
+        [ -n "`echo ${array_phpext[@]} | grep -w 8`" ] && pecl_ldap=1
+        [ -n "`echo ${array_phpext[@]} | grep -w 9`" ] && pecl_phalcon=1
+        [ -n "`echo ${array_phpext[@]} | grep -w 10`" ] && pecl_redis=1
+        [ -n "`echo ${array_phpext[@]} | grep -w 11`" ] && pecl_memcached=1
+        [ -n "`echo ${array_phpext[@]} | grep -w 12`" ] && pecl_memcache=1
+        [ -n "`echo ${array_phpext[@]} | grep -w 13`" ] && pecl_mongodb=1
+        [ -n "`echo ${array_phpext[@]} | grep -w 14`" ] && pecl_swoole=1
+        [ -n "`echo ${array_phpext[@]} | grep -w 15`" ] && pecl_xdebug=1
         break
       fi
     done
@@ -731,7 +734,7 @@ fi
 if [ ! -e ~/.oneinstack ]; then
   [ "${PM}" == 'apt-get' ] && apt-get -y update
   [ "${PM}" == 'yum' ] && yum clean all
-  ${PM} -y -q install wget gcc curl python
+  ${PM} -y install wget gcc curl python
 fi
 
 # get the IP information
@@ -824,8 +827,9 @@ case "${db_option}" in
     Install_MariaDB100 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   9)
-    . include/mariadb-5.5.sh
-    Install_MariaDB55 2>&1 | tee -a ${oneinstack_dir}/install.log
+    [ "${OS}" == 'CentOS' -a "${CentOS_ver}" != '7' ] && dbinstallmethod=1
+    . include/percona-8.0.sh
+    Install_Percona80 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   10)
     . include/percona-5.7.sh
@@ -976,6 +980,12 @@ fi
 if [ "${pecl_imap}" == '1' ]; then
   . include/pecl_imap.sh
   Install_pecl_imap 2>&1 | tee -a ${oneinstack_dir}/install.log
+fi
+
+# ldap
+if [ "${pecl_ldap}" == '1' ]; then
+  . include/pecl_ldap.sh
+  Install_pecl_ldap 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # phalcon

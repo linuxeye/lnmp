@@ -19,15 +19,15 @@ apr_util_ver=1.6.1
 nghttp2_ver=1.35.1
 
 # DB
-mysql80_ver=8.0.13
-mysql57_ver=5.7.24
-mysql56_ver=5.6.42
+mysql80_ver=8.0.14
+mysql57_ver=5.7.25
+mysql56_ver=5.6.43
 mysql55_ver=5.5.62
 
 mariadb103_ver=10.3.12
 mariadb102_ver=10.2.21
 mariadb101_ver=10.1.37
-mariadb100_ver=10.0.37
+mariadb55_ver=5.5.62
 
 percona80_ver=8.0.13-4
 percona57_ver=5.7.24-27

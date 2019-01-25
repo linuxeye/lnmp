@@ -11,7 +11,7 @@
 Upgrade_PHP() {
   pushd ${oneinstack_dir}/src > /dev/null
   [ ! -e "${php_install_dir}" ] && echo "${CWARNING}PHP is not installed on your system! ${CEND}" && exit 1
-  OLD_php_ver=`${php_install_dir}/bin/php -r 'echo PHP_VERSION;'`
+  OLD_php_ver=`${php_install_dir}/bin/php-config --version`
   Latest_php_ver=`curl --connect-timeout 2 -m 3 -s http://php.net/downloads.php | awk '/Changelog/{print $2}' | grep "${OLD_php_ver%.*}"`
   Latest_php_ver=${Latest_php_ver:-5.5.38}
   echo

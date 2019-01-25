@@ -79,7 +79,6 @@ Install_PHP73() {
   tar xzf php-${php73_ver}.tar.gz
   pushd php-${php73_ver} > /dev/null
   make clean
-  ./buildconf
   [ ! -d "${php_install_dir}" ] && mkdir -p ${php_install_dir}
   [ "${phpcache_option}" == '1' ] && phpcache_arg='--enable-opcache' || phpcache_arg='--disable-opcache'
   if [ "${apache_option}" == '2' ] || [ "${Apache_main_ver}" == '22' ] || [ "${apache_mode_option}" == '2' ]; then

@@ -194,9 +194,8 @@ Install_SS_python() {
   ${python_install_dir}/bin/pip install M2Crypto
   ${python_install_dir}/bin/pip install greenlet
   ${python_install_dir}/bin/pip install gevent
-  ${python_install_dir}/bin/pip install shadowsocks
+  ${python_install_dir}/bin/pip install git+https://github.com/shadowsocks/shadowsocks.git@master
   if [ -f ${python_install_dir}/bin/ssserver ]; then
-    sed -i 's@libcrypto.EVP_CIPHER_CTX_cleanup@libcrypto.EVP_CIPHER_CTX_reset@g' ${python_install_dir}/lib/python3.6/site-packages/shadowsocks/crypto/openssl.py
     if [ -e /bin/systemctl ]; then
       /bin/cp ../init.d/SS-python.service /lib/systemd/system/shadowsocks.service
       sed -i "s@/usr/local/python@${python_install_dir}@g" /lib/systemd/system/shadowsocks.service

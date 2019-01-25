@@ -12,7 +12,7 @@ Install_pecl_pgsql() {
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     pushd ${oneinstack_dir}/src > /dev/null
     phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
-    PHP_detail_ver=$(${php_install_dir}/bin/php -r 'echo PHP_VERSION;')
+    PHP_detail_ver=$(${php_install_dir}/bin/php-config --version)
     tar xzf php-${PHP_detail_ver}.tar.gz
     pushd php-${PHP_detail_ver}/ext/pgsql > /dev/null
     ${php_install_dir}/bin/phpize

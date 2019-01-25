@@ -12,7 +12,7 @@ Install_pecl_mongodb() {
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     pushd ${oneinstack_dir}/src > /dev/null
     phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
-    if [[ "$(${php_install_dir}/bin/php -r 'echo PHP_VERSION;' | awk -F. '{print $1$2}')" =~ ^5[3-4]$ ]]; then
+    if [[ "$(${php_install_dir}/bin/php-config --version | awk -F. '{print $1$2}')" =~ ^5[3-4]$ ]]; then
       src_url=https://pecl.php.net/get/mongo-${pecl_mongo_ver}.tgz && Download_src
       tar xzf mongo-${pecl_mongo_ver}.tgz
       pushd mongo-${pecl_mongo_ver} > /dev/null

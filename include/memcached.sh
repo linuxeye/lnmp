@@ -46,31 +46,27 @@ Install_pecl_memcache() {
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     pushd ${oneinstack_dir}/src > /dev/null
     phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
-    PHP_detail_ver=$(${php_install_dir}/bin/php -r 'echo PHP_VERSION;')
+    PHP_detail_ver=$(${php_install_dir}/bin/php-config --version)
     PHP_main_ver=${PHP_detail_ver%.*}
-    if [[ "${PHP_main_ver}" =~ ^5.[3-6]$|^7.[0-2]$ ]]; then
-      if [[ "${PHP_main_ver}" =~ ^7.[0-2]$ ]]; then
-        #git clone https://github.com/websupport-sk/pecl-memcache.git
-        #cd pecl-memcache
-        tar xzf pecl-memcache-php7.tgz
-        pushd pecl-memcache-php7 > /dev/null
-      else
-        tar xzf memcache-${pecl_memcache_ver}.tgz
-        pushd memcache-${pecl_memcache_ver} > /dev/null
-      fi
-      ${php_install_dir}/bin/phpize
-      ./configure --with-php-config=${php_install_dir}/bin/php-config
-      make -j ${THREAD} && make install
-      popd > /dev/null
-      if [ -f "${phpExtensionDir}/memcache.so" ]; then
-        echo "extension=memcache.so" > ${php_install_dir}/etc/php.d/05-memcache.ini
-        echo "${CSUCCESS}PHP memcache module installed successfully! ${CEND}"
-        rm -rf pecl-memcache-php7 memcache-${pecl_memcache_ver}
-      else
-        echo "${CFAILURE}PHP memcache module install failed, Please contact the author! ${CEND}"
-      fi
+    if [[ "${PHP_main_ver}" =~ ^7.[0-3]$ ]]; then
+      #git clone https://github.com/websupport-sk/pecl-memcache.git
+      #cd pecl-memcache
+      tar xzf pecl-memcache-php7.tgz
+      pushd pecl-memcache-php7 > /dev/null
     else
-      echo; echo "${CWARNING}Your php ${PHP_detail_ver} does not support pecl_memcache! ${CEND}";
+      tar xzf memcache-${pecl_memcache_ver}.tgz
+      pushd memcache-${pecl_memcache_ver} > /dev/null
+    fi
+    ${php_install_dir}/bin/phpize
+    ./configure --with-php-config=${php_install_dir}/bin/php-config
+    make -j ${THREAD} && make install
+    popd > /dev/null
+    if [ -f "${phpExtensionDir}/memcache.so" ]; then
+      echo "extension=memcache.so" > ${php_install_dir}/etc/php.d/05-memcache.ini
+      echo "${CSUCCESS}PHP memcache module installed successfully! ${CEND}"
+      rm -rf pecl-memcache-php7 memcache-${pecl_memcache_ver}
+    else
+      echo "${CFAILURE}PHP memcache module install failed, Please contact the author! ${CEND}"
     fi
     popd > /dev/null
   fi
@@ -91,7 +87,7 @@ Install_pecl_memcached() {
     popd > /dev/null
     rm -rf libmemcached-${libmemcached_ver}
 
-    if [ "$(${php_install_dir}/bin/php -r 'echo PHP_VERSION;' | awk -F. '{print $1}')" == '7' ]; then
+    if [ "$(${php_install_dir}/bin/php-config --version | awk -F. '{print $1}')" == '7' ]; then
       tar xzf memcached-${pecl_memcached_ver}.tgz
       pushd memcached-${pecl_memcached_ver} > /dev/null
     else

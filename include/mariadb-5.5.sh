@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/oneinstack/oneinstack
 
-Install_MariaDB100() {
+Install_MariaDB55() {
   pushd ${oneinstack_dir}/src > /dev/null
   id -u mysql >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin mysql
@@ -17,13 +17,14 @@ Install_MariaDB100() {
   mkdir -p ${mariadb_data_dir};chown mysql.mysql -R ${mariadb_data_dir}
 
   if [ "${dbinstallmethod}" == "1" ]; then
-    tar zxf mariadb-${mariadb100_ver}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
-    mv mariadb-${mariadb100_ver}-*-${SYS_BIT_b}/* ${mariadb_install_dir}
+    tar zxf mariadb-${mariadb55_ver}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
+    mv mariadb-${mariadb55_ver}-*-${SYS_BIT_b}/* ${mariadb_install_dir}
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mariadb_install_dir}/bin/mysqld_safe
     sed -i "s@/usr/local/mysql@${mariadb_install_dir}@g" ${mariadb_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then
-    tar xzf mariadb-${mariadb100_ver}.tar.gz
-    pushd mariadb-${mariadb100_ver}
+    tar xzf mariadb-${mariadb55_ver}.tar.gz
+    pushd mariadb-${mariadb55_ver}
+    [ "${armplatform}" == "y" ] && patch -p1 < ../mysql-5.5-fix-arm-client_plugin.patch
     cmake . -DCMAKE_INSTALL_PREFIX=${mariadb_install_dir} \
     -DMYSQL_DATADIR=${mariadb_data_dir} \
     -DSYSCONFDIR=/etc \
@@ -32,6 +33,7 @@ Install_MariaDB100() {
     -DWITH_FEDERATED_STORAGE_ENGINE=1 \
     -DWITH_BLACKHOLE_STORAGE_ENGINE=1 \
     -DWITH_MYISAM_STORAGE_ENGINE=1 \
+    -DWITH_READLINE=1 \
     -DWITH_EMBEDDED_SERVER=1 \
     -DENABLE_DTRACE=0 \
     -DENABLED_LOCAL_INFILE=1 \
@@ -48,9 +50,9 @@ Install_MariaDB100() {
     sed -i "s+^dbrootpwd.*+dbrootpwd='${dbrootpwd}'+" ../options.conf
     echo "${CSUCCESS}MariaDB installed successfully! ${CEND}"
     if [ "${dbinstallmethod}" == "1" ]; then
-      rm -rf mariadb-${mariadb100_ver}-*-${SYS_BIT_b}
+      rm -rf mariadb-${mariadb55_ver}-*-${SYS_BIT_b}
     elif [ "${dbinstallmethod}" == "2" ]; then
-      rm -rf mariadb-${mariadb100_ver}
+      rm -rf mariadb-${mariadb55_ver}
     fi
   else
     rm -rf ${mariadb_install_dir}
@@ -116,7 +118,7 @@ ft_min_word_len = 4
 
 log_bin = mysql-bin
 binlog_format = mixed
-expire_logs_days = 7
+expire_logs_days = 7 
 
 log_error = ${mariadb_data_dir}/mysql-error.log
 slow_query_log = 1
@@ -130,6 +132,7 @@ performance_schema = 0
 skip-external-locking
 
 default_storage_engine = InnoDB
+#default-storage-engine = MyISAM
 innodb_file_per_table = 1
 innodb_open_files = 500
 innodb_buffer_pool_size = 64M

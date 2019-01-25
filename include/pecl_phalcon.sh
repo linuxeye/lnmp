@@ -11,7 +11,7 @@
 Install_pecl_phalcon() {
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     pushd ${oneinstack_dir}/src > /dev/null
-    PHP_detail_ver=$(${php_install_dir}/bin/php -r 'echo PHP_VERSION;')
+    PHP_detail_ver=$(${php_install_dir}/bin/php-config --version)
     PHP_main_ver=${PHP_detail_ver%.*}
     if [[ "${PHP_main_ver}" =~ ^5.[5-6]$|^7.[0-3]$ ]]; then
       phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)

@@ -6,39 +6,39 @@ openresty_ver=1.13.6.2
 openssl11_ver=1.1.1a
 openssl_ver=1.0.2q
 
-tomcat9_ver=9.0.14
+tomcat9_ver=9.0.16
 tomcat8_ver=8.5.37
 tomcat7_ver=7.0.92
 tomcat6_ver=6.0.53
 
-apache24_ver=2.4.37
+apache24_ver=2.4.38
 apache22_ver=2.2.34
 pcre_ver=8.42
 apr_ver=1.6.5
 apr_util_ver=1.6.1
-nghttp2_ver=1.35.1
+nghttp2_ver=1.36.0
 
 # DB
-mysql80_ver=8.0.14
+mysql80_ver=8.0.15
 mysql57_ver=5.7.25
 mysql56_ver=5.6.43
 mysql55_ver=5.5.62
 
 mariadb103_ver=10.3.12
 mariadb102_ver=10.2.21
-mariadb101_ver=10.1.37
-mariadb55_ver=5.5.62
+mariadb101_ver=10.1.38
+mariadb55_ver=5.5.63
 
 percona80_ver=8.0.13-4
 percona57_ver=5.7.24-27
-percona56_ver=5.6.42-84.2
+percona56_ver=5.6.43-84.3
 percona55_ver=5.5.62-38.14
 
 alisql_ver=5.6.32-9
 
 pgsql_ver=11.1
 
-mongodb_ver=4.0.5
+mongodb_ver=4.0.6
 
 # JDK
 jdk110_ver=11.0.2
@@ -47,8 +47,8 @@ jdk17_ver=1.7.0_80
 jdk16_ver=1.6.0_45
 
 # PHP
-php73_ver=7.3.1
-php72_ver=7.2.14
+php73_ver=7.3.2
+php72_ver=7.2.15
 php71_ver=7.1.26
 php70_ver=7.0.33
 php56_ver=5.6.40
@@ -57,13 +57,13 @@ php54_ver=5.4.45
 php53_ver=5.3.29
 
 libiconv_ver=1.15
-curl_ver=7.63.0
+curl_ver=7.64.0
 libmcrypt_ver=2.5.8
 mcrypt_ver=2.6.8
 mhash_ver=0.9.9.9
 libsodium_ver=1.0.17
 argon2_ver=20171227
-imagemagick_ver=6.9.10-24
+imagemagick_ver=6.9.10-27
 imagick_ver=3.4.3
 graphicsmagick_ver=1.3.30
 gmagick_ver=2.0.5RC1
@@ -74,7 +74,7 @@ apcu_ver=5.1.16
 apcu_oldver=4.0.11
 eaccelerator_ver=0.9.6.1
 phalcon_ver=3.4.2
-swoole_ver=4.2.12
+swoole_ver=4.2.13
 swoole_oldver=1.10.5
 xdebug_ver=2.6.1
 xdebug_oldver=2.5.5
@@ -98,7 +98,7 @@ pecl_mongodb_ver=1.5.3
 pecl_mongo_ver=1.6.16
 
 # phpMyadmin
-phpmyadmin_ver=4.8.4
+phpmyadmin_ver=4.8.5
 phpmyadmin_oldver=4.4.15.10
 
 # jemalloc

@@ -9,9 +9,9 @@ Group=mongod
 Environment="OPTIONS=-f /etc/mongod.conf"
 EnvironmentFile=-/etc/sysconfig/mongod
 ExecStart=/usr/local/mongodb/bin/mongod $OPTIONS
-ExecStartPre=/usr/bin/mkdir -p /var/run/mongodb
-ExecStartPre=/usr/bin/chown mongod:mongod /var/run/mongodb
-ExecStartPre=/usr/bin/chmod 0755 /var/run/mongodb
+ExecStartPre=/bin/mkdir -p /var/run/mongodb
+ExecStartPre=/bin/chown mongod:mongod /var/run/mongodb
+ExecStartPre=/bin/chmod 0755 /var/run/mongodb
 PermissionsStartOnly=true
 PIDFile=/var/run/mongodb/mongod.pid
 Type=forking

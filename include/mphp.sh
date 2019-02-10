@@ -13,7 +13,6 @@ Install_MPHP() {
     if [ -e "${php_install_dir}${mphp_ver}/bin/phpize" ]; then
       echo "${CWARNING}PHP${mphp_ver} already installed! ${CEND}"
     else
-      service php-fpm stop
       [ -e "/lib/systemd/system/php-fpm.service" ] && /bin/mv /lib/systemd/system/php-fpm.service{,_bk}
       [ -e "/etc/init.d/php-fpm" ] && /bin/mv /etc/init.d/php-fpm{,_bk}
       php_install_dir=${php_install_dir}${mphp_ver}
@@ -57,7 +56,7 @@ Install_MPHP() {
         [ -e "/lib/systemd/system/php-fpm.service" ] && /bin/mv /lib/systemd/system/php-fpm.service /lib/systemd/system/php${mphp_ver}-fpm.service
         [ -e "/etc/init.d/php-fpm" ] && /bin/mv /etc/init.d/php-fpm /etc/init.d/php${mphp_ver}-fpm
         [ -e "/lib/systemd/system/php-fpm.service_bk" ] && /bin/mv /lib/systemd/system/php-fpm.service{_bk,}
-        [ -e "/etc/init.d/php-fpm_bk" ] && /bin/mv /etc/init.d/php-fpm /etc/init.d/php-fpm{_bk,}
+        [ -e "/etc/init.d/php-fpm_bk" ] && /bin/mv /etc/init.d/php-fpm{_bk,}
         if [ -e /bin/systemctl ]; then
           systemctl enable php${mphp_ver}-fpm
           systemctl enable php-fpm

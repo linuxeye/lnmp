@@ -10,9 +10,9 @@
 
 Install_PHP56() {
   pushd ${oneinstack_dir}/src > /dev/null
-  if [ -e "${apache_install_dir}/bin/apachectl" ];then
-    [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '4' ] && Apache_main_ver=24
-    [ "$(${apache_install_dir}/bin/apachectl -v | awk -F'.' /version/'{print $2}')" == '2' ] && Apache_main_ver=22
+  if [ -e "${apache_install_dir}/bin/httpd" ];then
+    [ "$(${apache_install_dir}/bin/httpd -v | awk -F'.' /version/'{print $2}')" == '4' ] && Apache_main_ver=24
+    [ "$(${apache_install_dir}/bin/httpd -v | awk -F'.' /version/'{print $2}')" == '2' ] && Apache_main_ver=22
   fi
   if [ ! -e "/usr/local/lib/libiconv.la" ]; then
     tar xzf libiconv-${libiconv_ver}.tar.gz

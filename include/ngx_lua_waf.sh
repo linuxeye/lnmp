@@ -13,17 +13,17 @@ Nginx_lua_waf() {
   [ ! -e "${nginx_install_dir}/sbin/nginx" ] && echo "${CWARNING}Nginx is not installed on your system! ${CEND}" && exit 1
   if [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ]; then
     [ -e "/usr/local/lib/libluajit-5.1.so.2.0.5" ] && find /usr/local -name *luajit* | xargs rm -rf
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/LuaJIT-2.1.0-beta3.tar.gz && Download_src
-    tar xzf LuaJIT-2.1.0-beta3.tar.gz
-    pushd LuaJIT-2.1.0-beta3
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/luajit2-2.1-20190115.tar.gz && Download_src
+    tar xzf luajit2-2.1-20190115.tar.gz
+    pushd luajit2-2.1-20190115
     make && make install
     [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ] && { echo "${CFAILURE}LuaJIT install failed! ${CEND}"; kill -9 $$; }
     popd > /dev/null
   fi
   if [ ! -e "/usr/local/lib/lua/5.1/cjson.so" ]; then
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/lua-cjson-2.1.0.6.tar.gz && Download_src
-    tar xzf lua-cjson-2.1.0.6.tar.gz
-    pushd lua-cjson-2.1.0.6
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/lua-cjson-2.1.0.7rc2.tar.gz && Download_src
+    tar xzf lua-cjson-2.1.0.7rc2.tar.gz
+    pushd lua-cjson-2.1.0.7rc2
     sed -i 's@^LUA_INCLUDE_DIR.*@&/luajit-2.1@' Makefile
     make && make install
     [ ! -e "/usr/local/lib/lua/5.1/cjson.so" ] && { echo "${CFAILURE}lua-cjson install failed! ${CEND}"; kill -9 $$; }
@@ -76,17 +76,17 @@ Tengine_lua_waf() {
   [ ! -e "${tengine_install_dir}/sbin/nginx" ] && echo "${CWARNING}Tengine is not installed on your system! ${CEND}" && exit 1
   if [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ]; then
     [ -e "/usr/local/lib/libluajit-5.1.so.2.0.5" ] && find /usr/local -name *luajit* | xargs rm -rf
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/LuaJIT-2.1.0-beta3.tar.gz && Download_src
-    tar xzf LuaJIT-2.1.0-beta3.tar.gz
-    pushd LuaJIT-2.1.0-beta3
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/luajit2-2.1-20190115.tar.gz && Download_src
+    tar xzf luajit2-2.1-20190115.tar.gz
+    pushd luajit2-2.1-20190115
     make && make install
     [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ] && { echo "${CFAILURE}LuaJIT install failed! ${CEND}"; kill -9 $$; }
     popd > /dev/null
   fi
   if [ ! -e "/usr/local/lib/lua/5.1/cjson.so" ]; then
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/lua-cjson-2.1.0.6.tar.gz && Download_src
-    tar xzf lua-cjson-2.1.0.6.tar.gz
-    pushd lua-cjson-2.1.0.6
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/lua-cjson-2.1.0.7rc2.tar.gz && Download_src
+    tar xzf lua-cjson-2.1.0.7rc2.tar.gz
+    pushd lua-cjson-2.1.0.7rc2
     sed -i 's@^LUA_INCLUDE_DIR.*@&/luajit-2.1@' Makefile
     make && make install
     [ ! -e "/usr/local/lib/lua/5.1/cjson.so" ] && { echo "${CFAILURE}lua-cjson install failed! ${CEND}"; kill -9 $$; }

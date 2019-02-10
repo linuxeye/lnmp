@@ -54,7 +54,7 @@ Install_Nginx() {
   fi
 
   mv ${nginx_install_dir}/conf/nginx.conf{,_bk}
-  if [[ ${apache_option} =~ ^[1-2]$ ]] || [ -e "${apache_install_dir}/bin/apachectl" ]; then
+  if [[ ${apache_option} =~ ^[1-2]$ ]] || [ -e "${apache_install_dir}/bin/httpd" ]; then
     /bin/cp ../config/nginx_apache.conf ${nginx_install_dir}/conf/nginx.conf
   elif { [[ ${tomcat_option} =~ ^[1-4]$ ]] || [ -e "${tomcat_install_dir}/conf/server.xml" ]; } && { [[ ! ${php_option} =~ ^[1-8]$ ]] && [ ! -e "${php_install_dir}/bin/php" ]; }; then
     /bin/cp ../config/nginx_tomcat.conf ${nginx_install_dir}/conf/nginx.conf

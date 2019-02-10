@@ -45,7 +45,7 @@ Upgrade_PHP() {
     make clean
     ${php_install_dir}/bin/php -i |grep 'Configure Command' | awk -F'=>' '{print $2}' | bash
     make ZEND_EXTRA_LIBS='-liconv'
-    if [ -e "${apache_install_dir}/bin/apachectl" ]; then
+    if [ -e "${apache_install_dir}/bin/httpd" ]; then
       echo "Stoping apache..."
       service httpd stop
       make install

@@ -789,7 +789,7 @@ if [[ ${nginx_option} =~ ^[1-3]$ ]] || [[ "${db_option}" =~ ^[1-9]$|^1[0-3]$ ]];
 fi
 
 # openSSL
-if [[ ${tomcat_option} =~ ^[1-4]$ ]] || [[ ${apache_option} =~ ^[1-2]$ ]] || [[ ${php_option} =~ ^[1-8]$ ]]; then
+if [[ ${tomcat_option} =~ ^[1-4]$ ]] || [[ ${apache_option} =~ ^[1-2]$ ]] || [[ ${php_option} =~ ^[1-8]$ ]] || [[ "${mphp_ver}" =~ ^5[3-6]$|^7[0-3]$ ]]; then
   . include/openssl.sh
   Install_openSSL | tee -a ${oneinstack_dir}/install.log
 fi

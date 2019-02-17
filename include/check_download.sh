@@ -70,7 +70,6 @@ checkDownload() {
     1)
       echo "Download tomcat 9..."
       src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat9_ver}/apache-tomcat-${tomcat9_ver}.tar.gz && Download_src
-      src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat9_ver}/catalina-jmx-remote.jar && Download_src
       ;;
     2)
       echo "Download tomcat 8..."
@@ -116,6 +115,7 @@ checkDownload() {
 
   if [[ "${db_option}" =~ ^[1-9]$|^1[0-5]$ ]]; then
     if [[ "${db_option}" =~ ^[1,2,5,6,9]$|^10$ ]] && [ "${dbinstallmethod}" == "2" ]; then
+      [ "${db_option}" == '9' ] && boost_ver=1.67.0
       [[ "${db_option}" =~ ^[2,5,6]$|^10$ ]] && boost_ver=${boost_oldver}
       echo "Download boost..."
       [ "${IPADDR_COUNTRY}"x == "CN"x ] && DOWN_ADDR_BOOST=${mirrorLink} || DOWN_ADDR_BOOST=http://downloads.sourceforge.net/project/boost/boost/${boost_ver}

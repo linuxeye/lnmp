@@ -39,6 +39,7 @@ fi
 
 # add swapfile
 if [ "${Swap}" == '0' ] && [ ${Mem} -le 2048 ]; then
+  echo "${CWARNING}Add Swap file, It may take a few minutes... ${CEND}"
   dd if=/dev/zero of=/swapfile count=2048 bs=1M
   mkswap /swapfile
   swapon /swapfile

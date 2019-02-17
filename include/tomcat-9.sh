@@ -35,7 +35,6 @@ Install_Tomcat9() {
     kill -9 $$
   fi
 
-  /bin/cp catalina-jmx-remote.jar ${tomcat_install_dir}/lib
   #[ ! -d "${tomcat_install_dir}/lib/catalina" ] && mkdir ${tomcat_install_dir}/lib/catalina
   #pushd ${tomcat_install_dir}/lib/catalina
   #jar xf ../catalina.jar

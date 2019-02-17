@@ -7,7 +7,7 @@ openssl11_ver=1.1.1a
 openssl_ver=1.0.2q
 
 tomcat9_ver=9.0.16
-tomcat8_ver=8.5.37
+tomcat8_ver=8.5.38
 tomcat7_ver=7.0.92
 tomcat6_ver=6.0.53
 
@@ -36,7 +36,7 @@ percona55_ver=5.5.62-38.14
 
 alisql_ver=5.6.32-9
 
-pgsql_ver=11.1
+pgsql_ver=11.2
 
 mongodb_ver=4.0.6
 
@@ -70,7 +70,7 @@ gmagick_ver=2.0.5RC1
 gmagick_oldver=1.1.7RC3
 zendopcache_ver=7.0.5
 xcache_ver=3.2.0
-apcu_ver=5.1.16
+apcu_ver=5.1.17
 apcu_oldver=4.0.11
 eaccelerator_ver=0.9.6.1
 phalcon_ver=3.4.2
@@ -105,7 +105,7 @@ phpmyadmin_oldver=4.4.15.10
 jemalloc_ver=5.1.0
 
 # boost
-boost_ver=1.67.0
+boost_ver=1.68.0
 boost_oldver=1.59.0
 
 # Others
@@ -114,6 +114,6 @@ tmux_ver=2.8
 htop_ver=2.2.0
 bison_ver=2.7.1
 python_ver=3.6.8
-setuptools_ver=40.6.3
-pip_ver=18.1
+setuptools_ver=40.8.0
+pip_ver=19.0.2
 fail2ban_ver=0.10.4

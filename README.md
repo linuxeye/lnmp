@@ -43,7 +43,7 @@ screen -S lnmp    // if network interruption, you can execute the command `scree
 ## How to install another PHP version 
 
 ```bash
-~/oneinstack/install.sh --mphp_ver 54
+~/lnmp/install.sh --mphp_ver 54
 
 ```
 
@@ -144,4 +144,4 @@ Follow the instructions in [Wiki Installation page](https://github.com/oneinstac
 
 For feedback, questions, and to follow the progress of the project: <br />
 [Telegram Group](https://t.me/oneinstack)<br />
-[lnmp最新源码一键安装脚本](https://blog.linuxeye.cn/31.html)<br />
+[lnmp最新源码一键安装脚本](https://linuxeye.com/31.html)<br />

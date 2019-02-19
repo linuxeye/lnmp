@@ -41,7 +41,10 @@ DB_OSS_BK() {
     DB_GREP="DB_${D}_`date +%Y%m%d`"
     DB_FILE=`ls -lrt ${backup_dir} | grep ${DB_GREP} | tail -1 | awk '{print $NF}'`
     /usr/local/bin/ossutil cp -f ${backup_dir}/${DB_FILE} oss://${oss_bucket}/`date +%F`/${DB_FILE}
-    [ $? -eq 0 ] && /usr/local/bin/ossutil rm -rf oss://${oss_bucket}/`date +%F --date="${expired_days} days ago"`/
+    if [ $? -eq 0 ]; then
+      /usr/local/bin/ossutil rm -rf oss://${oss_bucket}/`date +%F --date="${expired_days} days ago"`/
+      [ -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -f ${backup_dir}/${DB_FILE}
+    fi
   done
 }
 
@@ -52,7 +55,10 @@ DB_COS_BK() {
     DB_GREP="DB_${D}_`date +%Y%m%d`"
     DB_FILE=`ls -lrt ${backup_dir} | grep ${DB_GREP} | tail -1 | awk '{print $NF}'`
     ${python_install_dir}/bin/coscmd upload ${backup_dir}/${DB_FILE} /`date +%F`/${DB_FILE}
-    [ $? -eq 0 ] && ${python_install_dir}/bin/coscmd delete -r -f `date +%F --date="${expired_days} days ago"` > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+      ${python_install_dir}/bin/coscmd delete -r -f `date +%F --date="${expired_days} days ago"` > /dev/null 2>&1
+      [ -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -f ${backup_dir}/${DB_FILE}
+    fi
   done
 }
 
@@ -63,7 +69,10 @@ DB_UPYUN_BK() {
     DB_GREP="DB_${D}_`date +%Y%m%d`"
     DB_FILE=`ls -lrt ${backup_dir} | grep ${DB_GREP} | tail -1 | awk '{print $NF}'`
     /usr/local/bin/upx put ${backup_dir}/${DB_FILE} /`date +%F`/${DB_FILE}
-    [ $? -eq 0 ] && /usr/local/bin/upx rm -a `date +%F --date="${expired_days} days ago"` > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+      /usr/local/bin/upx rm -a `date +%F --date="${expired_days} days ago"` > /dev/null 2>&1
+      [ -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -f ${backup_dir}/${DB_FILE}
+    fi
   done
 }
 
@@ -77,6 +86,7 @@ DB_QINIU_BK() {
     if [ $? -eq 0 ]; then
       /usr/local/bin/qshell listbucket ${qiniu_bucket} /`date +%F --date="${expired_days} days ago"` /tmp/qiniu.txt > /dev/null 2>&1
       /usr/local/bin/qshell batchdelete -force ${qiniu_bucket} /tmp/qiniu.txt > /dev/null 2>&1
+      [ -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -f ${backup_dir}/${DB_FILE}
       rm -f /tmp/qiniu.txt
     fi
   done
@@ -89,7 +99,10 @@ DB_S3_BK() {
     DB_GREP="DB_${D}_`date +%Y%m%d`"
     DB_FILE=`ls -lrt ${backup_dir} | grep ${DB_GREP} | tail -1 | awk '{print $NF}'`
     ${python_install_dir}/bin/s3cmd put ${backup_dir}/${DB_FILE} s3://${s3_bucket}/`date +%F`/${DB_FILE}
-    [ $? -eq 0 ] && ${python_install_dir}/bin/s3cmd rm -r s3://${s3_bucket}/`date +%F --date="${expired_days} days ago"` > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+      ${python_install_dir}/bin/s3cmd rm -r s3://${s3_bucket}/`date +%F --date="${expired_days} days ago"` > /dev/null 2>&1
+      [ -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -f ${backup_dir}/${DB_FILE}
+    fi
   done
 }
 
@@ -110,6 +123,7 @@ DB_GDRIVE_BK() {
     if [ $? -eq 0 ]; then
       Parent_expired_id=$(/usr/local/bin/gdrive list --no-header -q "'${Parent_root_id}' in parents and trashed = false and name = '`date +%F --date="${expired_days} days ago"`'" | awk '{print $1}')
       [ -n "${Parent_expired_id}" ] && /usr/local/bin/gdrive delete -r ${Parent_expired_id} > /dev/null 2>&1
+      [ -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -f ${backup_dir}/${DB_FILE}
     fi
   done
 }
@@ -121,7 +135,10 @@ DB_DROPBOX_BK() {
     DB_GREP="DB_${D}_`date +%Y%m%d`"
     DB_FILE=`ls -lrt ${backup_dir} | grep ${DB_GREP} | tail -1 | awk '{print $NF}'`
     /usr/local/bin/dbxcli put ${backup_dir}/${DB_FILE} `date +%F`/${DB_FILE}
-    [ $? -eq 0 ] && /usr/local/bin/dbxcli rm -f `date +%F --date="${expired_days} days ago"` > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+      /usr/local/bin/dbxcli rm -f `date +%F --date="${expired_days} days ago"` > /dev/null 2>&1
+      [ -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -f ${backup_dir}/${DB_FILE}
+    fi
   done
 }
 
@@ -158,7 +175,10 @@ WEB_OSS_BK() {
       popd > /dev/null
     fi
     /usr/local/bin/ossutil cp -f ${PUSH_FILE} oss://${oss_bucket}/`date +%F`/${PUSH_FILE##*/}
-    [ $? -eq 0 ] && { [ -e "${PUSH_FILE}" ] && rm -rf ${PUSH_FILE}; /usr/local/bin/ossutil rm -rf oss://${oss_bucket}/`date +%F --date="${expired_days} days ago"`/; }
+    if [ $? -eq 0 ]; then
+      /usr/local/bin/ossutil rm -rf oss://${oss_bucket}/`date +%F --date="${expired_days} days ago"`/
+      [ -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -f ${PUSH_FILE}
+    fi
   done
 }
 
@@ -175,7 +195,7 @@ WEB_COS_BK() {
     ${python_install_dir}/bin/coscmd upload ${PUSH_FILE} /`date +%F`/${PUSH_FILE##*/}
     if [ $? -eq 0 ]; then
       ${python_install_dir}/bin/coscmd delete -r -f `date +%F --date="${expired_days} days ago"` > /dev/null 2>&1
-      [ -e "${PUSH_FILE}" -a -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -rf ${PUSH_FILE}
+      [ -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -f ${PUSH_FILE}
     fi
   done
 }
@@ -194,7 +214,7 @@ WEB_UPYUN_BK() {
     /usr/local/bin/upx put ${PUSH_FILE} /`date +%F`/${PUSH_FILE##*/}
     if [ $? -eq 0 ]; then
       /usr/local/bin/upx rm -a `date +%F --date="${expired_days} days ago"` > /dev/null 2>&1
-      [ -e "${PUSH_FILE}" -a -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -rf ${PUSH_FILE}
+      [ -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -f ${PUSH_FILE}
     fi
   done
 }
@@ -214,6 +234,7 @@ WEB_QINIU_BK() {
     if [ $? -eq 0 ]; then
       /usr/local/bin/qshell listbucket ${qiniu_bucket} /`date +%F --date="${expired_days} days ago"` /tmp/qiniu.txt > /dev/null 2>&1
       /usr/local/bin/qshell batchdelete -force ${qiniu_bucket} /tmp/qiniu.txt > /dev/null 2>&1
+      [ -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -f ${PUSH_FILE}
       rm -f /tmp/qiniu.txt
     fi
   done
@@ -231,7 +252,10 @@ WEB_S3_BK() {
       popd > /dev/null
     fi
     ${python_install_dir}/bin/s3cmd put ${PUSH_FILE} s3://${s3_bucket}/`date +%F`/${PUSH_FILE##*/}
-    [ $? -eq 0 ] && ${python_install_dir}/bin/s3cmd rm -r s3://${s3_bucket}/`date +%F --date="${expired_days} days ago"` > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+      ${python_install_dir}/bin/s3cmd rm -r s3://${s3_bucket}/`date +%F --date="${expired_days} days ago"` > /dev/null 2>&1
+      [ -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -f ${PUSH_FILE}
+    fi
   done
 }
 
@@ -253,10 +277,11 @@ WEB_GDRIVE_BK() {
       tar czf ${PUSH_FILE} ./$W
       popd > /dev/null
     fi
-    /usr/local/bin/gdrive upload -p ${Parent_sub_id} ${PUSH_FILE} 
+    /usr/local/bin/gdrive upload -p ${Parent_sub_id} ${PUSH_FILE}
     if [ $? -eq 0 ]; then
       Parent_expired_id=$(/usr/local/bin/gdrive list --no-header -q "'${Parent_root_id}' in parents and trashed = false and name = '`date +%F --date="${expired_days} days ago"`'" | awk '{print $1}')
       [ -n "${Parent_expired_id}" ] && /usr/local/bin/gdrive delete -r ${Parent_expired_id} > /dev/null 2>&1
+      [ -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -f ${PUSH_FILE}
     fi
   done
 }
@@ -273,7 +298,10 @@ WEB_DROPBOX_BK() {
       popd > /dev/null
     fi
     /usr/local/bin/dbxcli put ${PUSH_FILE} `date +%F`/${PUSH_FILE##*/}
-    [ $? -eq 0 ] && /usr/local/bin/dbxcli rm -f `date +%F --date="${expired_days} days ago"` > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+      /usr/local/bin/dbxcli rm -f `date +%F --date="${expired_days} days ago"` > /dev/null 2>&1
+      [ -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -f ${PUSH_FILE}
+    fi
   done
 }
 

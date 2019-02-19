@@ -43,6 +43,7 @@ Install_ZendGuardLoader() {
       esac
 
       if [ -f "${phpExtensionDir}/ZendGuardLoader.so" ]; then
+        chmod 644 ${phpExtensionDir}/ZendGuardLoader.so
         cat > ${php_install_dir}/etc/php.d/01-ZendGuardLoader.ini<< EOF
 [Zend Guard Loader]
 zend_extension=${phpExtensionDir}/ZendGuardLoader.so

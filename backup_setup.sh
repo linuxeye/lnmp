@@ -1,6 +1,6 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.cn
+# BLOG:  https://linuxeye.com
 #
 # Notes: OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+
 #
@@ -371,9 +371,9 @@ if [ -n "`echo ${desc_bk} | grep -w 6`" ]; then
     wget -qc http://devtools.qiniu.com/qshell-v2.3.6.zip -O /tmp/qshell-v2.3.6.zip
     unzip -q /tmp/qshell-v2.3.6.zip -d /tmp/
     if [ "${OS_BIT}" == '64' ]; then
-      /bin/cp /tmp/qshell-linux-x64 /usr/local/bin/qshell
+      /bin/cp /tmp/qshell_linux_x64 /usr/local/bin/qshell
     elif [ "${OS_BIT}" == '32' ]; then
-      /bin/cp /tmp/qshell-linux-x86 /usr/local/bin/qshell
+      /bin/cp /tmp/qshell_linux_x86 /usr/local/bin/qshell
     fi
     chmod +x /usr/local/bin/qshell
     rm -f /tmp/qshell*
@@ -406,7 +406,7 @@ if [ -n "`echo ${desc_bk} | grep -w 6`" ]; then
     read -e -p "Please enter the qiniu bucket: " QINIU_BUCKET
     [ -z "${QINIU_BUCKET}" ] && continue
     echo
-    /usr/local/bin/qshell account ${AccessKey} ${SecretKey}
+    /usr/local/bin/qshell account ${AccessKey} ${SecretKey} backup
     /usr/local/bin/qrsctl login ${AccessKey} ${SecretKey}
     if /usr/local/bin/qrsctl bucketinfo ${QINIU_BUCKET} > /dev/null 2>&1; then
       sed -i "s@^qiniu_bucket=.*@qiniu_bucket=${QINIU_BUCKET}@" ./options.conf

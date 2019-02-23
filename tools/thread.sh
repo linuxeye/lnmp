@@ -1,6 +1,6 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# Blog:  http://blog.linuxeye.cn
+# Blog:  http://linuxeye.com
 
 # Default Parameters
 myIFS=":::"

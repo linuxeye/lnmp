@@ -8,7 +8,7 @@ openssl_ver=1.0.2q
 
 tomcat9_ver=9.0.16
 tomcat8_ver=8.5.38
-tomcat7_ver=7.0.92
+tomcat7_ver=7.0.93
 tomcat6_ver=6.0.53
 
 apache24_ver=2.4.38
@@ -24,13 +24,13 @@ mysql57_ver=5.7.25
 mysql56_ver=5.6.43
 mysql55_ver=5.5.62
 
-mariadb103_ver=10.3.12
+mariadb103_ver=10.3.13
 mariadb102_ver=10.2.22
 mariadb101_ver=10.1.38
 mariadb55_ver=5.5.63
 
 percona80_ver=8.0.13-4
-percona57_ver=5.7.24-27
+percona57_ver=5.7.25-28
 percona56_ver=5.6.43-84.3
 percona55_ver=5.5.62-38.14
 

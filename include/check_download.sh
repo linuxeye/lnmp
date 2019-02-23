@@ -629,33 +629,33 @@ checkDownload() {
       # php 5.3
       src_url=${mirrorLink}/debian_patches_disable_SSLv2_for_openssl_1_0_0.patch && Download_src
       src_url=${mirrorLink}/php5.3patch && Download_src
-      src_url=http://www.php.net/distributions/php-${php53_ver}.tar.gz && Download_src
+      src_url=https://secure.php.net/distributions/php-${php53_ver}.tar.gz && Download_src
       src_url=${mirrorLink}/fpm-race-condition.patch && Download_src
       ;;
     2)
-      src_url=http://www.php.net/distributions/php-${php54_ver}.tar.gz && Download_src
+      src_url=https://secure.php.net/distributions/php-${php54_ver}.tar.gz && Download_src
       src_url=${mirrorLink}/fpm-race-condition.patch && Download_src
       ;;
     3)
-      src_url=http://www.php.net/distributions/php-${php55_ver}.tar.gz && Download_src
+      src_url=https://secure.php.net/distributions/php-${php55_ver}.tar.gz && Download_src
       src_url=${mirrorLink}/fpm-race-condition.patch && Download_src
       ;;
     4)
-      src_url=http://www.php.net/distributions/php-${php56_ver}.tar.gz && Download_src
+      src_url=https://secure.php.net/distributions/php-${php56_ver}.tar.gz && Download_src
       ;;
     5)
-      src_url=http://www.php.net/distributions/php-${php70_ver}.tar.gz && Download_src
+      src_url=https://secure.php.net/distributions/php-${php70_ver}.tar.gz && Download_src
       ;;
     6)
-      src_url=http://www.php.net/distributions/php-${php71_ver}.tar.gz && Download_src
+      src_url=https://secure.php.net/distributions/php-${php71_ver}.tar.gz && Download_src
       ;;
     7)
-      src_url=http://www.php.net/distributions/php-${php72_ver}.tar.gz && Download_src
+      src_url=https://secure.php.net/distributions/php-${php72_ver}.tar.gz && Download_src
       src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
       src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
       ;;
     8)
-      src_url=http://www.php.net/distributions/php-${php73_ver}.tar.gz && Download_src
+      src_url=https://secure.php.net/distributions/php-${php73_ver}.tar.gz && Download_src
       src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
       src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
       ;;

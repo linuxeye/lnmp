@@ -1,6 +1,6 @@
 #!/bin/bash
 # Author:  yeho <lj2007331 AT gmail.com>
-# BLOG:  https://blog.linuxeye.cn
+# BLOG:  https://linuxeye.com
 #
 # Notes: OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+
 #
@@ -20,7 +20,7 @@ Upgrade_PHP() {
     [ "${php_flag}" != 'y' ] && read -e -p "Please input upgrade PHP Version(Default: $Latest_php_ver): " NEW_php_ver
     NEW_php_ver=${NEW_php_ver:-${Latest_php_ver}}
     if [ "${NEW_php_ver%.*}" == "${OLD_php_ver%.*}" ]; then
-      [ ! -e "php-${NEW_php_ver}.tar.gz" ] && wget --no-check-certificate -c http://www.php.net/distributions/php-${NEW_php_ver}.tar.gz > /dev/null 2>&1
+      [ ! -e "php-${NEW_php_ver}.tar.gz" ] && wget --no-check-certificate -c https://secure.php.net/distributions/php-${NEW_php_ver}.tar.gz > /dev/null 2>&1
       if [ -e "php-${NEW_php_ver}.tar.gz" ]; then
         echo "Download [${CMSG}php-${NEW_php_ver}.tar.gz${CEND}] successfully! "
       else

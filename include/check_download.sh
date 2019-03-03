@@ -844,6 +844,11 @@ checkDownload() {
       src_url=http://hisham.hm/htop/releases/${htop_ver}/htop-${htop_ver}.tar.gz && Download_src
     fi
 
+    if [ "${CentOS_ver}" == '6' ]; then
+      echo "Download autoconf rpm for CentOS6..."
+      src_url=${mirrorLink}/autoconf-2.69-12.2.noarch.rpm && Download_src
+    fi
+
     if [[ "${Ubuntu_ver}" =~ ^14$|^15$ ]]; then
       echo "Download bison for Ubuntu..."
       src_url=http://ftp.gnu.org/gnu/bison/bison-${bison_ver}.tar.gz && Download_src

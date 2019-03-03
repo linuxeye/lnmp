@@ -43,7 +43,7 @@ Show_Help() {
   --phpcache                    Uninstall PHP opcode cache
   --php_extensions [ext name]   Uninstall PHP extensions, include zendguardloader,ioncube,
                                 sourceguardian,imagick,gmagick,fileinfo,imap,ldap,phalcon,
-                                redis,memcached,memcache,mongodb,swoole,xdebug
+                                yaf,redis,memcached,memcache,mongodb,swoole,xdebug
   --hhvm                        Uninstall HHVM
   --pureftpd                    Uninstall PureFtpd
   --redis                       Uninstall Redis-server
@@ -119,6 +119,7 @@ while :; do
       [ -n "`echo ${php_extensions} | grep -w imap`" ] && pecl_imap=1
       [ -n "`echo ${php_extensions} | grep -w ldap`" ] && pecl_ldap=1
       [ -n "`echo ${php_extensions} | grep -w phalcon`" ] && pecl_phalcon=1
+      [ -n "`echo ${php_extensions} | grep -w yaf`" ] && pecl_yaf=1
       [ -n "`echo ${php_extensions} | grep -w redis`" ] && pecl_redis=1
       [ -n "`echo ${php_extensions} | grep -w memcached`" ] && pecl_memcached=1
       [ -n "`echo ${php_extensions} | grep -w memcache`" ] && pecl_memcache=1
@@ -394,6 +395,12 @@ Uninstall_PHPext() {
   if [ "${pecl_phalcon}" == '1' ]; then
     . include/pecl_phalcon.sh
     Uninstall_pecl_phalcon
+  fi
+
+  # yaf
+  if [ "${pecl_yaf}" == '1' ]; then
+    . include/pecl_yaf.sh
+    Uninstall_pecl_yaf 2>&1 | tee -a ${oneinstack_dir}/install.log
   fi
 
   # pecl_memcached
@@ -723,7 +730,7 @@ else
     else
       [ "${php_flag}" == 'y' ] && Uninstall_PHP
       [ "${php_flag}" == 'y' ] && [ "${phpcache_flag}" == 'y' ] && Uninstall_PHPcache
-      [ "${php_flag}" == 'y' ] && [ -n "${php_extensions}" ] && Uninstall_PHPext
+      [ -n "${php_extensions}" ] && Uninstall_PHPext
       [ "${mphp_flag}" == 'y' ] && [ "${phpcache_flag}" != 'y' ] && [ -z "${php_extensions}" ] && Uninstall_MPHP
       [ "${mphp_flag}" == 'y' ] && [ "${phpcache_flag}" == 'y' ] && { php_install_dir=${php_install_dir}${mphp_ver}; Uninstall_PHPcache; }
       [ "${mphp_flag}" == 'y' ] && [ -n "${php_extensions}" ] && { php_install_dir=${php_install_dir}${mphp_ver}; Uninstall_PHPext; }

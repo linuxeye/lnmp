@@ -215,7 +215,7 @@ Install_SS_python() {
 }
 
 Install_SS_libev() {
-  src_url=http://mirrors.linuxeye.com/oneinstack/src/shadowsocks-libev-3.2.3.tar.gz && Download_src
+  src_url=http://mirrors.linuxeye.com/oneinstack/src/shadowsocks-libev-3.2.4.tar.gz && Download_src
   src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
   src_url=http://mirrors.linuxeye.com/oneinstack/src/mbedtls-2.16.0-apache.tgz && Download_src
   if [ ! -e "/usr/local/lib/libsodium.la" ]; then
@@ -231,8 +231,8 @@ Install_SS_libev() {
   make SHARED=1 CFLAGS=-fPIC
   make DESTDIR=/usr install
   popd > /dev/null
-  tar xzf shadowsocks-libev-3.2.3.tar.gz
-  pushd shadowsocks-libev-3.2.3 > /dev/null
+  tar xzf shadowsocks-libev-3.2.4.tar.gz
+  pushd shadowsocks-libev-3.2.4 > /dev/null
   make clean
   ./configure
   make -j ${THREAD} && make install
@@ -303,6 +303,7 @@ Config_SS() {
   [ "${ss_option}" == '1' ] && cat > /etc/shadowsocks/config.json << EOF
 {
     "server":"0.0.0.0",
+    "mode":"tcp_and_udp",
     "server_port":${SS_port},
     "local_port":1080,
     "password":"${SS_password}",

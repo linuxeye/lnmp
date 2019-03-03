@@ -188,9 +188,19 @@ installDepsBySrc() {
       popd > /dev/null
       rm -rf htop-${htop_ver}
     fi
+
+    # upgrade autoconf for CentOS6
+    [ "${CentOS_ver}" == '6' ] && rpm -Uvh autoconf-2.69-12.2.noarch.rpm
   else
     echo "No need to install software from source packages."
   fi
-  echo 'already initialize' > ~/.oneinstack
+
+  if command -v lsof >/dev/null 2>&1; then
+    echo 'already initialize' > ~/.oneinstack
+  else
+    echo "${CFAILURE}${PM} config error parsing file failed${CEND}"
+    kill -9 $$
+  fi
+
   popd > /dev/null
 }

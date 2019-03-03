@@ -31,7 +31,7 @@ TOMCAT_USAGE="Usage: $0 {\e[00;32mstart\e[00m|\e[00;31mstop\e[00m|\e[00;32mstatu
 SHUTDOWN_WAIT=20
 
 tomcat_pid() {
-  echo `ps -ef | grep $CATALINA_HOME/ | grep -v grep | tr -s " "|cut -d" " -f2`
+  echo `ps -ef | grep java | grep $CATALINA_HOME/ | grep -v grep | tr -s " "|cut -d" " -f2`
 }
 
 start() {

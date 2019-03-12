@@ -1150,8 +1150,8 @@ fi
 [ -d "${db_install_dir}/support-files" ] && [ -z "`ps -ef | grep mysqld_safe | grep -v grep`" ] && service mysqld start
 
 # reload php
-[ -e "${php_install_dir}/sbin/php-fpm" ] && service php-fpm reload
-[ -e "${php_install_dir}${mphp_ver}/sbin/php-fpm" ] && service php${mphp_ver}-fpm reload
+[ -e "${php_install_dir}/sbin/php-fpm" ] && { [ -e "/bin/systemctl" ] && systemctl reload php-fpm || service php-fpm reload; }
+[ -n "${mphp_ver}" -a -e "${php_install_dir}${mphp_ver}/sbin/php-fpm" ] && { [ -e "/bin/systemctl" ] && systemctl reload php${mphp_ver}-fpm || service php${mphp_ver}-fpm reload; }
 [ -e "${apache_install_dir}/bin/apachectl" ] && ${apache_install_dir}/bin/apachectl -k graceful
 
 endTime=`date +%s`

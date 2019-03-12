@@ -16,7 +16,7 @@ apache22_ver=2.2.34
 pcre_ver=8.42
 apr_ver=1.6.5
 apr_util_ver=1.6.1
-nghttp2_ver=1.36.0
+nghttp2_ver=1.37.0
 
 # DB
 mysql80_ver=8.0.15
@@ -47,9 +47,9 @@ jdk17_ver=1.7.0_80
 jdk16_ver=1.6.0_45
 
 # PHP
-php73_ver=7.3.2
-php72_ver=7.2.15
-php71_ver=7.1.26
+php73_ver=7.3.3
+php72_ver=7.2.16
+php71_ver=7.1.27
 php70_ver=7.0.33
 php56_ver=5.6.40
 php55_ver=5.5.38
@@ -63,9 +63,9 @@ mcrypt_ver=2.6.8
 mhash_ver=0.9.9.9
 libsodium_ver=1.0.17
 argon2_ver=20171227
-imagemagick_ver=6.9.10-30
+imagemagick_ver=6.9.10-33
 imagick_ver=3.4.3
-graphicsmagick_ver=1.3.30
+graphicsmagick_ver=1.3.31
 gmagick_ver=2.0.5RC1
 gmagick_oldver=1.1.7RC3
 zendopcache_ver=7.0.5
@@ -75,7 +75,7 @@ apcu_oldver=4.0.11
 eaccelerator_ver=0.9.6.1
 phalcon_ver=3.4.3
 yaf_ver=3.0.8
-swoole_ver=4.2.13
+swoole_ver=4.3.0
 swoole_oldver=1.10.5
 xdebug_ver=2.6.1
 xdebug_oldver=2.5.5

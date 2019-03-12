@@ -335,8 +335,8 @@ Uninstall_PHPcache() {
   Uninstall_APCU
   Uninstall_eAccelerator
   # reload php
-  [ -e "${php_install_dir}/sbin/php-fpm" ] && service php-fpm reload
-  [ -e "${php_install_dir}${mphp_ver}/sbin/php-fpm" ] && service php${mphp_ver}-fpm reload
+  [ -e "${php_install_dir}/sbin/php-fpm" ] && { [ -e "/bin/systemctl" ] && systemctl reload php-fpm || service php-fpm reload; }
+  [ -n "${mphp_ver}" -a -e "${php_install_dir}${mphp_ver}/sbin/php-fpm" ] && { [ -e "/bin/systemctl" ] && systemctl reload php${mphp_ver}-fpm || service php${mphp_ver}-fpm reload; }
   [ -e "${apache_install_dir}/bin/apachectl" ] && ${apache_install_dir}/bin/apachectl -k graceful
 }
 
@@ -440,8 +440,8 @@ Uninstall_PHPext() {
   fi
 
   # reload php
-  [ -e "${php_install_dir}/sbin/php-fpm" ] && service php-fpm reload
-  [ -e "${php_install_dir}${mphp_ver}/sbin/php-fpm" ] && service php${mphp_ver}-fpm reload
+  [ -e "${php_install_dir}/sbin/php-fpm" ] && { [ -e "/bin/systemctl" ] && systemctl reload php-fpm || service php-fpm reload; }
+  [ -n "${mphp_ver}" -a -e "${php_install_dir}${mphp_ver}/sbin/php-fpm" ] && { [ -e "/bin/systemctl" ] && systemctl reload php${mphp_ver}-fpm || service php${mphp_ver}-fpm reload; }
   [ -e "${apache_install_dir}/bin/apachectl" ] && ${apache_install_dir}/bin/apachectl -k graceful
 }
 
@@ -729,7 +729,7 @@ else
       Uninstall_ALLPHP
     else
       [ "${php_flag}" == 'y' ] && Uninstall_PHP
-      [ "${php_flag}" == 'y' ] && [ "${phpcache_flag}" == 'y' ] && Uninstall_PHPcache
+      [ "${phpcache_flag}" == 'y' ] && Uninstall_PHPcache
       [ -n "${php_extensions}" ] && Uninstall_PHPext
       [ "${mphp_flag}" == 'y' ] && [ "${phpcache_flag}" != 'y' ] && [ -z "${php_extensions}" ] && Uninstall_MPHP
       [ "${mphp_flag}" == 'y' ] && [ "${phpcache_flag}" == 'y' ] && { php_install_dir=${php_install_dir}${mphp_ver}; Uninstall_PHPcache; }

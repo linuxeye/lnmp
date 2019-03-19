@@ -43,7 +43,7 @@ Show_Help() {
   --phpcache                    Uninstall PHP opcode cache
   --php_extensions [ext name]   Uninstall PHP extensions, include zendguardloader,ioncube,
                                 sourceguardian,imagick,gmagick,fileinfo,imap,ldap,phalcon,
-                                yaf,redis,memcached,memcache,mongodb,swoole,xdebug
+                                yaf,yar,redis,memcached,memcache,mongodb,swoole,xdebug
   --hhvm                        Uninstall HHVM
   --pureftpd                    Uninstall PureFtpd
   --redis                       Uninstall Redis-server
@@ -120,6 +120,7 @@ while :; do
       [ -n "`echo ${php_extensions} | grep -w ldap`" ] && pecl_ldap=1
       [ -n "`echo ${php_extensions} | grep -w phalcon`" ] && pecl_phalcon=1
       [ -n "`echo ${php_extensions} | grep -w yaf`" ] && pecl_yaf=1
+      [ -n "`echo ${php_extensions} | grep -w yar`" ] && pecl_yar=1
       [ -n "`echo ${php_extensions} | grep -w redis`" ] && pecl_redis=1
       [ -n "`echo ${php_extensions} | grep -w memcached`" ] && pecl_memcached=1
       [ -n "`echo ${php_extensions} | grep -w memcache`" ] && pecl_memcache=1
@@ -401,6 +402,12 @@ Uninstall_PHPext() {
   if [ "${pecl_yaf}" == '1' ]; then
     . include/pecl_yaf.sh
     Uninstall_pecl_yaf 2>&1 | tee -a ${oneinstack_dir}/install.log
+  fi
+
+  # yar
+  if [ "${pecl_yar}" == '1' ]; then
+    . include/pecl_yar.sh
+    Uninstall_pecl_yar 2>&1 | tee -a ${oneinstack_dir}/install.log
   fi
 
   # pecl_memcached

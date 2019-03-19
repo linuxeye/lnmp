@@ -23,7 +23,6 @@ Install_Percona80() {
     sed -i "s@/usr/local/Percona-Server-${percona80_ver}-Linux.${SYS_BIT_b}.${sslLibVer}@${percona_install_dir}@g" ${percona_install_dir}/bin/mysqld_safe
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${percona_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then
-    boost_ver=1.67.0
     boostVersion2=$(echo ${boost_ver} | awk -F. '{print $1"_"$2"_"$3}')
     tar xzf boost_${boostVersion2}.tar.gz
     tar xzf percona-server-${percona80_ver}.tar.gz

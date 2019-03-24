@@ -75,7 +75,6 @@ Install_MariaDB101() {
 [client]
 port = 3306
 socket = /tmp/mysql.sock
-default-character-set = utf8mb4
 
 [mysqld]
 port = 3306

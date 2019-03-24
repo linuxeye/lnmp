@@ -319,77 +319,77 @@ if [ ${ARG_NUM} == 0 ]; then
           done
         fi
         # Tomcat
-        while :; do echo
-          echo 'Please select tomcat server:'
-          echo -e "\t${CMSG}1${CEND}. Install Tomcat-9"
-          echo -e "\t${CMSG}2${CEND}. Install Tomcat-8"
-          echo -e "\t${CMSG}3${CEND}. Install Tomcat-7"
-          echo -e "\t${CMSG}4${CEND}. Install Tomcat-6"
-          echo -e "\t${CMSG}5${CEND}. Do not install"
-          read -e -p "Please input a number:(Default 5 press Enter) " tomcat_option
-          tomcat_option=${tomcat_option:-5}
-          if [[ ! ${tomcat_option} =~ ^[1-5]$ ]]; then
-            echo "${CWARNING}input error! Please only input number 1~5${CEND}"
-          else
-            [ "${tomcat_option}" != '5' -a -e "$tomcat_install_dir/conf/server.xml" ] && { echo "${CWARNING}Tomcat already installed! ${CEND}" ; unset tomcat_option; }
-            if [ "${tomcat_option}" == '1' ]; then
-              while :; do echo
-                echo 'Please select JDK version:'
-                echo -e "\t${CMSG}1${CEND}. Install JDK-11.0"
-                echo -e "\t${CMSG}2${CEND}. Install JDK-1.8"
-                read -e -p "Please input a number:(Default 1 press Enter) " jdk_option
-                jdk_option=${jdk_option:-1}
-                if [[ ! ${jdk_option} =~ ^[1-2]$ ]]; then
-                  echo "${CWARNING}input error! Please only input number 1~2${CEND}"
-                else
-                  break
-                fi
-              done
-            elif [ "${tomcat_option}" == '2' ]; then
-              while :; do echo
-                echo 'Please select JDK version:'
-                echo -e "\t${CMSG}1${CEND}. Install JDK-11.0"
-                echo -e "\t${CMSG}2${CEND}. Install JDK-1.8"
-                echo -e "\t${CMSG}3${CEND}. Install JDK-1.7"
-                read -e -p "Please input a number:(Default 2 press Enter) " jdk_option
-                jdk_option=${jdk_option:-2}
-                if [[ ! ${jdk_option} =~ ^[1-3]$ ]]; then
-                  echo "${CWARNING}input error! Please only input number 1~3${CEND}"
-                else
-                  break
-                fi
-              done
-            elif [ "${tomcat_option}" == '3' ]; then
-              while :; do echo
-                echo 'Please select JDK version:'
-                echo -e "\t${CMSG}2${CEND}. Install JDK-1.8"
-                echo -e "\t${CMSG}3${CEND}. Install JDK-1.7"
-                echo -e "\t${CMSG}4${CEND}. Install JDK-1.6"
-                read -e -p "Please input a number:(Default 3 press Enter) " jdk_option
-                jdk_option=${jdk_option:-3}
-                if [[ ! ${jdk_option} =~ ^[2-4]$ ]]; then
-                  echo "${CWARNING}input error! Please only input number 2~4${CEND}"
-                else
-                  break
-                fi
-              done
-            elif [ "${tomcat_option}" == '4' ]; then
-              while :; do echo
-                echo 'Please select JDK version:'
-                echo -e "\t${CMSG}3${CEND}. Install JDK-1.7"
-                echo -e "\t${CMSG}4${CEND}. Install JDK-1.6"
-                read -e -p "Please input a number:(Default 4 press Enter) " jdk_option
-                jdk_option=${jdk_option:-4}
-                if [[ ! ${jdk_option} =~ ^[3-4]$ ]]; then
-                  echo "${CWARNING}input error! Please only input number 3~4${CEND}"
-                else
-                  break
-                fi
-              done
-            fi
-            break
-          fi
-        done
+        #while :; do echo
+        #  echo 'Please select tomcat server:'
+        #  echo -e "\t${CMSG}1${CEND}. Install Tomcat-9"
+        #  echo -e "\t${CMSG}2${CEND}. Install Tomcat-8"
+        #  echo -e "\t${CMSG}3${CEND}. Install Tomcat-7"
+        #  echo -e "\t${CMSG}4${CEND}. Install Tomcat-6"
+        #  echo -e "\t${CMSG}5${CEND}. Do not install"
+        #  read -e -p "Please input a number:(Default 5 press Enter) " tomcat_option
+        #  tomcat_option=${tomcat_option:-5}
+        #  if [[ ! ${tomcat_option} =~ ^[1-5]$ ]]; then
+        #    echo "${CWARNING}input error! Please only input number 1~5${CEND}"
+        #  else
+        #    [ "${tomcat_option}" != '5' -a -e "$tomcat_install_dir/conf/server.xml" ] && { echo "${CWARNING}Tomcat already installed! ${CEND}" ; unset tomcat_option; }
+        #    if [ "${tomcat_option}" == '1' ]; then
+        #      while :; do echo
+        #        echo 'Please select JDK version:'
+        #        echo -e "\t${CMSG}1${CEND}. Install JDK-11.0"
+        #        echo -e "\t${CMSG}2${CEND}. Install JDK-1.8"
+        #        read -e -p "Please input a number:(Default 1 press Enter) " jdk_option
+        #        jdk_option=${jdk_option:-1}
+        #        if [[ ! ${jdk_option} =~ ^[1-2]$ ]]; then
+        #          echo "${CWARNING}input error! Please only input number 1~2${CEND}"
+        #        else
+        #          break
+        #        fi
+        #      done
+        #    elif [ "${tomcat_option}" == '2' ]; then
+        #      while :; do echo
+        #        echo 'Please select JDK version:'
+        #        echo -e "\t${CMSG}1${CEND}. Install JDK-11.0"
+        #        echo -e "\t${CMSG}2${CEND}. Install JDK-1.8"
+        #        echo -e "\t${CMSG}3${CEND}. Install JDK-1.7"
+        #        read -e -p "Please input a number:(Default 2 press Enter) " jdk_option
+        #        jdk_option=${jdk_option:-2}
+        #        if [[ ! ${jdk_option} =~ ^[1-3]$ ]]; then
+        #          echo "${CWARNING}input error! Please only input number 1~3${CEND}"
+        #        else
+        #          break
+        #        fi
+        #      done
+        #    elif [ "${tomcat_option}" == '3' ]; then
+        #      while :; do echo
+        #        echo 'Please select JDK version:'
+        #        echo -e "\t${CMSG}2${CEND}. Install JDK-1.8"
+        #        echo -e "\t${CMSG}3${CEND}. Install JDK-1.7"
+        #        echo -e "\t${CMSG}4${CEND}. Install JDK-1.6"
+        #        read -e -p "Please input a number:(Default 3 press Enter) " jdk_option
+        #        jdk_option=${jdk_option:-3}
+        #        if [[ ! ${jdk_option} =~ ^[2-4]$ ]]; then
+        #          echo "${CWARNING}input error! Please only input number 2~4${CEND}"
+        #        else
+        #          break
+        #        fi
+        #      done
+        #    elif [ "${tomcat_option}" == '4' ]; then
+        #      while :; do echo
+        #        echo 'Please select JDK version:'
+        #        echo -e "\t${CMSG}3${CEND}. Install JDK-1.7"
+        #        echo -e "\t${CMSG}4${CEND}. Install JDK-1.6"
+        #        read -e -p "Please input a number:(Default 4 press Enter) " jdk_option
+        #        jdk_option=${jdk_option:-4}
+        #        if [[ ! ${jdk_option} =~ ^[3-4]$ ]]; then
+        #          echo "${CWARNING}input error! Please only input number 3~4${CEND}"
+        #        else
+        #          break
+        #        fi
+        #      done
+        #    fi
+        #    break
+        #  fi
+        #done
       fi
       break
     fi

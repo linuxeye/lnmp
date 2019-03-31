@@ -54,7 +54,7 @@ Show_Help() {
   --mphp_addons               Only install another PHP addons
   --phpcache_option [1-4]     Install PHP opcode cache, default: 1 opcache
   --php_extensions [ext name] Install PHP extensions, include zendguardloader,ioncube,
-                              sourceguardian,imagick,gmagick,fileinfo,imap,ldap,phalcon,
+                              sourceguardian,imagick,gmagick,fileinfo,imap,ldap,calendar,phalcon,
                               yaf,yar,redis,memcached,memcache,mongodb,swoole,xdebug
   --tomcat_option [1-4]       Install Tomcat version
   --jdk_option [1-4]          Install JDK version
@@ -130,6 +130,7 @@ while :; do
       [ -n "`echo ${php_extensions} | grep -w fileinfo`" ] && pecl_fileinfo=1
       [ -n "`echo ${php_extensions} | grep -w imap`" ] && pecl_imap=1
       [ -n "`echo ${php_extensions} | grep -w ldap`" ] && pecl_ldap=1
+      [ -n "`echo ${php_extensions} | grep -w calendar`" ] && pecl_calendar=1
       [ -n "`echo ${php_extensions} | grep -w phalcon`" ] && pecl_phalcon=1
       [ -n "`echo ${php_extensions} | grep -w yaf`" ] && pecl_yaf=1
       [ -n "`echo ${php_extensions} | grep -w yar`" ] && pecl_yar=1
@@ -994,6 +995,12 @@ PHP_addons() {
   if [ "${pecl_ldap}" == '1' ]; then
     . include/pecl_ldap.sh
     Install_pecl_ldap 2>&1 | tee -a ${oneinstack_dir}/install.log
+  fi
+
+  # calendar
+  if [ "${pecl_calendar}" == '1' ]; then
+    . include/pecl_calendar.sh
+    Install_pecl_calendar 2>&1 | tee -a ${oneinstack_dir}/install.log
   fi
 
   # phalcon

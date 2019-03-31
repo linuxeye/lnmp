@@ -15,22 +15,17 @@ Install_Tengine() {
 
   tar xzf pcre-${pcre_ver}.tar.gz
   tar xzf tengine-${tengine_ver}.tar.gz
-  tar xzf openssl-${openssl_ver}.tar.gz
-  [ "${Fedora_ver}" == '28' ] && patch -d tengine-${tengine_ver} -p1 < 0001-unix-ngx_user-Apply-fix-for-really-old-bug-in-glibc-.patch
-  patch -d tengine-${tengine_ver} -p0 < nginx-auto-cc-gcc.patch
+  tar xzf openssl-${openssl11_ver}.tar.gz
   pushd tengine-${tengine_ver} > /dev/null
   # Modify Tengine version
   #sed -i 's@TENGINE "/" TENGINE_VERSION@"Tengine/unknown"@' src/core/nginx.h
 
-  # close debug
-  sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc
-
   [ ! -d "${tengine_install_dir}" ] && mkdir -p ${tengine_install_dir}
-  ./configure --prefix=${tengine_install_dir} --user=${run_user} --group=${run_user} --with-http_v2_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-http_concat_module=shared --with-http_sysguard_module=shared --with-openssl=../openssl-${openssl_ver} --with-pcre=../pcre-${pcre_ver} --with-pcre-jit --with-jemalloc ${nginx_modules_options}
+  ./configure --prefix=${tengine_install_dir} --user=${run_user} --group=${run_user} --with-http_v2_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-openssl=../openssl-${openssl11_ver} --with-pcre=../pcre-${pcre_ver} --with-pcre-jit --with-jemalloc ${nginx_modules_options}
   make && make install
   if [ -e "${tengine_install_dir}/conf/nginx.conf" ]; then
     popd > /dev/null
-    rm -rf pcre-${pcre_ver} openssl-${openssl_ver} tengine-${tengine_ver}
+    rm -rf pcre-${pcre_ver} openssl-${openssl11_ver} tengine-${tengine_ver}
     echo "${CSUCCESS}Tengine installed successfully! ${CEND}"
   else
     rm -rf ${tengine_install_dir}
@@ -80,10 +75,6 @@ EOF
   sed -i "s@/data/wwwroot/default@${wwwroot_dir}/default@" ${tengine_install_dir}/conf/nginx.conf
   sed -i "s@/data/wwwlogs@${wwwlogs_dir}@g" ${tengine_install_dir}/conf/nginx.conf
   sed -i "s@^user www www@user ${run_user} ${run_user}@" ${tengine_install_dir}/conf/nginx.conf
-  uname -r | awk -F'.' '{if ($1$2>=39)S=0;else S=1}{exit S}' && [ -z "`grep 'reuse_port on;' ${tengine_install_dir}/conf/nginx.conf`" ] && sed -i "s@worker_connections 51200;@worker_connections 51200;\n    reuse_port on;@" ${tengine_install_dir}/conf/nginx.conf
-
-  # worker_cpu_affinity
-  sed -i "s@^worker_processes.*@worker_processes auto;\nworker_cpu_affinity auto;\ndso {\n\tload ngx_http_concat_module.so;\n\tload ngx_http_sysguard_module.so;\n}@" ${tengine_install_dir}/conf/nginx.conf
 
   # logrotate nginx log
   cat > /etc/logrotate.d/nginx << EOF

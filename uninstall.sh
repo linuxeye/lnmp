@@ -42,7 +42,7 @@ Show_Help() {
   --allphp                      Uninstall all PHP
   --phpcache                    Uninstall PHP opcode cache
   --php_extensions [ext name]   Uninstall PHP extensions, include zendguardloader,ioncube,
-                                sourceguardian,imagick,gmagick,fileinfo,imap,ldap,phalcon,
+                                sourceguardian,imagick,gmagick,fileinfo,imap,ldap,calendar,phalcon,
                                 yaf,yar,redis,memcached,memcache,mongodb,swoole,xdebug
   --hhvm                        Uninstall HHVM
   --pureftpd                    Uninstall PureFtpd
@@ -118,6 +118,7 @@ while :; do
       [ -n "`echo ${php_extensions} | grep -w fileinfo`" ] && pecl_fileinfo=1
       [ -n "`echo ${php_extensions} | grep -w imap`" ] && pecl_imap=1
       [ -n "`echo ${php_extensions} | grep -w ldap`" ] && pecl_ldap=1
+      [ -n "`echo ${php_extensions} | grep -w calendar`" ] && pecl_calendar=1
       [ -n "`echo ${php_extensions} | grep -w phalcon`" ] && pecl_phalcon=1
       [ -n "`echo ${php_extensions} | grep -w yaf`" ] && pecl_yaf=1
       [ -n "`echo ${php_extensions} | grep -w yar`" ] && pecl_yar=1
@@ -390,6 +391,12 @@ Uninstall_PHPext() {
   if [ "${pecl_ldap}" == '1' ]; then
     . include/pecl_ldap.sh
     Uninstall_pecl_ldap
+  fi
+
+  # calendar
+  if [ "${pecl_calendar}" == '1' ]; then
+    . include/pecl_calendar.sh
+    Uninstall_pecl_calendar
   fi
 
   # phalcon

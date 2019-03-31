@@ -13,9 +13,9 @@ Nginx_lua_waf() {
   [ ! -e "${nginx_install_dir}/sbin/nginx" ] && echo "${CWARNING}Nginx is not installed on your system! ${CEND}" && exit 1
   if [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ]; then
     [ -e "/usr/local/lib/libluajit-5.1.so.2.0.5" ] && find /usr/local -name *luajit* | xargs rm -rf
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/luajit2-2.1-20190228.tar.gz && Download_src
-    tar xzf luajit2-2.1-20190228.tar.gz
-    pushd luajit2-2.1-20190228
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/luajit2-2.1-20190329.tar.gz && Download_src
+    tar xzf luajit2-2.1-20190329.tar.gz
+    pushd luajit2-2.1-20190329
     make && make install
     [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ] && { echo "${CFAILURE}LuaJIT install failed! ${CEND}"; kill -9 $$; }
     popd > /dev/null
@@ -76,9 +76,9 @@ Tengine_lua_waf() {
   [ ! -e "${tengine_install_dir}/sbin/nginx" ] && echo "${CWARNING}Tengine is not installed on your system! ${CEND}" && exit 1
   if [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ]; then
     [ -e "/usr/local/lib/libluajit-5.1.so.2.0.5" ] && find /usr/local -name *luajit* | xargs rm -rf
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/luajit2-2.1-20190228.tar.gz && Download_src
-    tar xzf luajit2-2.1-20190228.tar.gz
-    pushd luajit2-2.1-20190228
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/luajit2-2.1-20190329.tar.gz && Download_src
+    tar xzf luajit2-2.1-20190329.tar.gz
+    pushd luajit2-2.1-20190329
     make && make install
     [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ] && { echo "${CFAILURE}LuaJIT install failed! ${CEND}"; kill -9 $$; }
     popd > /dev/null
@@ -95,33 +95,28 @@ Tengine_lua_waf() {
   ${tengine_install_dir}/sbin/nginx -V &> $$
   tengine_configure_args_tmp=`cat $$ | grep 'configure arguments:' | awk -F: '{print $2}'`
   rm -rf $$
-  tengine_configure_args=`echo ${tengine_configure_args_tmp} | sed "s@--with-openssl=../openssl-\w.\w.\w\+ @--with-openssl=../openssl-${openssl_ver} @" | sed "s@--with-pcre=../pcre-\w.\w\+ @--with-pcre=../pcre-${pcre_ver} @"`
+  tengine_configure_args=`echo ${tengine_configure_args_tmp} | sed "s@--with-openssl=../openssl-\w.\w.\w\+ @--with-openssl=../openssl-${openssl11_ver} @" | sed "s@--with-pcre=../pcre-\w.\w\+ @--with-pcre=../pcre-${pcre_ver} @"`
   if [ -z "`echo ${tengine_configure_args} | grep lua`" ]; then
     src_url=http://tengine.taobao.org/download/tengine-${tengine_ver}.tar.gz && Download_src
-    src_url=https://www.openssl.org/source/openssl-${openssl_ver}.tar.gz && Download_src
+    src_url=https://www.openssl.org/source/openssl-${openssl11_ver}.tar.gz && Download_src
     src_url=http://mirrors.linuxeye.com/oneinstack/src/pcre-${pcre_ver}.tar.gz && Download_src
     src_url=http://mirrors.linuxeye.com/oneinstack/src/ngx_devel_kit.tar.gz && Download_src
     src_url=http://mirrors.linuxeye.com/oneinstack/src/lua-nginx-module.tar.gz && Download_src
     tar xzf tengine-${tengine_ver}.tar.gz
-    tar xzf openssl-${openssl_ver}.tar.gz
+    tar xzf openssl-${openssl11_ver}.tar.gz
     tar xzf pcre-${pcre_ver}.tar.gz
     tar xzf ngx_devel_kit.tar.gz
     tar xzf lua-nginx-module.tar.gz
-    [ "${Fedora_ver}" == '28' ] && patch -d tengine-${tengine_ver} -p1 < 0001-unix-ngx_user-Apply-fix-for-really-old-bug-in-glibc-.patch
-    patch -d tengine-${tengine_ver} -p0 < nginx-auto-cc-gcc.patch
     pushd tengine-${tengine_ver}
     make clean
-    sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc # close debug
     export LUAJIT_LIB=/usr/local/lib
     export LUAJIT_INC=/usr/local/include/luajit-2.1
     ./configure ${tengine_configure_args} --with-ld-opt="-Wl,-rpath,/usr/local/lib" --add-module=../lua-nginx-module --add-module=../ngx_devel_kit
     make -j ${THREAD}
     if [ -f "objs/nginx" ]; then
       /bin/mv ${tengine_install_dir}/sbin/nginx{,`date +%m%d`}
-      /bin/mv ${tengine_install_dir}/sbin/dso_tool{,`date +%m%d`}
       /bin/mv ${tengine_install_dir}/modules{,`date +%m%d`}
       /bin/cp objs/nginx ${tengine_install_dir}/sbin/nginx
-      /bin/cp objs/dso_tool ${tengine_install_dir}/sbin/dso_tool
       chmod +x ${tengine_install_dir}/sbin/*
       make install
       kill -USR2 `cat /var/run/nginx.pid`

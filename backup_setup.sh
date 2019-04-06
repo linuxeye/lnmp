@@ -184,7 +184,7 @@ fi
 
 if [ -n "`echo ${desc_bk} | grep -w 3`" ]; then
   if [ ! -e "/usr/local/bin/ossutil" ]; then
-    wget -qc http://gosspublic.alicdn.com/ossutil/1.4.3/ossutil${OS_BIT} -O /usr/local/bin/ossutil
+    wget -qc http://gosspublic.alicdn.com/ossutil/1.5.0/ossutil${OS_BIT} -O /usr/local/bin/ossutil
     chmod +x /usr/local/bin/ossutil
   fi
   while :; do echo

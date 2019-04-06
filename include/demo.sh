@@ -10,7 +10,9 @@
 
 DEMO() {
   pushd ${oneinstack_dir}/src > /dev/null
-  [ "${IPADDR_COUNTRY}"x == "CN"x ] && /bin/cp ${oneinstack_dir}/config/index_cn.html ${wwwroot_dir}/default/index.html || /bin/cp ${oneinstack_dir}/config/index.html ${wwwroot_dir}/default
+  if [ ! -e ${wwwroot_dir}/default/index.html ]; then 
+    [ "${IPADDR_COUNTRY}"x == "CN"x ] && /bin/cp ${oneinstack_dir}/config/index_cn.html ${wwwroot_dir}/default/index.html || /bin/cp ${oneinstack_dir}/config/index.html ${wwwroot_dir}/default
+  fi
 
   if [ -e "${php_install_dir}/bin/php" ]; then
     src_url=http://mirrors.linuxeye.com/oneinstack/src/xprober.php && Download_src

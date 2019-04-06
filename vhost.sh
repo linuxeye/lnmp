@@ -1047,6 +1047,7 @@ Del_NGX_Vhost() {
                 rm -rf ${Directory}
               fi
               echo
+              [ -d ~/.acme.sh/${domain} ] && ~/.acme.sh/acme.sh --remove -d ${domain} > /dev/null 2>&1
               echo "${CMSG}Domain: ${domain} has been deleted.${CEND}"
               echo
             else
@@ -1098,6 +1099,7 @@ Del_Apache_Vhost() {
 		fi
                 rm -rf ${Directory}
               fi
+              [ -d ~/.acme.sh/${domain} ] && ~/.acme.sh/acme.sh --remove -d ${domain} > /dev/null 2>&1
               echo "${CSUCCESS}Domain: ${domain} has been deleted.${CEND}"
             else
               echo "${CWARNING}Virtualhost: ${domain} was not exist! ${CEND}"

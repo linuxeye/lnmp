@@ -44,8 +44,6 @@ Nginx_lua_waf() {
     tar xzf pcre-${pcre_ver}.tar.gz
     tar xzf ngx_devel_kit.tar.gz
     tar xzf lua-nginx-module.tar.gz
-    [ "${Fedora_ver}" == '28' ] && patch -d nginx-${nginx_ver} -p1 < 0001-unix-ngx_user-Apply-fix-for-really-old-bug-in-glibc-.patch
-    patch -d nginx-${nginx_ver} -p0 < nginx-auto-cc-gcc.patch
     pushd nginx-${nginx_ver}
     make clean
     sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc # close debug

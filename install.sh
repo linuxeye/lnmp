@@ -213,10 +213,6 @@ while :; do
   esac
 done
 
-[ ! -e "${wwwroot_dir}/default" ] && mkdir -p ${wwwroot_dir}/default
-[ ! -e "${wwwlogs_dir}" ] && mkdir -p ${wwwlogs_dir}
-[ -d /data ] && chmod 755 /data
-
 # Use default SSH port 22. If you use another SSH port on your server
 if [ -e "/etc/ssh/sshd_config" ]; then
   [ -z "`grep ^Port /etc/ssh/sshd_config`" ] && now_ssh_port=22 || now_ssh_port=`grep ^Port /etc/ssh/sshd_config | awk '{print $2}' | head -1`
@@ -738,6 +734,12 @@ if [ ${ARG_NUM} == 0 ]; then
   done
 fi
 
+if [[ ${nginx_option} =~ ^[1-3]$ ]] || [[ ${apache_option} =~ ^[1-2]$ ]] || [[ ${tomcat_option} =~ ^[1-4]$ ]]; then
+  [ ! -d ${wwwroot_dir}/default ] && mkdir -p ${wwwroot_dir}/default
+  [ ! -d ${wwwlogs_dir} ] && mkdir -p ${wwwlogs_dir}
+fi
+[ -d /data ] && chmod 755 /data
+
 # install wget gcc curl python
 if [ ! -e ~/.oneinstack ]; then
   downloadDepsSrc=1
@@ -1137,11 +1139,9 @@ if [ "${memcached_flag}" == 'y' ]; then
 fi
 
 # index example
-if [ ! -e "${wwwroot_dir}/default/index.html" ]; then
-  if [[ ${nginx_option} =~ ^[1-3]$ ]] || [[ ${apache_option} =~ ^[1-2]$ ]] || [[ ${tomcat_option} =~ ^[1-4]$ ]]; then
-    . include/demo.sh
-    DEMO 2>&1 | tee -a ${oneinstack_dir}/install.log
-  fi
+if [ -d "${wwwroot_dir}/default" ]; then
+  . include/demo.sh
+  DEMO 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # get web_install_dir and db_install_dir

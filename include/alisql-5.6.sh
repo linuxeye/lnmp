@@ -108,7 +108,7 @@ query_cache_limit = 2M
 
 ft_min_word_len = 4
 
-log_bin = mysql-bin
+log_bin = ON
 binlog_format = mixed
 expire_logs_days = 7
 

@@ -119,7 +119,7 @@ thread_cache_size = 8
 
 ft_min_word_len = 4
 
-log_bin = mysql-bin
+log_bin = ON
 binlog_format = mixed
 binlog_expire_logs_seconds = 604800
 

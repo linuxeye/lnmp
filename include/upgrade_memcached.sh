@@ -42,8 +42,7 @@ Upgrade_Memcached() {
     tar xzf memcached-${NEW_memcached_ver}.tar.gz
     pushd memcached-${NEW_memcached_ver}
     make clean
-    [ "${PM}" == 'yum' ] && libevent_arg='--with-libevent=/usr/local'
-    ./configure --prefix=${memcached_install_dir} ${libevent_arg}
+    ./configure --prefix=${memcached_install_dir}
     make -j ${THREAD}
 
     if [ -e "memcached" ]; then

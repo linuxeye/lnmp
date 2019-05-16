@@ -77,7 +77,7 @@ installDepsCentOS() {
 
   echo "${CMSG}Installing dependencies packages...${CEND}"
   # Install needed packages
-  pkgList="deltarpm gcc gcc-c++ make cmake autoconf libjpeg libjpeg-devel libjpeg-turbo libjpeg-turbo-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel krb5-devel libc-client libc-client-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel libaio numactl numactl-libs readline-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel libxslt-devel libicu-devel libevent-devel libtool libtool-ltdl bison gd-devel vim-enhanced pcre-devel zip unzip ntpdate sqlite-devel sysstat patch bc expect expat-devel rsync rsyslog git lsof lrzsz psmisc wget which libatomic"
+  pkgList="deltarpm gcc gcc-c++ make cmake autoconf libjpeg libjpeg-devel libjpeg-turbo libjpeg-turbo-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel krb5-devel libc-client libc-client-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel libaio numactl numactl-libs readline-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel libxslt-devel libicu-devel libevent-devel libtool libtool-ltdl bison gd-devel vim-enhanced pcre-devel zip unzip ntpdate sqlite-devel sysstat patch bc expect expat-devel rsync rsyslog git lsof lrzsz psmisc wget which libatomic tmux"
   for Package in ${pkgList}; do
     yum -y install ${Package}
   done
@@ -154,31 +154,6 @@ installDepsBySrc() {
       rm -rf bison-${bison_ver}
     fi
   elif [ "${OS}" == 'CentOS' ]; then
-    # Install tmux
-    if ! command -v tmux >/dev/null 2>&1; then
-      # Install libevent first
-      tar xzf libevent-${libevent_ver}.tar.gz
-      pushd libevent-${libevent_ver} > /dev/null
-      ./configure
-      make -j ${THREAD} && make install
-      popd > /dev/null
-      rm -rf libevent-${libevent_ver}
-
-      tar xzf tmux-${tmux_ver}.tar.gz
-      pushd tmux-${tmux_ver} > /dev/null
-      CFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib" ./configure
-      make -j ${THREAD} && make install
-      unset LDFLAGS
-      popd > /dev/null
-      rm -rf tmux-${tmux_ver}
-
-      if [ "${OS_BIT}" == "64" ]; then
-        ln -s /usr/local/lib/libevent-2.0.so.5 /usr/lib64/libevent-2.0.so.5
-      else
-        ln -s /usr/local/lib/libevent-2.0.so.5 /usr/lib/libevent-2.0.so.5
-      fi
-    fi
-
     # install htop
     if ! command -v htop >/dev/null 2>&1; then
       tar xzf htop-${htop_ver}.tar.gz

@@ -804,7 +804,7 @@ fi
 # Database
 case "${db_option}" in
   1)
-    [ "${OS}" == 'CentOS' -a "${CentOS_ver}" != '7' ] && dbinstallmethod=1
+    [ "${OS}" == 'CentOS' -a "${CentOS_ver}" != '7' ] && dbinstallmethod=1 && checkDownload
     . include/mysql-8.0.sh
     Install_MySQL80 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;

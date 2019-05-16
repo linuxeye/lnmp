@@ -17,8 +17,7 @@ Install_memcached_server() {
   tar xzf memcached-${memcached_ver}.tar.gz
   pushd memcached-${memcached_ver} > /dev/null
   [ ! -d "${memcached_install_dir}" ] && mkdir -p ${memcached_install_dir}
-  [ "${PM}" == 'yum' ] && libevent_arg='--with-libevent=/usr/local'
-  ./configure --prefix=${memcached_install_dir} ${libevent_arg}
+  ./configure --prefix=${memcached_install_dir}
   make -j ${THREAD} && make install
   popd > /dev/null
   if [ -f "${memcached_install_dir}/bin/memcached" ]; then

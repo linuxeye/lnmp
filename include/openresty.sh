@@ -15,20 +15,18 @@ Install_OpenResty() {
 
   tar xzf pcre-${pcre_ver}.tar.gz
   tar xzf openresty-${openresty_ver}.tar.gz
-  tar xzf openssl-${openssl_ver}.tar.gz
-  [ "${Fedora_ver}" == '28' ] && patch -d openresty-${openresty_ver}/bundle/nginx-${openresty_ver%.*} -p1 < 0001-unix-ngx_user-Apply-fix-for-really-old-bug-in-glibc-.patch
-  patch -d openresty-${openresty_ver}/bundle/nginx-${openresty_ver%.*} -p0 < nginx-auto-cc-gcc.patch
+  tar xzf openssl-${openssl11_ver}.tar.gz
   pushd openresty-${openresty_ver} > /dev/null
 
   # close debug
   sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' bundle/nginx-${openresty_ver%.*}/auto/cc/gcc # close debug
 
   [ ! -d "${openresty_install_dir}" ] && mkdir -p ${openresty_install_dir}
-  ./configure --prefix=${openresty_install_dir} --user=${run_user} --group=${run_user} --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-openssl=../openssl-${openssl_ver} --with-pcre=../pcre-${pcre_ver} --with-pcre-jit --with-ld-opt='-ljemalloc' ${nginx_modules_options}
+  ./configure --prefix=${openresty_install_dir} --user=${run_user} --group=${run_user} --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-openssl=../openssl-${openssl11_ver} --with-pcre=../pcre-${pcre_ver} --with-pcre-jit --with-ld-opt='-ljemalloc' ${nginx_modules_options}
   make -j ${THREAD} && make install
   if [ -e "${openresty_install_dir}/nginx/conf/nginx.conf" ]; then
     popd > /dev/null
-    rm -rf pcre-${pcre_ver} openssl-${openssl_ver} openresty-${openresty_ver}
+    rm -rf pcre-${pcre_ver} openssl-${openssl11_ver} openresty-${openresty_ver}
     echo "${CSUCCESS}OpenResty installed successfully! ${CEND}"
   else
     rm -rf ${openresty_install_dir}

@@ -3,11 +3,11 @@
 nginx_ver=1.16.0
 tengine_ver=2.3.0
 openresty_ver=1.15.8.1
-openssl11_ver=1.1.1b
-openssl_ver=1.0.2r
+openssl11_ver=1.1.1c
+openssl_ver=1.0.2s
 
-tomcat9_ver=9.0.20
-tomcat8_ver=8.5.41
+tomcat9_ver=9.0.21
+tomcat8_ver=8.5.42
 tomcat7_ver=7.0.94
 tomcat6_ver=6.0.53
 
@@ -16,7 +16,7 @@ apache22_ver=2.2.34
 pcre_ver=8.43
 apr_ver=1.7.0
 apr_util_ver=1.6.1
-nghttp2_ver=1.38.0
+nghttp2_ver=1.39.1
 
 # DB
 mysql80_ver=8.0.16
@@ -24,14 +24,14 @@ mysql57_ver=5.7.26
 mysql56_ver=5.6.44
 mysql55_ver=5.5.62
 
-mariadb103_ver=10.3.15
-mariadb102_ver=10.2.24
+mariadb103_ver=10.3.16
+mariadb102_ver=10.2.25
 mariadb101_ver=10.1.40
 mariadb55_ver=5.5.64
 
 percona80_ver=8.0.15-6
 percona57_ver=5.7.25-28
-percona56_ver=5.6.43-84.3
+percona56_ver=5.6.44-86.0
 percona55_ver=5.5.62-38.14
 
 alisql_ver=5.6.32-9
@@ -47,9 +47,9 @@ jdk17_ver=1.7.0_80
 jdk16_ver=1.6.0_45
 
 # PHP
-php73_ver=7.3.5
-php72_ver=7.2.18
-php71_ver=7.1.29
+php73_ver=7.3.6
+php72_ver=7.2.19
+php71_ver=7.1.30
 php70_ver=7.0.33
 php56_ver=5.6.40
 php55_ver=5.5.38
@@ -57,13 +57,13 @@ php54_ver=5.4.45
 php53_ver=5.3.29
 
 libiconv_ver=1.15
-curl_ver=7.64.1
+curl_ver=7.65.1
 libmcrypt_ver=2.5.8
 mcrypt_ver=2.6.8
 mhash_ver=0.9.9.9
 libsodium_ver=1.0.17
 argon2_ver=20171227
-imagemagick_ver=6.9.10-45
+imagemagick_ver=6.9.10-49
 imagick_ver=3.4.3
 graphicsmagick_ver=1.3.31
 gmagick_ver=2.0.5RC1
@@ -76,9 +76,9 @@ eaccelerator_ver=0.9.6.1
 phalcon_ver=3.4.3
 yaf_ver=3.0.8
 yar_ver=2.0.5
-swoole_ver=4.3.3
+swoole_ver=4.3.5
 swoole_oldver=1.10.5
-xdebug_ver=2.7.1
+xdebug_ver=2.7.2
 xdebug_oldver=2.5.5
 
 # Ftp
@@ -89,7 +89,7 @@ redis_ver=5.0.5
 pecl_redis_ver=4.3.0
 
 # Memcached
-memcached_ver=1.5.14
+memcached_ver=1.5.16
 libmemcached_ver=1.0.18
 pecl_memcached_ver=3.1.3
 pecl_memcached_oldver=2.2.0
@@ -100,7 +100,7 @@ pecl_mongodb_ver=1.5.3
 pecl_mongo_ver=1.6.16
 
 # phpMyadmin
-phpmyadmin_ver=4.8.5
+phpmyadmin_ver=4.9.0.1
 phpmyadmin_oldver=4.4.15.10
 
 # jemalloc

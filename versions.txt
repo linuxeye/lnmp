@@ -24,25 +24,25 @@ mysql57_ver=5.7.26
 mysql56_ver=5.6.44
 mysql55_ver=5.5.62
 
+mariadb104_ver=10.4.6
 mariadb103_ver=10.3.16
 mariadb102_ver=10.2.25
-mariadb101_ver=10.1.40
 mariadb55_ver=5.5.64
 
 percona80_ver=8.0.15-6
-percona57_ver=5.7.25-28
+percona57_ver=5.7.26-29
 percona56_ver=5.6.44-86.0
 percona55_ver=5.5.62-38.14
 
 alisql_ver=5.6.32-9
 
-pgsql_ver=11.3
+pgsql_ver=11.4
 
-mongodb_ver=4.0.9
+mongodb_ver=4.0.10
 
 # JDK
-jdk110_ver=11.0.2
-jdk18_ver=1.8.0_202
+jdk110_ver=11.0.3
+jdk18_ver=1.8.0_212
 jdk17_ver=1.7.0_80
 jdk16_ver=1.6.0_45
 
@@ -63,7 +63,7 @@ mcrypt_ver=2.6.8
 mhash_ver=0.9.9.9
 libsodium_ver=1.0.17
 argon2_ver=20171227
-imagemagick_ver=6.9.10-49
+imagemagick_ver=6.9.10-51
 imagick_ver=3.4.3
 graphicsmagick_ver=1.3.31
 gmagick_ver=2.0.5RC1

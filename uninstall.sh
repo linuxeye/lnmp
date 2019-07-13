@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://linuxeye.com
 #
-# Notes: OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RedHat 6+ Debian 8+ and Ubuntu 14+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -12,7 +12,7 @@ export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 clear
 printf "
 #######################################################################
-#       OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+      #
+#       OneinStack for CentOS/RedHat 6+ Debian 8+ and Ubuntu 14+      #
 #                         Uninstall OneinStack                        #
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
@@ -295,6 +295,7 @@ Print_ALLPHP() {
   [ -e "${imagick_install_dir}" ] && echo ${imagick_install_dir}
   [ -e "${gmagick_install_dir}" ] && echo ${gmagick_install_dir}
   [ -e "${curl_install_dir}" ] && echo ${curl_install_dir}
+  [ -e "${freetype_install_dir}" ] && echo ${freetype_install_dir}
 }
 
 Uninstall_PHP() {
@@ -325,6 +326,7 @@ Uninstall_ALLPHP() {
   [ -e "${imagick_install_dir}" ] && rm -rf ${imagick_install_dir}
   [ -e "${gmagick_install_dir}" ] && rm -rf ${gmagick_install_dir}
   [ -e "${curl_install_dir}" ] && rm -rf ${curl_install_dir}
+  [ -e "${freetype_install_dir}" ] && rm -rf ${freetype_install_dir}
 }
 
 Uninstall_PHPcache() {

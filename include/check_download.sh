@@ -1,7 +1,7 @@
 #!/bin/bash
 # Author:  Alpha Eva <kaneawk AT gmail.com>
 #
-# Notes: OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RedHat 6+ Debian 8+ and Ubuntu 14+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -10,6 +10,12 @@
 checkDownload() {
   mirrorLink=http://mirrors.linuxeye.com/oneinstack/src
   pushd ${oneinstack_dir}/src > /dev/null
+  # icu
+  if ! command -v icu-config >/dev/null 2>&1 || icu-config --version | grep '^3.'; then
+    echo "Download icu..."
+    src_url=${mirrorLink}/icu4c-${icu4c_ver}-src.tgz && Download_src
+  fi
+
   # General system utils
   if [[ ${tomcat_option} =~ ^[1-4]$ ]] || [[ ${apache_option} =~ ^[1-2]$ ]] || [[ ${php_option} =~ ^[1-8]$ ]]; then
     echo "Download openSSL..."
@@ -621,6 +627,7 @@ checkDownload() {
     src_url=http://downloads.sourceforge.net/project/mhash/mhash/${mhash_ver}/mhash-${mhash_ver}.tar.gz && Download_src
     src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/${libmcrypt_ver}/libmcrypt-${libmcrypt_ver}.tar.gz && Download_src
     src_url=http://downloads.sourceforge.net/project/mcrypt/MCrypt/${mcrypt_ver}/mcrypt-${mcrypt_ver}.tar.gz && Download_src
+    src_url=${mirrorLink}/freetype-${freetype_ver}.tar.gz && Download_src
   fi
 
   case "${php_option}" in

@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://linuxeye.com
 #
-# Notes: OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RedHat 6+ Debian 8+ and Ubuntu 14+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -30,9 +30,20 @@ Install_PHP54() {
     [ "${Debian_ver}" == '8' ] && apt-get -y remove zlib1g-dev
     ./configure --prefix=${curl_install_dir} --with-ssl=${openssl_install_dir}
     make -j ${THREAD} && make install
-    [ "${Debian_ver}" == '8' ] && apt-get -y install libc-client2007e-dev libfreetype6-dev libglib2.0-dev libpng12-dev libssl-dev libzip-dev zlib1g-dev
+    [ "${Debian_ver}" == '8' ] && apt-get -y install libc-client2007e-dev libglib2.0-dev libpng12-dev libssl-dev libzip-dev zlib1g-dev
     popd > /dev/null
     rm -rf curl-${curl_ver}
+  fi
+
+  if [ ! -e "${freetype_install_dir}/lib/libfreetype.la" ]; then
+    tar xzf freetype-${freetype_ver}.tar.gz
+    pushd freetype-${freetype_ver} > /dev/null
+    ./configure --prefix=${freetype_install_dir} --enable-freetype-config
+    make -j ${THREAD} && make install
+    ln -sf ${freetype_install_dir}/include/freetype2/* /usr/include/
+    [ -d /usr/lib/pkgconfig ] && /bin/cp ${freetype_install_dir}/lib/pkgconfig/freetype2.pc /usr/lib/pkgconfig/
+    popd > /dev/null
+    rm -rf freetype-${freetype_ver}
   fi
 
   if [ ! -e "/usr/local/lib/libmcrypt.la" ]; then
@@ -87,28 +98,29 @@ Install_PHP54() {
   pushd php-${php54_ver} > /dev/null
   make clean
   [ ! -d "${php_install_dir}" ] && mkdir -p ${php_install_dir}
+  { [ ${Debian_ver} -ge 10 >/dev/null 2>&1 ] || [ ${Ubuntu_ver} -ge 19 >/dev/null 2>&1 ]; } || intl_modules_options='--enable-intl'
   if [ "${apache_option}" == '2' ] || [ "${Apache_main_ver}" == '22' ] || [ "${apache_mode_option}" == '2' ]; then
     ./configure --prefix=${php_install_dir} --with-config-file-path=${php_install_dir}/etc \
     --with-config-file-scan-dir=${php_install_dir}/etc/php.d \
     --with-apxs2=${apache_install_dir}/bin/apxs --disable-fileinfo \
     --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
-    --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
+    --with-iconv-dir=/usr/local --with-freetype-dir=${freetype_install_dir} --with-jpeg-dir --with-png-dir --with-zlib \
     --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
     --enable-sysvsem --enable-inline-optimization --with-curl=${curl_install_dir} --enable-mbregex \
     --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl=${openssl_install_dir} \
-    --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
-    --with-gettext --enable-zip --enable-soap --disable-debug $php_modules_options
+    --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --with-xsl ${intl_modules_options} \
+    --with-gettext --enable-zip --enable-soap --disable-debug ${php_modules_options}
   else
     ./configure --prefix=${php_install_dir} --with-config-file-path=${php_install_dir}/etc \
     --with-config-file-scan-dir=${php_install_dir}/etc/php.d \
     --with-fpm-user=${run_user} --with-fpm-group=${run_user} --enable-fpm --disable-fileinfo \
     --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
-    --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib \
+    --with-iconv-dir=/usr/local --with-freetype-dir=${freetype_install_dir} --with-jpeg-dir --with-png-dir --with-zlib \
     --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
     --enable-sysvsem --enable-inline-optimization --with-curl=${curl_install_dir} --enable-mbregex \
     --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl=${openssl_install_dir} \
-    --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
-    --with-gettext --enable-zip --enable-soap --disable-debug $php_modules_options
+    --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --with-xsl ${intl_modules_options} \
+    --with-gettext --enable-zip --enable-soap --disable-debug ${php_modules_options}
   fi
   make ZEND_EXTRA_LIBS='-liconv' -j ${THREAD}
   make install

@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://linuxeye.com
 #
-# Notes: OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RedHat 6+ Debian 8+ and Ubuntu 14+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -97,11 +97,7 @@ net.netfilter.nf_conntrack_tcp_timeout_established = 3600
 EOF
 sysctl -p
 
-if [ "${CentOS_ver}" == '5' ]; then
-  sed -i 's@^[3-6]:2345:respawn@#&@g' /etc/inittab
-  sed -i 's@^ca::ctrlaltdel@#&@' /etc/inittab
-  sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/sysconfig/i18n
-elif [ "${CentOS_ver}" == '6' ]; then
+if [ "${CentOS_ver}" == '6' ]; then
   sed -i 's@^ACTIVE_CONSOLES.*@ACTIVE_CONSOLES=/dev/tty[1-2]@' /etc/sysconfig/init
   sed -i 's@^start@#start@' /etc/init/control-alt-delete.conf
   sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/sysconfig/i18n

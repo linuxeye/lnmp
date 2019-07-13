@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://linuxeye.com
 #
-# Notes: OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RedHat 6+ Debian 8+ and Ubuntu 14+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -245,7 +245,6 @@ Upgrade_Apache() {
       /bin/cp -R ../apr-util-${apr_util_ver} ./srclib/apr-util
       LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} --enable-mpms-shared=all --with-pcre --with-included-apr --enable-headers --enable-mime-magic --enable-deflate --enable-proxy --enable-so --enable-dav --enable-rewrite --enable-remoteip --enable-expires --enable-static-support --enable-suexec --enable-mods-shared=most --enable-nonportable-atomics=yes --enable-ssl --with-ssl=${openssl_install_dir} --enable-http2 --with-nghttp2=/usr/local
     elif [ "${Apache_main_ver}" == '22' ]; then
-      [ "${Ubuntu_ver}" == "12" ] && sed -i '@SSL_PROTOCOL_SSLV2@d' modules/ssl/ssl_engine_io.c
       LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} --with-mpm=prefork --enable-mpms-shared=all --with-included-apr --enable-headers --enable-mime-magic --enable-deflate --enable-proxy --enable-so --enable-dav --enable-rewrite --enable-expires --enable-static-support --enable-suexec --with-expat=builtin --enable-mods-shared=most --enable-ssl --with-ssl=${openssl_install_dir}
     fi
     make -j ${THREAD}

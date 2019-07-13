@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://linuxeye.com
 #
-# Notes: OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+
+# Notes: OneinStack for CentOS/RedHat 6+ Debian 8+ and Ubuntu 14+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -12,7 +12,7 @@ export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 clear
 printf "
 #######################################################################
-#       OneinStack for CentOS/RedHat 6+ Debian 7+ and Ubuntu 12+      #
+#       OneinStack for CentOS/RedHat 6+ Debian 8+ and Ubuntu 14+      #
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
 "
@@ -771,7 +771,6 @@ if [ ! -e ~/.oneinstack ]; then
     "CentOS")
       installDepsCentOS 2>&1 | tee ${oneinstack_dir}/install.log
       . include/init_CentOS.sh 2>&1 | tee -a ${oneinstack_dir}/install.log
-      [ -n "$(gcc --version | head -n1 | grep '4\.1\.')" ] && export CC="gcc44" CXX="g++44"
       ;;
     "Debian")
       installDepsDebian 2>&1 | tee ${oneinstack_dir}/install.log

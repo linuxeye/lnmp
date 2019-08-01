@@ -19,24 +19,37 @@ Script properties:
 - Provide local,remote(rsync between servers),Aliyun OSS,Qcloud COS,UPYUN,QINIU,Amazon S3,Google Drive and Dropbox backup script
 - Provided under HHVM install CentOS 6,7
 
-## How to use
+## Installation
 
-If your server system: CentOS/Redhat (Do not enter "//" and "// subsequent sentence)
+Install the dependencies for your distro, download the source and run the installation script.
+
+#### CentOS/Redhat
+
 ```bash
-yum -y install wget screen   // For CentOS / Redhat
-wget http://mirrors.linuxeye.com/lnmp-full.tar.gz   // Contains the source code
-tar xzf lnmp-full.tar.gz
-cd lnmp    // If you need to modify the directory (installation, data storage, Nginx logs), modify options.conf file
-screen -S lnmp    // if network interruption, you can execute the command `screen -r lnmp` reconnect install window
-./install.sh
+yum -y install wget screen
 ```
-If your server system: Debian/Ubuntu (Do not enter "//" and "// subsequent sentence)
+
+#### Debian/Ubuntu
+
 ```bash
-apt-get -y install wget screen   // For Debian / Ubuntu
-wget http://mirrors.linuxeye.com/lnmp-full.tar.gz   // Contains the source code
+apt-get -y install wget screen
+```
+
+#### Download Source and Install
+
+```bash
+wget http://mirrors.linuxeye.com/lnmp-full.tar.gz
 tar xzf lnmp-full.tar.gz
-cd lnmp    // If you need to modify the directory (installation, data storage, Nginx logs), modify options.conf file
-screen -S lnmp    // if network interruption, you can execute the command `screen -r lnmp` reconnect install window
+cd lnmp
+```
+
+If you disconnect during installation, you can execute the command `screen -r lnmp` to reconnect to the install window
+```bash
+screen -S lnmp
+```
+
+If you need to modify the directory (installation, data storage, Nginx logs), modify `options.conf` file before running install.sh
+```bash
 ./install.sh
 ```
 

@@ -10,7 +10,7 @@
 
 if [ -e "/usr/bin/yum" ]; then
   PM=yum
-  command -v lsb_release >/dev/null 2>&1 || { yum -y install redhat-lsb-core; clear; }
+  command -v lsb_release >/dev/null 2>&1 || { [ -e "/etc/euleros-release" ] && yum -y install euleros-lsb || yum -y install redhat-lsb-core; clear; }
 fi
 if [ -e "/usr/bin/apt-get" ]; then
   PM=apt-get
@@ -24,6 +24,7 @@ if [ -e /etc/redhat-release ]; then
   OS=CentOS
   CentOS_ver=$(lsb_release -sr | awk -F. '{print $1}')
   [[ "$(lsb_release -is)" =~ ^Aliyun$|^AlibabaCloudEnterpriseServer$ ]] && { CentOS_ver=7; Aliyun_ver=$(lsb_release -rs); }
+  [[ "$(lsb_release -is)" =~ ^EulerOS$ ]] && { CentOS_ver=7; EulerOS_ver=$(lsb_release -rs); }
   [ "$(lsb_release -is)" == 'Fedora' ] && [ ${CentOS_ver} -ge 19 >/dev/null 2>&1 ] && { CentOS_ver=7; Fedora_ver=$(lsb_release -rs); }
 elif [ -n "$(grep 'Amazon Linux' /etc/issue)" -o -n "$(grep 'Amazon Linux' /etc/os-release)" ]; then
   OS=CentOS
@@ -58,6 +59,22 @@ if [ ${CentOS_ver} -lt 6 >/dev/null 2>&1 ] || [ ${Debian_ver} -lt 8 >/dev/null 2
   kill -9 $$
 fi
 
+LIBC_YN=$(awk -v A=$(getconf -a | grep GNU_LIBC_VERSION | awk '{print $NF}') -v B=2.14 'BEGIN{print(A>=B)?"0":"1"}')
+[ ${LIBC_YN} == '0' ] && GLIBC_FLAG=linux-glibc_214 || GLIBC_FLAG=linux
+
+if uname -m | grep -Eqi "arm|aarch64"; then
+  armplatform="y"
+  if uname -m | grep -Eqi "armv7"; then
+    TARGET_ARCH="armv7"
+  elif uname -m | grep -Eqi "armv8"; then
+    TARGET_ARCH="arm64"
+  elif uname -m | grep -Eqi "aarch64"; then
+    TARGET_ARCH="aarch64"
+  else
+    TARGET_ARCH="unknown"
+  fi
+fi
+
 if [ "$(uname -r | awk -F- '{print $3}' 2>/dev/null)" == "Microsoft" ]; then
   Wsl=true
 fi
@@ -69,6 +86,7 @@ if [ "$(getconf WORD_BIT)" == "32" ] && [ "$(getconf LONG_BIT)" == "64" ]; then
   SYS_BIT_b=x86_64 #mariadb
   SYS_BIT_c=x86_64 #ZendGuardLoader
   SYS_BIT_d=x86-64 #ioncube
+  [ "${TARGET_ARCH}" == 'aarch64' ] && { SYS_BIT_c=aarch64; SYS_BIT_d=aarch64; }
 else
   OS_BIT=32
   SYS_BIT_j=i586
@@ -76,20 +94,7 @@ else
   SYS_BIT_b=i686
   SYS_BIT_c=i386
   SYS_BIT_d=x86
-fi
-
-LIBC_YN=$(awk -v A=$(getconf -a | grep GNU_LIBC_VERSION | awk '{print $NF}') -v B=2.14 'BEGIN{print(A>=B)?"0":"1"}')
-[ ${LIBC_YN} == '0' ] && GLIBC_FLAG=linux-glibc_214 || GLIBC_FLAG=linux
-
-if uname -m | grep -Eqi "arm"; then
-  armplatform="y"
-  if uname -m | grep -Eqi "armv7"; then
-    TARGET_ARCH="armv7"
-  elif uname -m | grep -Eqi "armv8"; then
-    TARGET_ARCH="arm64"
-  else
-    TARGET_ARCH="unknown"
-  fi
+  [ "${TARGET_ARCH}" == 'armv7' ] && { SYS_BIT_c=armhf; SYS_BIT_d=armv7l; }
 fi
 
 THREAD=$(grep 'processor' /proc/cpuinfo | sort -u | wc -l)

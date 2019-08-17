@@ -14,13 +14,10 @@ Install_SourceGuardian() {
     PHP_detail_ver=`${php_install_dir}/bin/php-config --version`
     PHP_main_ver=${PHP_detail_ver%.*}
     phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
-    if [[ "${PHP_main_ver}" =~ ^5.[3-6]$|^7.[0-2]$ ]] || [ "${TARGET_ARCH}" == "armv8" ]; then
-      [ ! -e sourceguardian ] && mkdir sourceguardian
-      if  [ "${TARGET_ARCH}" == "armv8" ]; then
-        tar xzf loaders.linux-aarch64.tar.gz -C sourceguardian
-      else
-        tar xzf loaders.linux-${SYS_BIT_c}.tar.gz -C sourceguardian
-      fi
+    [ ! -e sourceguardian ] && mkdir sourceguardian
+    [ -e "loaders.linux-${SYS_BIT_c}.tar.gz" ] && tar xzf loaders.linux-${SYS_BIT_c}.tar.gz -C sourceguardian
+  
+    if [ -e "sourceguardian/ixed.${PHP_main_ver}.lin" ]; then
       [ ! -d "${phpExtensionDir}" ] && mkdir -p ${phpExtensionDir}
       if [ -z "`echo ${phpExtensionDir} | grep 'non-zts'`" ]; then
         /bin/mv sourceguardian/ixed.${PHP_main_ver}ts.lin ${phpExtensionDir}

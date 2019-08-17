@@ -18,8 +18,26 @@ Install_Apache24() {
   id -u ${run_user} >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin ${run_user}
   tar xzf httpd-${apache24_ver}.tar.gz
-  tar xzf apr-${apr_ver}.tar.gz
-  tar xzf apr-util-${apr_util_ver}.tar.gz
+
+  # install apr
+  if [ ! -e "${apr_install_dir}/bin/apr-1-config" ]; then
+    tar xzf apr-${apr_ver}.tar.gz
+    pushd apr-${apr_ver} > /dev/null
+    ./configure --prefix=${apr_install_dir}
+    make -j ${THREAD} && make install
+    popd > /dev/null
+    rm -rf apr-${apr_ver}
+  fi
+
+  # install apr-util
+  if [ ! -e "${apr_install_dir}/bin/apu-1-config" ]; then
+    tar xzf apr-util-${apr_util_ver}.tar.gz
+    pushd apr-util-${apr_util_ver} > /dev/null
+    ./configure --prefix=${apr_install_dir} --with-apr=${apr_install_dir}
+    make -j ${THREAD} && make install
+    popd > /dev/null
+    rm -rf apr-util-${apr_util_ver}
+  fi
 
   # install nghttp2
   if [ ! -e "/usr/local/lib/libnghttp2.so" ]; then
@@ -35,15 +53,13 @@ Install_Apache24() {
 
   pushd httpd-${apache24_ver} > /dev/null
   [ ! -d "${apache_install_dir}" ] && mkdir -p ${apache_install_dir}
-  /bin/cp -R ../apr-${apr_ver} ./srclib/apr
-  /bin/cp -R ../apr-util-${apr_util_ver} ./srclib/apr-util
-  LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} --enable-mpms-shared=all --with-pcre --with-included-apr --enable-headers --enable-mime-magic --enable-deflate --enable-proxy --enable-so --enable-dav --enable-rewrite --enable-remoteip --enable-expires --enable-static-support --enable-suexec --enable-mods-shared=most --enable-nonportable-atomics=yes --enable-ssl --with-ssl=${openssl_install_dir} --enable-http2 --with-nghttp2=/usr/local
+  LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} --enable-mpms-shared=all --with-pcre --with-apr=${apr_install_dir} --with-apr-util=${apr_install_dir} --enable-headers --enable-mime-magic --enable-deflate --enable-proxy --enable-so --enable-dav --enable-rewrite --enable-remoteip --enable-expires --enable-static-support --enable-suexec --enable-mods-shared=most --enable-nonportable-atomics=yes --enable-ssl --with-ssl=${openssl_install_dir} --enable-http2 --with-nghttp2=/usr/local
   make -j ${THREAD} && make install
   popd > /dev/null
   unset LDFLAGS
   if [ -e "${apache_install_dir}/bin/httpd" ]; then
     echo "${CSUCCESS}Apache installed successfully! ${CEND}"
-    rm -rf httpd-${apache24_ver} pcre-${pcre_ver} apr-${apr_ver} apr-util-${apr_util_ver}
+    rm -rf httpd-${apache24_ver} pcre-${pcre_ver}
   else
     rm -rf ${apache_install_dir}
     echo "${CFAILURE}Apache install failed, Please contact the author! ${CEND}"
@@ -92,10 +108,10 @@ Install_Apache24() {
   sed -i "s@^DocumentRoot.*@DocumentRoot \"${wwwroot_dir}/default\"@" ${apache_install_dir}/conf/httpd.conf
   sed -i "s@^<Directory \"${apache_install_dir}/htdocs\">@<Directory \"${wwwroot_dir}/default\">@" ${apache_install_dir}/conf/httpd.conf
   sed -i "s@^#Include conf/extra/httpd-mpm.conf@Include conf/extra/httpd-mpm.conf@" ${apache_install_dir}/conf/httpd.conf
-  if [ "${apache_mpm_option}" == '2' ]; then 
+  if [ "${apache_mpm_option}" == '2' ]; then
     sed -ri 's@^(LoadModule.*mod_mpm_event.so)@#\1@' ${apache_install_dir}/conf/httpd.conf
     sed -i 's@^#LoadModule mpm_prefork_module@LoadModule mpm_prefork_module@' ${apache_install_dir}/conf/httpd.conf
-  elif [ "${apache_mpm_option}" == '3' ]; then 
+  elif [ "${apache_mpm_option}" == '3' ]; then
     sed -ri 's@^(LoadModule.*mod_mpm_event.so)@#\1@' ${apache_install_dir}/conf/httpd.conf
     sed -i 's@^#LoadModule mpm_worker_module@LoadModule mpm_worker_module@' ${apache_install_dir}/conf/httpd.conf
   fi

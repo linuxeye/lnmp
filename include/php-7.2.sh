@@ -63,7 +63,7 @@ Install_PHP72() {
     rm -rf libsodium-${libsodium_ver}
   fi
 
-  if [ ! -e "/usr/local/lib/libmhash.la" ]; then
+  if [ ! -e "/usr/local/include/mhash.h" -a ! -e "/usr/include/mhash.h" ]; then
     tar xzf mhash-${mhash_ver}.tar.gz
     pushd mhash-${mhash_ver} > /dev/null
     ./configure
@@ -77,10 +77,10 @@ Install_PHP72() {
 
   if [ "${PM}" == 'yum' ]; then
     if [ "${OS_BIT}" == '64' ]; then
-      ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1
-      ln -s /usr/lib64/libc-client.so /usr/lib/libc-client.so
+      [ ! -e "/lib64/libpcre.so.1" ] && ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1
+      [ ! -e "/usr/lib/libc-client.so" ] && ln -s /usr/lib64/libc-client.so /usr/lib/libc-client.so
     else
-      ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1
+      [ ! -e "/lib/libpcre.so.1" ] && ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1
     fi
   fi
 
@@ -147,7 +147,7 @@ Install_PHP72() {
   sed -i 's@^upload_max_filesize.*@upload_max_filesize = 50M@' ${php_install_dir}/etc/php.ini
   sed -i 's@^max_execution_time.*@max_execution_time = 600@' ${php_install_dir}/etc/php.ini
   sed -i 's@^;realpath_cache_size.*@realpath_cache_size = 2M@' ${php_install_dir}/etc/php.ini
-  sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,stream_socket_server,fsocket,popen@' ${php_install_dir}/etc/php.ini
+  sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,readlink,symlink,popepassthru,stream_socket_server,fsocket,popen@' ${php_install_dir}/etc/php.ini
   [ -e /usr/sbin/sendmail ] && sed -i 's@^;sendmail_path.*@sendmail_path = /usr/sbin/sendmail -t -i@' ${php_install_dir}/etc/php.ini
   sed -i "s@^;curl.cainfo.*@curl.cainfo = ${openssl_install_dir}/cert.pem@" ${php_install_dir}/etc/php.ini
   sed -i "s@^;openssl.cafile.*@openssl.cafile = ${openssl_install_dir}/cert.pem@" ${php_install_dir}/etc/php.ini

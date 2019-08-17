@@ -729,11 +729,7 @@ checkDownload() {
   # ioncube
   if [ "${pecl_ioncube}" == '1' ]; then
     echo "Download ioncube..."
-    if [ "${TARGET_ARCH}" == "armv7" ]; then
-      src_url=https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_armv7l.tar.gz && Download_src
-    else
-      src_url=https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_${SYS_BIT_d}.tar.gz && Download_src
-    fi
+    src_url=https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_${SYS_BIT_d}.tar.gz && Download_src
   fi
 
   # SourceGuardian
@@ -779,8 +775,13 @@ checkDownload() {
 
   # pecl_redis
   if [ "${pecl_redis}" == '1' ]; then
-    echo "Download pecl_redis..."
-    src_url=https://pecl.php.net/get/redis-${pecl_redis_ver}.tgz && Download_src
+    if [[ "${php_option}" =~ ^[1-4]$ ]]; then
+      echo "Download pecl_redis for php..."
+      src_url=https://pecl.php.net/get/redis-${pecl_redis_oldver}.tgz && Download_src
+    else
+      echo "Download pecl_redis for php 7.x..."
+      src_url=https://pecl.php.net/get/redis-${pecl_redis_ver}.tgz && Download_src
+    fi
   fi
 
   # memcached-server

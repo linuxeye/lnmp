@@ -212,8 +212,6 @@ Upgrade_Apache() {
         if [ "${Apache_main_ver}" == '24' ]; then
           src_url=http://archive.apache.org/dist/apr/apr-${apr_ver}.tar.gz && Download_src
           src_url=http://archive.apache.org/dist/apr/apr-util-${apr_util_ver}.tar.gz && Download_src
-          tar xzf apr-${apr_ver}.tar.gz
-          tar xzf apr-util-${apr_util_ver}.tar.gz
         fi
         [ ! -e "httpd-${NEW_apache_ver}.tar.gz" ] && wget --no-check-certificate -c http://archive.apache.org/dist/httpd/httpd-${NEW_apache_ver}.tar.gz > /dev/null 2>&1
         if [ -e "httpd-${NEW_apache_ver}.tar.gz" ]; then
@@ -237,13 +235,31 @@ Upgrade_Apache() {
       echo "Press Ctrl+c to cancel or Press any key to continue..."
       char=`get_char`
     fi
+    if [ "${Apache_main_ver}" == '24' ]; then
+      # install apr
+      if [ ! -e "${apr_install_dir}/bin/apr-1-config" ]; then
+        tar xzf apr-${apr_ver}.tar.gz
+        pushd apr-${apr_ver} > /dev/null
+        ./configure --prefix=${apr_install_dir}
+        make -j ${THREAD} && make install
+        popd > /dev/null
+        rm -rf apr-${apr_ver}
+      fi
+      # install apr-util
+      if [ ! -e "${apr_install_dir}/bin/apu-1-config" ]; then
+        tar xzf apr-util-${apr_util_ver}.tar.gz
+        pushd apr-util-${apr_util_ver} > /dev/null
+        ./configure --prefix=${apr_install_dir} --with-apr=${apr_install_dir}
+        make -j ${THREAD} && make install
+        popd > /dev/null
+        rm -rf apr-util-${apr_util_ver}
+      fi
+    fi
     tar xzf httpd-${NEW_apache_ver}.tar.gz
     pushd httpd-${NEW_apache_ver}
     make clean
     if [ "${Apache_main_ver}" == '24' ]; then
-      /bin/cp -R ../apr-${apr_ver} ./srclib/apr
-      /bin/cp -R ../apr-util-${apr_util_ver} ./srclib/apr-util
-      LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} --enable-mpms-shared=all --with-pcre --with-included-apr --enable-headers --enable-mime-magic --enable-deflate --enable-proxy --enable-so --enable-dav --enable-rewrite --enable-remoteip --enable-expires --enable-static-support --enable-suexec --enable-mods-shared=most --enable-nonportable-atomics=yes --enable-ssl --with-ssl=${openssl_install_dir} --enable-http2 --with-nghttp2=/usr/local
+      LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} --enable-mpms-shared=all --with-pcre --with-apr=${apr_install_dir} --with-apr-util=${apr_install_dir} --enable-headers --enable-mime-magic --enable-deflate --enable-proxy --enable-so --enable-dav --enable-rewrite --enable-remoteip --enable-expires --enable-static-support --enable-suexec --enable-mods-shared=most --enable-nonportable-atomics=yes --enable-ssl --with-ssl=${openssl_install_dir} --enable-http2 --with-nghttp2=/usr/local
     elif [ "${Apache_main_ver}" == '22' ]; then
       LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} --with-mpm=prefork --enable-mpms-shared=all --with-included-apr --enable-headers --enable-mime-magic --enable-deflate --enable-proxy --enable-so --enable-dav --enable-rewrite --enable-expires --enable-static-support --enable-suexec --with-expat=builtin --enable-mods-shared=most --enable-ssl --with-ssl=${openssl_install_dir}
     fi
@@ -256,7 +272,7 @@ Upgrade_Apache() {
       service httpd start
       popd > /dev/null
       echo "You have ${CMSG}successfully${CEND} upgrade from ${CWARNING}${OLD_apache_ver}${CEND} to ${CWARNING}${NEW_apache_ver}${CEND}"
-      rm -rf httpd-${NEW_apache_ver} apr-${apr_ver} apr-util-${apr_util_ver}
+      rm -rf httpd-${NEW_apache_ver}
     else
       echo "${CFAILURE}Upgrade Apache failed! ${CEND}"
     fi

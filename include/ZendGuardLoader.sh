@@ -54,7 +54,7 @@ EOF
         echo "${CSUCCESS}PHP ZendGuardLoader module installed successfully! ${CEND}"
       fi
     else
-      echo "Error! Your Apache's prefork or PHP already enable thread safety! "
+      echo "Error! Your Apache's prefork or PHP already enable thread safety or platform ${TARGET_ARCH} does not support ZendGuardLoader! "
     fi
     popd > /dev/null
   fi

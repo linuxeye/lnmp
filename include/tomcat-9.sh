@@ -15,10 +15,10 @@ Install_Tomcat9() {
   [ $? -ne 0 ] && useradd -M -s /bin/bash ${run_user} || { [ -z "$(grep ^${run_user} /etc/passwd | grep '/bin/bash')" ] && usermod -s /bin/bash ${run_user}; }
 
   # install apr
-  if [ ! -e "/usr/local/apr/bin/apr-1-config" ]; then
+  if [ ! -e "${apr_install_dir}/bin/apr-1-config" ]; then
     tar xzf apr-${apr_ver}.tar.gz
     pushd apr-${apr_ver} > /dev/null
-    ./configure
+    ./configure --prefix=${apr_install_dir}
     make -j ${THREAD} && make install
     popd > /dev/null
     rm -rf apr-${apr_ver}
@@ -48,16 +48,16 @@ Install_Tomcat9() {
   pushd ${tomcat_install_dir}/bin > /dev/null
   tar xzf tomcat-native.tar.gz
   pushd tomcat-native-*-src/native > /dev/null
-    ./configure --with-apr=/usr/local/apr --with-ssl=${openssl_install_dir}
+    ./configure --with-apr=${apr_install_dir} --with-ssl=${openssl_install_dir}
     make -j ${THREAD} && make install
   popd > /dev/null
   rm -rf tomcat-native-*
-  if [ -e "/usr/local/apr/lib/libtcnative-1.la" ]; then
+  if [ -e "${apr_install_dir}/lib/libtcnative-1.la" ]; then
     [ ${Mem} -le 768 ] && let Xms_Mem="${Mem}/3" || Xms_Mem=256
     let XmxMem="${Mem}/2"
     cat > ${tomcat_install_dir}/bin/setenv.sh << EOF
 JAVA_OPTS='-Djava.security.egd=file:/dev/./urandom -server -Xms${Xms_Mem}m -Xmx${XmxMem}m -Dfile.encoding=UTF-8'
-CATALINA_OPTS="-Djava.library.path=/usr/local/apr/lib"
+CATALINA_OPTS="-Djava.library.path=${apr_install_dir}/lib"
 # -Djava.rmi.server.hostname=$IPADDR
 # -Dcom.sun.management.jmxremote.password.file=\$CATALINA_BASE/conf/jmxremote.password
 # -Dcom.sun.management.jmxremote.access.file=\$CATALINA_BASE/conf/jmxremote.access

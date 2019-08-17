@@ -14,13 +14,8 @@ Install_ionCube() {
     PHP_detail_ver=`${php_install_dir}/bin/php-config --version`
     PHP_main_ver=${PHP_detail_ver%.*}
     phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
-    if  [ "${TARGET_ARCH}" == "armv7" ]; then
-      tar xzf ioncube_loaders_lin_armv7l.tar.gz
-    else
-      tar xzf ioncube_loaders_lin_${SYS_BIT_d}.tar.gz
-    fi
-
     [ ! -d "${phpExtensionDir}" ] && mkdir -p ${phpExtensionDir}
+    [ -e "ioncube_loaders_lin_${SYS_BIT_d}.tar.gz" ] && tar xzf ioncube_loaders_lin_${SYS_BIT_d}.tar.gz
     if [ -z "`echo ${phpExtensionDir} | grep 'non-zts'`" ]; then
       /bin/mv ioncube/ioncube_loader_lin_${PHP_main_ver}_ts.so ${phpExtensionDir}
       zend_extension="${phpExtensionDir}/ioncube_loader_lin_${PHP_main_ver}_ts.so"

@@ -61,8 +61,13 @@ Install_pecl_redis() {
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     pushd ${oneinstack_dir}/src > /dev/null
     phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
-    tar xzf redis-${pecl_redis_ver}.tgz
-    pushd redis-${pecl_redis_ver} > /dev/null
+    if [ "`${php_install_dir}/bin/php-config --version | awk -F. '{print $1}'`" == '7' ]; then
+      tar xzf redis-${pecl_redis_ver}.tgz
+      pushd redis-${pecl_redis_ver} > /dev/null
+    else
+      tar xzf redis-${pecl_redis_oldver}.tgz
+      pushd redis-${pecl_redis_oldver} > /dev/null
+    fi
     ${php_install_dir}/bin/phpize
     ./configure --with-php-config=${php_install_dir}/bin/php-config
     make -j ${THREAD} && make install
@@ -70,7 +75,7 @@ Install_pecl_redis() {
     if [ -f "${phpExtensionDir}/redis.so" ]; then
       echo 'extension=redis.so' > ${php_install_dir}/etc/php.d/05-redis.ini
       echo "${CSUCCESS}PHP Redis module installed successfully! ${CEND}"
-      rm -rf redis-${pecl_redis_ver}
+      rm -rf redis-${pecl_redis_ver} redis-${pecl_redis_oldver}
     else
       echo "${CFAILURE}PHP Redis module install failed, Please contact the author! ${CEND}"
     fi

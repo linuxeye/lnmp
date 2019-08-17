@@ -46,7 +46,7 @@ Install_PHP55() {
     rm -rf freetype-${freetype_ver}
   fi
 
-  if [ ! -e "/usr/local/lib/libmcrypt.la" ]; then
+  if [ ! -e "/usr/local/bin/libmcrypt-config" -a ! -e "/usr/bin/libmcrypt-config" ]; then
     tar xzf libmcrypt-${libmcrypt_ver}.tar.gz
     pushd libmcrypt-${libmcrypt_ver} > /dev/null
     ./configure
@@ -60,7 +60,7 @@ Install_PHP55() {
     rm -rf libmcrypt-${libmcrypt_ver}
   fi
 
-  if [ ! -e "/usr/local/lib/libmhash.la" ]; then
+  if [ ! -e "/usr/local/include/mhash.h" -a ! -e "/usr/include/mhash.h" ]; then
     tar xzf mhash-${mhash_ver}.tar.gz
     pushd mhash-${mhash_ver} > /dev/null
     ./configure
@@ -73,22 +73,24 @@ Install_PHP55() {
   ldconfig
 
   if [ "${PM}" == 'yum' ]; then
-    ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config
+    [ ! -e "/usr/bin/libmcrypt-config" ] && ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config
     if [ "${OS_BIT}" == '64' ]; then
-      ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1
-      ln -s /usr/lib64/libc-client.so /usr/lib/libc-client.so
+      [ ! -e "/lib64/libpcre.so.1" ] && ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1
+      [ ! -e "/usr/lib/libc-client.so" ] && ln -s /usr/lib64/libc-client.so /usr/lib/libc-client.so
     else
-      ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1
+      [ ! -e "/lib/libpcre.so.1" ] && ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1
     fi
   fi
 
-  tar xzf mcrypt-${mcrypt_ver}.tar.gz
-  pushd mcrypt-${mcrypt_ver} > /dev/null
-  ldconfig
-  ./configure
-  make -j ${THREAD} && make install
-  popd > /dev/null
-  rm -rf mcrypt-${mcrypt_ver}
+  if [ ! -e "/usr/local/bin/mcrypt" -a ! -e "/usr/bin/mcrypt" ]; then
+    tar xzf mcrypt-${mcrypt_ver}.tar.gz
+    pushd mcrypt-${mcrypt_ver} > /dev/null
+    ldconfig
+    ./configure
+    make -j ${THREAD} && make install
+    popd > /dev/null
+    rm -rf mcrypt-${mcrypt_ver}
+  fi
 
   id -u ${run_user} >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin ${run_user}
@@ -152,7 +154,7 @@ Install_PHP55() {
   sed -i 's@^post_max_size.*@post_max_size = 100M@' ${php_install_dir}/etc/php.ini
   sed -i 's@^upload_max_filesize.*@upload_max_filesize = 50M@' ${php_install_dir}/etc/php.ini
   sed -i 's@^max_execution_time.*@max_execution_time = 5@' ${php_install_dir}/etc/php.ini
-  sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,stream_socket_server,fsocket,popen@' ${php_install_dir}/etc/php.ini
+  sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,readlink,symlink,popepassthru,stream_socket_server,fsocket,popen@' ${php_install_dir}/etc/php.ini
   [ -e /usr/sbin/sendmail ] && sed -i 's@^;sendmail_path.*@sendmail_path = /usr/sbin/sendmail -t -i@' ${php_install_dir}/etc/php.ini
 
   [ "${phpcache_option}" == '1' ] && cat > ${php_install_dir}/etc/php.d/02-opcache.ini << EOF

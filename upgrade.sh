@@ -167,7 +167,7 @@ What Are You Doing?
           Upgrade_OneinStack
           ;;
         10)
-          [ -e ~/.acme.sh/acme.sh ] && { ~/.acme.sh/acme.sh --upgrade; ~/.acme.sh/acme.sh --version; }
+          [ -e ~/.acme.sh/acme.sh ] && { ~/.acme.sh/acme.sh --force --upgrade; ~/.acme.sh/acme.sh --version; }
           ;;
         q)
           exit
@@ -191,5 +191,5 @@ else
   [ "${memcached_flag}" == 'y' ] && Upgrade_Memcached
   [ "${phpmyadmin_flag}" == 'y' ] && Upgrade_phpMyAdmin
   [ "${NEW_oneinstack_ver}" == 'latest' ] && Upgrade_OneinStack
-  [ "${NEW_acme_ver}" == 'latest' ] && [ -e ~/.acme.sh/acme.sh ] && { ~/.acme.sh/acme.sh --upgrade; ~/.acme.sh/acme.sh --version; }
+  [ "${NEW_acme_ver}" == 'latest' ] && [ -e ~/.acme.sh/acme.sh ] && { ~/.acme.sh/acme.sh --force --upgrade; ~/.acme.sh/acme.sh --version; }
 fi

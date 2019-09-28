@@ -58,7 +58,10 @@ installDepsCentOS() {
   [ -e '/etc/yum.conf' ] && sed -i 's@^exclude@#exclude@' /etc/yum.conf
   # Uninstall the conflicting packages
   echo "${CMSG}Removing the conflicting packages...${CEND}"
-  if [ "${CentOS_ver}" == '7' ]; then
+  if [ "${CentOS_ver}" == '8' ]; then
+    yum -y install chronyd
+    systemctl enable chronyd
+  elif [ "${CentOS_ver}" == '7' ]; then
     yum -y groupremove "Basic Web Server" "MySQL Database server" "MySQL Database client"
     systemctl mask firewalld.service
     if [ "${iptables_flag}" == 'y' ]; then

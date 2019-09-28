@@ -347,19 +347,20 @@ What Are You Doing?
       PHP_main_ver=${PHP_detail_ver%.*}
       while :; do echo
         echo 'Please select a version of the PHP:'
-        echo -e "\t${CMSG}1${CEND}. PHP ${PHP_main_ver} (default)"
-        [ -e "/dev/shm/php53-cgi.sock" ] && echo -e "\t${CMSG}2${CEND}. PHP 5.3"
-        [ -e "/dev/shm/php54-cgi.sock" ] && echo -e "\t${CMSG}3${CEND}. PHP 5.4"
-        [ -e "/dev/shm/php55-cgi.sock" ] && echo -e "\t${CMSG}4${CEND}. PHP 5.5"
-        [ -e "/dev/shm/php56-cgi.sock" ] && echo -e "\t${CMSG}5${CEND}. PHP 5.6"
-        [ -e "/dev/shm/php70-cgi.sock" ] && echo -e "\t${CMSG}6${CEND}. PHP 7.0"
-        [ -e "/dev/shm/php71-cgi.sock" ] && echo -e "\t${CMSG}7${CEND}. PHP 7.1"
-        [ -e "/dev/shm/php72-cgi.sock" ] && echo -e "\t${CMSG}8${CEND}. PHP 7.2"
-        [ -e "/dev/shm/php73-cgi.sock" ] && echo -e "\t${CMSG}9${CEND}. PHP 7.3"
+        echo -e "\t${CMSG} 1${CEND}. PHP ${PHP_main_ver} (default)"
+        [ -e "/dev/shm/php53-cgi.sock" ] && echo -e "\t${CMSG} 2${CEND}. PHP 5.3"
+        [ -e "/dev/shm/php54-cgi.sock" ] && echo -e "\t${CMSG} 3${CEND}. PHP 5.4"
+        [ -e "/dev/shm/php55-cgi.sock" ] && echo -e "\t${CMSG} 4${CEND}. PHP 5.5"
+        [ -e "/dev/shm/php56-cgi.sock" ] && echo -e "\t${CMSG} 5${CEND}. PHP 5.6"
+        [ -e "/dev/shm/php70-cgi.sock" ] && echo -e "\t${CMSG} 6${CEND}. PHP 7.0"
+        [ -e "/dev/shm/php71-cgi.sock" ] && echo -e "\t${CMSG} 7${CEND}. PHP 7.1"
+        [ -e "/dev/shm/php72-cgi.sock" ] && echo -e "\t${CMSG} 8${CEND}. PHP 7.2"
+        [ -e "/dev/shm/php73-cgi.sock" ] && echo -e "\t${CMSG} 9${CEND}. PHP 7.3"
+        [ -e "/dev/shm/php74-cgi.sock" ] && echo -e "\t${CMSG}10${CEND}. PHP 7.4"
         read -e -p "Please input a number:(Default 1 press Enter) " php_option
         php_option=${php_option:-1}
-        if [[ ! ${php_option} =~ ^[1-9]$ ]]; then
-          echo "${CWARNING}input error! Please only input number 1~9${CEND}"
+        if [[ ! ${php_option} =~ ^[1-9]$|^10$ ]]; then
+          echo "${CWARNING}input error! Please only input number 1~10${CEND}"
         else
           break
         fi
@@ -373,6 +374,7 @@ What Are You Doing?
     [ "${php_option}" == '7' ] && mphp_ver=71
     [ "${php_option}" == '8' ] && mphp_ver=72
     [ "${php_option}" == '9' ] && mphp_ver=73
+    [ "${php_option}" == '10' ] && mphp_ver=74
     [ ! -e "/dev/shm/php${mphp_ver}-cgi.sock" ] && unset mphp_ver
   fi
 
@@ -558,7 +560,7 @@ Nginx_rewrite() {
     echo
     echo "Please input the rewrite of programme :"
     echo "${CMSG}wordpress${CEND},${CMSG}opencart${CEND},${CMSG}magento2${CEND},${CMSG}drupal${CEND},${CMSG}joomla${CEND},${CMSG}codeigniter${CEND},${CMSG}laravel${CEND}"
-    echo "${CMSG}thinkphp${CEND},${CMSG}pathinfo${CEND},${CMSG}discuz${CEND},${CMSG}typecho${CEND},${CMSG}ecshop${CEND},${CMSG}nextcloud${CEND},${CMSG}zblog${CEND} rewrite was exist."
+    echo "${CMSG}thinkphp${CEND},${CMSG}pathinfo${CEND},${CMSG}discuz${CEND},${CMSG}typecho${CEND},${CMSG}ecshop${CEND},${CMSG}nextcloud${CEND},${CMSG}zblog${CEND},${CMSG}whmcs${CEND} rewrite was exist."
     read -e -p "(Default rewrite: other): " rewrite
     if [ "${rewrite}" == "" ]; then
       rewrite="other"

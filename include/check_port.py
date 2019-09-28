@@ -6,8 +6,8 @@ def IsOpen(ip,port):
   try:
     s.connect((ip,int(port)))
     s.shutdown(2)
-    print True
+    print(True)
   except:
-    print False
+    print(False)
 if __name__ == '__main__':
   IsOpen(sys.argv[1],int(sys.argv[2]))

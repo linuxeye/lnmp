@@ -17,7 +17,7 @@ checkDownload() {
   fi
 
   # General system utils
-  if [[ ${tomcat_option} =~ ^[1-4]$ ]] || [[ ${apache_option} =~ ^[1-2]$ ]] || [[ ${php_option} =~ ^[1-8]$ ]]; then
+  if [[ ${tomcat_option} =~ ^[1-4]$ ]] || [[ ${apache_option} =~ ^[1-2]$ ]] || [[ ${php_option} =~ ^[1-9]$ ]]; then
     echo "Download openSSL..."
     src_url=https://www.openssl.org/source/openssl-${openssl_ver}.tar.gz && Download_src
     echo "Download cacert.pem..."
@@ -619,7 +619,7 @@ checkDownload() {
   fi
 
   # PHP
-  if [[ "${php_option}" =~ ^[1-8]$ ]]; then
+  if [[ "${php_option}" =~ ^[1-9]$ ]]; then
     echo "PHP common..."
     src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-${libiconv_ver}.tar.gz && Download_src
     src_url=${mirrorLink}/libiconv-glibc-2.16.patch && Download_src
@@ -665,6 +665,11 @@ checkDownload() {
       src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
       src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
       ;;
+    9)
+      src_url=https://secure.php.net/distributions/php-${php74_ver}.tar.gz && Download_src
+      src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
+      src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
+      ;;
   esac
 
   # PHP OPCache
@@ -684,7 +689,7 @@ checkDownload() {
       fi
       ;;
     3)
-      # php 5.3 5.4 5.5 5.6 7.0 7.1 7.2
+      # php 5.3 ~ 7.4
       echo "Download apcu..."
       if [[ "${php_option}" =~ ^[1-4]$ ]]; then
         src_url=https://pecl.php.net/get/apcu-${apcu_oldver}.tgz && Download_src

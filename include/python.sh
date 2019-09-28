@@ -13,29 +13,9 @@ Install_Python() {
     echo "${CWARNING}Python already installed! ${CEND}"
   else
     pushd ${oneinstack_dir}/src > /dev/null
-    if [ "${CentOS_ver}" == '7' ]; then
-      [ ! -e /etc/yum.repos.d/epel.repo ] && cat > /etc/yum.repos.d/epel.repo << EOF
-[epel]
-name=Extra Packages for Enterprise Linux 7 - \$basearch
-#baseurl=http://download.fedoraproject.org/pub/epel/7/\$basearch
-mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=\$basearch
-failovermethod=priority
-enabled=1
-gpgcheck=0
-EOF
-    elif [ "${CentOS_ver}" == '6' ]; then
-      [ ! -e /etc/yum.repos.d/epel.repo ] && cat > /etc/yum.repos.d/epel.repo << EOF
-[epel]
-name=Extra Packages for Enterprise Linux 6 - \$basearch
-#baseurl=http://download.fedoraproject.org/pub/epel/6/\$basearch
-mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-6&arch=\$basearch
-failovermethod=priority
-enabled=1
-gpgcheck=0
-EOF
-    fi
 
     if [ "${PM}" == 'yum' ]; then
+      [ ! -e /etc/yum.repos.d/epel.repo ] && yum -y install epel-release
       pkgList="gcc dialog augeas-libs openssl openssl-devel libffi-devel redhat-rpm-config ca-certificates"
       for Package in ${pkgList}; do
         yum -y install ${Package}

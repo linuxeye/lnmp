@@ -13,9 +13,9 @@ Nginx_lua_waf() {
   [ ! -e "${nginx_install_dir}/sbin/nginx" ] && echo "${CWARNING}Nginx is not installed on your system! ${CEND}" && exit 1
   if [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ]; then
     [ -e "/usr/local/lib/libluajit-5.1.so.2.0.5" ] && find /usr/local -name *luajit* | xargs rm -rf
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/luajit2-2.1-20190507.tar.gz && Download_src
-    tar xzf luajit2-2.1-20190507.tar.gz
-    pushd luajit2-2.1-20190507
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/luajit2-2.1-20190912.tar.gz && Download_src
+    tar xzf luajit2-2.1-20190912.tar.gz
+    pushd luajit2-2.1-20190912
     make && make install
     [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ] && { echo "${CFAILURE}LuaJIT install failed! ${CEND}"; kill -9 $$; }
     popd > /dev/null
@@ -74,9 +74,9 @@ Tengine_lua_waf() {
   [ ! -e "${tengine_install_dir}/sbin/nginx" ] && echo "${CWARNING}Tengine is not installed on your system! ${CEND}" && exit 1
   if [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ]; then
     [ -e "/usr/local/lib/libluajit-5.1.so.2.0.5" ] && find /usr/local -name *luajit* | xargs rm -rf
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/luajit2-2.1-20190507.tar.gz && Download_src
-    tar xzf luajit2-2.1-20190507.tar.gz
-    pushd luajit2-2.1-20190507
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/luajit2-2.1-20190912.tar.gz && Download_src
+    tar xzf luajit2-2.1-20190912.tar.gz
+    pushd luajit2-2.1-20190912
     make && make install
     [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ] && { echo "${CFAILURE}LuaJIT install failed! ${CEND}"; kill -9 $$; }
     popd > /dev/null

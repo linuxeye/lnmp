@@ -618,7 +618,7 @@ server {
     expires 7d;
     access_log off;
   }
-  location ~ /\.ht {
+  location ~ /(\.user\.ini|\.ht|\.git|\.svn|\.project|LICENSE|README\.md) {
     deny all;
   }
   ${NGX_CONF}
@@ -714,7 +714,7 @@ server {
     expires 7d;
     access_log off;
   }
-  location ~ /\.ht {
+  location ~ /(\.user\.ini|\.ht|\.git|\.svn|\.project|LICENSE|README\.md) {
     deny all;
   }
 }
@@ -903,7 +903,7 @@ server {
     expires 7d;
     access_log off;
   }
-  location ~ /\.ht {
+  location ~ /(\.user\.ini|\.ht|\.git|\.svn|\.project|LICENSE|README\.md) {
     deny all;
   }
 }

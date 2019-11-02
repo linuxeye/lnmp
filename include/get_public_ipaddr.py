@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys,re,socket
 
-if sys.version_info.major == 2:
+if sys.version_info[0] == 2:
   import urllib2 as request
 else:
   import urllib.request as request

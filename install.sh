@@ -747,6 +747,7 @@ if [ ! -e ~/.oneinstack ]; then
   [ "${PM}" == 'apt-get' ] && apt-get -y update
   [ "${PM}" == 'yum' ] && yum clean all
   ${PM} -y install wget gcc curl python
+  [ "${CentOS_ver}" == '8' ] && { yum -y install python36; sudo alternatives --set python /usr/bin/python3; }
 fi
 
 # get the IP information
@@ -804,7 +805,7 @@ fi
 # Database
 case "${db_option}" in
   1)
-    [ "${OS}" == 'CentOS' -a "${CentOS_ver}" != '7' ] && dbinstallmethod=1 && checkDownload
+    [ "${OS}" == 'CentOS' ] && [ ${CentOS_ver} -le 6 >/dev/null 2>&1 ] && dbinstallmethod=1 && checkDownload
     . include/mysql-8.0.sh
     Install_MySQL80 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
@@ -837,7 +838,8 @@ case "${db_option}" in
     Install_MariaDB55 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   9)
-    [ "${OS}" == 'CentOS' -a "${CentOS_ver}" != '7' ] && dbinstallmethod=1
+    [ "${OS}" == 'CentOS' ] && [ ${CentOS_ver} -le 6 >/dev/null 2>&1 ] && dbinstallmethod=1 && checkDownload
+    [ "${OS}" == 'CentOS' ] && [ "${CentOS_ver}" == '8' ] && dbinstallmethod=2 && checkDownload
     . include/percona-8.0.sh
     Install_Percona80 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;

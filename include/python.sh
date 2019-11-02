@@ -15,7 +15,7 @@ Install_Python() {
     pushd ${oneinstack_dir}/src > /dev/null
 
     if [ "${PM}" == 'yum' ]; then
-      [ ! -e /etc/yum.repos.d/epel.repo ] && yum -y install epel-release
+      [ -z "`grep -w epel /etc/yum.repos.d/*.repo`" ] && yum -y install epel-release
       pkgList="gcc dialog augeas-libs openssl openssl-devel libffi-devel redhat-rpm-config ca-certificates"
       for Package in ${pkgList}; do
         yum -y install ${Package}

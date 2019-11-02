@@ -22,7 +22,7 @@ Install_MySQL57() {
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mysql_install_dir}/bin/mysqld_safe
     sed -i "s@/usr/local/mysql@${mysql_install_dir}@g" ${mysql_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then
-    boostVersion2=$(echo ${boost_oldver} | awk -F. '{print $1"_"$2"_"$3}')
+    boostVersion2=$(echo ${boost_ver} | awk -F. '{print $1"_"$2"_"$3}')
     tar xzf boost_${boostVersion2}.tar.gz
     tar xzf mysql-${mysql57_ver}.tar.gz
     pushd mysql-${mysql57_ver}

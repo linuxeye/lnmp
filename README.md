@@ -9,13 +9,15 @@ Script properties:
 - Providing a plurality of database versions (MySQL-8.0, MySQL-5.7, MySQL-5.6, MySQL-5.5, MariaDB-10.4, MariaDB-10.3, MariaDB-10.2, MariaDB-5.5, Percona-8.0, Percona-5.7, Percona-5.6, Percona-5.5, AliSQL-5.6, PostgreSQL, MongoDB)
 - Providing multiple PHP versions (PHP-7.4, PHP-7.3, PHP-7.2, PHP-7.1, PHP-7.0, PHP-5.6, PHP-5.5, PHP-5.4, PHP-5.3)
 - Provide Nginx, Tengine, OpenResty and ngx_lua_waf
+- Providing a plurality of Tomcat version (Tomcat-9, Tomcat-8, Tomcat-7, Tomcat-6)
+- Providing a plurality of JDK version (JDK-11.0, JDK-1.8, JDK-1.7, JDK-1.6)
 - Providing a plurality of Apache version (Apache-2.4, Apache-2.2)
-- According to their needs to install PHP Cache Accelerator provides ZendOPcache, xcache, apcu, eAccelerator. And php extensions,include ZendGuardLoader,ionCube,SourceGuardian,imagick,gmagick,fileinfo,imap,ldap,phalcon,yaf,yar,redis,memcached,memcache,mongodb,swoole,xdebug
+- According to their needs to install PHP Cache Accelerator provides ZendOPcache, xcache, apcu, eAccelerator. And php extensions,include ZendGuardLoader,ionCube,SourceGuardian,imagick,gmagick,fileinfo,imap,ldap,calendar,phalcon,yaf,yar,redis,memcached,memcache,mongodb,swoole,xdebug
 - Installation Pureftpd, phpMyAdmin according to their needs
 - Install memcached, redis according to their needs
 - Jemalloc optimize MySQL, Nginx
 - Providing add a virtual host script, include Let's Encrypt SSL certificate
-- Provide Nginx/Tengine/OpenResty/Apache, MySQL/MariaDB/Percona, PHP, Redis, Memcached, phpMyAdmin upgrade script
+- Provide Nginx/Tengine/OpenResty/Apache/Tomcat, MySQL/MariaDB/Percona, PHP, Redis, Memcached, phpMyAdmin upgrade script
 - Provide local,remote(rsync between servers),Aliyun OSS,Qcloud COS,UPYUN,QINIU,Amazon S3,Google Drive and Dropbox backup script
 - Provided under HHVM install CentOS 6,7
 
@@ -38,14 +40,14 @@ apt-get -y install wget screen
 #### Download Source and Install
 
 ```bash
-wget http://mirrors.linuxeye.com/lnmp-full.tar.gz
-tar xzf lnmp-full.tar.gz
-cd lnmp
+wget http://mirrors.linuxeye.com/oneinstack-full.tar.gz
+tar xzf oneinstack-full.tar.gz
+cd oneinstack 
 ```
 
 If you disconnect during installation, you can execute the command `screen -r lnmp` to reconnect to the install window
 ```bash
-screen -S lnmp
+screen -S oneinstack 
 ```
 
 If you need to modify the directory (installation, data storage, Nginx logs), modify `options.conf` file before running install.sh
@@ -53,44 +55,45 @@ If you need to modify the directory (installation, data storage, Nginx logs), mo
 ./install.sh
 ```
 
-## How to install another PHP version 
+## How to install another PHP version
 
 ```bash
-~/lnmp/install.sh --mphp_ver 54
+~/oneinstack/install.sh --mphp_ver 54
 
 ```
 
 ## How to add Extensions
 
 ```bash
-~/lnmp/addons.sh
+~/oneinstack/addons.sh
+
 ```
 
 ## How to add a virtual host
 
 ```bash
-~/lnmp/vhost.sh
+~/oneinstack/vhost.sh
 ```
 
 ## How to delete a virtual host
 
 ```bash
-~/lnmp/vhost.sh --del
+~/oneinstack/vhost.sh --del
 ```
 
-## How to add FTP virtual user 
+## How to add FTP virtual user
 
 ```bash
-~/lnmp/pureftpd_vhost.sh
+~/oneinstack/pureftpd_vhost.sh
 ```
 
 ## How to backup
 
 ```bash
-~/lnmp/backup_setup.sh    // Backup parameters 
-~/lnmp/backup.sh    // Perform the backup immediately 
-crontab -l    // Can be added to scheduled tasks, such as automatic backups every day 1:00 
-  0 1 * * * ~/lnmp/backup.sh  > /dev/null 2>&1 &
+~/oneinstack/backup_setup.sh    // Backup parameters
+~/oneinstack/backup.sh    // Perform the backup immediately
+crontab -l    // Can be added to scheduled tasks, such as automatic backups every day 1:00
+  0 1 * * * cd ~/oneinstack/backup.sh  > /dev/null 2>&1 &
 ```
 
 ## How to manage service
@@ -126,7 +129,11 @@ Apache:
 ```bash
 service httpd {start|restart|stop}
 ```
-Pure-Ftpd:
+Tomcat:
+```bash
+service tomcat {start|stop|status|restart}
+```
+Pure-FTPd:
 ```bash
 service pureftpd {start|stop|restart|status}
 ```
@@ -139,22 +146,20 @@ Memcached:
 service memcached {start|stop|status|restart|reload}
 ```
 
-## How to upgrade 
+## How to upgrade
 
 ```bash
-~/lnmp/upgrade.sh
+~/oneinstack/upgrade.sh
 ```
 
-## How to uninstall 
+## How to uninstall
 
 ```bash
-~/lnmp/uninstall.sh
+~/oneinstack/uninstall.sh
 ```
 
 ## Installation
 
-Follow the instructions in [Wiki Installation page](https://github.com/oneinstack/lnmp/wiki/Installation)<br />
-
 For feedback, questions, and to follow the progress of the project: <br />
 [Telegram Group](https://t.me/oneinstack)<br />
-[lnmp最新源码一键安装脚本](https://linuxeye.com/31.html)<br />
+[OneinStack](https://oneinstack.com)<br />

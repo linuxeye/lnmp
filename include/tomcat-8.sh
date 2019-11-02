@@ -49,8 +49,8 @@ Install_Tomcat8() {
   pushd ${tomcat_install_dir}/bin > /dev/null
   tar xzf tomcat-native.tar.gz
   pushd tomcat-native-*-src/native > /dev/null
-    ./configure --with-apr=${apr_install_dir} --with-ssl=${openssl_install_dir}
-    make -j ${THREAD} && make install
+  ./configure --prefix=${apr_install_dir} --with-apr=${apr_install_dir} --with-ssl=${openssl_install_dir}
+  make -j ${THREAD} && make install
   popd > /dev/null
   rm -rf tomcat-native-*
   if [ -e "${apr_install_dir}/lib/libtcnative-1.la" ]; then

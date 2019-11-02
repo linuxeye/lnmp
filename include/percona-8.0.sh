@@ -31,6 +31,7 @@ Install_Percona80() {
     -DMYSQL_DATADIR=${percona_data_dir} \
     -DDOWNLOAD_BOOST=1 \
     -DWITH_BOOST=../boost_${boostVersion2} \
+    -DFORCE_INSOURCE_BUILD=1 \
     -DSYSCONFDIR=/etc \
     -DWITH_INNOBASE_STORAGE_ENGINE=1 \
     -DWITH_PARTITION_STORAGE_ENGINE=1 \
@@ -47,6 +48,10 @@ Install_Percona80() {
     sed -i 's@^load_jemalloc=1@load_jemalloc=0@' ${percona_install_dir}/bin/mysqld_safe
     popd
   fi
+
+  # backup openssl so
+  [ ! -e "${percona_install_dir}/lib/lib_bk" ] && mkdir ${percona_install_dir}/lib/lib_bk
+  /bin/mv ${percona_install_dir}/lib/{libssl,libcrypto}.so* ${percona_install_dir}/lib/lib_bk/
 
   if [ -d "${percona_install_dir}/support-files" ]; then
     sed -i "s+^dbrootpwd.*+dbrootpwd='${dbrootpwd}'+" ../options.conf

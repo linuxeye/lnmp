@@ -29,6 +29,7 @@ Install_MySQL80() {
     -DMYSQL_DATADIR=${mysql_data_dir} \
     -DDOWNLOAD_BOOST=1 \
     -DWITH_BOOST=../boost_${boostVersion2} \
+    -DFORCE_INSOURCE_BUILD=1 \
     -DSYSCONFDIR=/etc \
     -DWITH_INNOBASE_STORAGE_ENGINE=1 \
     -DWITH_PARTITION_STORAGE_ENGINE=1 \
@@ -45,6 +46,10 @@ Install_MySQL80() {
     make install
     popd
   fi
+
+  # backup openssl so
+  [ ! -e "${mysql_install_dir}/lib/lib_bk" ] && mkdir ${mysql_install_dir}/lib/lib_bk
+  /bin/mv ${mysql_install_dir}/lib/{libssl,libcrypto}.so* ${mysql_install_dir}/lib/lib_bk/
 
   if [ -d "${mysql_install_dir}/support-files" ]; then
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mysql_install_dir}/bin/mysqld_safe

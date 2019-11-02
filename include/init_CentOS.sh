@@ -106,6 +106,8 @@ elif [ ${CentOS_ver} -ge 7 >/dev/null 2>&1 ]; then
   sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/locale.conf
 fi
 
+[ "${CentOS_ver}" == '8' ] && dnf --enablerepo=PowerTools install -y rpcgen
+
 # Update time
 if [ -e "$(which ntpdate)" ]; then
   ntpdate -u pool.ntp.org

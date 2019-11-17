@@ -23,7 +23,7 @@ Install_Percona80() {
     sed -i "s@/usr/local/Percona-Server-${percona80_ver}-Linux.${SYS_BIT_b}.${sslLibVer}@${percona_install_dir}@g" ${percona_install_dir}/bin/mysqld_safe
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${percona_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then
-    boostVersion2=$(echo ${boost_ver} | awk -F. '{print $1"_"$2"_"$3}')
+    boostVersion2=$(echo ${boost_percona_ver} | awk -F. '{print $1"_"$2"_"$3}')
     tar xzf boost_${boostVersion2}.tar.gz
     tar xzf percona-server-${percona80_ver}.tar.gz
     pushd percona-server-${percona80_ver}
@@ -50,8 +50,8 @@ Install_Percona80() {
   fi
 
   # backup openssl so
-  [ ! -e "${percona_install_dir}/lib/lib_bk" ] && mkdir ${percona_install_dir}/lib/lib_bk
-  /bin/mv ${percona_install_dir}/lib/{libssl,libcrypto}.so* ${percona_install_dir}/lib/lib_bk/
+  #[ ! -e "${percona_install_dir}/lib/lib_bk" ] && mkdir ${percona_install_dir}/lib/lib_bk
+  #/bin/mv ${percona_install_dir}/lib/{libssl,libcrypto}.so* ${percona_install_dir}/lib/lib_bk/
 
   if [ -d "${percona_install_dir}/support-files" ]; then
     sed -i "s+^dbrootpwd.*+dbrootpwd='${dbrootpwd}'+" ../options.conf
@@ -63,7 +63,7 @@ Install_Percona80() {
     fi
   else
     rm -rf ${percona_install_dir}
-    echo "${CFAILURE}Percona install failed, Please contact the author! ${CEND}"
+    echo "${CFAILURE}Percona install failed, Please contact the author! ${CEND}" && lsb_release -a
     kill -9 $$
   fi
 

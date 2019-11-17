@@ -62,7 +62,7 @@ Install_Apache24() {
     rm -rf httpd-${apache24_ver} pcre-${pcre_ver}
   else
     rm -rf ${apache_install_dir}
-    echo "${CFAILURE}Apache install failed, Please contact the author! ${CEND}"
+    echo "${CFAILURE}Apache install failed, Please contact the author! ${CEND}" && lsb_release -a
     kill -9 $$
   fi
 

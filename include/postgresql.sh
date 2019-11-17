@@ -50,7 +50,7 @@ Install_PostgreSQL() {
     echo "${CSUCCESS}PostgreSQL installed successfully! ${CEND}"
   else
     rm -rf ${pgsql_install_dir} ${pgsql_data_dir}
-    echo "${CFAILURE}PostgreSQL install failed, Please contact the author! ${CEND}"
+    echo "${CFAILURE}PostgreSQL install failed, Please contact the author! ${CEND}" && lsb_release -a
     kill -9 $$
   fi
   popd

@@ -43,7 +43,7 @@ Install_AliSQL56() {
   else
     rm -rf ${alisql_install_dir}
     rm -rf alisql-${alisql_ver}
-    echo "${CFAILURE}AliSQL install failed, Please contact the author! ${CEND}"
+    echo "${CFAILURE}AliSQL install failed, Please contact the author! ${CEND}" && lsb_release -a
     kill -9 $$
   fi
   /bin/cp ${alisql_install_dir}/support-files/mysql.server /etc/init.d/mysqld

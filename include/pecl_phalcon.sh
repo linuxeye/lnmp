@@ -26,7 +26,7 @@ Install_pecl_phalcon() {
         echo "${CSUCCESS}PHP phalcon module installed successfully! ${CEND}"
         rm -rf cphalcon-${phalcon_ver}
       else
-        echo "${CFAILURE}PHP phalcon module install failed, Please contact the author! ${CEND}"
+        echo "${CFAILURE}PHP phalcon module install failed, Please contact the author! ${CEND}" && lsb_release -a
       fi
     else
       echo "${CWARNING}Your php ${PHP_detail_ver} does not support phalcon! ${CEND}";

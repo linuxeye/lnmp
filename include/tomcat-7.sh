@@ -31,7 +31,7 @@ Install_Tomcat7() {
 
   if [ ! -e "${tomcat_install_dir}/conf/server.xml" ]; then
     rm -rf ${tomcat_install_dir}
-    echo "${CFAILURE}Tomcat install failed, Please contact the author! ${CEND}"
+    echo "${CFAILURE}Tomcat install failed, Please contact the author! ${CEND}" && lsb_release -a
     kill -9 $$
   fi
 
@@ -139,7 +139,7 @@ EOF
     rm -rf apache-tomcat-${tomcat7_ver}
   else
     popd > /dev/null
-    echo "${CFAILURE}Tomcat install failed, Please contact the author! ${CEND}"
+    echo "${CFAILURE}Tomcat install failed, Please contact the author! ${CEND}" && lsb_release -a
   fi
   service tomcat start
   popd > /dev/null

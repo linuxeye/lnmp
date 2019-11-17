@@ -80,7 +80,7 @@ Install_PureFTPd() {
     rm -rf pure-ftpd-${pureftpd_ver}
   else
     rm -rf ${pureftpd_install_dir}
-    echo "${CFAILURE}Pure-Ftpd install failed, Please contact the author! ${CEND}"
+    echo "${CFAILURE}Pure-Ftpd install failed, Please contact the author! ${CEND}" && lsb_release -a
     kill -9 $$
   fi
   popd > /dev/null

@@ -74,7 +74,7 @@ EOF
     rm -rf mongodb-linux-${SYS_BIT_b}-${mongodb_ver}
   else
     rm -rf ${mongo_install_dir} ${mongo_data_dir}
-    echo "${CFAILURE}MongoDB install failed, Please contact the author! ${CEND}"
+    echo "${CFAILURE}MongoDB install failed, Please contact the author! ${CEND}" && lsb_release -a
     kill -9 $$
   fi
   popd

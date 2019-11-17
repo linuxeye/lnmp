@@ -56,7 +56,7 @@ Install_Percona56() {
     fi
   else
     rm -rf ${percona_install_dir}
-    echo "${CFAILURE}Percona install failed, Please contact the author! ${CEND}"
+    echo "${CFAILURE}Percona install failed, Please contact the author! ${CEND}" && lsb_release -a
     kill -9 $$
   fi
 

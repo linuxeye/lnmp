@@ -56,7 +56,7 @@ Install_MySQL55() {
     fi
   else
     rm -rf ${mysql_install_dir}
-    echo "${CFAILURE}MySQL install failed, Please contact the author! ${CEND}"
+    echo "${CFAILURE}MySQL install failed, Please contact the author! ${CEND}" && lsb_release -a
     kill -9 $$
   fi
 

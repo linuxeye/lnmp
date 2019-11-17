@@ -25,7 +25,7 @@ Install_Apache22() {
     rm -rf httpd-${apache22_ver}
   else
     rm -rf ${apache_install_dir}
-    echo "${CFAILURE}Apache install failed, Please contact the author! ${CEND}"
+    echo "${CFAILURE}Apache install failed, Please contact the author! ${CEND}" && lsb_release -a
     kill -9 $$
   fi
 

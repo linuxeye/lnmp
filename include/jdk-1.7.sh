@@ -27,7 +27,7 @@ Install_JDK17() {
     echo "${CSUCCESS}$JDK_NAME installed successfully! ${CEND}"
   else
     rm -rf $JAVA_dir
-    echo "${CFAILURE}JDK install failed, Please contact the author! ${CEND}"
+    echo "${CFAILURE}JDK install failed, Please contact the author! ${CEND}" && lsb_release -a
     kill -9 $$
   fi
   popd

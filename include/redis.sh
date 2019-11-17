@@ -51,7 +51,7 @@ Install_redis_server() {
     service redis-server start
   else
     rm -rf ${redis_install_dir}
-    echo "${CFAILURE}Redis-server install failed, Please contact the author! ${CEND}"
+    echo "${CFAILURE}Redis-server install failed, Please contact the author! ${CEND}" && lsb_release -a
     kill -9 $$
   fi
   popd > /dev/null
@@ -77,7 +77,7 @@ Install_pecl_redis() {
       echo "${CSUCCESS}PHP Redis module installed successfully! ${CEND}"
       rm -rf redis-${pecl_redis_ver} redis-${pecl_redis_oldver}
     else
-      echo "${CFAILURE}PHP Redis module install failed, Please contact the author! ${CEND}"
+      echo "${CFAILURE}PHP Redis module install failed, Please contact the author! ${CEND}" && lsb_release -a
     fi
     popd > /dev/null
   fi

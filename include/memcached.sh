@@ -35,7 +35,7 @@ Install_memcached_server() {
     rm -rf memcached-${memcached_ver}
   else
     rm -rf ${memcached_install_dir}
-    echo "${CFAILURE}memcached-server install failed, Please contact the author! ${CEND}"
+    echo "${CFAILURE}memcached-server install failed, Please contact the author! ${CEND}" && lsb_release -a
     kill -9 $$
   fi
   popd > /dev/null
@@ -65,7 +65,7 @@ Install_pecl_memcache() {
       echo "${CSUCCESS}PHP memcache module installed successfully! ${CEND}"
       rm -rf pecl-memcache-${pecl_memcache_ver} memcache-${pecl_memcache_oldver}
     else
-      echo "${CFAILURE}PHP memcache module install failed, Please contact the author! ${CEND}"
+      echo "${CFAILURE}PHP memcache module install failed, Please contact the author! ${CEND}" && lsb_release -a
     fi
     popd > /dev/null
   fi
@@ -105,7 +105,7 @@ EOF
       echo "${CSUCCESS}PHP memcached module installed successfully! ${CEND}"
       rm -rf memcached-${pecl_memcached_oldver} memcached-${pecl_memcached_ver}
     else
-      echo "${CFAILURE}PHP memcached module install failed, Please contact the author! ${CEND}"
+      echo "${CFAILURE}PHP memcached module install failed, Please contact the author! ${CEND}" && lsb_release -a
     fi
     popd > /dev/null
   fi

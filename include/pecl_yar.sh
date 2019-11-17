@@ -27,7 +27,7 @@ Install_pecl_yar() {
         echo "${CSUCCESS}PHP yar module installed successfully! ${CEND}"
         rm -rf yar-${yar_ver}
       else
-        echo "${CFAILURE}PHP yar module install failed, Please contact the author! ${CEND}"
+        echo "${CFAILURE}PHP yar module install failed, Please contact the author! ${CEND}" && lsb_release -a
       fi
     else
       echo "${CWARNING}Your php ${PHP_detail_ver} does not support yar! ${CEND}";

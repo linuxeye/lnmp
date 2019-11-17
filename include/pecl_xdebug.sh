@@ -49,7 +49,7 @@ EOF
         echo; echo "Webgrind URL: ${CMSG}http://{Public IP}/webgrind ${CEND}"
         rm -rf xdebug-${xdebug_ver} xdebug-${xdebug_oldver}
       else
-        echo "${CFAILURE}PHP xdebug module install failed, Please contact the author! ${CEND}"
+        echo "${CFAILURE}PHP xdebug module install failed, Please contact the author! ${CEND}" && lsb_release -a
       fi
     else
       echo "${CWARNING}Your php ${PHP_detail_ver} does not support xdebug! ${CEND}";

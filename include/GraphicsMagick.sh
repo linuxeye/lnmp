@@ -51,7 +51,7 @@ Install_pecl_gmagick() {
       echo "${CSUCCESS}PHP gmagick module installed successfully! ${CEND}"
       rm -rf gmagick-${gmagick_ver} gmagick-${gmagick_oldver}
     else
-      echo "${CFAILURE}PHP gmagick module install failed, Please contact the author! ${CEND}"
+      echo "${CFAILURE}PHP gmagick module install failed, Please contact the author! ${CEND}" && lsb_release -a
     fi
     popd > /dev/null
   fi

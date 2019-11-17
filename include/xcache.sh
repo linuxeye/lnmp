@@ -67,7 +67,7 @@ EOF
         echo "${CSUCCESS}PHP xcache module installed successfully! ${CEND}"
         rm -rf xcache-${xcache_ver}
       else
-        echo "${CFAILURE}PHP xcache module install failed, Please contact the author! ${CEND}"
+        echo "${CFAILURE}PHP xcache module install failed, Please contact the author! ${CEND}" && lsb_release -a
       fi
     else
       echo; echo "${CWARNING}Your php ${PHP_detail_ver} does not support XCache! ${CEND}";

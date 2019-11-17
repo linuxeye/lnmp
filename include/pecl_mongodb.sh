@@ -25,7 +25,7 @@ Install_pecl_mongodb() {
         rm -rf mongo-${pecl_mongo_ver}
         echo "${CSUCCESS}PHP mongo module installed successfully! ${CEND}"
       else
-        echo "${CFAILURE}PHP mongo module install failed, Please contact the author! ${CEND}"
+        echo "${CFAILURE}PHP mongo module install failed, Please contact the author! ${CEND}" && lsb_release -a
       fi
     else
       src_url=https://pecl.php.net/get/mongodb-${pecl_mongodb_ver}.tgz && Download_src
@@ -40,7 +40,7 @@ Install_pecl_mongodb() {
         echo "${CSUCCESS}PHP mongodb module installed successfully! ${CEND}"
         rm -rf mongodb-${pecl_mongodb_ver}
       else
-        echo "${CFAILURE}PHP mongodb module install failed, Please contact the author! ${CEND}"
+        echo "${CFAILURE}PHP mongodb module install failed, Please contact the author! ${CEND}" && lsb_release -a
       fi
     fi
     popd > /dev/null

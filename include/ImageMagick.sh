@@ -46,7 +46,7 @@ Install_pecl_imagick() {
       echo "${CSUCCESS}PHP imagick module installed successfully! ${CEND}"
       rm -rf imagick-${imagick_ver}
     else
-      echo "${CFAILURE}PHP imagick module install failed, Please contact the author! ${CEND}"
+      echo "${CFAILURE}PHP imagick module install failed, Please contact the author! ${CEND}" && lsb_release -a
     fi
     popd > /dev/null
   fi

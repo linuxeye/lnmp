@@ -31,7 +31,7 @@ Install_pecl_imap() {
       echo "${CSUCCESS}PHP imap module installed successfully! ${CEND}"
       rm -rf php-${PHP_detail_ver}
     else
-      echo "${CFAILURE}PHP imap module install failed, Please contact the author! ${CEND}"
+      echo "${CFAILURE}PHP imap module install failed, Please contact the author! ${CEND}" && lsb_release -a
     fi
     popd > /dev/null
   fi

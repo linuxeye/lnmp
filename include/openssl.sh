@@ -25,7 +25,7 @@ Install_openSSL() {
       /bin/cp cacert.pem ${openssl_install_dir}/cert.pem
       rm -rf openssl-${openssl_ver}
     else
-      echo "${CFAILURE}openSSL install failed, Please contact the author! ${CEND}"
+      echo "${CFAILURE}openSSL install failed, Please contact the author! ${CEND}" && lsb_release -a
       kill -9 $$
     fi
     popd > /dev/null

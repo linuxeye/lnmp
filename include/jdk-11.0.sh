@@ -26,7 +26,7 @@ Install_JDK110() {
     . /etc/profile
     echo "${CSUCCESS}$JDK_NAME installed successfully! ${CEND}"
   else
-    echo "${CFAILURE}JDK install failed, Please contact the author! ${CEND}"
+    echo "${CFAILURE}JDK install failed, Please contact the author! ${CEND}" && lsb_release -a
     kill -9 $$
   fi
   popd

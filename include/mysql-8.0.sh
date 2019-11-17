@@ -48,8 +48,8 @@ Install_MySQL80() {
   fi
 
   # backup openssl so
-  [ ! -e "${mysql_install_dir}/lib/lib_bk" ] && mkdir ${mysql_install_dir}/lib/lib_bk
-  /bin/mv ${mysql_install_dir}/lib/{libssl,libcrypto}.so* ${mysql_install_dir}/lib/lib_bk/
+  #[ ! -e "${mysql_install_dir}/lib/lib_bk" ] && mkdir ${mysql_install_dir}/lib/lib_bk
+  #/bin/mv ${mysql_install_dir}/lib/{libssl,libcrypto}.so* ${mysql_install_dir}/lib/lib_bk/
 
   if [ -d "${mysql_install_dir}/support-files" ]; then
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mysql_install_dir}/bin/mysqld_safe
@@ -62,7 +62,7 @@ Install_MySQL80() {
     fi
   else
     rm -rf ${mysql_install_dir}
-    echo "${CFAILURE}MySQL install failed, Please contact the author! ${CEND}"
+    echo "${CFAILURE}MySQL install failed, Please contact the author! ${CEND}" && lsb_release -a
     kill -9 $$
   fi
 

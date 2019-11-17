@@ -54,7 +54,7 @@ EOF
         echo "${CSUCCESS}PHP eaccelerator module installed successfully! ${CEND}"
         rm -rf eaccelerator-${eaccelerator_ver} eaccelerator-eaccelerator-42067ac
       else
-        echo "${CFAILURE}PHP eaccelerator module install failed, Please contact the author! ${CEND}"
+        echo "${CFAILURE}PHP eaccelerator module install failed, Please contact the author! ${CEND}" && lsb_release -a
       fi
     else
       echo; echo "${CWARNING}Your php ${PHP_detail_ver} does not support eAccelerator! ${CEND}";

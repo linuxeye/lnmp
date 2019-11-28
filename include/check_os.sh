@@ -108,6 +108,8 @@ elif [ ${Debian_ver} -ge 9 >/dev/null 2>&1 ] || [ ${Ubuntu_ver} -ge 14 >/dev/nul
   sslLibVer=ssl102
 elif [ ${Fedora_ver} -ge 27 >/dev/null 2>&1 ]; then
   sslLibVer=ssl102
+elif [ "${CentOS_ver}" == '8' ]; then 
+  sslLibVer=ssl1:111
 else
   sslLibVer=unknown
 fi

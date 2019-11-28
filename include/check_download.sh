@@ -440,10 +440,10 @@ checkDownload() {
         fi
         # start download
         src_url=${DOWN_ADDR_PERCONA}/${FILE_NAME} && Download_src
-        src_url=${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum && Download_src
+        src_url=${mirrorLink}/${FILE_NAME}.md5sum && Download_src
         # verifying download
         PERCONA_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5sum)
-        [ -z "${PERCONA_TAR_MD5}" ] && PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
+        [ -z "${PERCONA_TAR_MD5}" ] && PERCONA_TAR_MD5=$(curl -s ${mirrorLink}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}')
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${PERCONA_TAR_MD5}" ]; do
           wget -c --no-check-certificate ${DOWN_ADDR_PERCONA}/${FILE_NAME}; sleep 1
@@ -472,10 +472,10 @@ checkDownload() {
         fi
         # start download
         src_url=${DOWN_ADDR_PERCONA}/${FILE_NAME} && Download_src
-        src_url=${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum && Download_src
+        src_url=${mirrorLink}/${FILE_NAME}.md5sum && Download_src
         # verifying download
         PERCONA_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5sum)
-        [ -z "${PERCONA_TAR_MD5}" ] && PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
+        [ -z "${PERCONA_TAR_MD5}" ] && PERCONA_TAR_MD5=$(curl -s ${mirrorLink}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}')
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${PERCONA_TAR_MD5}" ]; do
           wget -c --no-check-certificate ${DOWN_ADDR_PERCONA}/${FILE_NAME}; sleep 1
@@ -505,10 +505,10 @@ checkDownload() {
         fi
         # start download
         src_url=${DOWN_ADDR_PERCONA}/${FILE_NAME} && Download_src
-        src_url=${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum && Download_src
+        src_url=${mirrorLink}/${FILE_NAME}.md5sum && Download_src
         # verifying download
         PERCONA_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5sum)
-        [ -z "${PERCONA_TAR_MD5}" ] && PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
+        [ -z "${PERCONA_TAR_MD5}" ] && PERCONA_TAR_MD5=$(curl -s ${mirrorLink}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}')
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${PERCONA_TAR_MD5}" ]; do
           wget -c --no-check-certificate ${DOWN_ADDR_PERCONA}/${FILE_NAME}; sleep 1
@@ -538,10 +538,10 @@ checkDownload() {
         fi
         # start download
         src_url=${DOWN_ADDR_PERCONA}/${FILE_NAME} && Download_src
-        src_url=${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum && Download_src
+        src_url=${mirrorLink}/${FILE_NAME}.md5sum && Download_src
         # verifying download
         PERCONA_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5sum)
-        [ -z "${PERCONA_TAR_MD5}" ] && PERCONA_TAR_MD5=$(curl -s ${DOWN_ADDR_PERCONA}/${FILE_NAME}.md5sum |  grep ${FILE_NAME} | awk '{print $1}')
+        [ -z "${PERCONA_TAR_MD5}" ] && PERCONA_TAR_MD5=$(curl -s ${mirrorLink}/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}')
         tryDlCount=0
         while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${PERCONA_TAR_MD5}" ]; do
           wget -c --no-check-certificate ${DOWN_ADDR_PERCONA}/${FILE_NAME}; sleep 1

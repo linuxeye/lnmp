@@ -29,6 +29,7 @@ Upgrade_PHP() {
       break
     else
       echo "${CWARNING}input error! ${CEND}Please only input '${CMSG}${OLD_php_ver%.*}.xx${CEND}'"
+      [ "${php_flag}" == 'y' ] && exit
     fi
   done
 

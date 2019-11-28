@@ -85,6 +85,7 @@ Upgrade_DB() {
       break
     else
       echo "${CWARNING}input error! ${CEND}Please only input '${CMSG}${OLD_db_ver%.*}.xx${CEND}'"
+      [ "${db_flag}" == 'y' ] && exit
     fi
   done
 

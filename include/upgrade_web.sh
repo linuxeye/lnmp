@@ -226,6 +226,7 @@ Upgrade_Apache() {
       fi
     else
       echo "${CWARNING}input error! ${CEND}Please only input '${CMSG}${OLD_apache_ver%.*}.xx${CEND}'"
+      [ "${apache_flag}" == 'y' ] && exit
     fi
   done
 

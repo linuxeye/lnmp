@@ -62,9 +62,10 @@ installDepsCentOS() {
   if [ "${CentOS_ver}" == '8' ]; then
     dnf -y --enablerepo=PowerTools install chrony oniguruma-devel rpcgen
     systemctl enable chronyd
+    systemctl stop firewalld && systemctl mask firewalld.service
   elif [ "${CentOS_ver}" == '7' ]; then
     yum -y groupremove "Basic Web Server" "MySQL Database server" "MySQL Database client"
-    systemctl mask firewalld.service
+    systemctl stop firewalld && systemctl mask firewalld.service
   elif [ "${CentOS_ver}" == '6' ]; then
     yum -y groupremove "FTP Server" "PostgreSQL Database client" "PostgreSQL Database server" "MySQL Database server" "MySQL Database client" "Web Server"
   fi

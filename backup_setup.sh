@@ -271,7 +271,7 @@ if [ -n "`echo ${desc_bk} | grep -w 4`" ]; then
     echo -e "\t ${CMSG}19${CEND}. eu-frankfurt-法兰克福       ${CMSG}20${CEND}. eu-moscow-莫斯科"
     read -e -p "Please input a number:(Default 1 press Enter) " Location
     Location=${Location:-1}
-    if [[ "${Location}" =~ ^[1-9]$|^1[0-7]$ ]]; then
+    if [[ "${Location}" =~ ^[1-9]$|^1[0-9]$|^20$ ]]; then
       break
     else
       echo "${CWARNING}input error! Please only input number 1~17${CEND}"

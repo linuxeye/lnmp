@@ -30,11 +30,15 @@ checkDownload() {
     src_url=${mirrorLink}/jemalloc-${jemalloc_ver}.tar.bz2 && Download_src
   fi
 
+  # openssl1.1
+  if [[ ${nginx_option} =~ ^[1-3]$ ]]; then
+      echo "Download openSSL1.1..."
+      src_url=https://www.openssl.org/source/openssl-${openssl11_ver}.tar.gz && Download_src
+  fi
+
   # nginx/tengine/openresty
   case "${nginx_option}" in
     1)
-      echo "Download openSSL1.1..."
-      src_url=https://www.openssl.org/source/openssl-${openssl11_ver}.tar.gz && Download_src
       echo "Download nginx..."
       src_url=http://nginx.org/download/nginx-${nginx_ver}.tar.gz && Download_src
       ;;

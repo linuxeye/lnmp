@@ -45,7 +45,7 @@ tar xzf oneinstack-full.tar.gz
 cd oneinstack 
 ```
 
-If you disconnect during installation, you can execute the command `screen -r lnmp` to reconnect to the install window
+If you disconnect during installation, you can execute the command `screen -r oneinstack` to reconnect to the install window
 ```bash
 screen -S oneinstack 
 ```

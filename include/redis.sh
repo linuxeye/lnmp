@@ -61,7 +61,7 @@ Install_pecl_redis() {
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     pushd ${oneinstack_dir}/src > /dev/null
     phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
-    if [ "`${php_install_dir}/bin/php-config --version | awk -F. '{print $1}'`" == '7' ]; then
+    if [ "$(${php_install_dir}/bin/php-config --version | awk -F. '{print $1}')" == '7' ]; then
       tar xzf redis-${pecl_redis_ver}.tgz
       pushd redis-${pecl_redis_ver} > /dev/null
     else

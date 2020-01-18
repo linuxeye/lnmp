@@ -822,7 +822,8 @@ checkDownload() {
     else
       echo "Download pecl_memcache for php 7.x..."
       # src_url=https://codeload.github.com/websupport-sk/pecl-memcache/zip/php7 && Download_src
-      src_url=${mirrorLink}/pecl-memcache-${pecl_memcache_ver}.tar.gz && Download_src
+      src_url=https://pecl.php.net/get/memcache-${pecl_memcache_ver}.tgz && Download_src
+    else
     fi
   fi
 

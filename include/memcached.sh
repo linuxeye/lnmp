@@ -47,11 +47,10 @@ Install_pecl_memcache() {
     phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
     PHP_detail_ver=$(${php_install_dir}/bin/php-config --version)
     PHP_main_ver=${PHP_detail_ver%.*}
-    if [[ "${PHP_main_ver}" =~ ^7.[0-3]$ ]]; then
+    if [ "$(${php_install_dir}/bin/php-config --version | awk -F. '{print $1}')" == '7' ]; then
       #git clone https://github.com/websupport-sk/pecl-memcache.git
-      #cd pecl-memcache
-      tar xzf pecl-memcache-${pecl_memcache_ver}.tar.gz
-      pushd pecl-memcache-${pecl_memcache_ver} > /dev/null
+      tar xzf memcache-${pecl_memcache_ver}.tar.gz
+      pushd memcache-${pecl_memcache_ver} > /dev/null
     else
       tar xzf memcache-${pecl_memcache_oldver}.tgz
       pushd memcache-${pecl_memcache_oldver} > /dev/null
@@ -63,7 +62,7 @@ Install_pecl_memcache() {
     if [ -f "${phpExtensionDir}/memcache.so" ]; then
       echo "extension=memcache.so" > ${php_install_dir}/etc/php.d/05-memcache.ini
       echo "${CSUCCESS}PHP memcache module installed successfully! ${CEND}"
-      rm -rf pecl-memcache-${pecl_memcache_ver} memcache-${pecl_memcache_oldver}
+      rm -rf memcache-${pecl_memcache_ver} memcache-${pecl_memcache_oldver}
     else
       echo "${CFAILURE}PHP memcache module install failed, Please contact the author! ${CEND}" && lsb_release -a
     fi

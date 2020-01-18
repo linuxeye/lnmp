@@ -19,9 +19,9 @@ apr_util_ver=1.6.1
 nghttp2_ver=1.40.0
 
 # DB
-mysql80_ver=8.0.18
-mysql57_ver=5.7.28
-mysql56_ver=5.6.46
+mysql80_ver=8.0.19
+mysql57_ver=5.7.29
+mysql56_ver=5.6.47
 mysql55_ver=5.5.62
 
 mariadb104_ver=10.4.11
@@ -41,8 +41,8 @@ pgsql_ver=12.1
 mongodb_ver=4.0.13
 
 # JDK
-jdk110_ver=11.0.5
-jdk18_ver=1.8.0_231
+jdk110_ver=11.0.6
+jdk18_ver=1.8.0_241
 jdk17_ver=1.7.0_80
 jdk16_ver=1.6.0_45
 
@@ -66,7 +66,7 @@ freetype_ver=2.10.1
 icu4c_ver=63_1
 libsodium_ver=1.0.18
 argon2_ver=20171227
-imagemagick_ver=7.0.9-13
+imagemagick_ver=7.0.9-14
 imagick_ver=3.4.4
 graphicsmagick_ver=1.3.33
 gmagick_ver=2.0.5RC1
@@ -95,17 +95,17 @@ pecl_redis_oldver=4.3.0
 # Memcached
 memcached_ver=1.5.20
 libmemcached_ver=1.0.18
-pecl_memcached_ver=3.1.4
+pecl_memcached_ver=3.1.5
 pecl_memcached_oldver=2.2.0
-pecl_memcache_ver=4.0.4
+pecl_memcache_ver=4.0.5.2
 pecl_memcache_oldver=3.0.8
 
 # MongoDB
-pecl_mongodb_ver=1.6.0
+pecl_mongodb_ver=1.6.1
 pecl_mongo_ver=1.6.16
 
 # phpMyadmin
-phpmyadmin_ver=4.9.3
+phpmyadmin_ver=4.9.4
 phpmyadmin_oldver=4.4.15.10
 
 # jemalloc
@@ -119,7 +119,7 @@ boost_oldver=1.59.0
 # Others
 htop_ver=2.2.0
 bison_ver=2.7.1
-python_ver=3.6.9
-setuptools_ver=41.5.1
+python_ver=3.6.10
+setuptools_ver=45.0.0
 pip_ver=19.3.1
-fail2ban_ver=0.10.4
+fail2ban_ver=0.11.1

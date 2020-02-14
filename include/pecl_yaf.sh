@@ -15,7 +15,7 @@ Install_pecl_yaf() {
     PHP_main_ver=${PHP_detail_ver%.*}
     if [[ "${PHP_main_ver}" =~ ^7.[0-3]$ ]]; then
       phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
-      src_url=http://mirrors.linuxeye.com/oneinstack/src/yaf-${yaf_ver}.tar.gz && Download_src
+      src_url=https://pecl.php.net/get/yaf-${yaf_ver}.tar.gz && Download_src
       tar xzf yaf-${yaf_ver}.tar.gz
       pushd yaf-${yaf_ver} > /dev/null
       ${php_install_dir}/bin/phpize

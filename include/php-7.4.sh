@@ -63,6 +63,15 @@ Install_PHP74() {
     rm -rf libsodium-${libsodium_ver}
   fi
 
+  if [ ! -e "/usr/local/lib/libzip.la" ]; then
+    tar xzf libzip-${libzip_ver}.tar.gz
+    pushd libzip-${libzip_ver} > /dev/null
+    ./configure
+    make -j ${THREAD} && make install
+    popd > /dev/null
+    rm -rf libzip-${libzip_ver}
+  fi
+
   if [ ! -e "/usr/local/include/mhash.h" -a ! -e "/usr/include/mhash.h" ]; then
     tar xzf mhash-${mhash_ver}.tar.gz
     pushd mhash-${mhash_ver} > /dev/null
@@ -103,7 +112,7 @@ Install_PHP74() {
     --enable-sysvsem --enable-inline-optimization --with-curl=${curl_install_dir} --enable-mbregex \
     --enable-mbstring --with-password-argon2 --with-sodium=/usr/local --enable-gd --with-openssl=${openssl_install_dir} \
     --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
-    --with-gettext --with-zip --without-libzip --enable-soap --disable-debug ${php_modules_options}
+    --with-gettext --with-zip=/usr/local --enable-soap --disable-debug ${php_modules_options}
   else
     ./configure --prefix=${php_install_dir} --with-config-file-path=${php_install_dir}/etc \
     --with-config-file-scan-dir=${php_install_dir}/etc/php.d \
@@ -114,7 +123,7 @@ Install_PHP74() {
     --enable-sysvsem --enable-inline-optimization --with-curl=${curl_install_dir} --enable-mbregex \
     --enable-mbstring --with-password-argon2 --with-sodium=/usr/local --enable-gd --with-openssl=${openssl_install_dir} \
     --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
-    --with-gettext --with-zip --without-libzip --enable-soap --disable-debug ${php_modules_options}
+    --with-gettext --with-zip=/usr/local --enable-soap --disable-debug ${php_modules_options}
   fi
   make ZEND_EXTRA_LIBS='-liconv' -j ${THREAD}
   make install

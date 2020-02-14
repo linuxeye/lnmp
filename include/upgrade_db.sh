@@ -114,7 +114,7 @@ Upgrade_DB() {
       ${mariadb_install_dir}/bin/mysql_upgrade -uroot -p${dbrootpwd} >/dev/null 2>&1
       [ $? -eq 0 ] &&  echo "You have ${CMSG}successfully${CEND} upgrade from ${CMSG}${OLD_db_ver}${CEND} to ${CMSG}${NEW_db_ver}${CEND}"
     elif [ "${DB}" == 'Percona' ]; then
-      tar xzf ${DB_filename}.tar.gz
+      tar xzf ./${DB_filename}.tar.gz
       service mysqld stop
       mv ${percona_install_dir}{,_old_`date +"%Y%m%d_%H%M%S"`}
       mv ${percona_data_dir}{,_old_`date +"%Y%m%d_%H%M%S"`}

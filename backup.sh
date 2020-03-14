@@ -106,32 +106,6 @@ DB_S3_BK() {
   done
 }
 
-DB_GDRIVE_BK() {
-  # get the IP information
-  IPADDR=$(../include/get_ipaddr.py)
-  IPADDR=${IPADDR:-127.0.0.1}
-  Parent_root_id=$(/usr/local/bin/gdrive list --no-header -q "trashed = false and name = '${IPADDR}'" | awk '{print $1}' | head -1)
-  [ -z "${Parent_root_id}" ] && sleep 60 && Parent_root_id=$(/usr/local/bin/gdrive mkdir ${IPADDR} | awk '{print $2}')
-  sleep 60
-  Parent_sub_id=$(/usr/local/bin/gdrive list --no-header -q "'${Parent_root_id}' in parents and trashed = false and name = '`date +%F`'" | awk '{print $1}' | head -1)
-  [ -z "${Parent_sub_id}" ] && sleep 60 && Parent_sub_id=$(/usr/local/bin/gdrive mkdir -p ${Parent_root_id} `date +%F` | awk '{print $2}')
-  sleep 60
-  for D in `echo ${db_name} | tr ',' ' '`
-  do
-    ./db_bk.sh ${D}
-    DB_GREP="DB_${D}_`date +%Y%m%d`"
-    DB_FILE=`ls -lrt ${backup_dir} | grep ${DB_GREP} | tail -1 | awk '{print $NF}'`
-    /usr/local/bin/gdrive upload -p ${Parent_sub_id} ${backup_dir}/${DB_FILE}
-    sleep 120
-    if [ $? -eq 0 ]; then
-      Parent_expired_id=$(/usr/local/bin/gdrive list --no-header -q "'${Parent_root_id}' in parents and trashed = false and name = '`date +%F --date="${expired_days} days ago"`'" | awk '{print $1}' | head -1)
-      [ -n "${Parent_expired_id}" ] && sleep 60 && /usr/local/bin/gdrive delete -r ${Parent_expired_id} > /dev/null 2>&1
-      [ -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -f ${backup_dir}/${DB_FILE}
-      sleep 60
-    fi
-  done
-}
-
 DB_DROPBOX_BK() {
   for D in `echo ${db_name} | tr ',' ' '`
   do
@@ -263,37 +237,6 @@ WEB_S3_BK() {
   done
 }
 
-WEB_GDRIVE_BK() {
-  # get the IP information
-  IPADDR=$(../include/get_ipaddr.py)
-  IPADDR=${IPADDR:-127.0.0.1}
-  Parent_root_id=$(/usr/local/bin/gdrive list --no-header -q "trashed = false and name = '${IPADDR}'" | awk '{print $1}' | head -1)
-  [ -z "${Parent_root_id}" ] && sleep 60 && Parent_root_id=$(/usr/local/bin/gdrive mkdir ${IPADDR} | awk '{print $2}')
-  sleep 60
-  Parent_sub_id=$(/usr/local/bin/gdrive list --no-header -q "'${Parent_root_id}' in parents and trashed = false and name = '`date +%F`'" | awk '{print $1}' | head -1)
-  [ -z "${Parent_sub_id}" ] && sleep 60 && Parent_sub_id=$(/usr/local/bin/gdrive mkdir -p ${Parent_root_id} `date +%F` | awk '{print $2}')
-  sleep 60
-  for W in `echo ${website_name} | tr ',' ' '`
-  do
-    [ ! -e "${wwwroot_dir}/${WebSite}" ] && { echo "[${wwwroot_dir}/${WebSite}] not exist"; break; }
-    [ ! -e "${backup_dir}" ] && mkdir -p ${backup_dir}
-    PUSH_FILE="${backup_dir}/Web_${W}_$(date +%Y%m%d_%H).tgz"
-    if [ ! -e "${PUSH_FILE}" ]; then
-      pushd ${wwwroot_dir} > /dev/null
-      tar czf ${PUSH_FILE} ./$W
-      popd > /dev/null
-    fi
-    /usr/local/bin/gdrive upload -p ${Parent_sub_id} ${PUSH_FILE}
-    sleep 120
-    if [ $? -eq 0 ]; then
-      Parent_expired_id=$(/usr/local/bin/gdrive list --no-header -q "'${Parent_root_id}' in parents and trashed = false and name = '`date +%F --date="${expired_days} days ago"`'" | awk '{print $1}' | head -1)
-      [ -n "${Parent_expired_id}" ] && sleep 60 && /usr/local/bin/gdrive delete -r ${Parent_expired_id} > /dev/null 2>&1
-      [ -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -f ${PUSH_FILE}
-      sleep 60
-    fi
-  done
-}
-
 WEB_DROPBOX_BK() {
   for W in `echo ${website_name} | tr ',' ' '`
   do
@@ -344,10 +287,6 @@ do
   if [ "${DEST}" == 's3' ]; then
     [ -n "`echo ${backup_content} | grep -ow db`" ] && DB_S3_BK
     [ -n "`echo ${backup_content} | grep -ow web`" ] && WEB_S3_BK
-  fi
-  if [ "${DEST}" == 'gdrive' ]; then
-    [ -n "`echo ${backup_content} | grep -ow db`" ] && DB_GDRIVE_BK
-    [ -n "`echo ${backup_content} | grep -ow web`" ] && WEB_GDRIVE_BK
   fi
   if [ "${DEST}" == 'dropbox' ]; then
     [ -n "`echo ${backup_content} | grep -ow db`" ] && DB_DROPBOX_BK

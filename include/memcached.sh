@@ -49,7 +49,7 @@ Install_pecl_memcache() {
     PHP_main_ver=${PHP_detail_ver%.*}
     if [ "$(${php_install_dir}/bin/php-config --version | awk -F. '{print $1}')" == '7' ]; then
       #git clone https://github.com/websupport-sk/pecl-memcache.git
-      tar xzf memcache-${pecl_memcache_ver}.tar.gz
+      tar xzf memcache-${pecl_memcache_ver}.tgz
       pushd memcache-${pecl_memcache_ver} > /dev/null
     else
       tar xzf memcache-${pecl_memcache_oldver}.tgz

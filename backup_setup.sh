@@ -39,12 +39,11 @@ while :; do echo
   echo -e "\t${CMSG}5${CEND}. UPYUN"
   echo -e "\t${CMSG}6${CEND}. QINIU"
   echo -e "\t${CMSG}7${CEND}. Amazon S3"
-  echo -e "\t${CMSG}8${CEND}. Google Drive"
-  echo -e "\t${CMSG}9${CEND}. Dropbox"
+  echo -e "\t${CMSG}8${CEND}. Dropbox"
   read -e -p "Please input numbers:(Default 1 press Enter) " desc_bk
   desc_bk=${desc_bk:-'1'}
   array_desc=(${desc_bk})
-  array_all=(1 2 3 4 5 6 7 8 9)
+  array_all=(1 2 3 4 5 6 7 8)
   for v in ${array_desc[@]}
   do
     [ -z "`echo ${array_all[@]} | grep -w ${v}`" ] && desc_flag=1
@@ -66,8 +65,7 @@ done
 [ -n "`echo ${desc_bk} | grep -w 5`" ] && sed -i 's@^backup_destination=.*@&,upyun@' ./options.conf
 [ -n "`echo ${desc_bk} | grep -w 6`" ] && sed -i 's@^backup_destination=.*@&,qiniu@' ./options.conf
 [ -n "`echo ${desc_bk} | grep -w 7`" ] && sed -i 's@^backup_destination=.*@&,s3@' ./options.conf
-[ -n "`echo ${desc_bk} | grep -w 8`" ] && sed -i 's@^backup_destination=.*@&,gdrive@' ./options.conf
-[ -n "`echo ${desc_bk} | grep -w 9`" ] && sed -i 's@^backup_destination=.*@&,dropbox@' ./options.conf
+[ -n "`echo ${desc_bk} | grep -w 8`" ] && sed -i 's@^backup_destination=.*@&,dropbox@' ./options.conf
 sed -i 's@^backup_destination=,@backup_destination=@' ./options.conf
 
 while :; do echo
@@ -519,22 +517,6 @@ if [ -n "`echo ${desc_bk} | grep -w 7`" ]; then
 fi
 
 if [ -n "`echo ${desc_bk} | grep -w 8`" ]; then
-  if [ ! -e "/usr/local/bin/gdrive" ]; then
-    if [ "${OS_BIT}" == '64' ]; then
-      wget -qc http://mirrors.linuxeye.com/oneinstack/src/gdrive-linux-x64 -O /usr/local/bin/gdrive
-    elif [ "${OS_BIT}" == '32' ]; then
-      wget -qc http://mirrors.linuxeye.com/oneinstack/src/gdrive-linux-386 -O /usr/local/bin/gdrive
-    fi
-    chmod +x /usr/local/bin/gdrive
-  fi
-  while :; do echo
-    if gdrive about; then
-      break
-    fi
-  done
-fi
-
-if [ -n "`echo ${desc_bk} | grep -w 9`" ]; then
   if [ ! -e "/usr/local/bin/dbxcli" ]; then
     if [ "${OS_BIT}" == '64' ]; then
       wget -qc http://mirrors.linuxeye.com/oneinstack/src/dbxcli-linux-amd64 -O /usr/local/bin/dbxcli

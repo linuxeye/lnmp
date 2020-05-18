@@ -19,7 +19,7 @@ checkDownload() {
   # General system utils
   if [[ ${tomcat_option} =~ ^[1-4]$ ]] || [[ ${apache_option} =~ ^[1-2]$ ]] || [[ ${php_option} =~ ^[1-9]$ ]]; then
     echo "Download openSSL..."
-    src_url=https://www.openssl.org/source/openssl-${openssl_ver}.tar.gz && Download_src
+    src_url=https://www.openssl.org/source/old/1.0.2/openssl-${openssl_ver}.tar.gz && Download_src
     echo "Download cacert.pem..."
     src_url=https://curl.haxx.se/ca/cacert.pem && Download_src
   fi

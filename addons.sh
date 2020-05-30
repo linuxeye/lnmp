@@ -36,9 +36,9 @@ pushd ${oneinstack_dir} > /dev/null
 
 . ./include/fail2ban.sh
 
-. include/ngx_lua_waf.sh
+. ./include/ngx_lua_waf.sh
 
-. include/panel.sh
+. ./include/panel.sh
 
 Show_Help() {
   echo

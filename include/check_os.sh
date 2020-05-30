@@ -59,6 +59,11 @@ if [ ${CentOS_ver} -lt 6 >/dev/null 2>&1 ] || [ ${Debian_ver} -lt 8 >/dev/null 2
   kill -9 $$
 fi
 
+command -v gcc > /dev/null 2>&1 || $PM -y install gcc
+gcc_ver=$(gcc -dumpversion | awk -F. '{print $1}')
+
+[ ${gcc_ver} -lt 5 >/dev/null 2>&1 ] && redis_ver=${redis_oldver}
+
 LIBC_YN=$(awk -v A=$(getconf -a | grep GNU_LIBC_VERSION | awk '{print $NF}') -v B=2.14 'BEGIN{print(A>=B)?"0":"1"}')
 [ ${LIBC_YN} == '0' ] && GLIBC_FLAG=linux-glibc_214 || GLIBC_FLAG=linux
 

@@ -157,10 +157,10 @@ installDepsBySrc() {
     echo "No need to install software from source packages."
   fi
 
-  if ! command -v icu-config > /dev/null 2>&1 || icu-config --version | grep '^3.'; then
+  if ! command -v icu-config > /dev/null 2>&1 || icu-config --version | grep '^3.' || [ "${Ubuntu_ver}" == "20" ]; then
     tar xzf icu4c-${icu4c_ver}-src.tgz
     pushd icu/source > /dev/null
-    ./configure --prefix=/usr
+    ./configure --prefix=/usr/local
     make -j ${THREAD} && make install
     popd > /dev/null
     rm -rf icu

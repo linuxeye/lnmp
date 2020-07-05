@@ -17,8 +17,8 @@ Install_MariaDB55() {
   mkdir -p ${mariadb_data_dir};chown mysql.mysql -R ${mariadb_data_dir}
 
   if [ "${dbinstallmethod}" == "1" ]; then
-    tar zxf mariadb-${mariadb55_ver}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
-    mv mariadb-${mariadb55_ver}-*-${SYS_BIT_b}/* ${mariadb_install_dir}
+    tar zxf mariadb-${mariadb55_ver}-linux-${SYS_BIT_b}.tar.gz
+    mv mariadb-${mariadb55_ver}-linux-${SYS_BIT_b}/* ${mariadb_install_dir}
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mariadb_install_dir}/bin/mysqld_safe
     sed -i "s@/usr/local/mysql@${mariadb_install_dir}@g" ${mariadb_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then
@@ -50,7 +50,7 @@ Install_MariaDB55() {
     sed -i "s+^dbrootpwd.*+dbrootpwd='${dbrootpwd}'+" ../options.conf
     echo "${CSUCCESS}MariaDB installed successfully! ${CEND}"
     if [ "${dbinstallmethod}" == "1" ]; then
-      rm -rf mariadb-${mariadb55_ver}-*-${SYS_BIT_b}
+      rm -rf mariadb-${mariadb55_ver}-linux-${SYS_BIT_b}
     elif [ "${dbinstallmethod}" == "2" ]; then
       rm -rf mariadb-${mariadb55_ver}
     fi

@@ -15,7 +15,6 @@ Install_Apache22() {
   tar xzf httpd-${apache22_ver}.tar.gz
   pushd httpd-${apache22_ver} > /dev/null
   [ ! -d "${apache_install_dir}" ] && mkdir -p ${apache_install_dir}
-  [ "${Ubuntu_ver}" == "12" ] && sed -i '@SSL_PROTOCOL_SSLV2@d' modules/ssl/ssl_engine_io.c
   LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} --with-mpm=prefork --enable-mpms-shared=all --with-included-apr --enable-headers --enable-mime-magic --enable-deflate --enable-proxy --enable-so --enable-dav --enable-rewrite --enable-expires --enable-static-support --enable-suexec --with-expat=builtin --enable-mods-shared=most --enable-ssl --with-ssl=${openssl_install_dir}
   make -j ${THREAD} && make install
   unset LDFLAGS

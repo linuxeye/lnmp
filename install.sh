@@ -36,8 +36,8 @@ xcachepwd=`< /dev/urandom tr -dc A-Za-z0-9 | head -c8`
 dbinstallmethod=1
 
 version() {
-  echo "version: 2.2"
-  echo "updated date: 2019-11-28"
+  echo "version: 2.3"
+  echo "updated date: 2020-07-05"
 }
 
 Show_Help() {
@@ -405,9 +405,9 @@ if [ ${ARG_NUM} == 0 ]; then
           echo -e "\t${CMSG} 2${CEND}. Install MySQL-5.7"
           echo -e "\t${CMSG} 3${CEND}. Install MySQL-5.6"
           echo -e "\t${CMSG} 4${CEND}. Install MySQL-5.5"
-          echo -e "\t${CMSG} 5${CEND}. Install MariaDB-10.4"
-          echo -e "\t${CMSG} 6${CEND}. Install MariaDB-10.3"
-          echo -e "\t${CMSG} 7${CEND}. Install MariaDB-10.2"
+          echo -e "\t${CMSG} 5${CEND}. Install MariaDB-10.5"
+          echo -e "\t${CMSG} 6${CEND}. Install MariaDB-10.4"
+          echo -e "\t${CMSG} 7${CEND}. Install MariaDB-10.3"
           echo -e "\t${CMSG} 8${CEND}. Install MariaDB-5.5"
           echo -e "\t${CMSG} 9${CEND}. Install Percona-8.0"
           echo -e "\t${CMSG}10${CEND}. Install Percona-5.7"
@@ -418,7 +418,7 @@ if [ ${ARG_NUM} == 0 ]; then
           echo -e "\t${CMSG}15${CEND}. Install MongoDB"
           read -e -p "Please input a number:(Default 2 press Enter) " db_option
           db_option=${db_option:-2}
-          [[ "${db_option}" =~ ^[1,5,6,9]$|^15$ ]] && [ "${OS_BIT}" == '32' ] && { echo "${CWARNING}By not supporting 32-bit! ${CEND}"; continue; }
+          [[ "${db_option}" =~ ^9$|^15$ ]] && [ "${OS_BIT}" == '32' ] && { echo "${CWARNING}By not supporting 32-bit! ${CEND}"; continue; }
           if [[ "${db_option}" =~ ^[1-9]$|^1[0-5]$ ]]; then
             if [ "${db_option}" == '14' ]; then
               [ -e "${pgsql_install_dir}/bin/psql" ] && { echo "${CWARNING}PostgreSQL already installed! ${CEND}"; unset db_option; break; }
@@ -463,7 +463,6 @@ if [ ${ARG_NUM} == 0 ]; then
                 if [[ ! ${dbinstallmethod} =~ ^[1-2]$ ]]; then
                   echo "${CWARNING}input error! Please only input number 1~2${CEND}"
                 else
-                  [[ "${db_option}" =~ ^[5-6]$ ]] && [ "${LIBC_YN}" != '0' -a "${dbinstallmethod}" == '1' ] && { echo "${CWARNING}MariaDB-10.3+ binaries require GLIBC 2.14 or higher! ${CEND}"; continue; }
                   break
                 fi
               done
@@ -822,16 +821,16 @@ case "${db_option}" in
     Install_MySQL55 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   5)
+    . include/mariadb-10.5.sh
+    Install_MariaDB105 2>&1 | tee -a ${oneinstack_dir}/install.log
+    ;;
+  6)
     . include/mariadb-10.4.sh
     Install_MariaDB104 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
-  6)
+  7)
     . include/mariadb-10.3.sh
     Install_MariaDB103 2>&1 | tee -a ${oneinstack_dir}/install.log
-    ;;
-  7)
-    . include/mariadb-10.2.sh
-    Install_MariaDB102 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   8)
     . include/mariadb-5.5.sh

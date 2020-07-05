@@ -11,7 +11,7 @@ checkDownload() {
   mirrorLink=http://mirrors.linuxeye.com/oneinstack/src
   pushd ${oneinstack_dir}/src > /dev/null
   # icu
-  if ! command -v icu-config >/dev/null 2>&1 || icu-config --version | grep '^3.'; then
+  if ! command -v icu-config >/dev/null 2>&1 || icu-config --version | grep '^3.' || [ "${Ubuntu_ver}" == "20" ]; then
     echo "Download icu..."
     src_url=${mirrorLink}/icu4c-${icu4c_ver}-src.tgz && Download_src
   fi
@@ -275,141 +275,41 @@ checkDownload() {
           kill -9 $$
         fi
         ;;
-      5)
-        # MariaDB 10.4
+      [5-8])
+	case "${db_option}" in
+          5)
+            mariadb_ver=${mariadb105_ver}
+	    ;;
+          6)
+            mariadb_ver=${mariadb104_ver}
+	    ;;
+          7)
+            mariadb_ver=${mariadb103_ver}
+	    ;;
+          8)
+            mariadb_ver=${mariadb55_ver}
+	    ;;
+        esac
+
         if [ "${dbinstallmethod}" == '1' ]; then
-          echo "Download MariaDB 10.4 binary package..."
-          FILE_NAME=mariadb-${mariadb104_ver}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
+          echo "Download MariaDB ${mariadb_ver} binary package..."
+          FILE_NAME=mariadb-${mariadb_ver}-linux-${SYS_BIT_b}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            DOWN_ADDR_MARIADB=http://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb104_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            DOWN_ADDR_MARIADB_BK=http://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb104_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
+            DOWN_ADDR_MARIADB=http://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb_ver}/bintar-linux-${SYS_BIT_a}
+            DOWN_ADDR_MARIADB_BK=http://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb_ver}/bintar-linux-${SYS_BIT_a}
           else
-            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb104_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb104_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
+            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb_ver}/bintar-linux-${SYS_BIT_a}
+            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb_ver}/bintar-linux-${SYS_BIT_a}
           fi
         elif [ "${dbinstallmethod}" == '2' ]; then
-          echo "Download MariaDB 10.4 source package..."
-          FILE_NAME=mariadb-${mariadb104_ver}.tar.gz
+          echo "Download MariaDB ${mariadb_ver} source package..."
+          FILE_NAME=mariadb-${mariadb_ver}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            DOWN_ADDR_MARIADB=http://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb104_ver}/source
-            DOWN_ADDR_MARIADB_BK=http://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb104_ver}/source
+            DOWN_ADDR_MARIADB=http://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb_ver}/source
+            DOWN_ADDR_MARIADB_BK=http://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb_ver}/source
           else
-            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb104_ver}/source
-            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb104_ver}/source
-          fi
-        fi
-        src_url=${DOWN_ADDR_MARIADB}/${FILE_NAME} && Download_src
-        wget -4 --tries=6 -c --no-check-certificate ${DOWN_ADDR_MARIADB}/md5sums.txt -O ${FILE_NAME}.md5
-        MARAIDB_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
-        [ -z "${MARAIDB_TAR_MD5}" ] && MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB_BK}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
-        tryDlCount=0
-        while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${MARAIDB_TAR_MD5}" ]; do
-          wget -c --no-check-certificate ${DOWN_ADDR_MARIADB_BK}/${FILE_NAME};sleep 1
-          let "tryDlCount++"
-          [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${MARAIDB_TAR_MD5}" -o "${tryDlCount}" == '6' ] && break || continue
-        done
-        if [ "${tryDlCount}" == '6' ]; then
-          echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
-          kill -9 $$
-        fi
-        ;;
-      6)
-        # MariaDB 10.3
-        if [ "${dbinstallmethod}" == '1' ]; then
-          echo "Download MariaDB 10.3 binary package..."
-          FILE_NAME=mariadb-${mariadb103_ver}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
-          if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            DOWN_ADDR_MARIADB=http://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb103_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            DOWN_ADDR_MARIADB_BK=http://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb103_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-          else
-            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb103_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb103_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-          fi
-        elif [ "${dbinstallmethod}" == '2' ]; then
-          echo "Download MariaDB 10.3 source package..."
-          FILE_NAME=mariadb-${mariadb103_ver}.tar.gz
-          if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            DOWN_ADDR_MARIADB=http://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb103_ver}/source
-            DOWN_ADDR_MARIADB_BK=http://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb103_ver}/source
-          else
-            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb103_ver}/source
-            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb103_ver}/source
-          fi
-        fi
-        src_url=${DOWN_ADDR_MARIADB}/${FILE_NAME} && Download_src
-        wget -4 --tries=6 -c --no-check-certificate ${DOWN_ADDR_MARIADB}/md5sums.txt -O ${FILE_NAME}.md5
-        MARAIDB_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
-        [ -z "${MARAIDB_TAR_MD5}" ] && MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB_BK}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
-        tryDlCount=0
-        while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${MARAIDB_TAR_MD5}" ]; do
-          wget -c --no-check-certificate ${DOWN_ADDR_MARIADB_BK}/${FILE_NAME};sleep 1
-          let "tryDlCount++"
-          [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${MARAIDB_TAR_MD5}" -o "${tryDlCount}" == '6' ] && break || continue
-        done
-        if [ "${tryDlCount}" == '6' ]; then
-          echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
-          kill -9 $$
-        fi
-        ;;
-      7)
-        # MariaDB 10.2
-        if [ "${dbinstallmethod}" == '1' ]; then
-          echo "Download MariaDB 10.2 binary package..."
-          FILE_NAME=mariadb-${mariadb102_ver}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
-          if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            DOWN_ADDR_MARIADB=http://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb102_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            DOWN_ADDR_MARIADB_BK=http://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb102_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-          else
-            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb102_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb102_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-          fi
-        elif [ "${dbinstallmethod}" == '2' ]; then
-          echo "Download MariaDB 10.2 source package..."
-          FILE_NAME=mariadb-${mariadb102_ver}.tar.gz
-          if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            DOWN_ADDR_MARIADB=http://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb102_ver}/source
-            DOWN_ADDR_MARIADB_BK=http://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb102_ver}/source
-          else
-            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb102_ver}/source
-            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb102_ver}/source
-          fi
-        fi
-        src_url=${DOWN_ADDR_MARIADB}/${FILE_NAME} && Download_src
-        wget -4 --tries=6 -c --no-check-certificate ${DOWN_ADDR_MARIADB}/md5sums.txt -O ${FILE_NAME}.md5
-        MARAIDB_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
-        [ -z "${MARAIDB_TAR_MD5}" ] && MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB_BK}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
-        tryDlCount=0
-        while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${MARAIDB_TAR_MD5}" ]; do
-          wget -c --no-check-certificate ${DOWN_ADDR_MARIADB_BK}/${FILE_NAME};sleep 1
-          let "tryDlCount++"
-          [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${MARAIDB_TAR_MD5}" -o "${tryDlCount}" == '6' ] && break || continue
-        done
-        if [ "${tryDlCount}" == '6' ]; then
-          echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
-          kill -9 $$
-        fi
-        ;;
-      8)
-        # MariaDB 5.5
-        if [ "${dbinstallmethod}" == '1' ]; then
-          echo "Download MariaDB 5.5 binary package..."
-          FILE_NAME=mariadb-${mariadb55_ver}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
-          if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            DOWN_ADDR_MARIADB=http://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb55_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            DOWN_ADDR_MARIADB_BK=http://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb55_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-          else
-            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb55_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb55_ver}/bintar-${GLIBC_FLAG}-${SYS_BIT_a}
-          fi
-        elif [ "${dbinstallmethod}" == '2' ]; then
-          echo "Download MariaDB 5.5 source package..."
-          FILE_NAME=mariadb-${mariadb55_ver}.tar.gz
-          if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            DOWN_ADDR_MARIADB=http://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb55_ver}/source
-            DOWN_ADDR_MARIADB_BK=http://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb55_ver}/source
-          else
-            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb55_ver}/source
-            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb55_ver}/source
+            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb_ver}/source
+            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb_ver}/source
           fi
         fi
         src_url=${DOWN_ADDR_MARIADB}/${FILE_NAME} && Download_src

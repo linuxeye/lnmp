@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/oneinstack/oneinstack
 
-Install_MariaDB102() {
+Install_MariaDB105() {
   pushd ${oneinstack_dir}/src > /dev/null
   id -u mysql >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin mysql
@@ -17,15 +17,15 @@ Install_MariaDB102() {
   mkdir -p ${mariadb_data_dir};chown mysql.mysql -R ${mariadb_data_dir}
 
   if [ "${dbinstallmethod}" == "1" ]; then
-    tar zxf mariadb-${mariadb102_ver}-${GLIBC_FLAG}-${SYS_BIT_b}.tar.gz
-    mv mariadb-${mariadb102_ver}-*-${SYS_BIT_b}/* ${mariadb_install_dir}
+    tar zxf mariadb-${mariadb105_ver}-linux-${SYS_BIT_b}.tar.gz
+    mv mariadb-${mariadb105_ver}-linux-${SYS_BIT_b}/* ${mariadb_install_dir}
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mariadb_install_dir}/bin/mysqld_safe
     sed -i "s@/usr/local/mysql@${mariadb_install_dir}@g" ${mariadb_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then
     boostVersion2=$(echo ${boost_oldver} | awk -F. '{print $1"_"$2"_"$3}')
     tar xzf boost_${boostVersion2}.tar.gz
-    tar xzf mariadb-${mariadb102_ver}.tar.gz
-    pushd mariadb-${mariadb102_ver}
+    tar xzf mariadb-${mariadb105_ver}.tar.gz
+    pushd mariadb-${mariadb105_ver}
     cmake . -DCMAKE_INSTALL_PREFIX=${mariadb_install_dir} \
     -DMYSQL_DATADIR=${mariadb_data_dir} \
     -DDOWNLOAD_BOOST=1 \
@@ -52,9 +52,9 @@ Install_MariaDB102() {
     sed -i "s+^dbrootpwd.*+dbrootpwd='${dbrootpwd}'+" ../options.conf
     echo "${CSUCCESS}MariaDB installed successfully! ${CEND}"
     if [ "${dbinstallmethod}" == "1" ]; then
-      rm -rf mariadb-${mariadb102_ver}-*-${SYS_BIT_b}
+      rm -rf mariadb-${mariadb105_ver}-linux-${SYS_BIT_b}
     elif [ "${dbinstallmethod}" == "2" ]; then
-      rm -rf mariadb-${mariadb102_ver} boost_${boostVersion2}
+      rm -rf mariadb-${mariadb105_ver} boost_${boostVersion2}
     fi
   else
     rm -rf ${mariadb_install_dir}
@@ -75,6 +75,7 @@ Install_MariaDB102() {
 [client]
 port = 3306
 socket = /tmp/mysql.sock
+default-character-set = utf8mb4
 
 [mysqld]
 port = 3306

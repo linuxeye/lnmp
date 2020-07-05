@@ -6,7 +6,7 @@ Script properties:
 - Continually updated, Provide Shell Interaction and Autoinstall
 - Source compiler installation, most stable source is the latest version, and download from the official site
 - Some security optimization
-- Providing a plurality of database versions (MySQL-8.0, MySQL-5.7, MySQL-5.6, MySQL-5.5, MariaDB-10.4, MariaDB-10.3, MariaDB-10.2, MariaDB-5.5, Percona-8.0, Percona-5.7, Percona-5.6, Percona-5.5, AliSQL-5.6, PostgreSQL, MongoDB)
+- Providing a plurality of database versions (MySQL-8.0, MySQL-5.7, MySQL-5.6, MySQL-5.5, MariaDB-10.5, MariaDB-10.4, MariaDB-10.3, MariaDB-5.5, Percona-8.0, Percona-5.7, Percona-5.6, Percona-5.5, AliSQL-5.6, PostgreSQL, MongoDB)
 - Providing multiple PHP versions (PHP-7.4, PHP-7.3, PHP-7.2, PHP-7.1, PHP-7.0, PHP-5.6, PHP-5.5, PHP-5.4, PHP-5.3)
 - Provide Nginx, Tengine, OpenResty and ngx_lua_waf
 - Providing a plurality of Tomcat version (Tomcat-9, Tomcat-8, Tomcat-7, Tomcat-6)
@@ -45,7 +45,7 @@ tar xzf oneinstack-full.tar.gz
 cd oneinstack 
 ```
 
-If you disconnect during installation, you can execute the command `screen -r oneinstack` to reconnect to the install window
+If you disconnect during installation, you can execute the command `screen -r lnmp` to reconnect to the install window
 ```bash
 screen -S oneinstack 
 ```

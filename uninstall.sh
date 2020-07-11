@@ -38,7 +38,7 @@ Show_Help() {
   --postgresql                  Uninstall PostgreSQL
   --mongodb                     Uninstall MongoDB
   --php                         Uninstall PHP (PATH: ${php_install_dir})
-  --mphp_ver [53~73]            Uninstall another PHP version (PATH: ${php_install_dir}\${mphp_ver})
+  --mphp_ver [53~74]            Uninstall another PHP version (PATH: ${php_install_dir}\${mphp_ver})
   --allphp                      Uninstall all PHP
   --phpcache                    Uninstall PHP opcode cache
   --php_extensions [ext name]   Uninstall PHP extensions, include zendguardloader,ioncube,
@@ -100,7 +100,7 @@ while :; do
       ;;
     --mphp_ver)
       mphp_ver=$2; mphp_flag=y; shift 2
-      [[ ! "${mphp_ver}" =~ ^5[3-6]$|^7[0-3]$ ]] && { echo "${CWARNING}mphp_ver input error! Please only input number 53~73${CEND}"; exit 1; }
+      [[ ! "${mphp_ver}" =~ ^5[3-6]$|^7[0-4]$ ]] && { echo "${CWARNING}mphp_ver input error! Please only input number 53~74${CEND}"; exit 1; }
       ;;
     --allphp)
       allphp_flag=y; shift 1
@@ -288,7 +288,7 @@ Print_ALLPHP() {
   [ -e "${php_install_dir}" ] && echo ${php_install_dir}
   [ -e "/etc/init.d/php-fpm" ] && echo /etc/init.d/php-fpm
   [ -e "/lib/systemd/system/php-fpm.service" ] && echo /lib/systemd/system/php-fpm.service
-  for php_ver in 53 54 55 56 70 71 72 73; do
+  for php_ver in 53 54 55 56 70 71 72 73 74; do
     [ -e "${php_install_dir}${php_ver}" ] && echo ${php_install_dir}${php_ver}
     [ -e "/etc/init.d/php${php_ver}-fpm" ] && echo /etc/init.d/php${php_ver}-fpm
     [ -e "/lib/systemd/system/php${php_ver}-fpm.service" ] && echo /lib/systemd/system/php${php_ver}-fpm.service
@@ -297,6 +297,7 @@ Print_ALLPHP() {
   [ -e "${gmagick_install_dir}" ] && echo ${gmagick_install_dir}
   [ -e "${curl_install_dir}" ] && echo ${curl_install_dir}
   [ -e "${freetype_install_dir}" ] && echo ${freetype_install_dir}
+  [ -e "${libiconv_install_dir}" ] && echo ${libiconv_install_dir}
 }
 
 Uninstall_PHP() {
@@ -319,7 +320,7 @@ Uninstall_ALLPHP() {
   [ -e "${apache_install_dir}/conf/httpd.conf" ] && [ -n "`grep libphp ${apache_install_dir}/conf/httpd.conf`" ] && sed -i '/libphp/d' ${apache_install_dir}/conf/httpd.conf
   [ -e "${php_install_dir}" ] && { rm -rf ${php_install_dir}; echo "${CMSG}PHP uninstall completed! ${CEND}"; }
   sed -i "s@${php_install_dir}/bin:@@" /etc/profile
-  for php_ver in 53 54 55 56 70 71 72 73; do
+  for php_ver in 53 54 55 56 70 71 72 73 74; do
     [ -e "/etc/init.d/php${php_ver}-fpm" ] && { service php${php_ver}-fpm stop > /dev/null 2>&1; rm -f /etc/init.d/php${php_ver}-fpm; }
     [ -e "/lib/systemd/system/php${php_ver}-fpm.service" ] && { systemctl stop php${php_ver}-fpm > /dev/null 2>&1; systemctl disable php${php_ver}-fpm > /dev/null 2>&1; rm -f /lib/systemd/system/php${php_ver}-fpm.service; }
     [ -e "${php_install_dir}${php_ver}" ] && { rm -rf ${php_install_dir}${php_ver}; echo "${CMSG}PHP${php_ver} uninstall completed! ${CEND}"; }
@@ -328,6 +329,7 @@ Uninstall_ALLPHP() {
   [ -e "${gmagick_install_dir}" ] && rm -rf ${gmagick_install_dir}
   [ -e "${curl_install_dir}" ] && rm -rf ${curl_install_dir}
   [ -e "${freetype_install_dir}" ] && rm -rf ${freetype_install_dir}
+  [ -e "${libiconv_install_dir}" ] && rm -rf ${libiconv_install_dir}
 }
 
 Uninstall_PHPcache() {

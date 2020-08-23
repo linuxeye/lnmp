@@ -66,7 +66,11 @@ Upgrade_DB() {
         else
           perconaVerStr1=${NEW_db_ver}
         fi
-        DB_filename=Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.${sslLibVer}
+        if [[ "`echo ${NEW_db_ver} | awk -F. '{print $1"."$2}'`" =~ ^8.0$ ]]; then
+           DB_filename=Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.glibc2.12
+        else
+           DB_filename=Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.${sslLibVer}
+        fi
         DB_URL=https://www.percona.com/downloads/Percona-Server-`echo ${NEW_db_ver} | awk -F. '{print $1"."$2}'`/Percona-Server-${NEW_db_ver}/binary/tarball/${DB_filename}.tar.gz
       elif [ "${DB}" == 'MySQL' ]; then
         DB_filename=mysql-${NEW_db_ver}-linux-glibc2.12-${SYS_BIT_b}

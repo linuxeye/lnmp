@@ -179,7 +179,7 @@ Upgrade_OpenResty() {
     ${openresty_install_dir}/nginx/sbin/nginx -V &> $$
     ./configure --prefix=${openresty_install_dir} --user=${run_user} --group=${run_user} --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-openssl=../openssl-${openssl11_ver} --with-pcre=../pcre-${pcre_ver} --with-pcre-jit --with-ld-opt='-ljemalloc -Wl,-u,pcre_version' ${nginx_modules_options}
     make -j ${THREAD}
-    if [ -f "build/nginx-${openresty_ver_tmp}/objs/nginx" ]; then
+    if [ -f "build/nginx-${NEW_openresy_ver%.*}/objs/nginx" ]; then
       /bin/mv ${openresty_install_dir}/nginx/sbin/nginx{,`date +%m%d`}
       make install
       kill -USR2 `cat /var/run/nginx.pid`

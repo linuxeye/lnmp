@@ -126,7 +126,7 @@ Install_PHP53() {
     --with-gettext --enable-zip --enable-soap --disable-debug ${php_modules_options}
   fi
   { [ ${Debian_ver} -ge 10 >/dev/null 2>&1 ] || [ ${Ubuntu_ver} -ge 19 >/dev/null 2>&1 ]; } || sed -i '/^BUILD_/ s/\$(CC)/\$(CXX)/g' Makefile
-  make -j ${THREAD}
+  make ZEND_EXTRA_LIBS='-liconv' -j ${THREAD}
   make install
 
   if [ -e "${php_install_dir}/bin/phpize" ]; then

@@ -66,7 +66,7 @@ Upgrade_DB() {
         else
           perconaVerStr1=${NEW_db_ver}
         fi
-        if [[ "`echo ${NEW_db_ver} | awk -F. '{print $1"."$2}'`" =~ ^8.0$ ]]; then
+        if [[ "`echo ${NEW_db_ver} | awk -F. '{print $1"."$2}'`" =~ ^5.7$|^8.0$ ]]; then
            DB_filename=Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.glibc2.12
         else
            DB_filename=Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.${sslLibVer}

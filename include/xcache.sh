@@ -23,8 +23,8 @@ Install_XCache() {
       if [ -f "${phpExtensionDir}/xcache.so" ]; then
         /bin/cp -R htdocs ${wwwroot_dir}/default/xcache
         popd > /dev/null
-        chown -R ${run_user}.${run_user} ${wwwroot_dir}/default/xcache
-        touch /tmp/xcache;chown ${run_user}.${run_user} /tmp/xcache
+        chown -R ${run_user}.${run_group} ${wwwroot_dir}/default/xcache
+        touch /tmp/xcache;chown ${run_user}.${run_group} /tmp/xcache
         let xcacheCount="${CPU}+1"
         let xcacheSize="${Memory_limit}/2"
         cat > ${php_install_dir}/etc/php.d/04-xcache.ini << EOF

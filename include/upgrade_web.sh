@@ -326,7 +326,7 @@ Upgrade_Tomcat() {
     [[ -d ${tomcat_install_dir}_bak && -d ${tomcat_install_dir} ]] && rm -rf ${tomcat_install_dir}._bak
     service tomcat stop
     /bin/mv ${tomcat_install_dir}{,_bak}
-    /bin/mv apache-tomcat-${NEW_tomcat_ver} ${tomcat_install_dir} && chown -R ${run_user}.${run_user} ${tomcat_install_dir}
+    /bin/mv apache-tomcat-${NEW_tomcat_ver} ${tomcat_install_dir} && chown -R ${run_user}.${run_group} ${tomcat_install_dir}
     if [ -e "${tomcat_install_dir}/conf/server.xml" ]; then
       service tomcat start
       echo "You have ${CMSG}successfully${CEND} upgrade from ${CWARNING}${OLD_tomcat_ver}${CEND} to ${CWARNING}${NEW_tomcat_ver}${CEND}"

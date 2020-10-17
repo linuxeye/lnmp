@@ -39,7 +39,7 @@ DEMO() {
         ;;
     esac
   fi
-  chown -R ${run_user}.${run_user} ${wwwroot_dir}/default
+  chown -R ${run_user}.${run_group} ${wwwroot_dir}/default
   [ -e /bin/systemctl ] && systemctl daemon-reload
   popd > /dev/null
 }

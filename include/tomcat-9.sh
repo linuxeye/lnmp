@@ -11,8 +11,10 @@
 Install_Tomcat9() {
   pushd ${oneinstack_dir}/src > /dev/null
   . /etc/profile
+  id -g ${run_group} >/dev/null 2>&1
+  [ $? -ne 0 ] && groupadd ${run_group}
   id -u ${run_user} >/dev/null 2>&1
-  [ $? -ne 0 ] && useradd -M -s /bin/bash ${run_user} || { [ -z "$(grep ^${run_user} /etc/passwd | grep '/bin/bash')" ] && usermod -s /bin/bash ${run_user}; }
+  [ $? -ne 0 ] && useradd -g ${run_group} -M -s /bin/bash ${run_user} || { [ -z "$(grep ^${run_user} /etc/passwd | grep '/bin/bash')" ] && usermod -g ${run_group} -s /bin/bash ${run_user}; }
 
   # install apr
   if [ ! -e "${apr_install_dir}/bin/apr-1-config" ]; then
@@ -127,7 +129,7 @@ EOF
 monitorRole  $(cat /dev/urandom | head -1 | md5sum | head -c 8)
 # controlRole   R&D
 EOF
-    chown -R ${run_user}.${run_user} ${tomcat_install_dir}
+    chown -R ${run_user}.${run_group} ${tomcat_install_dir}
     /bin/cp ${oneinstack_dir}/init.d/Tomcat-init /etc/init.d/tomcat
     sed -i "s@JAVA_HOME=.*@JAVA_HOME=${JAVA_HOME}@" /etc/init.d/tomcat
     sed -i "s@^CATALINA_HOME=.*@CATALINA_HOME=${tomcat_install_dir}@" /etc/init.d/tomcat

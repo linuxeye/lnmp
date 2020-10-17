@@ -10,8 +10,10 @@
 
 Install_PureFTPd() {
   pushd ${oneinstack_dir}/src > /dev/null
+  id -g ${run_group} >/dev/null 2>&1
+  [ $? -ne 0 ] && groupadd ${run_group}
   id -u ${run_user} >/dev/null 2>&1
-  [ $? -ne 0 ] && useradd -M -s /sbin/nologin ${run_user}
+  [ $? -ne 0 ] && useradd -g ${run_group} -M -s /sbin/nologin ${run_user}
 
   tar xzf pure-ftpd-${pureftpd_ver}.tar.gz
   pushd pure-ftpd-${pureftpd_ver} > /dev/null

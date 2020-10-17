@@ -145,7 +145,7 @@ UserAdd() {
   USER
   [ -e "${Passwdfile}" ] && [ -n "`grep ^${User}: ${Passwdfile}`" ] && { echo "${CQUESTION}[${User}] is already existed! ${CEND}"; exit 1; }
   PASSWORD;DIRECTORY
-  ${FTP_bin} useradd ${User} -f ${Passwdfile} -u ${run_user} -g ${run_user} -d ${Directory} -m < ${FTP_tmp_passfile}
+  ${FTP_bin} useradd ${User} -f ${Passwdfile} -u ${run_user} -g ${run_group} -d ${Directory} -m < ${FTP_tmp_passfile}
   ${FTP_bin} mkdb ${Puredbfile} -f ${Passwdfile} > /dev/null 2>&1
   echo "#####################################"
   echo

@@ -10,8 +10,10 @@
 
 Install_Apache22() {
   pushd ${oneinstack_dir}/src > /dev/null
+  id -g ${run_group} >/dev/null 2>&1
+  [ $? -ne 0 ] && groupadd ${run_group}
   id -u ${run_user} >/dev/null 2>&1
-  [ $? -ne 0 ] && useradd -M -s /sbin/nologin ${run_user}
+  [ $? -ne 0 ] && useradd -g ${run_group} -M -s /sbin/nologin ${run_user}
   tar xzf httpd-${apache22_ver}.tar.gz
   pushd httpd-${apache22_ver} > /dev/null
   [ ! -d "${apache_install_dir}" ] && mkdir -p ${apache_install_dir}
@@ -46,7 +48,7 @@ Install_Apache22() {
   fi
 
   sed -i "s@^User daemon@User ${run_user}@" ${apache_install_dir}/conf/httpd.conf
-  sed -i "s@^Group daemon@Group ${run_user}@" ${apache_install_dir}/conf/httpd.conf
+  sed -i "s@^Group daemon@Group ${run_group}@" ${apache_install_dir}/conf/httpd.conf
   if [[ ! ${nginx_option} =~ ^[1-3]$ ]] && [ ! -e "${web_install_dir}/sbin/nginx" ]; then
     sed -i 's/^#ServerName www.example.com:80/ServerName 0.0.0.0:80/' ${apache_install_dir}/conf/httpd.conf
     TMP_PORT=80

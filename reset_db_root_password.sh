@@ -90,7 +90,7 @@ Reset_force_dbrootpwd() {
   DB_Ver="`${db_install_dir}/bin/mysql_config --version`"
   echo "${CMSG}Stopping MySQL...${CEND}"
   service mysqld stop > /dev/null 2>&1
-  while [ -n "`ps -ef | grep mysql | grep -v grep | awk '{print $2}'`" ]; do
+  while [ -n "`ps -ef | grep mysqld | grep -v grep | awk '{print $2}'`" ]; do
     sleep 1
   done
   echo "${CMSG}skip grant tables...${CEND}"
@@ -112,10 +112,10 @@ EOF
   fi
   if [ $? -eq 0 ]; then
     killall mysqld
-    while [ -n "`ps -ef | grep mysql | grep -v grep | awk '{print $2}'`" ]; do
+    while [ -n "`ps -ef | grep mysqld | grep -v grep | awk '{print $2}'`" ]; do
       sleep 1
     done
-    [ -n "`ps -ef | grep mysql | grep -v grep | awk '{print $2}'`" ] && ps -ef | grep mysql | grep -v grep | awk '{print $2}' | xargs kill -9 > /dev/null 2>&1
+    [ -n "`ps -ef | grep mysqld | grep -v grep | awk '{print $2}'`" ] && ps -ef | grep mysqld | grep -v grep | awk '{print $2}' | xargs kill -9 > /dev/null 2>&1
     service mysqld start > /dev/null 2>&1
     sed -i "s+^dbrootpwd.*+dbrootpwd='${New_dbrootpwd}'+" ./options.conf
     [ -e ~/ReadMe ] && sed -i "s+^MySQL root password:.*+MySQL root password: ${New_dbrootpwd}+"  ~/ReadMe

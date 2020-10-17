@@ -18,9 +18,11 @@ printf "
 #######################################################################
 "
 # Check if user is root
+# shellcheck disable=SC2046
 [ $(id -u) != '0' ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
 
 oneinstack_dir=$(dirname "`readlink -f $0`")
+# shellcheck disable=SC2164
 pushd ${oneinstack_dir} > /dev/null
 
 . ./versions.txt
@@ -40,6 +42,7 @@ pushd ${oneinstack_dir} > /dev/null
 
 . ./include/panel.sh
 
+# shellcheck disable=SC2154
 Show_Help() {
   echo
   echo "Usage: $0  command ...
@@ -146,7 +149,9 @@ What Are You Doing?
         3)
           ACTION_FUN
           if [ "${install_flag}" = 'y' ]; then
+            # shellcheck disable=SC2154
             [ -e "${nginx_install_dir}/sbin/nginx" ] && Nginx_lua_waf
+            # shellcheck disable=SC2154
             [ -e "${tengine_install_dir}/sbin/nginx" ] && Tengine_lua_waf
             enable_lua_waf
           elif [ "${uninstall_flag}" = 'y' ]; then

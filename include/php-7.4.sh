@@ -92,8 +92,10 @@ Install_PHP74() {
     fi
   fi
 
+  id -g ${run_group} >/dev/null 2>&1
+  [ $? -ne 0 ] && groupadd ${run_group}
   id -u ${run_user} >/dev/null 2>&1
-  [ $? -ne 0 ] && useradd -M -s /sbin/nologin ${run_user}
+  [ $? -ne 0 ] && useradd -g ${run_group} -M -s /sbin/nologin ${run_user}
 
   tar xzf php-${php74_ver}.tar.gz
   pushd php-${php74_ver} > /dev/null
@@ -115,7 +117,7 @@ Install_PHP74() {
   else
     ./configure --prefix=${php_install_dir} --with-config-file-path=${php_install_dir}/etc \
     --with-config-file-scan-dir=${php_install_dir}/etc/php.d \
-    --with-fpm-user=${run_user} --with-fpm-group=${run_user} --enable-fpm ${phpcache_arg} --disable-fileinfo \
+    --with-fpm-user=${run_user} --with-fpm-group=${run_group} --enable-fpm ${phpcache_arg} --disable-fileinfo \
     --enable-mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
     --with-iconv-dir=${libiconv_install_dir} --with-freetype --with-jpeg --with-zlib \
     --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
@@ -220,10 +222,10 @@ listen = /dev/shm/php-cgi.sock
 listen.backlog = -1
 listen.allowed_clients = 127.0.0.1
 listen.owner = ${run_user}
-listen.group = ${run_user}
+listen.group = ${run_group}
 listen.mode = 0666
 user = ${run_user}
-group = ${run_user}
+group = ${run_group}
 
 pm = dynamic
 pm.max_children = 12

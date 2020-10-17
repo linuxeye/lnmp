@@ -33,7 +33,8 @@ Show_Help() {
   --help, -h                  Show this help message
   --quiet, -q                 quiet operation
   --list, -l                  List Virtualhost
-  --mphp_ver [53~73]          Use another PHP version (PATH: /usr/local/php${mphp_ver})
+  --mphp_ver [53~74]          Use another PHP version (PATH: /usr/local/php${mphp_ver})
+  --proxy                     Use proxy
   --add                       Add Virtualhost
   --delete, --del             Delete Virtualhost
   --httponly                  Use HTTP Only
@@ -44,7 +45,7 @@ Show_Help() {
 }
 
 ARG_NUM=$#
-TEMP=`getopt -o hql --long help,quiet,list,mphp_ver:,add,delete,del,httponly,selfsigned,letsencrypt,dnsapi -- "$@" 2>/dev/null`
+TEMP=`getopt -o hql --long help,quiet,list,proxy,mphp_ver:,add,delete,del,httponly,selfsigned,letsencrypt,dnsapi -- "$@" 2>/dev/null`
 [ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && Show_Help && exit 1
 eval set -- "${TEMP}"
 while :; do
@@ -61,7 +62,10 @@ while :; do
       ;;
     --mphp_ver)
       mphp_ver=$2; mphp_flag=y; shift 2
-      [[ ! "${mphp_ver}" =~ ^5[3-6]$|^7[0-3]$ ]] && { echo "${CWARNING}mphp_ver input error! Please only input number 53~73${CEND}"; unset mphp_ver mphp_flag; }
+      [[ ! "${mphp_ver}" =~ ^5[3-6]$|^7[0-4]$ ]] && { echo "${CWARNING}mphp_ver input error! Please only input number 53~74${CEND}"; unset mphp_ver mphp_flag; }
+      ;;
+    --proxy)
+      proxy_flag=y; shift 1
       ;;
     --add)
       add_flag=y; shift 1
@@ -209,6 +213,7 @@ If you enter '.', the field will be left blank.
     echo
     read -e -p "Country Name (2 letter code) [CN]: " SELFSIGNEDSSL_C
     SELFSIGNEDSSL_C=${SELFSIGNEDSSL_C:-CN}
+    # shellcheck disable=SC2104
     [ ${#SELFSIGNEDSSL_C} != 2 ] && { echo "${CWARNING}input error, You must input 2 letter code country name${CEND}"; continue; }
     echo
     read -e -p "State or Province Name (full name) [Shanghai]: " SELFSIGNEDSSL_ST
@@ -321,6 +326,18 @@ Print_SSL() {
   fi
 }
 
+Input_Add_proxy() {
+  while :; do echo
+    read -e -p "Please input the correct proxy_pass: " Proxy_Pass
+    if [ -z "$(echo $Proxy_Pass | grep -E '^http://|https://')" ]; then
+      echo "${CFAILURE}input error! Please only input example http://192.168.1.1:8080${CEND}"
+    else
+      echo "proxy_pass=${Proxy_Pass}"
+      break
+    fi
+  done
+}
+
 Input_Add_domain() {
   if [ "${sslquiet_flag}" != 'y' ]; then
     while :;do
@@ -431,25 +448,26 @@ What Are You Doing?
   else
     echo "domain=${domain}"
   fi
-
-  while :; do echo
-    echo "Please input the directory for the domain:${domain} :"
-    read -e -p "(Default directory: ${wwwroot_dir}/${domain}): " vhostdir
-    if [ -n "${vhostdir}" -a -z "$(echo ${vhostdir} | grep '^/')" ]; then
-      echo "${CWARNING}input error! Press Enter to continue...${CEND}"
-    else
-      if [ -z "${vhostdir}" ]; then
-        vhostdir="${wwwroot_dir}/${domain}"
-        echo "Virtual Host Directory=${CMSG}${vhostdir}${CEND}"
+  if [[ -z ${proxy_flag} || "${proxy_flag}" != 'y' ]]; then
+    while :; do echo
+      echo "Please input the directory for the domain:${domain} :"
+      read -e -p "(Default directory: ${wwwroot_dir}/${domain}): " vhostdir
+      if [ -n "${vhostdir}" -a -z "$(echo ${vhostdir} | grep '^/')" ]; then
+        echo "${CWARNING}input error! Press Enter to continue...${CEND}"
+      else
+        if [ -z "${vhostdir}" ]; then
+          vhostdir="${wwwroot_dir}/${domain}"
+          echo "Virtual Host Directory=${CMSG}${vhostdir}${CEND}"
+        fi
+        echo
+        echo "Create Virtul Host directory......"
+        mkdir -p ${vhostdir}
+        echo "set permissions of Virtual Host directory......"
+        chown -R ${run_user}.${run_group} ${vhostdir}
+        break
       fi
-      echo
-      echo "Create Virtul Host directory......"
-      mkdir -p ${vhostdir}
-      echo "set permissions of Virtual Host directory......"
-      chown -R ${run_user}.${run_user} ${vhostdir}
-      break
-    fi
-  done
+    done
+  fi
 
   while :; do echo
     read -e -p "Do you want to add more domain name? [y/n]: " moredomainame_flag
@@ -575,7 +593,6 @@ Nginx_rewrite() {
     fi
     echo "You choose rewrite=${CMSG}$rewrite${CEND}"
     [ "${NGX_FLAG}" == 'php' -a "${rewrite}" == "joomla" ] && NGX_CONF=$(echo -e "location ~ \\.php\$ {\n    #fastcgi_pass remote_php_ip:9000;\n    fastcgi_pass unix:/dev/shm/php${mphp_ver}-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi.conf;\n  }")
-    #[ "${NGX_FLAG}" == 'php' ] && [[ "${rewrite}" =~ ^codeigniter$|^thinkphp$|^pathinfo$ ]] && NGX_CONF=$(echo -e "location ~ [^/]\.php(/|\$) {\n    try_files \$uri =404;\n    #fastcgi_pass remote_php_ip:9000;\n    fastcgi_pass unix:/dev/shm/php${mphp_ver}-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi.conf;\n    set \$real_script_name \$fastcgi_script_name;\n    if (\$fastcgi_script_name ~ \"^(.+?\.php)(/.+)\$\") {\n      set \$real_script_name \$1;\n      set \$path_info \$2;\n    }\n    fastcgi_param SCRIPT_FILENAME \$document_root\$real_script_name;\n    fastcgi_param SCRIPT_NAME \$real_script_name;\n    fastcgi_param PATH_INFO \$path_info;\n  }")
     [ "${NGX_FLAG}" == 'php' ] && [[ "${rewrite}" =~ ^codeigniter$|^thinkphp$|^pathinfo$ ]] && NGX_CONF=$(echo -e "location ~ [^/]\.php(/|\$) {\n    #fastcgi_pass remote_php_ip:9000;\n    fastcgi_pass unix:/dev/shm/php${mphp_ver}-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi.conf;\n    fastcgi_split_path_info ^(.+?\.php)(/.*)\$;\n    set \$path_info \$fastcgi_path_info;\n    fastcgi_param PATH_INFO \$path_info;\n    try_files \$fastcgi_script_name =404;    \n  }")
     [ "${NGX_FLAG}" == 'php' -a "${rewrite}" == "typecho" ] && NGX_CONF=$(echo -e "location ~ .*\.php(\/.*)*\$ {\n    #fastcgi_pass remote_php_ip:9000;\n    fastcgi_pass unix:/dev/shm/php${mphp_ver}-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi.conf;\n    set \$path_info \"\";\n    set \$real_script_name \$fastcgi_script_name;\n    if (\$fastcgi_script_name ~ \"^(.+?\.php)(/.+)\$\") {\n      set \$real_script_name \$1;\n      set \$path_info \$2;\n    }\n    fastcgi_param SCRIPT_FILENAME \$document_root\$real_script_name;\n    fastcgi_param SCRIPT_NAME \$real_script_name;\n    fastcgi_param PATH_INFO \$path_info;\n  }")
     if [[ ! "${rewrite}" =~ ^magento2$|^pathinfo$ ]]; then
@@ -763,6 +780,97 @@ EOF
       sed -i "s@^  server_name.*;@&\n  ssl_certificate ${PATH_SSL}/${domain}.crt;@" ${web_install_dir}/conf/vhost/${domain}.conf
     fi
   fi
+
+  [ "${https_flag}" == 'y' ] && sed -i "s@^  root.*;@&\n  if (\$ssl_protocol = \"\") { return 301 https://\$host\$request_uri; }@" ${web_install_dir}/conf/vhost/${domain}.conf
+
+  echo
+  ${web_install_dir}/sbin/nginx -t
+  if [ $? == 0 ]; then
+    echo "Reload Nginx......"
+    ${web_install_dir}/sbin/nginx -s reload
+  else
+    rm -f ${web_install_dir}/conf/vhost/${domain}.conf
+    echo "Create virtualhost ... [${CFAILURE}FAILED${CEND}]"
+    exit 1
+  fi
+
+  printf "
+#######################################################################
+#       OneinStack for CentOS/RedHat 6+ Debian 8+ and Ubuntu 14+      #
+#       For more information please visit https://oneinstack.com      #
+#######################################################################
+"
+  echo "$(printf "%-30s" "Your domain:")${CMSG}${domain}${CEND}"
+  echo "$(printf "%-30s" "Virtualhost conf:")${CMSG}${web_install_dir}/conf/vhost/${domain}.conf${CEND}"
+  echo "$(printf "%-30s" "Directory of:")${CMSG}${vhostdir}${CEND}"
+  [ "${rewrite_flag}" == 'y' -a "${rewrite}" != 'magento2' -a "${rewrite}" != 'pathinfo' ] && echo "$(printf "%-30s" "Rewrite rule:")${CMSG}${web_install_dir}/conf/rewrite/${rewrite}.conf${CEND}"
+  Print_SSL
+}
+
+Create_nginx_proxy_conf() {
+  [ ! -d ${web_install_dir}/conf/vhost ] && mkdir ${web_install_dir}/conf/vhost
+  cat > ${web_install_dir}/conf/vhost/${domain}.conf << EOF
+server {
+  ${Nginx_conf}
+  server_name ${domain}${moredomainame};
+  ${Nginx_log}
+  index index.html index.htm index.php;
+  ${Nginx_redirect}
+  location / {
+    proxy_pass ${Proxy_Pass};
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    proxy_set_header Host \$http_host;
+    proxy_set_header X-NginX-Proxy true;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade \$http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_max_temp_file_size 0;
+  }
+
+  #error_page 404 /404.html;
+  #error_page 502 /502.html;
+  ${anti_hotlinking}
+
+  location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|mp4|ico)$ {
+    expires 30d;
+    access_log off;
+  }
+  location ~ .*\.(js|css)?$ {
+    expires 7d;
+    access_log off;
+  }
+  location ~ /(\.user\.ini|\.ht|\.git|\.svn|\.project|LICENSE|README\.md) {
+    deny all;
+  }
+}
+EOF
+
+  [ "${redirect_flag}" == 'y' ] && sed -i "s@^  root.*;@&\n  if (\$host != ${domain}) {  return 301 \$scheme://${domain}\$request_uri;  }@" ${web_install_dir}/conf/vhost/${domain}.conf
+
+  if [ "${nginx_ssl_flag}" == 'y' ]; then
+    sed -i "s@^  listen 80;@&\n  listen ${LISTENOPT};@" ${web_install_dir}/conf/vhost/${domain}.conf
+    sed -i "s@^  server_name.*;@&\n  ssl_stapling_verify on;@" ${web_install_dir}/conf/vhost/${domain}.conf
+    sed -i "s@^  server_name.*;@&\n  ssl_stapling on;@" ${web_install_dir}/conf/vhost/${domain}.conf
+    sed -i "s@^  server_name.*;@&\n  add_header Strict-Transport-Security max-age=15768000;@" ${web_install_dir}/conf/vhost/${domain}.conf
+    sed -i "s@^  server_name.*;@&\n  ssl_buffer_size 1400;@" ${web_install_dir}/conf/vhost/${domain}.conf
+    sed -i "s@^  server_name.*;@&\n  ssl_session_cache builtin:1000 shared:SSL:10m;@" ${web_install_dir}/conf/vhost/${domain}.conf
+    sed -i "s@^  server_name.*;@&\n  ssl_session_timeout 10m;@" ${web_install_dir}/conf/vhost/${domain}.conf
+    sed -i "s@^  server_name.*;@&\n  ssl_prefer_server_ciphers on;@" ${web_install_dir}/conf/vhost/${domain}.conf
+    sed -i "s@^  server_name.*;@&\n  ssl_ciphers TLS13-AES-256-GCM-SHA384:TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-128-GCM-SHA256:TLS13-AES-128-CCM-8-SHA256:TLS13-AES-128-CCM-SHA256:EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:\!MD5;@" ${web_install_dir}/conf/vhost/${domain}.conf
+    sed -i "s@^  server_name.*;@&\n  ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;@" ${web_install_dir}/conf/vhost/${domain}.conf
+    sed -i "s@^  server_name.*;@&\n  ssl_certificate_key ${PATH_SSL}/${domain}.key;@" ${web_install_dir}/conf/vhost/${domain}.conf
+    sed -i "s@^  server_name.*;@&\n  ssl_certificate ${PATH_SSL}/${domain}.crt;@" ${web_install_dir}/conf/vhost/${domain}.conf
+  fi
+
+  if [ "${anti_hotlinking_flag}" == 'y' ]; then
+      sed -i "s@^  root.*;@&\n  }@" ${web_install_dir}/conf/vhost/${domain}.conf
+      sed -i "s@^  root.*;@&\n    }@" ${web_install_dir}/conf/vhost/${domain}.conf
+      sed -i "s@^  root.*;@&\n      return 403;@" ${web_install_dir}/conf/vhost/${domain}.conf
+      sed -i "s@^  root.*;@&\n      rewrite ^/ http://www.linuxeye.com/403.html;@" ${web_install_dir}/conf/vhost/${domain}.conf
+      sed -i "s@^  root.*;@&\n    if (\$invalid_referer) {@" ${web_install_dir}/conf/vhost/${domain}.conf
+      sed -i "s@^  root.*;@&\n    valid_referers none blocked ${domain_allow_all};@" ${web_install_dir}/conf/vhost/${domain}.conf
+      sed -i "s@^  root.*;@&\n  location ~ .*\.(wma|wmv|asf|mp3|mmf|zip|rar|jpg|gif|png|swf|flv|mp4)\$ {@" ${web_install_dir}/conf/vhost/${domain}.conf
+    fi
 
   [ "${https_flag}" == 'y' ] && sed -i "s@^  root.*;@&\n  if (\$ssl_protocol = \"\") { return 301 https://\$host\$request_uri; }@" ${web_install_dir}/conf/vhost/${domain}.conf
 
@@ -986,13 +1094,18 @@ Add_Vhost() {
     Choose_ENV
     Input_Add_domain
     Nginx_anti_hotlinking
-    Nginx_rewrite
-    if [ "${NGX_FLAG}" == "java" ]; then
-      Nginx_log
-      Create_nginx_tomcat_conf
-    else
-      Nginx_log
-      Create_nginx_phpfpm_hhvm_conf
+    if [ "${proxy_flag}" == "y" ]; then
+        Input_Add_proxy
+        Create_nginx_proxy_conf
+      else
+        Nginx_rewrite
+        if [ "${NGX_FLAG}" == "java" ]; then
+          Nginx_log
+          Create_nginx_tomcat_conf
+        else
+          Nginx_log
+          Create_nginx_phpfpm_hhvm_conf
+        fi
     fi
   elif [ ! -e "${web_install_dir}/sbin/nginx" -a -e "${apache_install_dir}/bin/httpd" ]; then
     Choose_ENV
@@ -1196,7 +1309,7 @@ List_Vhost() {
 if [ ${ARG_NUM} == 0 ]; then
   Add_Vhost
 else
-  [ "${add_flag}" == 'y' -o "${sslquiet_flag}" == 'y' ] && Add_Vhost
+  [ "${add_flag}" == 'y' -o "${proxy_flag}" == 'y' -o "${sslquiet_flag}" == 'y' ] && Add_Vhost
   [ "${list_flag}" == 'y' ] && List_Vhost
   [ "${delete_flag}" == 'y' ] && { Del_NGX_Vhost; Del_Apache_Vhost; Del_Tomcat_Vhost; }
 fi

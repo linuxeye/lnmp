@@ -363,7 +363,7 @@ checkDownload() {
         # Precona 5.7
         if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download Percona 5.7 binary package..."
-          FILE_NAME=Percona-Server-${percona57_ver}-Linux.${SYS_BIT_b}.${sslLibVer}.tar.gz
+          FILE_NAME=Percona-Server-${percona57_ver}-Linux.${SYS_BIT_b}.glibc2.12.tar.gz
           DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_ver}/binary/tarball
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download Percona 5.7 source package..."

@@ -7,6 +7,7 @@ pushd ${oneinstack_dir} >/dev/null
 . ./include/check_os.sh
 . ./include/get_char.sh
 
+
 Show_Help() {
 	echo
 	echo "Usage: $0  command ...[parameters]....
@@ -173,8 +174,8 @@ Create_SSL() {
 		else
 			if [ "${nginx_ssl_flag}" == 'y' ]; then
 				[ ! -d ${web_install_dir}/conf/vhost ] && mkdir ${web_install_dir}/conf/vhost
-				echo "server {  server_name ${domain}${moredomainame};  root ${vhostdir};  access_log off; }" >${web_install_dir}/conf/vhost/${domain}.conf
-				${web_install_dir}/sbin/nginx -s reload
+        echo "server {  server_name ${domain}${moredomainame};  root ${vhostdir};  access_log off; }" > ${web_install_dir}/conf/vhost/${domain}.conf
+        ${web_install_dir}/sbin/nginx -s reload
 			fi
 			if [ "${apache_ssl_flag}" == 'y' ]; then
 				[ ! -d ${apache_install_dir}/conf/vhost ] && mkdir ${apache_install_dir}/conf/vhost

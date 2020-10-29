@@ -1,7 +1,6 @@
 <?php
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
-use DotEnv\DotEnv;
 /**
  * @uses curl_init exec, allow_url_fopen
  * @author airan.talles@gmail.com

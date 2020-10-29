@@ -12,7 +12,7 @@ use Monolog\Formatter\JsonFormatter;
 require "vendor/autoload.php";
 
 function jssx($data){
-    return $data;
+    return json_encode($data);
 }
 
 /**
@@ -56,7 +56,7 @@ $dotenv->load();
 
 
 $cdir = __DIR__ . '/tmp/'.date('dmY');
-$cfile = $cdir.'/'.md5(date('dmY')).'.json';
+$cfile = $cdir.'/'.md5(date('dmYhis')).'_TS_'.time().'.json';
 echo "Working Log: {$cfile} \n";
 if(!file_exists($cdir)){
     mkdir($cdir);

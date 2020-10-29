@@ -56,7 +56,7 @@ $dotenv->load();
 
 
 $cdir = __DIR__ . '/tmp/'.date('dmY');
-$cfile = $cdir.'/'.md5(date('dmYHis')).'.log';
+$cfile = $cdir.'/'.md5(date('dmY')).'.json';
 echo "Working Log: {$cfile} \n";
 if(!file_exists($cdir)){
     mkdir($cdir);

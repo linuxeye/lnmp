@@ -1,6 +1,8 @@
 <?php
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Formatter\JsonFormatter;
 /**
  * @uses curl_init exec, allow_url_fopen
  * @author airan.talles@gmail.com
@@ -8,6 +10,11 @@ use Monolog\Handler\StreamHandler;
  * Simple script to sync vhosts programatically
  */
 require "vendor/autoload.php";
+
+function jssx($data){
+    return $data;
+}
+
 /**
  * Get remote content
  *
@@ -48,9 +55,24 @@ $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
 
+$cdir = __DIR__ . '/tmp/'.date('dmY');
+$cfile = $cdir.'/'.md5(date('dmYHis')).'.log';
+echo "Working Log: {$cfile} \n";
+if(!file_exists($cdir)){
+    mkdir($cdir);
+    touch($cfile,time());
+}
+if(!file_exists($cfile)){
+    touch($cfile,time());
+}
 // create a log channel
 $log = new Logger('domainHandler');
-$log->pushHandler(new StreamHandler('tmp/domainHandler.log', Logger::WARNING) );
+    // finally, create a formatter
+$formatter = new JsonFormatter();
+$stream = new StreamHandler($cfile, Logger::DEBUG);
+$stream->setFormatter($formatter);
+$log->pushHandler($stream);
+
 $lnmpInstallDir = $_ENV['INSTALL_DIR'];
 
 /**
@@ -87,24 +109,20 @@ if($argv[1]=='syncDomains') {
     /**
      * @var string $remoteDomains 
      */
-
-    
     $remoteDomains = getRemoteContent($_ENV['DOMAINS_API']);
     /**
      * @var array $enabledDomains
      * store active domains on laravel multitenancy 
      */
+    if(!(strpos($remoteHeader[0],'200'))){
+        $log->emergency(jssx(['message'=>'WebServer Error','body'=>$remoteDomains]));
 
-     
-
-     if(!(strpos($remoteHeader[0],'200'))){
-        die('WebServer Error'); 
-     }
-
-
+    }
     if((mb_strpos($remoteDomains,'cloudflare'))){
+        $log->emergency(jssx(['message'=>'CloudFlare Error','body'=>$remoteDomains]));
         die('CloudFlare Error');
     }
+
     $enabledDomains=[];
     $enableDomainsData = explode("\n",$remoteDomains);
     if(is_array($enableDomainsData) and !empty($enableDomainsData)){
@@ -113,9 +131,8 @@ if($argv[1]=='syncDomains') {
                 $enabledDomains[]=$enabledDomain;            
             }
         }
-
+        
         foreach ($enabledDomains as $enabledDomain){
-    
             /**
              * Check if domains is present in active vhosts before vhost -add
              */
@@ -124,12 +141,18 @@ if($argv[1]=='syncDomains') {
                 /**
                  * @var string $enableDomainData
                  * Server vhost response
-                 */
-                $log->info(print_r($enableDomainData,true));
+                 */ 
+                $log->info(jssx(['action'=>'addDomain','domain'=>$enabledDomain,'body'=>$enableDomainData]));
+            }else{
+                $log->debug(jssx(['action'=>'bypassAdd','domain'=>$enabledDomain]));
+
             }
         }
     
-    } 
+    } else{
+        $log->error(jssx(['message'=>'Domains Error','body'=>$remoteDomains]));
+        die('Domains Error');
+    }
 
     /**
      * Refresh ServerVhosts
@@ -148,8 +171,9 @@ if($argv[1]=='syncDomains') {
     foreach($activeDomains as $actD){
         if(!(in_array($actD,$enabledDomains))) {
             exec('sh '.$lnmpInstallDir.'vhostHandler.sh --del --domain '.$actD, $deleteDomainData);
-            $log->info(print_r($deleteDomainData,true));
-
+            $log->info(jssx(['action'=>'deleteDomain','domain'=>$actD,'body'=>$deleteDomainData]));
+        }else{
+            $log->debug(jssx(['action'=>'bypassDel','domain'=>$actD]));
         }
     } 
 } 

@@ -83,15 +83,28 @@ if($argv[1]=='syncDomains') {
             }
         }
     }
-          /**
+    $remoteHeader = get_headers($_ENV['DOMAINS_API'],1);
+    /**
      * @var string $remoteDomains 
      */
+
+    
     $remoteDomains = getRemoteContent($_ENV['DOMAINS_API']);
     /**
      * @var array $enabledDomains
      * store active domains on laravel multitenancy 
      */
 
+     
+
+     if(!(strpos($remoteHeader[0],'200'))){
+        die('WebServer Error'); 
+     }
+
+
+    if((mb_strpos($remoteDomains,'cloudflare'))){
+        die('CloudFlare Error');
+    }
     $enabledDomains=[];
     $enableDomainsData = explode("\n",$remoteDomains);
     if(is_array($enableDomainsData) and !empty($enableDomainsData)){
@@ -131,7 +144,7 @@ if($argv[1]=='syncDomains') {
             $activeDomains[]=$activeDomain;            
         }
 
-    } 
+    }  
     foreach($activeDomains as $actD){
         if(!(in_array($actD,$enabledDomains))) {
             exec('sh '.$lnmpInstallDir.'vhostHandler.sh --del --domain '.$actD, $deleteDomainData);
@@ -139,5 +152,4 @@ if($argv[1]=='syncDomains') {
 
         }
     } 
-}
-die();
+} 

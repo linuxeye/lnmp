@@ -1,7 +1,4 @@
-# lnmp for Laravel MultiTenancy
-[![PayPal donate button](https://img.shields.io/badge/paypal-donate-green.svg)](https://paypal.me/yeho) 
-[![支付宝捐助按钮](https://img.shields.io/badge/%E6%94%AF%E4%BB%98%E5%AE%9D-%E5%90%91TA%E6%8D%90%E5%8A%A9-green.svg)](https://static.oneinstack.com/images/alipay.png) 
-[![微信捐助按钮](https://img.shields.io/badge/%E5%BE%AE%E4%BF%A1-%E5%90%91TA%E6%8D%90%E5%8A%A9-green.svg)](https://static.oneinstack.com/images/weixin.png)
+[![PayPal donate button](https://img.shields.io/badge/paypal-donate-green.svg)](https://paypal.me/yeho) [![支付宝捐助按钮](https://img.shields.io/badge/%E6%94%AF%E4%BB%98%E5%AE%9D-%E5%90%91TA%E6%8D%90%E5%8A%A9-green.svg)](https://static.oneinstack.com/images/alipay.png) [![微信捐助按钮](https://img.shields.io/badge/%E5%BE%AE%E4%BF%A1-%E5%90%91TA%E6%8D%90%E5%8A%A9-green.svg)](https://static.oneinstack.com/images/weixin.png)
 
 This script is written using the shell, in order to quickly deploy `LEMP`/`LAMP`/`LNMP`/`LNMPA`/`LTMP`(Linux, Nginx/Tengine/OpenResty, MySQL in a production environment/MariaDB/Percona, PHP, JAVA), applicable to CentOS 6 ~ 8(including redhat), Debian 8 ~ 10, Ubuntu 14 ~ 19, Fedora 27+ of 32 and 64.
 
@@ -23,15 +20,6 @@ Script properties:
 - Provide Nginx/Tengine/OpenResty/Apache/Tomcat, MySQL/MariaDB/Percona, PHP, Redis, Memcached, phpMyAdmin upgrade script
 - Provide local,remote(rsync between servers),Aliyun OSS,Qcloud COS,UPYUN,QINIU,Amazon S3,Google Drive and Dropbox backup script
 - Provided under HHVM install CentOS 6,7
-* Thanks @oneinstack for this script and documentation 
-
-# This script have a modification to works on Laravel Multi-Tenancy Env
-Mods properties:
-- options.conf -> laravel_multitenancy config directory
-- vhostHandler.sh programatically domain creation with dryrun and txt output
-- domainHandler.php for external api domain sync open file to read documentation
-
-[!(Tenancy For Laravel)](https://tenancyforlaravel.com)
 
 ## Installation
 
@@ -52,14 +40,14 @@ apt-get -y install wget screen
 #### Download Source and Install
 
 ```bash
-wget https://github.com/tallesairan/lnmp/archive/master.zip
-unzip master.zip
-cd master
+wget http://mirrors.linuxeye.com/oneinstack-full.tar.gz
+tar xzf oneinstack-full.tar.gz
+cd oneinstack 
 ```
 
 If you disconnect during installation, you can execute the command `screen -r lnmp` to reconnect to the install window
 ```bash
-screen -S master 
+screen -S oneinstack 
 ```
 
 If you need to modify the directory (installation, data storage, Nginx logs), modify `options.conf` file before running install.sh
@@ -70,68 +58,42 @@ If you need to modify the directory (installation, data storage, Nginx logs), mo
 ## How to install another PHP version
 
 ```bash
-~/master/install.sh --mphp_ver 54
+~/oneinstack/install.sh --mphp_ver 54
 
 ```
 
 ## How to add Extensions
 
 ```bash
-~/master/addons.sh
+~/oneinstack/addons.sh
 
 ```
 
 ## How to add a virtual host
 
 ```bash
-~/master/vhost.sh
+~/oneinstack/vhost.sh
 ```
 
 ## How to delete a virtual host
 
 ```bash
-~/master/vhost.sh --del
+~/oneinstack/vhost.sh --del
 ```
-## Silent vhost create domain for laravel multi-tenancy
-
-```bash
-~/master/vhostHandler.sh --add --domain example.com
-```
-
-## Silent vhost
-
-```bash
-~/master/vhostHandler.sh --del
-```
-
-##vhostHandler.sh
-vhostHandler.sh is a copy of vhost.sh with silent run + text only output
-how to use ?
- 
-* Add Domain
- vhostHandler.sh --add --domain example.com
-* List Domains
- vhostHandler.sh --list
-* Delete Domain
- vhostHandler.sh --del --domain example.com
-
-domainHandler.php open to see instructions
-* rename .env.example file to .env
- 
 
 ## How to add FTP virtual user
 
 ```bash
-~/master/pureftpd_vhost.sh
+~/oneinstack/pureftpd_vhost.sh
 ```
 
 ## How to backup
 
 ```bash
-~/master/backup_setup.sh    // Backup parameters
-~/master/backup.sh    // Perform the backup immediately
+~/oneinstack/backup_setup.sh    // Backup parameters
+~/oneinstack/backup.sh    // Perform the backup immediately
 crontab -l    // Can be added to scheduled tasks, such as automatic backups every day 1:00
-  0 1 * * * cd ~/master/backup.sh  > /dev/null 2>&1 &
+  0 1 * * * cd ~/oneinstack/backup.sh  > /dev/null 2>&1 &
 ```
 
 ## How to manage service
@@ -187,13 +149,13 @@ service memcached {start|stop|status|restart|reload}
 ## How to upgrade
 
 ```bash
-~/master/upgrade.sh
+~/oneinstack/upgrade.sh
 ```
 
 ## How to uninstall
 
 ```bash
-~/master/uninstall.sh
+~/oneinstack/uninstall.sh
 ```
 
 ## Installation

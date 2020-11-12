@@ -4,3 +4,4 @@ install.log
 error_log
 *.ini
 vendor/*
+.env

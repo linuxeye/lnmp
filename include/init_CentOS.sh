@@ -52,10 +52,10 @@ rm -rf /etc/localtime
 ln -s /usr/share/zoneinfo/${timezone} /etc/localtime
 
 # Set DNS
-#cat > /etc/resolv.conf << EOF
-#nameserver 114.114.114.114
-#nameserver 8.8.8.8
-#EOF
+cat > /etc/resolv.conf << EOF
+nameserver 1.1.1.1
+nameserver 1.0.0.1
+EOF
 
 # ip_conntrack table full dropping packets
 [ ! -e "/etc/sysconfig/modules/iptables.modules" ] && { echo -e "modprobe nf_conntrack\nmodprobe nf_conntrack_ipv4" > /etc/sysconfig/modules/iptables.modules; chmod +x /etc/sysconfig/modules/iptables.modules; }

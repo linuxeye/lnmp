@@ -754,7 +754,7 @@ checkDownload() {
   if [ "${downloadDepsSrc}" == '1' ]; then
     if [ "${PM}" == 'yum' ]; then
       echo "Download htop for CentOS..."
-      src_url=http://hisham.hm/htop/releases/${htop_ver}/htop-${htop_ver}.tar.gz && Download_src
+      src_url=https://dl.bintray.com/htop/source/htop-${htop_ver}.tar.gz && Download_src
     fi
 
     if [ "${CentOS_ver}" == '6' ]; then

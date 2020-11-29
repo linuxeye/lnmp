@@ -1,1 +1,7 @@
 install.log
+.idea/*
+.vscode/*
+error_log
+*.ini
+vendor/*
+.env

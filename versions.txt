@@ -121,7 +121,7 @@ boost_oldver=1.59.0
 
 # Others
 lua_nginx_module_ver=0.10.15
-htop_ver=2.2.0
+htop_ver=3.0.2
 bison_ver=2.7.1
 python_ver=3.6.11
 setuptools_ver=50.3.0

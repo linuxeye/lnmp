@@ -4,7 +4,7 @@
 #
 # Notes: OneinStack for CentOS/RedHat 6+ Debian 8+ and Ubuntu 14+
 #
-# Project home page:
+# Project home page:22
 #       https://oneinstack.com
 #       https://github.com/oneinstack/oneinstack
 

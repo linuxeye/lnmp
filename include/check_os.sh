@@ -23,7 +23,7 @@ command -v lsb_release >/dev/null 2>&1 || { echo "${CFAILURE}${PM} source failed
 if [ -e /etc/redhat-release ]; then
   OS=CentOS
   CentOS_ver=$(lsb_release -sr | awk -F. '{print $1}')
-  [[ "$(lsb_release -is)" =~ ^Aliyun$|^AlibabaCloudEnterpriseServer$ ]] && { CentOS_ver=7; Aliyun_ver=$(lsb_release -rs); }
+  [ -n "$(lsb_release -is | grep -Ei 'Alibaba|Aliyun')" ] && { CentOS_ver=7; Aliyun_ver=$(lsb_release -rs); }
   [[ "$(lsb_release -is)" =~ ^EulerOS$ ]] && { CentOS_ver=7; EulerOS_ver=$(lsb_release -rs); }
   [ "$(lsb_release -is)" == 'Fedora' ] && [ ${CentOS_ver} -ge 19 >/dev/null 2>&1 ] && { CentOS_ver=7; Fedora_ver=$(lsb_release -rs); }
 elif [ -n "$(grep 'Amazon Linux' /etc/issue)" -o -n "$(grep 'Amazon Linux' /etc/os-release)" ]; then

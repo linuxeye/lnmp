@@ -32,9 +32,9 @@ Install_pecl_xdebug() {
         src_url=http://mirrors.linuxeye.com/oneinstack/src/webgrind-master.zip && Download_src
         unzip -q webgrind-master.zip
         /bin/mv webgrind-master ${wwwroot_dir}/default/webgrind
-        [ ! -e /tmp/xdebug ] && { mkdir /tmp/xdebug; chown ${run_user}.${run_group} /tmp/xdebug; }
-        [ ! -e /tmp/webgrind ] && { mkdir /tmp/webgrind; chown ${run_user}.${run_group} /tmp/webgrind; }
-        chown -R ${run_user}.${run_group} ${wwwroot_dir}/default/webgrind
+        [ ! -e /tmp/xdebug ] && { mkdir /tmp/xdebug; chown ${run_user}:${run_group} /tmp/xdebug; }
+        [ ! -e /tmp/webgrind ] && { mkdir /tmp/webgrind; chown ${run_user}:${run_group} /tmp/webgrind; }
+        chown -R ${run_user}:${run_group} ${wwwroot_dir}/default/webgrind
         sed -i 's@static $storageDir.*@static $storageDir = "/tmp/webgrind";@' ${wwwroot_dir}/default/webgrind/config.php
         sed -i 's@static $profilerDir.*@static $profilerDir = "/tmp/xdebug";@' ${wwwroot_dir}/default/webgrind/config.php
         cat > ${php_install_dir}/etc/php.d/08-xdebug.ini << EOF

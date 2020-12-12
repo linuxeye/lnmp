@@ -18,7 +18,7 @@ Install_JDK18() {
   [ ! -e ${JAVA_dir} ] && mkdir -p ${JAVA_dir}
   tar xzf ${JDK_FILE} -C ${JAVA_dir}
   if [ -d "${JDK_PATH}" ]; then
-    chown -R ${run_user}.${run_group} ${JDK_PATH}
+    chown -R ${run_user}:${run_group} ${JDK_PATH}
     /bin/cp ${JDK_PATH}/jre/lib/security/cacerts /etc/ssl/certs/java
     [ -z "`grep ^'export JAVA_HOME=' /etc/profile`" ] && { [ -z "`grep ^'export PATH=' /etc/profile`" ] && echo  "export JAVA_HOME=${JDK_PATH}" >> /etc/profile || sed -i "s@^export PATH=@export JAVA_HOME=${JDK_PATH}\nexport PATH=@" /etc/profile; } || sed -i "s@^export JAVA_HOME=.*@export JAVA_HOME=${JDK_PATH}@" /etc/profile
     [ -z "`grep ^'export CLASSPATH=' /etc/profile`" ] && sed -i "s@export JAVA_HOME=\(.*\)@export JAVA_HOME=\1\nexport CLASSPATH=\$JAVA_HOME/lib/tools.jar:\$JAVA_HOME/lib/dt.jar:\$JAVA_HOME/lib@" /etc/profile

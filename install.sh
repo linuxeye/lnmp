@@ -49,8 +49,8 @@ Show_Help() {
   --apache_option [1-2]       Install Apache server version
   --apache_mode_option [1-2]  Apache2.4 mode, 1(default): php-fpm, 2: mod_php
   --apache_mpm_option [1-3]   Apache2.4 MPM, 1(default): event, 2: prefork, 3: worker
-  --php_option [1-9]          Install PHP version
-  --mphp_ver [53~74]          Install another PHP version (PATH: ${php_install_dir}\${mphp_ver})
+  --php_option [1-10]         Install PHP version
+  --mphp_ver [53~80]          Install another PHP version (PATH: ${php_install_dir}\${mphp_ver})
   --mphp_addons               Only install another PHP addons
   --phpcache_option [1-4]     Install PHP opcode cache, default: 1 opcache
   --php_extensions [ext name] Install PHP extensions, include zendguardloader,ioncube,
@@ -107,12 +107,12 @@ while :; do
       ;;
     --php_option)
       php_option=$2; shift 2
-      [[ ! ${php_option} =~ ^[1-9]$ ]] && { echo "${CWARNING}php_option input error! Please only input number 1~9${CEND}"; exit 1; }
+      [[ ! ${php_option} =~ ^[1-9]$|^10$ ]] && { echo "${CWARNING}php_option input error! Please only input number 1~10${CEND}"; exit 1; }
       [ -e "${php_install_dir}/bin/phpize" ] && { echo "${CWARNING}PHP already installed! ${CEND}"; unset php_option; }
       ;;
     --mphp_ver)
       mphp_ver=$2; mphp_flag=y; shift 2
-      [[ ! "${mphp_ver}" =~ ^5[3-6]$|^7[0-4]$ ]] && { echo "${CWARNING}mphp_ver input error! Please only input number 53~74${CEND}"; exit 1; }
+      [[ ! "${mphp_ver}" =~ ^5[3-6]$|^7[0-4]$|^80$ ]] && { echo "${CWARNING}mphp_ver input error! Please only input number 53~80${CEND}"; exit 1; }
       ;;
     --mphp_addons)
       mphp_addons_flag=y; shift 1
@@ -487,19 +487,20 @@ if [ ${ARG_NUM} == 0 ]; then
         [ -e "${php_install_dir}/bin/phpize" ] && { echo "${CWARNING}PHP already installed! ${CEND}"; unset php_option; break; }
         while :; do echo
           echo 'Please select a version of the PHP:'
-          echo -e "\t${CMSG}1${CEND}. Install php-5.3"
-          echo -e "\t${CMSG}2${CEND}. Install php-5.4"
-          echo -e "\t${CMSG}3${CEND}. Install php-5.5"
-          echo -e "\t${CMSG}4${CEND}. Install php-5.6"
-          echo -e "\t${CMSG}5${CEND}. Install php-7.0"
-          echo -e "\t${CMSG}6${CEND}. Install php-7.1"
-          echo -e "\t${CMSG}7${CEND}. Install php-7.2"
-          echo -e "\t${CMSG}8${CEND}. Install php-7.3"
-          echo -e "\t${CMSG}9${CEND}. Install php-7.4"
+          echo -e "\t${CMSG} 1${CEND}. Install php-5.3"
+          echo -e "\t${CMSG} 2${CEND}. Install php-5.4"
+          echo -e "\t${CMSG} 3${CEND}. Install php-5.5"
+          echo -e "\t${CMSG} 4${CEND}. Install php-5.6"
+          echo -e "\t${CMSG} 5${CEND}. Install php-7.0"
+          echo -e "\t${CMSG} 6${CEND}. Install php-7.1"
+          echo -e "\t${CMSG} 7${CEND}. Install php-7.2"
+          echo -e "\t${CMSG} 8${CEND}. Install php-7.3"
+          echo -e "\t${CMSG} 9${CEND}. Install php-7.4"
+          echo -e "\t${CMSG}10${CEND}. Install php-8.0"
           read -e -p "Please input a number:(Default 7 press Enter) " php_option
           php_option=${php_option:-7}
-          if [[ ! ${php_option} =~ ^[1-9]$ ]]; then
-            echo "${CWARNING}input error! Please only input number 1~9${CEND}"
+          if [[ ! ${php_option} =~ ^[1-9]$|^10$ ]]; then
+            echo "${CWARNING}input error! Please only input number 1~10${CEND}"
           else
             break
           fi
@@ -516,7 +517,7 @@ if [ ${ARG_NUM} == 0 ]; then
   fi
 
   # PHP opcode cache and extensions
-  if [[ ${php_option} =~ ^[1-9]$ ]] || [ -e "${php_install_dir}/bin/phpize" ]; then
+  if [[ ${php_option} =~ ^[1-9]$|^10$ ]] || [ -e "${php_install_dir}/bin/phpize" ]; then
     while :; do echo
       read -e -p "Do you want to install opcode cache of the PHP? [y/n]: " phpcache_flag
       if [[ ! ${phpcache_flag} =~ ^[y,n]$ ]]; then
@@ -585,7 +586,7 @@ if [ ${ARG_NUM} == 0 ]; then
               fi
             done
           fi
-          if [[ ${php_option} =~ ^[5-9]$ ]] || [[ "${PHP_main_ver}" =~ ^7.[0-4]$ ]]; then
+          if [[ ${php_option} =~ ^[5-9]$|^10$ ]] || [[ "${PHP_main_ver}" =~ ^7.[0-4]$|^8.0$ ]]; then
             while :; do
               echo 'Please select a opcode cache of the PHP:'
               echo -e "\t${CMSG}1${CEND}. Install Zend OPcache"
@@ -678,7 +679,7 @@ if [ ${ARG_NUM} == 0 ]; then
   done
 
   # check phpMyAdmin
-  if [[ ${php_option} =~ ^[1-9]$ ]] || [ -e "${php_install_dir}/bin/phpize" ]; then
+  if [[ ${php_option} =~ ^[1-9]$|^10$ ]] || [ -e "${php_install_dir}/bin/phpize" ]; then
     while :; do echo
       read -e -p "Do you want to install phpMyAdmin? [y/n]: " phpmyadmin_flag
       if [[ ! ${phpmyadmin_flag} =~ ^[y,n]$ ]]; then
@@ -796,7 +797,7 @@ if [[ ${nginx_option} =~ ^[1-3]$ ]] || [[ "${db_option}" =~ ^[1-9]$|^1[0-3]$ ]];
 fi
 
 # openSSL
-if [[ ${tomcat_option} =~ ^[1-4]$ ]] || [[ ${apache_option} =~ ^[1-2]$ ]] || [[ ${php_option} =~ ^[1-9]$ ]] || [[ "${mphp_ver}" =~ ^5[3-6]$|^7[0-4]$ ]]; then
+if [[ ${tomcat_option} =~ ^[1-4]$ ]] || [[ ${apache_option} =~ ^[1-2]$ ]] || [[ ${php_option} =~ ^[1-9]$|^10$ ]] || [[ "${mphp_ver}" =~ ^5[3-6]$|^7[0-4]$|^80$ ]]; then
   . include/openssl.sh
   Install_openSSL | tee -a ${oneinstack_dir}/install.log
 fi
@@ -930,6 +931,10 @@ case "${php_option}" in
   9)
     . include/php-7.4.sh
     Install_PHP74 2>&1 | tee -a ${oneinstack_dir}/install.log
+    ;;
+  10)
+    . include/php-8.0.sh
+    Install_PHP80 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
 esac
 
@@ -1192,7 +1197,7 @@ echo "Total OneinStack Install Time: ${CQUESTION}${installTime}${CEND} minutes"
 [ "${db_option}" == '15' ] && echo "$(printf "%-32s" "MongoDB data dir:")${CMSG}${mongo_data_dir}${CEND}"
 [ "${db_option}" == '15' ] && echo "$(printf "%-32s" "MongoDB user:")${CMSG}root${CEND}"
 [ "${db_option}" == '15' ] && echo "$(printf "%-32s" "MongoDB password:")${CMSG}${dbmongopwd}${CEND}"
-[[ "${php_option}" =~ ^[1-9]$ ]] && echo -e "\n$(printf "%-32s" "PHP install dir:")${CMSG}${php_install_dir}${CEND}"
+[[ "${php_option}" =~ ^[1-9]$|^10$ ]] && echo -e "\n$(printf "%-32s" "PHP install dir:")${CMSG}${php_install_dir}${CEND}"
 [ "${phpcache_option}" == '1' ] && echo "$(printf "%-32s" "Opcache Control Panel URL:")${CMSG}http://${IPADDR}/ocp.php${CEND}"
 [ "${phpcache_option}" == '2' -a -e "${php_install_dir}/etc/php.d/04-xcache.ini" ] && echo "$(printf "%-32s" "xcache Control Panel URL:")${CMSG}http://${IPADDR}/xcache${CEND}"
 [ "${phpcache_option}" == '2' -a -e "${php_install_dir}/etc/php.d/04-xcache.ini" ] && echo "$(printf "%-32s" "xcache user:")${CMSG}admin${CEND}"

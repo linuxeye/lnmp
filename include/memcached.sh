@@ -47,13 +47,13 @@ Install_pecl_memcache() {
     phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
     PHP_detail_ver=$(${php_install_dir}/bin/php-config --version)
     PHP_main_ver=${PHP_detail_ver%.*}
-    if [ "$(${php_install_dir}/bin/php-config --version | awk -F. '{print $1}')" == '7' ]; then
+    if [ "$(${php_install_dir}/bin/php-config --version | awk -F. '{print $1}')" == '5' ]; then
+      tar xzf memcache-${pecl_memcache_oldver}.tgz
+      pushd memcache-${pecl_memcache_oldver} > /dev/null
+    else
       #git clone https://github.com/websupport-sk/pecl-memcache.git
       tar xzf memcache-${pecl_memcache_ver}.tgz
       pushd memcache-${pecl_memcache_ver} > /dev/null
-    else
-      tar xzf memcache-${pecl_memcache_oldver}.tgz
-      pushd memcache-${pecl_memcache_oldver} > /dev/null
     fi
     ${php_install_dir}/bin/phpize
     ./configure --with-php-config=${php_install_dir}/bin/php-config
@@ -85,12 +85,12 @@ Install_pecl_memcached() {
     popd > /dev/null
     rm -rf libmemcached-${libmemcached_ver}
 
-    if [ "$(${php_install_dir}/bin/php-config --version | awk -F. '{print $1}')" == '7' ]; then
-      tar xzf memcached-${pecl_memcached_ver}.tgz
-      pushd memcached-${pecl_memcached_ver} > /dev/null
-    else
+    if [ "$(${php_install_dir}/bin/php-config --version | awk -F. '{print $1}')" == '5' ]; then
       tar xzf memcached-${pecl_memcached_oldver}.tgz
       pushd memcached-${pecl_memcached_oldver} > /dev/null
+    else
+      tar xzf memcached-${pecl_memcached_ver}.tgz
+      pushd memcached-${pecl_memcached_ver} > /dev/null
     fi
     ${php_install_dir}/bin/phpize
     ./configure --with-php-config=${php_install_dir}/bin/php-config

@@ -146,7 +146,7 @@ enable_lua_waf() {
   if [ $? -eq 0 ]; then
     service nginx reload
     echo "${CSUCCESS}ngx_lua_waf enabled successfully! ${CEND}"
-    chown ${run_user}.${run_group} ${wwwlogs_dir}
+    chown ${run_user}:${run_group} ${wwwlogs_dir}
   else
     echo "${CFAILURE}ngx_lua_waf enable failed! ${CEND}"
   fi

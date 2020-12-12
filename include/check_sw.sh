@@ -82,6 +82,7 @@ installDepsCentOS() {
   for Package in ${pkgList}; do
     yum -y install ${Package}
   done
+  [ ${CentOS_ver} -lt 8 >/dev/null 2>&1 ] && yum -y install cmake3
 
   yum -y update bash openssl glibc
 }

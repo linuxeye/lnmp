@@ -33,7 +33,7 @@ Show_Help() {
   --help, -h                  Show this help message
   --quiet, -q                 quiet operation
   --list, -l                  List Virtualhost
-  --mphp_ver [53~74]          Use another PHP version (PATH: /usr/local/php${mphp_ver})
+  --mphp_ver [53~80]          Use another PHP version (PATH: /usr/local/php${mphp_ver})
   --proxy                     Use proxy
   --add                       Add Virtualhost
   --delete, --del             Delete Virtualhost
@@ -62,7 +62,7 @@ while :; do
       ;;
     --mphp_ver)
       mphp_ver=$2; mphp_flag=y; shift 2
-      [[ ! "${mphp_ver}" =~ ^5[3-6]$|^7[0-4]$ ]] && { echo "${CWARNING}mphp_ver input error! Please only input number 53~74${CEND}"; unset mphp_ver mphp_flag; }
+      [[ ! "${mphp_ver}" =~ ^5[3-6]$|^7[0-4]$|^80$ ]] && { echo "${CWARNING}mphp_ver input error! Please only input number 53~80${CEND}"; unset mphp_ver mphp_flag; }
       ;;
     --proxy)
       proxy_flag=y; shift 1
@@ -364,34 +364,36 @@ What Are You Doing?
       PHP_main_ver=${PHP_detail_ver%.*}
       while :; do echo
         echo 'Please select a version of the PHP:'
-        echo -e "\t${CMSG} 1${CEND}. PHP ${PHP_main_ver} (default)"
-        [ -e "/dev/shm/php53-cgi.sock" ] && echo -e "\t${CMSG} 2${CEND}. PHP 5.3"
-        [ -e "/dev/shm/php54-cgi.sock" ] && echo -e "\t${CMSG} 3${CEND}. PHP 5.4"
-        [ -e "/dev/shm/php55-cgi.sock" ] && echo -e "\t${CMSG} 4${CEND}. PHP 5.5"
-        [ -e "/dev/shm/php56-cgi.sock" ] && echo -e "\t${CMSG} 5${CEND}. PHP 5.6"
-        [ -e "/dev/shm/php70-cgi.sock" ] && echo -e "\t${CMSG} 6${CEND}. PHP 7.0"
-        [ -e "/dev/shm/php71-cgi.sock" ] && echo -e "\t${CMSG} 7${CEND}. PHP 7.1"
-        [ -e "/dev/shm/php72-cgi.sock" ] && echo -e "\t${CMSG} 8${CEND}. PHP 7.2"
-        [ -e "/dev/shm/php73-cgi.sock" ] && echo -e "\t${CMSG} 9${CEND}. PHP 7.3"
-        [ -e "/dev/shm/php74-cgi.sock" ] && echo -e "\t${CMSG}10${CEND}. PHP 7.4"
-        read -e -p "Please input a number:(Default 1 press Enter) " php_option
-        php_option=${php_option:-1}
-        if [[ ! ${php_option} =~ ^[1-9]$|^10$ ]]; then
-          echo "${CWARNING}input error! Please only input number 1~10${CEND}"
+        echo -e "\t${CMSG} 0${CEND}. PHP ${PHP_main_ver} (default)"
+        [ -e "/dev/shm/php53-cgi.sock" ] && echo -e "\t${CMSG} 1${CEND}. PHP 5.3"
+        [ -e "/dev/shm/php54-cgi.sock" ] && echo -e "\t${CMSG} 2${CEND}. PHP 5.4"
+        [ -e "/dev/shm/php55-cgi.sock" ] && echo -e "\t${CMSG} 3${CEND}. PHP 5.5"
+        [ -e "/dev/shm/php56-cgi.sock" ] && echo -e "\t${CMSG} 4${CEND}. PHP 5.6"
+        [ -e "/dev/shm/php70-cgi.sock" ] && echo -e "\t${CMSG} 5${CEND}. PHP 7.0"
+        [ -e "/dev/shm/php71-cgi.sock" ] && echo -e "\t${CMSG} 6${CEND}. PHP 7.1"
+        [ -e "/dev/shm/php72-cgi.sock" ] && echo -e "\t${CMSG} 7${CEND}. PHP 7.2"
+        [ -e "/dev/shm/php73-cgi.sock" ] && echo -e "\t${CMSG} 8${CEND}. PHP 7.3"
+        [ -e "/dev/shm/php74-cgi.sock" ] && echo -e "\t${CMSG} 9${CEND}. PHP 7.4"
+        [ -e "/dev/shm/php80-cgi.sock" ] && echo -e "\t${CMSG}10${CEND}. PHP 8.0"
+        read -e -p "Please input a number:(Default 0 press Enter) " php_option
+        php_option=${php_option:-0}
+        if [[ ! ${php_option} =~ ^[0-9]$|^10$ ]]; then
+          echo "${CWARNING}input error! Please only input number 0~10${CEND}"
         else
           break
         fi
       done
     fi
-    [ "${php_option}" == '2' ] && mphp_ver=53
-    [ "${php_option}" == '3' ] && mphp_ver=54
-    [ "${php_option}" == '4' ] && mphp_ver=55
-    [ "${php_option}" == '5' ] && mphp_ver=56
-    [ "${php_option}" == '6' ] && mphp_ver=70
-    [ "${php_option}" == '7' ] && mphp_ver=71
-    [ "${php_option}" == '8' ] && mphp_ver=72
-    [ "${php_option}" == '9' ] && mphp_ver=73
-    [ "${php_option}" == '10' ] && mphp_ver=74
+    [ "${php_option}" == '1' ] && mphp_ver=53
+    [ "${php_option}" == '2' ] && mphp_ver=54
+    [ "${php_option}" == '3' ] && mphp_ver=55
+    [ "${php_option}" == '4' ] && mphp_ver=56
+    [ "${php_option}" == '5' ] && mphp_ver=70
+    [ "${php_option}" == '6' ] && mphp_ver=71
+    [ "${php_option}" == '7' ] && mphp_ver=72
+    [ "${php_option}" == '8' ] && mphp_ver=73
+    [ "${php_option}" == '9' ] && mphp_ver=74
+    [ "${php_option}" == '10' ] && mphp_ver=80
     [ ! -e "/dev/shm/php${mphp_ver}-cgi.sock" ] && unset mphp_ver
   fi
 
@@ -463,7 +465,7 @@ What Are You Doing?
         echo "Create Virtul Host directory......"
         mkdir -p ${vhostdir}
         echo "set permissions of Virtual Host directory......"
-        chown -R ${run_user}.${run_group} ${vhostdir}
+        chown -R ${run_user}:${run_group} ${vhostdir}
         break
       fi
     done

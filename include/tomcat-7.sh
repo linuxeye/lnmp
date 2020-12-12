@@ -130,7 +130,7 @@ EOF
 monitorRole  $(cat /dev/urandom | head -1 | md5sum | head -c 8)
 # controlRole   R&D
 EOF
-    chown -R ${run_user}.${run_group} ${tomcat_install_dir}
+    chown -R ${run_user}:${run_group} ${tomcat_install_dir}
     /bin/cp ${oneinstack_dir}/init.d/Tomcat-init /etc/init.d/tomcat
     sed -i "s@JAVA_HOME=.*@JAVA_HOME=${JAVA_HOME}@" /etc/init.d/tomcat
     sed -i "s@^CATALINA_HOME=.*@CATALINA_HOME=${tomcat_install_dir}@" /etc/init.d/tomcat

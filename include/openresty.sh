@@ -24,7 +24,7 @@ Install_OpenResty() {
   sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' bundle/nginx-${openresty_ver%.*}/auto/cc/gcc # close debug
 
   [ ! -d "${openresty_install_dir}" ] && mkdir -p ${openresty_install_dir}
-  ./configure --prefix=${openresty_install_dir} --user=${run_user} --group=${run_group} --with-http_stub_status_module --with-http_v2_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-openssl=../openssl-${openssl11_ver} --with-pcre=../pcre-${pcre_ver} --with-pcre-jit --with-ld-opt='-ljemalloc -Wl,-u,pcre_version' ${nginx_modules_options}
+  ./configure --prefix=${openresty_install_dir} --user=${run_user} --group=${run_group} --with-http_stub_status_module --with-http_sub_module --with-http_v2_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-openssl=../openssl-${openssl11_ver} --with-pcre=../pcre-${pcre_ver} --with-pcre-jit --with-ld-opt='-ljemalloc -Wl,-u,pcre_version' ${nginx_modules_options}
   make -j ${THREAD} && make install
   if [ -e "${openresty_install_dir}/nginx/conf/nginx.conf" ]; then
     popd > /dev/null
@@ -52,11 +52,11 @@ Install_OpenResty() {
   mv ${openresty_install_dir}/nginx/conf/nginx.conf{,_bk}
   if [[ ${apache_option} =~ ^[1-2]$ ]] || [ -e "${apache_install_dir}/bin/httpd" ]; then
     /bin/cp ../config/nginx_apache.conf ${openresty_install_dir}/nginx/conf/nginx.conf 
-  elif { [[ ${tomcat_option} =~ ^[1-4]$ ]] || [ -e "${tomcat_install_dir}/conf/server.xml" ]; } && { [[ ! ${php_option} =~ ^[1-9]$ ]] && [ ! -e "${php_install_dir}/bin/php" ]; }; then
+  elif { [[ ${tomcat_option} =~ ^[1-4]$ ]] || [ -e "${tomcat_install_dir}/conf/server.xml" ]; } && { [[ ! ${php_option} =~ ^[1-9]$|^10$ ]] && [ ! -e "${php_install_dir}/bin/php" ]; }; then
     /bin/cp ../config/nginx_tomcat.conf ${openresty_install_dir}/nginx/conf/nginx.conf 
   else
     /bin/cp ../config/nginx.conf ${openresty_install_dir}/nginx/conf/nginx.conf
-    [[ "${php_option}" =~ ^[1-9]$ ]] && [ -z "`grep '/php-fpm_status' ${openresty_install_dir}/nginx/conf/nginx.conf`" ] &&  sed -i "s@index index.html index.php;@index index.html index.php;\n    location ~ /php-fpm_status {\n        #fastcgi_pass remote_php_ip:9000;\n        fastcgi_pass unix:/dev/shm/php-cgi.sock;\n        fastcgi_index index.php;\n        include fastcgi.conf;\n        allow 127.0.0.1;\n        deny all;\n        }@" ${openresty_install_dir}/nginx/conf/nginx.conf
+    [[ "${php_option}" =~ ^[1-9]$|^10$ ]] && [ -z "`grep '/php-fpm_status' ${openresty_install_dir}/nginx/conf/nginx.conf`" ] &&  sed -i "s@index index.html index.php;@index index.html index.php;\n    location ~ /php-fpm_status {\n        #fastcgi_pass remote_php_ip:9000;\n        fastcgi_pass unix:/dev/shm/php-cgi.sock;\n        fastcgi_index index.php;\n        include fastcgi.conf;\n        allow 127.0.0.1;\n        deny all;\n        }@" ${openresty_install_dir}/nginx/conf/nginx.conf
   fi
   cat > ${openresty_install_dir}/nginx/conf/proxy.conf << EOF
 proxy_connect_timeout 300s;

@@ -17,7 +17,7 @@ checkDownload() {
   fi
 
   # General system utils
-  if [[ ${tomcat_option} =~ ^[1-4]$ ]] || [[ ${apache_option} =~ ^[1-2]$ ]] || [[ ${php_option} =~ ^[1-9]$ ]]; then
+  if [[ ${tomcat_option} =~ ^[1-4]$ ]] || [[ ${apache_option} =~ ^[1-2]$ ]] || [[ ${php_option} =~ ^[1-9]$|^10$ ]]; then
     echo "Download openSSL..."
     src_url=https://www.openssl.org/source/old/1.0.2/openssl-${openssl_ver}.tar.gz && Download_src
     echo "Download cacert.pem..."
@@ -524,7 +524,7 @@ checkDownload() {
   fi
 
   # PHP
-  if [[ "${php_option}" =~ ^[1-9]$ ]]; then
+  if [[ "${php_option}" =~ ^[1-9]$|^10$ ]]; then
     echo "PHP common..."
     src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-${libiconv_ver}.tar.gz && Download_src
     src_url=https://curl.haxx.se/download/curl-${curl_ver}.tar.gz && Download_src
@@ -571,6 +571,12 @@ checkDownload() {
       ;;
     9)
       src_url=https://secure.php.net/distributions/php-${php74_ver}.tar.gz && Download_src
+      src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
+      src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
+      src_url=http://mirrors.linuxeye.com/oneinstack/src/libzip-${libzip_ver}.tar.gz && Download_src
+      ;;
+    10)
+      src_url=https://secure.php.net/distributions/php-${php80_ver}.tar.gz && Download_src
       src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
       src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
       src_url=http://mirrors.linuxeye.com/oneinstack/src/libzip-${libzip_ver}.tar.gz && Download_src
@@ -754,7 +760,7 @@ checkDownload() {
   if [ "${downloadDepsSrc}" == '1' ]; then
     if [ "${PM}" == 'yum' ]; then
       echo "Download htop for CentOS..."
-      src_url=http://hisham.hm/htop/releases/${htop_ver}/htop-${htop_ver}.tar.gz && Download_src
+      src_url=${mirrorLink}/htop-${htop_ver}.tar.gz && Download_src
     fi
 
     if [ "${CentOS_ver}" == '6' ]; then

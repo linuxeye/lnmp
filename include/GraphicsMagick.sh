@@ -34,12 +34,12 @@ Install_pecl_gmagick() {
   if [ -e "${php_install_dir}/bin/phpize" ]; then
     pushd ${oneinstack_dir}/src > /dev/null
     phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
-    if [ "`${php_install_dir}/bin/php-config --version | awk -F. '{print $1}'`" == '7' ]; then
-      tar xzf gmagick-${gmagick_ver}.tgz
-      pushd gmagick-${gmagick_ver} > /dev/null
-    else
+    if [ "`${php_install_dir}/bin/php-config --version | awk -F. '{print $1}'`" == '5' ]; then
       tar xzf gmagick-${gmagick_oldver}.tgz
       pushd gmagick-${gmagick_oldver} > /dev/null
+    else
+      tar xzf gmagick-${gmagick_ver}.tgz
+      pushd gmagick-${gmagick_ver} > /dev/null
     fi
     export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
     ${php_install_dir}/bin/phpize

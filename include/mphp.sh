@@ -53,6 +53,10 @@ Install_MPHP() {
           . include/php-7.4.sh
           Install_PHP74 2>&1 | tee -a ${oneinstack_dir}/install.log
           ;;
+        80)
+          . include/php-8.0.sh
+          Install_PHP80 2>&1 | tee -a ${oneinstack_dir}/install.log
+          ;;
       esac
       if [ -e "${php_install_dir}/sbin/php-fpm" ]; then
         service php-fpm stop

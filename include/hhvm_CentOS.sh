@@ -50,7 +50,7 @@ EOF
   userdel -r nginx;userdel -r saslauth
   rm -rf /var/log/hhvm
   mkdir /var/log/hhvm
-  chown -R ${run_user}.${run_group} /var/log/hhvm
+  chown -R ${run_user}:${run_group} /var/log/hhvm
   cat > /etc/hhvm/config.hdf << EOF
 ResourceLimit {
   CoreFileSize = 0          # in bytes

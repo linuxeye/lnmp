@@ -51,11 +51,11 @@ Install_Tengine() {
   mv ${tengine_install_dir}/conf/nginx.conf{,_bk}
   if [[ ${apache_option} =~ ^[1-2]$ ]] || [ -e "${apache_install_dir}/bin/httpd" ]; then
     /bin/cp ../config/nginx_apache.conf ${tengine_install_dir}/conf/nginx.conf
-  elif { [[ ${tomcat_option} =~ ^[1-4]$ ]] || [ -e "${tomcat_install_dir}/conf/server.xml" ]; } && { [[ ! ${php_option} =~ ^[1-9]$ ]] && [ ! -e "${php_install_dir}/bin/php" ]; }; then
+  elif { [[ ${tomcat_option} =~ ^[1-4]$ ]] || [ -e "${tomcat_install_dir}/conf/server.xml" ]; } && { [[ ! ${php_option} =~ ^[1-9]$|^10$ ]] && [ ! -e "${php_install_dir}/bin/php" ]; }; then
     /bin/cp ../config/nginx_tomcat.conf ${tengine_install_dir}/conf/nginx.conf
   else
     /bin/cp ../config/nginx.conf ${tengine_install_dir}/conf/nginx.conf
-    [[ "${php_option}" =~ ^[1-9]$ ]] && [ -z "`grep '/php-fpm_status' ${tengine_install_dir}/conf/nginx.conf`" ] &&  sed -i "s@index index.html index.php;@index index.html index.php;\n    location ~ /php-fpm_status {\n        #fastcgi_pass remote_php_ip:9000;\n        fastcgi_pass unix:/dev/shm/php-cgi.sock;\n        fastcgi_index index.php;\n        include fastcgi.conf;\n        allow 127.0.0.1;\n        deny all;\n        }@" ${tengine_install_dir}/conf/nginx.conf
+    [[ "${php_option}" =~ ^[1-9]$|^10$ ]] && [ -z "`grep '/php-fpm_status' ${tengine_install_dir}/conf/nginx.conf`" ] &&  sed -i "s@index index.html index.php;@index index.html index.php;\n    location ~ /php-fpm_status {\n        #fastcgi_pass remote_php_ip:9000;\n        fastcgi_pass unix:/dev/shm/php-cgi.sock;\n        fastcgi_index index.php;\n        include fastcgi.conf;\n        allow 127.0.0.1;\n        deny all;\n        }@" ${tengine_install_dir}/conf/nginx.conf
   fi
   cat > ${tengine_install_dir}/conf/proxy.conf << EOF
 proxy_connect_timeout 300s;

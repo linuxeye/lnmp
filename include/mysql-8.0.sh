@@ -25,7 +25,8 @@ Install_MySQL80() {
     tar xzf boost_${boostVersion2}.tar.gz
     tar xzf mysql-${mysql80_ver}.tar.gz
     pushd mysql-${mysql80_ver}
-    cmake . -DCMAKE_INSTALL_PREFIX=${mysql_install_dir} \
+    [ -e "/usr/bin/cmake3" ] && CMAKE=cmake3 || CMAKE=cmake
+    $CMAKE . -DCMAKE_INSTALL_PREFIX=${mysql_install_dir} \
     -DMYSQL_DATADIR=${mysql_data_dir} \
     -DDOWNLOAD_BOOST=1 \
     -DWITH_BOOST=../boost_${boostVersion2} \

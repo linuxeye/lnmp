@@ -28,7 +28,7 @@ Install_eAccelerator() {
       make -j ${THREAD} && make install
       popd > /dev/null
       if [ -f "${phpExtensionDir}/eaccelerator.so" ]; then
-        mkdir /var/eaccelerator_cache;chown -R ${run_user}.${run_group} /var/eaccelerator_cache
+        mkdir /var/eaccelerator_cache;chown -R ${run_user}:${run_group} /var/eaccelerator_cache
         cat > ${php_install_dir}/etc/php.d/02-eaccelerator.ini << EOF
 [eaccelerator]
 zend_extension=${phpExtensionDir}/eaccelerator.so

@@ -23,6 +23,14 @@ Install_Percona80() {
     sed -i "s@/usr/local/Percona-Server-${percona80_ver}-Linux.${SYS_BIT_b}.glibc2.12@${percona_install_dir}@g" ${percona_install_dir}/bin/mysqld_safe
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${percona_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then
+    if [ "${PM}" == 'yum' ]; then
+      yum -y install openldap-devel
+      [ "${OS_BIT}" == '64' ] && With_libdir='--with-libdir=lib64'
+    else
+      apt-get -y install libldap2-dev
+      ln -s /usr/lib/${SYS_BIT_c}-linux-gnu/libldap.so /usr/lib/
+      ln -s /usr/lib/${SYS_BIT_c}-linux-gnu/liblber.so /usr/lib/
+    fi
     boostVersion2=$(echo ${boost_percona_ver} | awk -F. '{print $1"_"$2"_"$3}')
     tar xzf boost_${boostVersion2}.tar.gz
     tar xzf percona-server-${percona80_ver}.tar.gz

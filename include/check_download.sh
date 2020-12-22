@@ -331,7 +331,7 @@ checkDownload() {
         # Percona 8.0
         if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download Percona 8.0 binary package..."
-          FILE_NAME=Percona-Server-${percona80_ver}-Linux.${SYS_BIT_b}.glibc2.12.tar.gz
+          FILE_NAME=Percona-Server-${percona80_ver}-Linux.${SYS_BIT_b}.glibc2.17.tar.gz
           DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-8.0/Percona-Server-${percona80_ver}/binary/tarball
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download Percona 8.0 source package..."
@@ -524,9 +524,9 @@ checkDownload() {
   fi
 
   # PHP
-  if [[ "${php_option}" =~ ^[1-9]$|^10$ ]]; then
+  if [[ "${php_option}" =~ ^[1-9]$|^10$ ]] || [[ "${mphp_ver}" =~ ^5[3-6]$|^7[0-4]$|^80$ ]]; then
     echo "PHP common..."
-    src_url=http://ftp.gnu.org/pub/gnu/libiconv/libiconv-${libiconv_ver}.tar.gz && Download_src
+    src_url=${mirrorLink}/libiconv-${libiconv_ver}.tar.gz && Download_src
     src_url=https://curl.haxx.se/download/curl-${curl_ver}.tar.gz && Download_src
     src_url=http://downloads.sourceforge.net/project/mhash/mhash/${mhash_ver}/mhash-${mhash_ver}.tar.gz && Download_src
     src_url=http://downloads.sourceforge.net/project/mcrypt/Libmcrypt/${libmcrypt_ver}/libmcrypt-${libmcrypt_ver}.tar.gz && Download_src
@@ -534,54 +534,42 @@ checkDownload() {
     src_url=${mirrorLink}/freetype-${freetype_ver}.tar.gz && Download_src
   fi
 
-  case "${php_option}" in
-    1)
-      # php 5.3
-      src_url=${mirrorLink}/debian_patches_disable_SSLv2_for_openssl_1_0_0.patch && Download_src
-      src_url=${mirrorLink}/php5.3patch && Download_src
-      src_url=https://secure.php.net/distributions/php-${php53_ver}.tar.gz && Download_src
-      src_url=${mirrorLink}/fpm-race-condition.patch && Download_src
-      ;;
-    2)
-      src_url=https://secure.php.net/distributions/php-${php54_ver}.tar.gz && Download_src
-      src_url=${mirrorLink}/fpm-race-condition.patch && Download_src
-      ;;
-    3)
-      src_url=https://secure.php.net/distributions/php-${php55_ver}.tar.gz && Download_src
-      src_url=${mirrorLink}/fpm-race-condition.patch && Download_src
-      ;;
-    4)
-      src_url=https://secure.php.net/distributions/php-${php56_ver}.tar.gz && Download_src
-      ;;
-    5)
-      src_url=https://secure.php.net/distributions/php-${php70_ver}.tar.gz && Download_src
-      ;;
-    6)
-      src_url=https://secure.php.net/distributions/php-${php71_ver}.tar.gz && Download_src
-      ;;
-    7)
-      src_url=https://secure.php.net/distributions/php-${php72_ver}.tar.gz && Download_src
-      src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
-      src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
-      ;;
-    8)
-      src_url=https://secure.php.net/distributions/php-${php73_ver}.tar.gz && Download_src
-      src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
-      src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
-      ;;
-    9)
-      src_url=https://secure.php.net/distributions/php-${php74_ver}.tar.gz && Download_src
-      src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
-      src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
-      src_url=http://mirrors.linuxeye.com/oneinstack/src/libzip-${libzip_ver}.tar.gz && Download_src
-      ;;
-    10)
-      src_url=https://secure.php.net/distributions/php-${php80_ver}.tar.gz && Download_src
-      src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
-      src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
-      src_url=http://mirrors.linuxeye.com/oneinstack/src/libzip-${libzip_ver}.tar.gz && Download_src
-      ;;
-  esac
+  if [ "${php_option}" == '1' ] || [ "${mphp_ver}" == '53' ]; then
+    src_url=${mirrorLink}/debian_patches_disable_SSLv2_for_openssl_1_0_0.patch && Download_src
+    src_url=${mirrorLink}/php5.3patch && Download_src
+    src_url=https://secure.php.net/distributions/php-${php53_ver}.tar.gz && Download_src
+    src_url=${mirrorLink}/fpm-race-condition.patch && Download_src
+  elif [ "${php_option}" == '2' ] || [ "${mphp_ver}" == '54' ]; then
+    src_url=https://secure.php.net/distributions/php-${php54_ver}.tar.gz && Download_src
+    src_url=${mirrorLink}/fpm-race-condition.patch && Download_src
+  elif [ "${php_option}" == '3' ] || [ "${mphp_ver}" == '55' ]; then
+    src_url=https://secure.php.net/distributions/php-${php55_ver}.tar.gz && Download_src
+    src_url=${mirrorLink}/fpm-race-condition.patch && Download_src
+  elif [ "${php_option}" == '4' ] || [ "${mphp_ver}" == '56' ]; then
+    src_url=https://secure.php.net/distributions/php-${php56_ver}.tar.gz && Download_src
+  elif [ "${php_option}" == '5' ] || [ "${mphp_ver}" == '70' ]; then
+    src_url=https://secure.php.net/distributions/php-${php70_ver}.tar.gz && Download_src
+  elif [ "${php_option}" == '6' ] || [ "${mphp_ver}" == '71' ]; then
+    src_url=https://secure.php.net/distributions/php-${php71_ver}.tar.gz && Download_src
+  elif [ "${php_option}" == '7' ] || [ "${mphp_ver}" == '72' ]; then
+    src_url=https://secure.php.net/distributions/php-${php72_ver}.tar.gz && Download_src
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
+  elif [ "${php_option}" == '8' ] || [ "${mphp_ver}" == '73' ]; then
+    src_url=https://secure.php.net/distributions/php-${php73_ver}.tar.gz && Download_src
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
+  elif [ "${php_option}" == '9' ] || [ "${mphp_ver}" == '74' ]; then
+    src_url=https://secure.php.net/distributions/php-${php74_ver}.tar.gz && Download_src
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/libzip-${libzip_ver}.tar.gz && Download_src
+  elif [ "${php_option}" == '10' ] || [ "${mphp_ver}" == '80' ]; then
+    src_url=https://secure.php.net/distributions/php-${php80_ver}.tar.gz && Download_src
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/libzip-${libzip_ver}.tar.gz && Download_src
+  fi
 
   # PHP OPCache
   case "${phpcache_option}" in

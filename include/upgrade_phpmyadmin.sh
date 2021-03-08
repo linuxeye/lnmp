@@ -13,7 +13,7 @@ Upgrade_phpMyAdmin() {
   [ ! -e "${wwwroot_dir}/default/phpMyAdmin" ] && echo "${CWARNING}phpMyAdmin is not installed on your system! ${CEND}" && exit 1
   OLD_phpmyadmin_ver=`grep Version ${wwwroot_dir}/default/phpMyAdmin/README | awk '{print $2}'`
   Latest_phpmyadmin_ver=`curl --connect-timeout 2 -m 3 -s https://www.phpmyadmin.net/files/ | awk -F'>|<' '/\/files\/[0-9]/{print $5}' | head -1`
-  Latest_phpmyadmin_ver=${Latest_phpmyadmin_ver:-4.8.3}
+  Latest_phpmyadmin_ver=${Latest_phpmyadmin_ver:-5.0.4}
   echo "Current phpMyAdmin Version: ${CMSG}${OLD_phpmyadmin_ver}${CEND}"
   while :; do echo
     [ "${phpmyadmin_flag}" != 'y' ] && read -e -p "Please input upgrade phpMyAdmin Version(default: ${Latest_phpmyadmin_ver}): " NEW_phpmyadmin_ver

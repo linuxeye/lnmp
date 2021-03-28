@@ -17,15 +17,15 @@ checkDownload() {
   fi
 
   # General system utils
-  if [[ ${tomcat_option} =~ ^[1-4]$ ]] || [[ ${apache_option} =~ ^[1-2]$ ]] || [[ ${php_option} =~ ^[1-9]$|^10$ ]]; then
+  if [[ ${tomcat_option} =~ ^[1-4]$ ]] || [ "${apache_flag}" == 'y' ] || [[ ${php_option} =~ ^[1-9]$|^10$ ]]; then
     echo "Download openSSL..."
     src_url=https://www.openssl.org/source/old/1.0.2/openssl-${openssl_ver}.tar.gz && Download_src
     echo "Download cacert.pem..."
-    src_url=https://curl.haxx.se/ca/cacert.pem && Download_src
+    src_url=https://curl.se/ca/cacert.pem && Download_src
   fi
 
   # jemalloc
-  if [[ ${nginx_option} =~ ^[1-3]$ ]] || [[ "${db_option}" =~ ^[1-9]$|^1[0-3]$ ]]; then
+  if [[ ${nginx_option} =~ ^[1-3]$ ]] || [[ "${db_option}" =~ ^[1-9]$|^1[0-2]$ ]]; then
     echo "Download jemalloc..."
     src_url=${mirrorLink}/jemalloc-${jemalloc_ver}.tar.bz2 && Download_src
   fi
@@ -53,27 +53,19 @@ checkDownload() {
   esac
 
   # pcre
-  if [[ "${nginx_option}" =~ ^[1-3]$ || ${apache_option} == '1' ]]; then
+  if [[ "${nginx_option}" =~ ^[1-3]$ ]] || [ "${apache_flag}" == 'y' ]; then
     echo "Download pcre..."
     src_url=https://ftp.pcre.org/pub/pcre/pcre-${pcre_ver}.tar.gz && Download_src
   fi
 
   # apache
-  case "${apache_option}" in
-    1)
-      echo "Download apache 2.4..."
-      src_url=http://archive.apache.org/dist/httpd/httpd-${apache24_ver}.tar.gz && Download_src
-      src_url=http://archive.apache.org/dist/apr/apr-${apr_ver}.tar.gz && Download_src
-      src_url=http://archive.apache.org/dist/apr/apr-util-${apr_util_ver}.tar.gz && Download_src
-      src_url=http://mirrors.linuxeye.com/apache/httpd/nghttp2-${nghttp2_ver}.tar.gz && Download_src
-      ;;
-    2)
-      echo "Download apache 2.2..."
-      src_url=http://archive.apache.org/dist/httpd/httpd-${apache22_ver}.tar.gz && Download_src
-      echo "Download mod_remoteip.c for apache 2.2..."
-      src_url=${mirrorLink}/mod_remoteip.c && Download_src
-      ;;
-  esac
+  if [ "${apache_flag}" == 'y' ]; then
+    echo "Download apache 2.4..."
+    src_url=http://archive.apache.org/dist/httpd/httpd-${apache_ver}.tar.gz && Download_src
+    src_url=http://archive.apache.org/dist/apr/apr-${apr_ver}.tar.gz && Download_src
+    src_url=http://archive.apache.org/dist/apr/apr-util-${apr_util_ver}.tar.gz && Download_src
+    src_url=http://mirrors.linuxeye.com/apache/httpd/nghttp2-${nghttp2_ver}.tar.gz && Download_src
+  fi
 
   # tomcat
   case "${tomcat_option}" in
@@ -123,7 +115,7 @@ checkDownload() {
     src_url=http://archive.apache.org/dist/apr/apr-${apr_ver}.tar.gz && Download_src
   fi
 
-  if [[ "${db_option}" =~ ^[1-9]$|^1[0-5]$ ]]; then
+  if [[ "${db_option}" =~ ^[1-9]$|^1[0-4]$ ]]; then
     if [[ "${db_option}" =~ ^[1,2,5,6,7,9]$|^10$ ]] && [ "${dbinstallmethod}" == "2" ]; then
       [[ "${db_option}" =~ ^[2,5,6,7]$|^10$ ]] && boost_ver=${boost_oldver}
       [[ "${db_option}" =~ ^9$ ]] && boost_ver=${boost_percona_ver}
@@ -137,8 +129,8 @@ checkDownload() {
       1)
         # MySQL 8.0
         if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-          DOWN_ADDR_MYSQL=http://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-8.0
-          DOWN_ADDR_MYSQL_BK=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-8.0
+          DOWN_ADDR_MYSQL=http://mirrors.aliyun.com/mysql/MySQL-8.0
+          DOWN_ADDR_MYSQL_BK=http://mirrors.tuna.tsinghua.edu.cn/mysql/Downloads/MySQL-8.0
           DOWN_ADDR_MYSQL_BK2=http://mirrors.huaweicloud.com/repository/toolkit/mysql/Downloads/MySQL-8.0
         else
           DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-8.0
@@ -172,8 +164,8 @@ checkDownload() {
       2)
         # MySQL 5.7
         if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-          DOWN_ADDR_MYSQL=http://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.7
-          DOWN_ADDR_MYSQL_BK=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.7
+          DOWN_ADDR_MYSQL=http://mirrors.aliyun.com/mysql/MySQL-5.7
+          DOWN_ADDR_MYSQL_BK=http://mirrors.tuna.tsinghua.edu.cn/mysql/Downloads/MySQL-5.7
           DOWN_ADDR_MYSQL_BK2=http://mirrors.huaweicloud.com/repository/toolkit/mysql/Downloads/MySQL-5.7
         else
           DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.7
@@ -207,8 +199,8 @@ checkDownload() {
       3)
         # MySQL 5.6
         if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-          DOWN_ADDR_MYSQL=http://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.6
-          DOWN_ADDR_MYSQL_BK=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.6
+          DOWN_ADDR_MYSQL=http://mirrors.aliyun.com/mysql/MySQL-5.6
+          DOWN_ADDR_MYSQL_BK=http://mirrors.tuna.tsinghua.edu.cn/mysql/Downloads/MySQL-5.6
           DOWN_ADDR_MYSQL_BK2=http://mirrors.huaweicloud.com/repository/toolkit/mysql/Downloads/MySQL-5.6
         else
           DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.6
@@ -242,8 +234,8 @@ checkDownload() {
       4)
         # MySQL 5.5
         if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-          DOWN_ADDR_MYSQL=http://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.5
-          DOWN_ADDR_MYSQL_BK=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads/MySQL-5.5
+          DOWN_ADDR_MYSQL=http://mirrors.aliyun.com/mysql/MySQL-5.5
+          DOWN_ADDR_MYSQL_BK=http://mirrors.tuna.tsinghua.edu.cn/mysql/Downloads/MySQL-5.5
           DOWN_ADDR_MYSQL_BK2=http://mirrors.huaweicloud.com/repository/toolkit/mysql/Downloads/MySQL-5.5
         else
           DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.5
@@ -313,7 +305,7 @@ checkDownload() {
           fi
         fi
         src_url=${DOWN_ADDR_MARIADB}/${FILE_NAME} && Download_src
-        wget -4 --tries=6 -c --no-check-certificate ${DOWN_ADDR_MARIADB}/md5sums.txt -O ${FILE_NAME}.md5
+        wget --tries=6 -c --no-check-certificate ${DOWN_ADDR_MARIADB}/md5sums.txt -O ${FILE_NAME}.md5
         MARAIDB_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
         [ -z "${MARAIDB_TAR_MD5}" ] && MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB_BK}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
         tryDlCount=0
@@ -332,14 +324,14 @@ checkDownload() {
         if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download Percona 8.0 binary package..."
           FILE_NAME=Percona-Server-${percona80_ver}-Linux.${SYS_BIT_b}.glibc2.17.tar.gz
-          DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-8.0/Percona-Server-${percona80_ver}/binary/tarball
+          DOWN_ADDR_PERCONA=https://downloads.percona.com/downloads/Percona-Server-8.0/Percona-Server-${percona80_ver}/binary/tarball
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download Percona 8.0 source package..."
           FILE_NAME=percona-server-${percona80_ver}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             DOWN_ADDR_PERCONA=${mirrorLink}
           else
-            DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-8.0/Percona-Server-${percona80_ver}/source/tarball
+            DOWN_ADDR_PERCONA=https://downloads.percona.com/downloads/Percona-Server-8.0/Percona-Server-${percona80_ver}/source/tarball
           fi
         fi
         # start download
@@ -364,14 +356,14 @@ checkDownload() {
         if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download Percona 5.7 binary package..."
           FILE_NAME=Percona-Server-${percona57_ver}-Linux.${SYS_BIT_b}.glibc2.12.tar.gz
-          DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_ver}/binary/tarball
+          DOWN_ADDR_PERCONA=https://downloads.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_ver}/binary/tarball
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download Percona 5.7 source package..."
           FILE_NAME=percona-server-${percona57_ver}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             DOWN_ADDR_PERCONA=${mirrorLink}
           else
-            DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_ver}/source/tarball
+            DOWN_ADDR_PERCONA=https://downloads.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_ver}/source/tarball
           fi
         fi
         # start download
@@ -397,14 +389,14 @@ checkDownload() {
           echo "Download Percona 5.6 binary package..."
           perconaVerStr1=$(echo ${percona56_ver} | sed "s@-@-rel@")
           FILE_NAME=Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.${sslLibVer}.tar.gz
-          DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_ver}/binary/tarball
+          DOWN_ADDR_PERCONA=https://downloads.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_ver}/binary/tarball
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download Percona 5.6 source package..."
           FILE_NAME=percona-server-${percona56_ver}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             DOWN_ADDR_PERCONA=${mirrorLink}
           else
-            DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_ver}/source/tarball
+            DOWN_ADDR_PERCONA=https://downloads.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_ver}/source/tarball
           fi
         fi
         # start download
@@ -430,14 +422,14 @@ checkDownload() {
           echo "Download Percona 5.5 binary package..."
           perconaVerStr1=$(echo ${percona55_ver} | sed "s@-@-rel@")
           FILE_NAME=Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.${sslLibVer}.tar.gz
-          DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-${percona55_ver}/binary/tarball
+          DOWN_ADDR_PERCONA=https://downloads.percona.com/downloads/Percona-Server-5.5/Percona-Server-${percona55_ver}/binary/tarball
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download Percona 5.5 source package..."
           FILE_NAME=percona-server-${percona55_ver}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
             DOWN_ADDR_PERCONA=${mirrorLink}
           else
-            DOWN_ADDR_PERCONA=https://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-${percona55_ver}/source/tarball
+            DOWN_ADDR_PERCONA=https://downloads.percona.com/downloads/Percona-Server-5.5/Percona-Server-${percona55_ver}/source/tarball
           fi
         fi
         # start download
@@ -458,21 +450,6 @@ checkDownload() {
         fi
         ;;
       13)
-        # AliSQL 5.6
-        DOWN_ADDR_ALISQL=$mirrorLink
-        echo "Download AliSQL 5.6 source package..."
-        FILE_NAME=alisql-${alisql_ver}.tar.gz
-        src_url=${DOWN_ADDR_ALISQL}/${FILE_NAME} && Download_src
-        src_url=${DOWN_ADDR_ALISQL}/${FILE_NAME}.md5 && Download_src
-        ALISQL_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
-        while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${ALISQL_TAR_MD5}" ];do
-          wget -4c --no-check-certificate ${DOWN_ADDR_ALISQL}/${FILE_NAME};sleep 1
-          [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${ALISQL_TAR_MD5}" ] && break || continue
-        done
-        ;;
-      14)
-        # PostgreSQL
-        echo "Download PostgreSQL source package..."
         FILE_NAME=postgresql-${pgsql_ver}.tar.gz
         if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
           DOWN_ADDR_PGSQL=https://mirrors.tuna.tsinghua.edu.cn/postgresql/source/v${pgsql_ver}
@@ -496,7 +473,7 @@ checkDownload() {
           kill -9 $$
         fi
         ;;
-      15)
+      14)
         # MongoDB
         echo "Download MongoDB binary package..."
         FILE_NAME=mongodb-linux-${SYS_BIT_b}-${mongodb_ver}.tgz

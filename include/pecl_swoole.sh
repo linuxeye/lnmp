@@ -15,6 +15,10 @@ Install_pecl_swoole() {
     PHP_detail_ver=$(${php_install_dir}/bin/php-config --version)
     PHP_main_ver=${PHP_detail_ver%.*}
     if [[ "${PHP_main_ver}" =~ ^5.[3-6]$ ]]; then
+      src_url=https://pecl.php.net/get/swoole-1.10.5.tgz && Download_src
+      tar xzf swoole-1.10.5.tgz
+      pushd swoole-1.10.5 > /dev/null
+    elif [[ "${PHP_main_ver}" =~ ^7.[0-1]$ ]]; then
       src_url=https://pecl.php.net/get/swoole-${swoole_oldver}.tgz && Download_src
       tar xzf swoole-${swoole_oldver}.tgz
       pushd swoole-${swoole_oldver} > /dev/null

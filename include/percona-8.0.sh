@@ -19,9 +19,8 @@ Install_Percona80() {
   if [ "${dbinstallmethod}" == "1" ]; then
     tar xzf ./Percona-Server-${percona80_ver}-Linux.${SYS_BIT_b}.glibc2.17.tar.gz
     mv Percona-Server-${percona80_ver}-Linux.${SYS_BIT_b}.glibc2.17/* ${percona_install_dir}
-    sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${percona_install_dir}/bin/mysqld_safe
+    #sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${percona_install_dir}/bin/mysqld_safe
     sed -i "s@/usr/local/Percona-Server-${percona80_ver}-Linux.${SYS_BIT_b}.glibc2.17@${percona_install_dir}@g" ${percona_install_dir}/bin/mysqld_safe
-    sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${percona_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then
     if [ "${PM}" == 'yum' ]; then
       yum -y install openldap-devel
@@ -223,7 +222,7 @@ EOF
   ${percona_install_dir}/bin/mysql -uroot -hlocalhost -e "grant all privileges on *.* to root@'localhost' with grant option;"
   ${percona_install_dir}/bin/mysql -uroot -hlocalhost -e "alter user root@'localhost' identified by \"${dbrootpwd}\";"
   ${percona_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "reset master;"
-  rm -rf /etc/ld.so.conf.d/{mysql,mariadb,percona,alisql}*.conf
+  rm -rf /etc/ld.so.conf.d/{mysql,mariadb,percona}*.conf
   [ -e "${percona_install_dir}/my.cnf" ] && rm -f ${percona_install_dir}/my.cnf
   echo "${percona_install_dir}/lib" > /etc/ld.so.conf.d/z-percona.conf
   ldconfig

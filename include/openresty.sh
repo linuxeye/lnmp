@@ -50,7 +50,7 @@ Install_OpenResty() {
   fi
 
   mv ${openresty_install_dir}/nginx/conf/nginx.conf{,_bk}
-  if [[ ${apache_option} =~ ^[1-2]$ ]] || [ -e "${apache_install_dir}/bin/httpd" ]; then
+  if [ "${apache_flag}" == 'y' ] || [ -e "${apache_install_dir}/bin/httpd" ]; then
     /bin/cp ../config/nginx_apache.conf ${openresty_install_dir}/nginx/conf/nginx.conf 
   elif { [[ ${tomcat_option} =~ ^[1-4]$ ]] || [ -e "${tomcat_install_dir}/conf/server.xml" ]; } && { [[ ! ${php_option} =~ ^[1-9]$|^10$ ]] && [ ! -e "${php_install_dir}/bin/php" ]; }; then
     /bin/cp ../config/nginx_tomcat.conf ${openresty_install_dir}/nginx/conf/nginx.conf 

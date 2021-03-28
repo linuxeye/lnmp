@@ -9,7 +9,7 @@
 
 installDepsDebian() {
   echo "${CMSG}Removing the conflicting packages...${CEND}"
-  if [[ "${apache_option}" =~ ^[1-2]$ ]]; then
+  if [ "${apache_flag}" == 'y' ]; then
     killall apache2
     pkgList="apache2 apache2-doc apache2-utils apache2.2-common apache2.2-bin apache2-mpm-prefork apache2-doc apache2-mpm-worker php5 php5-common php5-cgi php5-cli php5-mysql php5-curl php5-gd"
     for Package in ${pkgList};do
@@ -18,7 +18,7 @@ installDepsDebian() {
     dpkg -l | grep ^rc | awk '{print $2}' | xargs dpkg -P
   fi
 
-  if [[ "${db_option}" =~ ^[1-9]$|^1[0-3]$ ]]; then
+  if [[ "${db_option}" =~ ^[1-9]$|^1[0-2]$ ]]; then
     pkgList="mysql-client mysql-server mysql-common mysql-server-core-5.5 mysql-client-5.5 mariadb-client mariadb-server mariadb-common"
     for Package in ${pkgList};do
       apt-get -y purge ${Package}
@@ -42,7 +42,7 @@ installDepsDebian() {
       pkgList="debian-keyring debian-archive-keyring build-essential gcc g++ make cmake autoconf libjpeg8 libjpeg62-turbo-dev libjpeg-dev libpng12-0 libpng12-dev libpng3 libgd-dev libxml2 libxml2-dev zlib1g zlib1g-dev libc6 libc6-dev libc-client2007e-dev libglib2.0-0 libglib2.0-dev bzip2 libzip-dev libbz2-1.0 libncurses5 libncurses5-dev libaio1 libaio-dev numactl libreadline-dev curl libcurl3-gnutls libcurl4-gnutls-dev libcurl4-openssl-dev e2fsprogs libkrb5-3 libkrb5-dev libltdl-dev libidn11 libidn11-dev openssl net-tools libssl-dev libtool libevent-dev bison re2c libsasl2-dev libxslt1-dev libxslt-dev libicu-dev locales libcloog-ppl0 patch vim zip unzip tmux htop bc dc expect libexpat1-dev libonig-dev libtirpc-dev nss rsync git lsof lrzsz iptables rsyslog cron logrotate ntpdate libsqlite3-dev psmisc wget sysv-rc ca-certificates"
       ;;
     9|10)
-      pkgList="debian-keyring debian-archive-keyring build-essential gcc g++ make cmake autoconf libjpeg62-turbo-dev libjpeg-dev libpng-dev libxml2 libxml2-dev zlib1g zlib1g-dev libc6 libc6-dev libc-client2007e-dev libglib2.0-0 libglib2.0-dev bzip2 libzip-dev libbz2-1.0 libncurses5 libncurses5-dev libaio1 libaio-dev numactl libreadline-dev curl libcurl3-gnutls libcurl4-gnutls-dev libcurl4-openssl-dev e2fsprogs libkrb5-3 libkrb5-dev libltdl-dev libidn11 libidn11-dev openssl net-tools libssl-dev libtool libevent-dev bison re2c libsasl2-dev libxslt1-dev libicu-dev locales libcloog-ppl1 patch vim zip unzip tmux htop bc dc expect libexpat1-dev libonig-dev libtirpc-dev nss rsync git lsof lrzsz iptables rsyslog cron logrotate ntpdate libsqlite3-dev psmisc wget sysv-rc ca-certificates"
+      pkgList="debian-keyring debian-archive-keyring build-essential gcc g++ make cmake autoconf libjpeg62-turbo-dev libjpeg-dev libpng-dev libgd-dev libxml2 libxml2-dev zlib1g zlib1g-dev libc6 libc6-dev libc-client2007e-dev libglib2.0-0 libglib2.0-dev bzip2 libzip-dev libbz2-1.0 libncurses5 libncurses5-dev libaio1 libaio-dev numactl libreadline-dev curl libcurl3-gnutls libcurl4-gnutls-dev libcurl4-openssl-dev e2fsprogs libkrb5-3 libkrb5-dev libltdl-dev libidn11 libidn11-dev openssl net-tools libssl-dev libtool libevent-dev bison re2c libsasl2-dev libxslt1-dev libicu-dev locales libcloog-ppl1 patch vim zip unzip tmux htop bc dc expect libexpat1-dev libonig-dev libtirpc-dev nss rsync git lsof lrzsz iptables rsyslog cron logrotate ntpdate libsqlite3-dev psmisc wget sysv-rc ca-certificates"
       ;;
     *)
       echo "${CFAILURE}Your system Debian ${Debian_ver} are not supported!${CEND}"
@@ -90,7 +90,7 @@ installDepsCentOS() {
 installDepsUbuntu() {
   # Uninstall the conflicting software
   echo "${CMSG}Removing the conflicting packages...${CEND}"
-  if [[ "${apache_option}" =~ ^[1-2]$ ]]; then
+  if [ "${apache_flag}" == 'y' ]; then
     killall apache2
     pkgList="apache2 apache2-doc apache2-utils apache2.2-common apache2.2-bin apache2-mpm-prefork apache2-doc apache2-mpm-worker php5 php5-common php5-cgi php5-cli php5-mysql php5-curl php5-gd"
     for Package in ${pkgList};do
@@ -99,7 +99,7 @@ installDepsUbuntu() {
     dpkg -l | grep ^rc | awk '{print $2}' | xargs dpkg -P
   fi
 
-  if [[ "${db_option}" =~ ^[1-9]$|^1[0-3]$ ]]; then
+  if [[ "${db_option}" =~ ^[1-9]$|^1[0-2]$ ]]; then
     pkgList="mysql-client mysql-server mysql-common mysql-server-core-5.5 mysql-client-5.5 mariadb-client mariadb-server mariadb-common"
     for Package in ${pkgList};do
       apt-get -y purge ${Package}

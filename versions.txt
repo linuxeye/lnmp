@@ -1,7 +1,7 @@
 # newest software version
 # Web
 nginx_ver=1.18.0
-tengine_ver=2.3.2
+tengine_ver=2.3.3
 openresty_ver=1.19.3.1
 openssl11_ver=1.1.1k
 openssl_ver=1.0.2u
@@ -65,7 +65,7 @@ icu4c_ver=63_1
 libsodium_ver=1.0.18
 libzip_ver=1.2.0
 argon2_ver=20171227
-imagemagick_ver=7.0.11-4
+imagemagick_ver=7.0.11-6
 imagick_ver=3.4.4
 graphicsmagick_ver=1.3.36
 gmagick_ver=2.0.5RC1

@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://linuxeye.com
 #
-# Notes: OneinStack for CentOS/RedHat 6+ Debian 8+ and Ubuntu 14+
+# Notes: OneinStack for CentOS/RedHat 7+ Debian 8+ and Ubuntu 16+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -12,7 +12,7 @@ export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 clear
 printf "
 #######################################################################
-#       OneinStack for CentOS/RedHat 6+ Debian 8+ and Ubuntu 14+      #
+#       OneinStack for CentOS/RedHat 7+ Debian 8+ and Ubuntu 16+      #
 #                     Setup the backup parameters                     #
 #       For more information please visit https://oneinstack.com      #
 #######################################################################
@@ -182,7 +182,7 @@ fi
 
 if [ -n "`echo ${desc_bk} | grep -w 3`" ]; then
   if [ ! -e "/usr/local/bin/ossutil" ]; then
-    wget -qc http://gosspublic.alicdn.com/ossutil/1.6.10/ossutil${OS_BIT} -O /usr/local/bin/ossutil
+    wget -qc https://gosspublic.alicdn.com/ossutil/1.7.1/ossutil${OS_BIT} -O /usr/local/bin/ossutil
     chmod +x /usr/local/bin/ossutil
   fi
   while :; do echo
@@ -336,11 +336,15 @@ fi
 if [ -n "`echo ${desc_bk} | grep -w 5`" ]; then
   if [ ! -e "/usr/local/bin/upx" ]; then
     if [ "${OS_BIT}" == '64' ]; then
-      wget -qc http://collection.b0.upaiyun.com/softwares/upx/upx-linux-amd64-v0.2.4 -O /usr/local/bin/upx
+      wget -qc http://collection.b0.upaiyun.com/softwares/upx/upx_0.3.5_linux_x86_64.tar.gz -O /tmp/upx_0.3.5_linux_x86_64.tar.gz
+      tar xzf /tmp/upx_0.3.5_linux_x86_64.tar.gz -C /tmp/
     elif [ "${OS_BIT}" == '32' ]; then
-      wget -qc http://collection.b0.upaiyun.com/softwares/upx/upx-linux-386-v0.2.4 -O /usr/local/bin/upx
+      wget -qc http://collection.b0.upaiyun.com/softwares/upx/upx_0.3.5_linux_i386.tar.gz -O /tmp/upx_0.3.5_linux_i386.tar.gz 
+      tar xzf /tmp/upx_0.3.5_linux_i386.tar.gz -C /tmp/
     fi
+    /bin/mv /tmp/upx /usr/local/bin/upx
     chmod +x /usr/local/bin/upx
+    rm -f /tmp/upx_* /tmp/LICENSE /tmp/README.md
   fi
   while :; do echo
     read -e -p "Please enter the upyun ServiceName: " ServiceName
@@ -374,13 +378,11 @@ if [ -n "`echo ${desc_bk} | grep -w 6`" ]; then
   fi
   if [ ! -e "/usr/local/bin/qshell" ]; then
     if [ "${OS_BIT}" == '64' ]; then
-      wget -qc http://devtools.qiniu.com/qshell-linux-x64-v2.4.0.zip -O /tmp/qshell-linux-x64-v2.4.0.zip
-      unzip -q /tmp/qshell-linux-x64-v2.4.0.zip -d /tmp/
-      /bin/cp /tmp/qshell-linux-x64-v2.4.0 /usr/local/bin/qshell
+      wget -qc https://devtools.qiniu.com/qshell-v2.5.0-linux-amd64.tar.gz -O /tmp/qshell-v2.5.0-linux-amd64.tar.gz
+      tar xzf /tmp/qshell-v2.5.0-linux-amd64.tar.gz -C /usr/local/bin/
     elif [ "${OS_BIT}" == '32' ]; then
-      wget -qc http://devtools.qiniu.com/qshell-linux-x86-v2.4.0.zip -O /tmp/qshell-linux-x86-v2.4.0.zip
-      unzip -q /tmp/qshell-linux-x86-v2.4.0.zip -d /tmp/
-      /bin/cp /tmp/qshell-linux-x86-v2.4.0 /usr/local/bin/qshell
+      wget -qc https://devtools.qiniu.com/qshell-v2.5.0-linux-386.tar.gz -O /tmp/qshell-v2.5.0-linux-386.tar.gz 
+      tar xzf /tmp/qshell-v2.5.0-linux-386.tar.gz -C /usr/local/bin/
     fi
     chmod +x /usr/local/bin/qshell
     rm -f /tmp/qshell*

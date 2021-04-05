@@ -1,7 +1,7 @@
 #!/bin/bash
 # Author:  Alpha Eva <kaneawk AT gmail.com>
 #
-# Notes: OneinStack for CentOS/RedHat 6+ Debian 8+ and Ubuntu 14+
+# Notes: OneinStack for CentOS/RedHat 7+ Debian 8+ and Ubuntu 16+
 #
 # Project home page:
 #       https://oneinstack.com
@@ -60,7 +60,11 @@ installDepsCentOS() {
   echo "${CMSG}Removing the conflicting packages...${CEND}"
   [ -z "`grep -w epel /etc/yum.repos.d/*.repo`" ] && yum -y install epel-release
   if [ "${CentOS_ver}" == '8' ]; then
-    dnf -y --enablerepo=PowerTools install chrony oniguruma-devel rpcgen
+    if grep -qw "^\[PowerTools\]" /etc/yum.repos.d/*.repo; then
+      dnf -y --enablerepo=PowerTools install chrony oniguruma-devel rpcgen
+    else
+      dnf -y --enablerepo=powertools install chrony oniguruma-devel rpcgen
+    fi
     systemctl enable chronyd
     systemctl stop firewalld && systemctl mask firewalld.service
   elif [ "${CentOS_ver}" == '7' ]; then

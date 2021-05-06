@@ -13,13 +13,31 @@ Nginx_lua_waf() {
   [ ! -e "${nginx_install_dir}/sbin/nginx" ] && echo "${CWARNING}Nginx is not installed on your system! ${CEND}" && exit 1
   if [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ]; then
     [ -e "/usr/local/lib/libluajit-5.1.so.2.0.5" ] && find /usr/local -name *luajit* | xargs rm -rf
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/luajit2-2.1-20200102.tar.gz && Download_src
-    tar xzf luajit2-2.1-20200102.tar.gz
-    pushd luajit2-2.1-20200102
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/luajit2-${luajit2_ver}.tar.gz && Download_src
+    tar xzf luajit2-${luajit2_ver}.tar.gz
+    pushd luajit2-${luajit2_ver}
     make && make install
     [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ] && { echo "${CFAILURE}LuaJIT install failed! ${CEND}"; kill -9 $$; }
     popd > /dev/null
+    rm -rf luajit2-${luajit2_ver}
   fi
+  if [ ! -e "/usr/local/lib/lua/resty/core.lua" ]; then
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/lua-resty-core-${lua_resty_core_ver}.tar.gz && Download_src
+    tar xzf lua-resty-core-${lua_resty_core_ver}.tar.gz
+    pushd lua-resty-core-${lua_resty_core_ver}
+    make install
+    popd > /dev/null
+    rm -rf lua-resty-core-${lua_resty_core_ver}
+  fi
+  if [ ! -e "/usr/local/lib/lua/resty/lrucache.lua" ]; then
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/lua-resty-lrucache-${lua_resty_lrucache_ver}.tar.gz && Download_src
+    tar xzf lua-resty-lrucache-${lua_resty_lrucache_ver}.tar.gz
+    pushd lua-resty-lrucache-${lua_resty_lrucache_ver}
+    make install
+    popd > /dev/null
+    rm -rf lua-resty-lrucache-${lua_resty_lrucache_ver}
+  fi
+  [ -d "/usr/local/share/lua/5.1" ] && ln -s /usr/local/lib/lua /usr/local/share/lua/5.1
   if [ ! -e "/usr/local/lib/lua/5.1/cjson.so" ]; then
     src_url=http://mirrors.linuxeye.com/oneinstack/src/lua-cjson-2.1.0.8.tar.gz && Download_src
     tar xzf lua-cjson-2.1.0.8.tar.gz
@@ -59,7 +77,7 @@ Nginx_lua_waf() {
       kill -QUIT `cat /var/run/nginx.pid.oldbin`
       popd > /dev/null
       echo "${CSUCCESS}lua-nginx-module installed successfully! ${CEND}"
-      sed -i "s@^nginx_modules_options='\(.*\)'@nginx_modules_options=\'\1 --with-ld-opt=\"-Wl,-rpath,/usr/local/lib\" --add-module=../lua-nginx-module --add-module=../ngx_devel_kit\'@" ../options.conf
+      sed -i "s@^nginx_modules_options='\(.*\)'@nginx_modules_options=\'\1 --with-ld-opt=\"-Wl,-rpath,/usr/local/lib\" --add-module=../lua-nginx-module-${lua_nginx_module_ver} --add-module=../ngx_devel_kit\'@" ../options.conf
       rm -rf nginx-${nginx_ver}
     else
       echo "${CFAILURE}lua-nginx-module install failed! ${CEND}"
@@ -74,9 +92,9 @@ Tengine_lua_waf() {
   [ ! -e "${tengine_install_dir}/sbin/nginx" ] && echo "${CWARNING}Tengine is not installed on your system! ${CEND}" && exit 1
   if [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ]; then
     [ -e "/usr/local/lib/libluajit-5.1.so.2.0.5" ] && find /usr/local -name *luajit* | xargs rm -rf
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/luajit2-2.1-20200102.tar.gz && Download_src
-    tar xzf luajit2-2.1-20200102.tar.gz
-    pushd luajit2-2.1-20200102
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/luajit2-${luajit2_ver}.tar.gz && Download_src
+    tar xzf luajit2-${luajit2_ver}.tar.gz
+    pushd luajit2-${luajit2_ver}
     make && make install
     [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ] && { echo "${CFAILURE}LuaJIT install failed! ${CEND}"; kill -9 $$; }
     popd > /dev/null

@@ -127,39 +127,13 @@ installDepsUbuntu() {
   for Package in ${pkgList}; do
     apt-get --no-install-recommends -y install ${Package}
   done
-
-  if [[ "${Ubuntu_ver}" =~ ^14$|^15$ ]]; then
-    apt-get -y remove bison
-  fi
 }
 
 installDepsBySrc() {
   pushd ${oneinstack_dir}/src > /dev/null
-  if [ "${OS}" == 'Ubuntu' ]; then
-    if [[ "${Ubuntu_ver}" =~ ^14$|^15$ ]]; then
-      # Install bison on ubt 14.x 15.x
-      tar xzf bison-${bison_ver}.tar.gz
-      pushd bison-${bison_ver} > /dev/null
-      ./configure
-      make -j ${THREAD} && make install
-      popd > /dev/null
-      rm -rf bison-${bison_ver}
-    fi
-  elif [ "${OS}" == 'CentOS' ]; then
-    # install htop
-    if ! command -v htop >/dev/null 2>&1; then
-      tar xzf htop-${htop_ver}.tar.gz
-      pushd htop-${htop_ver} > /dev/null
-      ./configure
-      make -j ${THREAD} && make install
-      popd > /dev/null
-      rm -rf htop-${htop_ver}
-    fi
-
+  if [ "${OS}" == 'CentOS' ] && [ "${CentOS_ver}" == '6' ]; then
     # upgrade autoconf for CentOS6
-    [ "${CentOS_ver}" == '6' ] && rpm -Uvh autoconf-2.69-12.2.noarch.rpm
-  else
-    echo "No need to install software from source packages."
+    rpm -Uvh autoconf-2.69-12.2.noarch.rpm
   fi
 
   if ! command -v icu-config > /dev/null 2>&1 || icu-config --version | grep '^3.' || [ "${Ubuntu_ver}" == "20" ]; then

@@ -13,7 +13,7 @@ Install_pecl_yar() {
     pushd ${oneinstack_dir}/src > /dev/null
     PHP_detail_ver=$(${php_install_dir}/bin/php-config --version)
     PHP_main_ver=${PHP_detail_ver%.*}
-    if [[ "${PHP_main_ver}" =~ ^7.[0-3]$ ]]; then
+    if [[ "${PHP_main_ver}" =~ ^7.[0-4]$|^8.0$ ]]; then
       phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
       src_url=https://pecl.php.net/get/yar-${yar_ver}.tgz && Download_src
       tar xzf yar-${yar_ver}.tgz

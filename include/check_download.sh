@@ -70,23 +70,22 @@ checkDownload() {
   # tomcat
   case "${tomcat_option}" in
     1)
+      echo "Download tomcat 10..."
+      src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat10_ver}/apache-tomcat-${tomcat10_ver}.tar.gz && Download_src
+      ;;
+    2)
       echo "Download tomcat 9..."
       src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat9_ver}/apache-tomcat-${tomcat9_ver}.tar.gz && Download_src
       ;;
-    2)
+    3)
       echo "Download tomcat 8..."
       src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat8_ver}/apache-tomcat-${tomcat8_ver}.tar.gz && Download_src
       src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat8_ver}/catalina-jmx-remote.jar && Download_src
       ;;
-    3)
+    4)
       echo "Download tomcat 7..."
       src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat7_ver}/apache-tomcat-${tomcat7_ver}.tar.gz && Download_src
       src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat7_ver}/catalina-jmx-remote.jar && Download_src
-      ;;
-    4)
-      echo "Download tomcat 6..."
-      src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat6_ver}/apache-tomcat-${tomcat6_ver}.tar.gz && Download_src
-      src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat6_ver}/catalina-jmx-remote.jar && Download_src
       ;;
   esac
 
@@ -721,22 +720,10 @@ checkDownload() {
     fi
   fi
 
-  # others
-  if [ "${downloadDepsSrc}" == '1' ]; then
-    if [ "${PM}" == 'yum' ]; then
-      echo "Download htop for CentOS..."
-      src_url=${mirrorLink}/htop-${htop_ver}.tar.gz && Download_src
-    fi
-
-    if [ "${CentOS_ver}" == '6' ]; then
-      echo "Download autoconf rpm for CentOS6..."
-      src_url=${mirrorLink}/autoconf-2.69-12.2.noarch.rpm && Download_src
-    fi
-
-    if [[ "${Ubuntu_ver}" =~ ^14$|^15$ ]]; then
-      echo "Download bison for Ubuntu..."
-      src_url=http://ftp.gnu.org/gnu/bison/bison-${bison_ver}.tar.gz && Download_src
-    fi
+  # autoconf for CentOS6
+  if [ "${downloadDepsSrc}" == '1' ] && [ "${CentOS_ver}" == '6' ]; then
+    echo "Download autoconf rpm for CentOS6..."
+    src_url=${mirrorLink}/autoconf-2.69-12.2.noarch.rpm && Download_src
   fi
 
   popd > /dev/null

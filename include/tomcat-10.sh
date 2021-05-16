@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/oneinstack/oneinstack
 
-Install_Tomcat6() {
+Install_Tomcat10() {
   pushd ${oneinstack_dir}/src > /dev/null
   . /etc/profile
   id -g ${run_group} >/dev/null 2>&1
@@ -26,9 +26,9 @@ Install_Tomcat6() {
     rm -rf apr-${apr_ver}
   fi
 
-  tar xzf apache-tomcat-${tomcat6_ver}.tar.gz
+  tar xzf apache-tomcat-${tomcat10_ver}.tar.gz
   [ ! -d "${tomcat_install_dir}" ] && mkdir -p ${tomcat_install_dir}
-  /bin/cp -R apache-tomcat-${tomcat6_ver}/* ${tomcat_install_dir}
+  /bin/cp -R apache-tomcat-${tomcat10_ver}/* ${tomcat_install_dir}
   rm -rf ${tomcat_install_dir}/webapps/{docs,examples,host-manager,manager,ROOT/*}
 
   if [ ! -e "${tomcat_install_dir}/conf/server.xml" ]; then
@@ -37,12 +37,11 @@ Install_Tomcat6() {
     kill -9 $$
   fi
 
-  /bin/cp catalina-jmx-remote.jar ${tomcat_install_dir}/lib
   #[ ! -d "${tomcat_install_dir}/lib/catalina" ] && mkdir ${tomcat_install_dir}/lib/catalina
   #pushd ${tomcat_install_dir}/lib/catalina
   #jar xf ../catalina.jar
   #sed -i 's@^server.info=.*@server.info=Tomcat@' org/apache/catalina/util/ServerInfo.properties
-  #sed -i 's@^server.number=.*@server.number=6@' org/apache/catalina/util/ServerInfo.properties
+  #sed -i 's@^server.number=.*@server.number=10@' org/apache/catalina/util/ServerInfo.properties
   #sed -i "s@^server.built=.*@server.built=$(date)@" org/apache/catalina/util/ServerInfo.properties
   #jar cf ../catalina.jar ./*
   #popd
@@ -71,7 +70,7 @@ EOF
     popd # goto ${oneinstack_dir}/src
     /bin/cp ${oneinstack_dir}/config/server.xml ${tomcat_install_dir}/conf
     sed -i "s@/usr/local/tomcat@${tomcat_install_dir}@g" ${tomcat_install_dir}/conf/server.xml
-    sed -i /ThreadLocalLeakPreventionListener/d ${tomcat_install_dir}/conf/server.xml
+
     if [ ! -e "${nginx_install_dir}/sbin/nginx" -a ! -e "${tengine_install_dir}/sbin/nginx" -a ! -e "${openresty_install_dir}/nginx/sbin/nginx" -a ! -e "${apache_install_dir}/bin/httpd" ]; then
       if [ "${PM}" == 'yum' ]; then
         if [ -n "`grep 'dport 80 ' /etc/sysconfig/iptables`" ] && [ -z "$(grep -w '8080' /etc/sysconfig/iptables)" ]; then
@@ -138,7 +137,7 @@ EOF
     [ "${PM}" == 'yum' ] && { chkconfig --add tomcat; chkconfig tomcat on; }
     [ "${PM}" == 'apt-get' ] && update-rc.d tomcat defaults
     echo "${CSUCCESS}Tomcat installed successfully! ${CEND}"
-    rm -rf apache-tomcat-${tomcat6_ver}
+    rm -rf apache-tomcat-${tomcat10_ver}
   else
     popd > /dev/null
     echo "${CFAILURE}Tomcat install failed, Please contact the author! ${CEND}" && lsb_release -a

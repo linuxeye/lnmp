@@ -287,7 +287,7 @@ Upgrade_Tomcat() {
   OLD_tomcat_ver="`${tomcat_install_dir}/bin/version.sh | awk '/Server number/{print $3}' | awk -F. '{print $1"."$2"."$3}'`"
   Tomcat_flag="`echo ${OLD_tomcat_ver} | awk -F. '{print $1}'`"
   Latest_tomcat_ver=`curl --connect-timeout 2 -m 3 -s https://tomcat.apache.org/download-${Tomcat_flag}0.cgi | grep "README" | head -1 | grep -oE "[6-9]\.[0-9]\.[0-9]+"`
-  Latest_tomcat_ver=${Latest_tomcat_ver:-${tomcat9_ver}}
+  Latest_tomcat_ver=${Latest_tomcat_ver:-${tomcat10_ver}}
   echo
   echo "Current Tomcat Version: ${CMSG}${OLD_tomcat_ver}${CEND}"
   while :; do echo
@@ -297,9 +297,11 @@ Upgrade_Tomcat() {
       rm -f catalina-jmx-remote.jar
       echo "Download tomcat-${NEW_tomcat_ver}..."
       src_url=http://mirrors.linuxeye.com/apache/tomcat/v${NEW_tomcat_ver}/apache-tomcat-${NEW_tomcat_ver}.tar.gz && Download_src
-      src_url=http://mirrors.linuxeye.com/apache/tomcat/v${NEW_tomcat_ver}/catalina-jmx-remote.jar && Download_src
       [ ! -e "apache-tomcat-${NEW_tomcat_ver}.tar.gz" ] && wget --no-check-certificate -c https://archive.apache.org/dist/tomcat-${OLD_tomcat_ver}/v${NEW_tomcat_ver}/bin/apache-tomcat-${NEW_tomcat_ver}.tar.gz > /dev/null 2>&1
-      [ ! -e "catalina-jmx-remote.jar" ] && wget --no-check-certificate -c https://archive.apache.org/dist/tomcat-${OLD_tomcat_ver}/v${NEW_tomcat_ver}/bin/extras/catalina-jmx-remote.jar > /dev/null 2>&1
+      if [ -e "${tomcat_install_dir}/lib/catalina-jmx-remote.jar" ]; then
+        src_url=http://mirrors.linuxeye.com/apache/tomcat/v${NEW_tomcat_ver}/catalina-jmx-remote.jar && Download_src
+        [ ! -e "catalina-jmx-remote.jar" ] && wget --no-check-certificate -c https://archive.apache.org/dist/tomcat-${OLD_tomcat_ver}/v${NEW_tomcat_ver}/bin/extras/catalina-jmx-remote.jar > /dev/null 2>&1
+      fi
       if [ -e "apache-tomcat-${NEW_tomcat_ver}.tar.gz" ]; then
         echo "Download [${CMSG}apache-tomcat-${NEW_tomcat_ver}.tar.gz${CEND}] successfully! "
         break
@@ -320,6 +322,7 @@ Upgrade_Tomcat() {
     tar xzf apache-tomcat-${NEW_tomcat_ver}.tar.gz
     /bin/mv apache-tomcat-${NEW_tomcat_ver}/conf/server.xml{,_bk}
     /bin/cp ${tomcat_install_dir}/conf/{server.xml,jmxremote.access,jmxremote.password,tomcat-users.xml} apache-tomcat-${NEW_tomcat_ver}/conf/
+    [ -e "${tomcat_install_dir}/lib/catalina-jmx-remote.jar" ] && /bin/cp catalina-jmx-remote.jar apache-tomcat-${NEW_tomcat_ver}/lib
     /bin/cp ${tomcat_install_dir}/bin/setenv.sh apache-tomcat-${NEW_tomcat_ver}/bin/
     /bin/cp -R ${tomcat_install_dir}/conf/vhost apache-tomcat-${NEW_tomcat_ver}/conf/
     chmod +x apache-tomcat-${NEW_tomcat_ver}/bin/*.sh

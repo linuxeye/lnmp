@@ -37,9 +37,9 @@ elif [ -n "$(grep 'Amazon Linux' /etc/issue)" -o -n "$(grep 'Amazon Linux' /etc/
 elif [ -n "$(grep 'bian' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Debian" ]; then
   OS=Debian
   Debian_ver=$(lsb_release -sr | awk -F. '{print $1}')
-elif [ -n "$(grep 'Deepin' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Deepin" ]; then
+elif [ -n "$(grep 'Deepin 20' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Deepin" ]; then
   OS=Debian
-  Debian_ver=8
+  Debian_ver=10
 elif [ -n "$(grep -w 'Kali' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Kali" ]; then
   OS=Debian
   if [ -n "$(grep 'VERSION="2016.*"' /etc/os-release)" ]; then
@@ -59,8 +59,8 @@ elif [ -n "$(grep 'elementary' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" 
 fi
 
 # Check OS Version
-if [ ${CentOS_ver} -lt 6 >/dev/null 2>&1 ] || [ ${Debian_ver} -lt 8 >/dev/null 2>&1 ] || [ ${Ubuntu_ver} -lt 14 >/dev/null 2>&1 ]; then
-  echo "${CFAILURE}Does not support this OS, Please install CentOS 6+,Debian 8+,Ubuntu 14+ ${CEND}"
+if [ ${CentOS_ver} -lt 6 >/dev/null 2>&1 ] || [ ${Debian_ver} -lt 8 >/dev/null 2>&1 ] || [ ${Ubuntu_ver} -lt 16 >/dev/null 2>&1 ]; then
+  echo "${CFAILURE}Does not support this OS, Please install CentOS 6+,Debian 8+,Ubuntu 16+ ${CEND}"
   kill -9 $$
 fi
 
@@ -107,15 +107,15 @@ fi
 THREAD=$(grep 'processor' /proc/cpuinfo | sort -u | wc -l)
 
 # Percona binary: https://www.percona.com/doc/percona-server/5.7/installation.html#installing-percona-server-from-a-binary-tarball
-if [ ${Debian_ver} -lt 9 >/dev/null 2>&1 ] || [ ${Ubuntu_ver} -lt 14 >/dev/null 2>&1 ]; then
+if [ ${Debian_ver} -lt 9 >/dev/null 2>&1 ]; then
   sslLibVer=ssl100
 elif [[ "${CentOS_ver}" =~ ^[6-7]$ ]] && [ "$(lsb_release -is)" != 'Fedora' ]; then
   sslLibVer=ssl101
-elif [ ${Debian_ver} -ge 9 >/dev/null 2>&1 ] || [ ${Ubuntu_ver} -ge 14 >/dev/null 2>&1 ]; then
+elif [ ${Debian_ver} -ge 9 >/dev/null 2>&1 ] || [ ${Ubuntu_ver} -ge 16 >/dev/null 2>&1 ]; then
   sslLibVer=ssl102
 elif [ ${Fedora_ver} -ge 27 >/dev/null 2>&1 ]; then
   sslLibVer=ssl102
-elif [ "${CentOS_ver}" == '8' ]; then 
+elif [ "${CentOS_ver}" == '8' ]; then
   sslLibVer=ssl1:111
 else
   sslLibVer=unknown

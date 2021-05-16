@@ -14,7 +14,7 @@ Install_pecl_phalcon() {
     PHP_detail_ver=$(${php_install_dir}/bin/php-config --version)
     PHP_main_ver=${PHP_detail_ver%.*}
     phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
-    if [[ "${PHP_main_ver}" =~ ^7.[2-4]$ ]]; then
+    if [[ "${PHP_main_ver}" =~ ^7.[2-4]$|^8.0$ ]]; then
       src_url=https://pecl.php.net/get/phalcon-${phalcon_ver}.tgz && Download_src
       tar xzf phalcon-${phalcon_ver}.tgz
       pushd phalcon-${phalcon_ver} > /dev/null

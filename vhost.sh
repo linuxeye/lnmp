@@ -136,6 +136,9 @@ Choose_ENV() {
   elif [ -e "${php_install_dir}/bin/phpize" -a ! -e "${tomcat_install_dir}/conf/server.xml" ]; then
     Number=10
     NGX_FLAG=php
+  elif [ ! -e "${php_install_dir}/bin/phpize" -a -e "${tomcat_install_dir}/conf/server.xml" ]; then
+    Number=01
+    NGX_FLAG=java
   else
     Number=00
     NGX_FLAG=php

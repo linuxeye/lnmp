@@ -6,10 +6,10 @@ openresty_ver=1.19.3.1
 openssl11_ver=1.1.1k
 openssl_ver=1.0.2u
 
-tomcat9_ver=9.0.44
-tomcat8_ver=8.5.64
-tomcat7_ver=7.0.108
-tomcat6_ver=6.0.53
+tomcat10_ver=10.0.6
+tomcat9_ver=9.0.46
+tomcat8_ver=8.5.66
+tomcat7_ver=7.0.109
 
 apache_ver=2.4.46
 pcre_ver=8.44
@@ -28,18 +28,18 @@ mariadb104_ver=10.4.18
 mariadb103_ver=10.3.28
 mariadb55_ver=5.5.68
 
-percona80_ver=8.0.22-13
+percona80_ver=8.0.23-14
 percona57_ver=5.7.33-36
 percona56_ver=5.6.51-91.0
 percona55_ver=5.5.62-38.14
 
-pgsql_ver=12.6
+pgsql_ver=12.7
 
 mongodb_ver=4.0.16
 
 # JDK
 jdk110_ver=11.0.10
-jdk18_ver=1.8.0_281
+jdk18_ver=1.8.0_291
 jdk17_ver=1.7.0_80
 jdk16_ver=1.6.0_45
 
@@ -56,7 +56,7 @@ php74_ver=7.4.19
 php80_ver=8.0.6
 
 libiconv_ver=1.16
-curl_ver=7.75.0
+curl_ver=7.76.1
 libmcrypt_ver=2.5.8
 mcrypt_ver=2.6.8
 mhash_ver=0.9.9.9
@@ -65,7 +65,7 @@ icu4c_ver=63_1
 libsodium_ver=1.0.18
 libzip_ver=1.2.0
 argon2_ver=20171227
-imagemagick_ver=7.0.11-11
+imagemagick_ver=7.0.11-12
 imagick_ver=3.4.4
 graphicsmagick_ver=1.3.36
 gmagick_ver=2.0.5RC1
@@ -75,11 +75,11 @@ xcache_ver=3.2.0
 apcu_ver=5.1.20
 apcu_oldver=4.0.11
 eaccelerator_ver=0.9.6.1
-phalcon_ver=4.0.4
+phalcon_ver=4.1.2
 phalcon_oldver=3.4.5
-yaf_ver=3.0.9
-yar_ver=2.0.7
-swoole_ver=4.6.4
+yaf_ver=3.3.2
+yar_ver=2.2.0
+swoole_ver=4.6.7
 swoole_oldver=4.5.2
 xdebug_ver=2.9.5
 xdebug_oldver=2.5.5
@@ -102,7 +102,7 @@ pecl_memcache_ver=4.0.5.2
 pecl_memcache_oldver=3.0.8
 
 # MongoDB
-pecl_mongodb_ver=1.9.0
+pecl_mongodb_ver=1.9.1
 pecl_mongo_ver=1.6.16
 
 # phpMyadmin
@@ -114,16 +114,14 @@ jemalloc_ver=5.2.1
 
 # boost
 boost_ver=1.73.0
-boost_percona_ver=1.72.0
+boost_percona_ver=1.73.0
 boost_oldver=1.59.0
 
 # Others
 lua_nginx_module_ver=0.10.19
-luajit2_ver=2.1-20201229
+luajit2_ver=2.1-20210510
 lua_resty_core_ver=0.1.21
 lua_resty_lrucache_ver=0.10
-htop_ver=3.0.2
-bison_ver=2.7.1
 python_ver=3.6.13
 setuptools_ver=54.2.0
 pip_ver=21.0.1

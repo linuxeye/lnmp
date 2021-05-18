@@ -37,7 +37,7 @@ dbinstallmethod=1
 
 version() {
   echo "version: 2.4"
-  echo "updated date: 2021-04-01"
+  echo "updated date: 2021-05-18"
 }
 
 Show_Help() {
@@ -699,10 +699,11 @@ fi
 # install wget gcc curl python
 if [ ! -e ~/.oneinstack ]; then
   downloadDepsSrc=1
-  [ "${PM}" == 'apt-get' ] && apt-get -y update
+  [ "${PM}" == 'apt-get' ] && apt-get -y update > /dev/null
   [ "${PM}" == 'yum' ] && yum clean all
   ${PM} -y install wget gcc curl python
   [ "${CentOS_ver}" == '8' ] && { yum -y install python36; sudo alternatives --set python /usr/bin/python3; }
+  clear
 fi
 
 # get the IP information
@@ -712,6 +713,7 @@ IPADDR_COUNTRY=$(./include/get_ipaddr_state.py ${PUBLIC_IPADDR})
 
 # Check download source packages
 . ./include/check_download.sh
+[ "${armplatform}" == "y" ] && dbinstallmethod=2
 checkDownload 2>&1 | tee -a ${oneinstack_dir}/install.log
 
 # del openssl for jcloud
@@ -724,7 +726,7 @@ checkDownload 2>&1 | tee -a ${oneinstack_dir}/install.log
 if [ ! -e ~/.oneinstack ]; then
   # Check binary dependencies packages
   . ./include/check_sw.sh
-  case "${OS}" in
+  case "${LikeOS}" in
     "CentOS")
       installDepsCentOS 2>&1 | tee ${oneinstack_dir}/install.log
       . include/init_CentOS.sh 2>&1 | tee -a ${oneinstack_dir}/install.log
@@ -760,7 +762,7 @@ fi
 # Database
 case "${db_option}" in
   1)
-    [ "${OS}" == 'CentOS' ] && [ ${CentOS_ver} -le 6 >/dev/null 2>&1 ] && dbinstallmethod=1 && checkDownload
+    [ "${LikeOS}" == 'CentOS' ] && [ ${CentOS_ver} -le 6 >/dev/null 2>&1 ] && dbinstallmethod=1 && checkDownload
     . include/mysql-8.0.sh
     Install_MySQL80 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
@@ -793,8 +795,8 @@ case "${db_option}" in
     Install_MariaDB55 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   9)
-    [ "${OS}" == 'CentOS' ] && [ ${CentOS_ver} -le 6 >/dev/null 2>&1 ] && dbinstallmethod=1 && checkDownload
-    [ "${OS}" == 'CentOS' ] && [ "${CentOS_ver}" == '8' ] && dbinstallmethod=2 && checkDownload
+    [ "${LikeOS}" == 'CentOS' ] && [ ${CentOS_ver} -le 6 >/dev/null 2>&1 ] && dbinstallmethod=1 && checkDownload
+    [ "${LikeOS}" == 'CentOS' ] && [ "${CentOS_ver}" == '8' ] && dbinstallmethod=2 && checkDownload
     . include/percona-8.0.sh
     Install_Percona80 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;

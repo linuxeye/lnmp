@@ -15,47 +15,49 @@ if [ -e "/usr/bin/yum" ]; then
     sed -i 's@centos/RPM-GPG@centos-vault/RPM-GPG@g' /etc/yum.repos.d/CentOS-Base.repo
     [ -e /etc/yum.repos.d/epel.repo ] && rm -f /etc/yum.repos.d/epel.repo
   fi
-  command -v lsb_release >/dev/null 2>&1 || { [ -e "/etc/euleros-release" ] && yum -y install euleros-lsb || yum -y install redhat-lsb-core; clear; }
+  if ! command -v lsb_release >/dev/null 2>&1; then
+    if [ -e "/etc/euleros-release" ]; then
+      yum -y install euleros-lsb
+    elif [ -e "/etc/openeuler-release" ]; then
+      yum -y install openeuler-lsb
+    else
+      yum -y install redhat-lsb-core
+    fi
+    clear
+  fi
 fi
+
 if [ -e "/usr/bin/apt-get" ]; then
   PM=apt-get
-  command -v lsb_release >/dev/null 2>&1 || { apt-get -y update; apt-get -y install lsb-release; clear; }
+  command -v lsb_release >/dev/null 2>&1 || { apt-get -y update > /dev/null; apt-get -y install lsb-release; clear; }
 fi
 
 command -v lsb_release >/dev/null 2>&1 || { echo "${CFAILURE}${PM} source failed! ${CEND}"; kill -9 $$; }
 
 # Get OS Version
-if [ -e /etc/redhat-release ]; then
-  OS=CentOS
-  CentOS_ver=$(lsb_release -sr | awk -F. '{print $1}')
-  [ -n "$(lsb_release -is | grep -Ei 'Alibaba|Aliyun')" ] && { CentOS_ver=7; Aliyun_ver=$(lsb_release -rs); }
-  [[ "$(lsb_release -is)" =~ ^EulerOS$ ]] && { CentOS_ver=7; EulerOS_ver=$(lsb_release -rs); }
-  [ "$(lsb_release -is)" == 'Fedora' ] && [ ${CentOS_ver} -ge 19 >/dev/null 2>&1 ] && { CentOS_ver=7; Fedora_ver=$(lsb_release -rs); }
-elif [ -n "$(grep 'Amazon Linux' /etc/issue)" -o -n "$(grep 'Amazon Linux' /etc/os-release)" ]; then
-  OS=CentOS
-  CentOS_ver=7
-elif [ -n "$(grep 'bian' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Debian" ]; then
-  OS=Debian
-  Debian_ver=$(lsb_release -sr | awk -F. '{print $1}')
-elif [ -n "$(grep 'Deepin 20' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Deepin" ]; then
-  OS=Debian
-  Debian_ver=10
-elif [ -n "$(grep -w 'Kali' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Kali" ]; then
-  OS=Debian
-  if [ -n "$(grep 'VERSION="2016.*"' /etc/os-release)" ]; then
-    Debian_ver=8
-  elif [ -n "$(grep 'VERSION="2017.*"' /etc/os-release)" ]; then
-    Debian_ver=9
-  elif [ -n "$(grep 'VERSION="2018.*"' /etc/os-release)" ]; then
-    Debian_ver=9
+OS=$(lsb_release -is)
+if [[ "${OS}" =~ ^CentOS$|^RedHat$|^Fedora$|^Amazon$|^Alibaba$|^Aliyun$|^EulerOS$|^openEuler$ ]]; then
+  LikeOS=CentOS
+  CentOS_ver=$(lsb_release -rs | awk -F. '{print $1}')
+  [[ "${OS}" =~ ^Fedora$ ]] && [ ${CentOS_ver} -ge 19 >/dev/null 2>&1 ] && { CentOS_ver=7; Fedora_ver=$(lsb_release -rs); }
+  [[ "${OS}" =~ ^Amazon$|^Alibaba$|^Aliyun$|^EulerOS$|^openEuler$ ]] && CentOS_ver=7
+elif [[ "${OS}" =~ ^Debian$|^Deepin$|^Uos$|^Kali$ ]]; then
+  LikeOS=Debian
+  Debian_ver=$(lsb_release -rs | awk -F. '{print $1}')
+  [[ "${OS}" =~ ^Deepin$|^Uos$ ]] && [[ "${Debian_ver}" =~ ^20$ ]] && Debian_ver=10
+  [[ "${OS}" =~ ^Kali$ ]] && [[ "${Debian_ver}" =~ ^202 ]] && Debian_ver=10
+elif [[ "${OS}" =~ ^Ubuntu$|^LinuxMint$|^elementary$ ]]; then
+  LikeOS=Ubuntu
+  Ubuntu_ver=$(lsb_release -rs | awk -F. '{print $1}')
+  if [[ "${OS}" =~ ^LinuxMint$ ]]; then
+    [[ "${Ubuntu_ver}" =~ ^18$ ]] && Ubuntu_ver=16
+    [[ "${Ubuntu_ver}" =~ ^19$ ]] && Ubuntu_ver=18
+    [[ "${Ubuntu_ver}" =~ ^20$ ]] && Ubuntu_ver=20
   fi
-elif [ -n "$(grep 'Ubuntu' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == "Ubuntu" -o -n "$(grep 'Linux Mint' /etc/issue)" ]; then
-  OS=Ubuntu
-  Ubuntu_ver=$(lsb_release -sr | awk -F. '{print $1}')
-  [ -n "$(grep 'Linux Mint 18' /etc/issue)" ] && Ubuntu_ver=16
-elif [ -n "$(grep 'elementary' /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == 'elementary' ]; then
-  OS=Ubuntu
-  Ubuntu_ver=16
+  if [[ "${OS}" =~ ^elementary$ ]]; then
+    [[ "${Ubuntu_ver}" =~ ^5$ ]] && Ubuntu_ver=18
+    [[ "${Ubuntu_ver}" =~ ^6$ ]] && Ubuntu_ver=20
+  fi
 fi
 
 # Check OS Version
@@ -109,7 +111,7 @@ THREAD=$(grep 'processor' /proc/cpuinfo | sort -u | wc -l)
 # Percona binary: https://www.percona.com/doc/percona-server/5.7/installation.html#installing-percona-server-from-a-binary-tarball
 if [ ${Debian_ver} -lt 9 >/dev/null 2>&1 ]; then
   sslLibVer=ssl100
-elif [[ "${CentOS_ver}" =~ ^[6-7]$ ]] && [ "$(lsb_release -is)" != 'Fedora' ]; then
+elif [[ "${CentOS_ver}" =~ ^[6-7]$ ]] && [ "${OS}" != 'Fedora' ]; then
   sslLibVer=ssl101
 elif [ ${Debian_ver} -ge 9 >/dev/null 2>&1 ] || [ ${Ubuntu_ver} -ge 16 >/dev/null 2>&1 ]; then
   sslLibVer=ssl102

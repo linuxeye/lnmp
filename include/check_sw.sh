@@ -131,7 +131,7 @@ installDepsUbuntu() {
 
 installDepsBySrc() {
   pushd ${oneinstack_dir}/src > /dev/null
-  if [ "${OS}" == 'CentOS' ] && [ "${CentOS_ver}" == '6' ]; then
+  if [ "${LikeOS}" == 'CentOS' ] && [ "${CentOS_ver}" == '6' ]; then
     # upgrade autoconf for CentOS6
     rpm -Uvh autoconf-2.69-12.2.noarch.rpm
   fi

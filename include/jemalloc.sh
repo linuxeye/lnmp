@@ -17,7 +17,7 @@ Install_Jemalloc() {
     make -j ${THREAD} && make install
     popd > /dev/null
     if [ -f "/usr/local/lib/libjemalloc.so" ]; then
-      if [ "${OS_BIT}" == '64' -a "${OS}" == 'CentOS' ]; then
+      if [ "${OS_BIT}" == '64' -a "${LikeOS}" == 'CentOS' ]; then
         ln -s /usr/local/lib/libjemalloc.so.2 /usr/lib64/libjemalloc.so.1
       else
         ln -s /usr/local/lib/libjemalloc.so.2 /usr/lib/libjemalloc.so.1

@@ -37,11 +37,11 @@ Nginx_lua_waf() {
     popd > /dev/null
     rm -rf lua-resty-lrucache-${lua_resty_lrucache_ver}
   fi
-  [ -d "/usr/local/share/lua/5.1" ] && ln -s /usr/local/lib/lua /usr/local/share/lua/5.1
+  [ ! -h "/usr/local/share/lua/5.1" ] && { rm -rf /usr/local/share/lua/5.1 ; ln -s /usr/local/lib/lua /usr/local/share/lua/5.1; }
   if [ ! -e "/usr/local/lib/lua/5.1/cjson.so" ]; then
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/lua-cjson-2.1.0.8.tar.gz && Download_src
-    tar xzf lua-cjson-2.1.0.8.tar.gz
-    pushd lua-cjson-2.1.0.8
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/lua-cjson-${lua_cjson_ver}.tar.gz && Download_src
+    tar xzf lua-cjson-${lua_cjson_ver}.tar.gz
+    pushd lua-cjson-${lua_cjson_ver}
     sed -i 's@^LUA_INCLUDE_DIR.*@&/luajit-2.1@' Makefile
     make && make install
     [ ! -e "/usr/local/lib/lua/5.1/cjson.so" ] && { echo "${CFAILURE}lua-cjson install failed! ${CEND}"; kill -9 $$; }
@@ -100,9 +100,9 @@ Tengine_lua_waf() {
     popd > /dev/null
   fi
   if [ ! -e "/usr/local/lib/lua/5.1/cjson.so" ]; then
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/lua-cjson-2.1.0.8.tar.gz && Download_src
-    tar xzf lua-cjson-2.1.0.8.tar.gz
-    pushd lua-cjson-2.1.0.8
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/lua-cjson-${lua_cjson_ver}.tar.gz && Download_src
+    tar xzf lua-cjson-${lua_cjson_ver}.tar.gz
+    pushd lua-cjson-${lua_cjson_ver}
     sed -i 's@^LUA_INCLUDE_DIR.*@&/luajit-2.1@' Makefile
     make && make install
     [ ! -e "/usr/local/lib/lua/5.1/cjson.so" ] && { echo "${CFAILURE}lua-cjson install failed! ${CEND}"; kill -9 $$; }

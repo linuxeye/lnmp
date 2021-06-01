@@ -18,8 +18,12 @@ if [ -e "/usr/bin/yum" ]; then
   if ! command -v lsb_release >/dev/null 2>&1; then
     if [ -e "/etc/euleros-release" ]; then
       yum -y install euleros-lsb
-    elif [ -e "/etc/openeuler-release" ]; then
-      yum -y install openeuler-lsb
+    elif [ -e "/etc/openEuler-release" -o -e "/etc/openeuler-release" ]; then
+      if [ -n "$(grep -w '"20.03"' /etc/os-release)" ]; then
+        rpm -Uvh https://repo.openeuler.org/openEuler-20.03-LTS-SP1/everything/aarch64/Packages/openeuler-lsb-5.0-1.oe1.aarch64.rpm
+      else
+        yum -y install openeuler-lsb
+      fi
     else
       yum -y install redhat-lsb-core
     fi
@@ -36,19 +40,19 @@ command -v lsb_release >/dev/null 2>&1 || { echo "${CFAILURE}${PM} source failed
 
 # Get OS Version
 OS=$(lsb_release -is)
-if [[ "${OS}" =~ ^CentOS$|^RedHat$|^Fedora$|^Amazon$|^Alibaba$|^Aliyun$|^EulerOS$|^openEuler$ ]]; then
+if [[ "${OS}" =~ ^CentOS$|^RedHat$|^Rocky$|^Fedora$|^Amazon$|^Alibaba$|^Aliyun$|^EulerOS$|^openEuler$ ]]; then
   LikeOS=CentOS
-  CentOS_ver=$(lsb_release -rs | awk -F. '{print $1}')
+  CentOS_ver=$(lsb_release -rs | awk -F. '{print $1}' | awk '{print $1}')
   [[ "${OS}" =~ ^Fedora$ ]] && [ ${CentOS_ver} -ge 19 >/dev/null 2>&1 ] && { CentOS_ver=7; Fedora_ver=$(lsb_release -rs); }
   [[ "${OS}" =~ ^Amazon$|^Alibaba$|^Aliyun$|^EulerOS$|^openEuler$ ]] && CentOS_ver=7
 elif [[ "${OS}" =~ ^Debian$|^Deepin$|^Uos$|^Kali$ ]]; then
   LikeOS=Debian
-  Debian_ver=$(lsb_release -rs | awk -F. '{print $1}')
+  Debian_ver=$(lsb_release -rs | awk -F. '{print $1}' | awk '{print $1}')
   [[ "${OS}" =~ ^Deepin$|^Uos$ ]] && [[ "${Debian_ver}" =~ ^20$ ]] && Debian_ver=10
   [[ "${OS}" =~ ^Kali$ ]] && [[ "${Debian_ver}" =~ ^202 ]] && Debian_ver=10
 elif [[ "${OS}" =~ ^Ubuntu$|^LinuxMint$|^elementary$ ]]; then
   LikeOS=Ubuntu
-  Ubuntu_ver=$(lsb_release -rs | awk -F. '{print $1}')
+  Ubuntu_ver=$(lsb_release -rs | awk -F. '{print $1}' | awk '{print $1}')
   if [[ "${OS}" =~ ^LinuxMint$ ]]; then
     [[ "${Ubuntu_ver}" =~ ^18$ ]] && Ubuntu_ver=16
     [[ "${Ubuntu_ver}" =~ ^19$ ]] && Ubuntu_ver=18
@@ -95,7 +99,7 @@ if [ "$(getconf WORD_BIT)" == "32" ] && [ "$(getconf LONG_BIT)" == "64" ]; then
   SYS_BIT_b=x86_64 #mariadb
   SYS_BIT_c=x86_64 #ZendGuardLoader
   SYS_BIT_d=x86-64 #ioncube
-  [ "${TARGET_ARCH}" == 'aarch64' ] && { SYS_BIT_c=aarch64; SYS_BIT_d=aarch64; }
+  [ "${TARGET_ARCH}" == 'aarch64' ] && { SYS_BIT_j=aarch64; SYS_BIT_c=aarch64; SYS_BIT_d=aarch64; }
 else
   OS_BIT=32
   SYS_BIT_j=i586
@@ -103,7 +107,7 @@ else
   SYS_BIT_b=i686
   SYS_BIT_c=i386
   SYS_BIT_d=x86
-  [ "${TARGET_ARCH}" == 'armv7' ] && { SYS_BIT_c=armhf; SYS_BIT_d=armv7l; }
+  [ "${TARGET_ARCH}" == 'armv7' ] && { SYS_BIT_j=arm32-vfp-hflt; SYS_BIT_c=armhf; SYS_BIT_d=armv7l; }
 fi
 
 THREAD=$(grep 'processor' /proc/cpuinfo | sort -u | wc -l)

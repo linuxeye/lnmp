@@ -704,6 +704,13 @@ checkDownload() {
     src_url=https://pecl.php.net/get/mongodb-${pecl_mongodb_ver}.tgz && Download_src
   fi
 
+  # nodejs
+  if [ "${node_flag}" == 'y' ]; then
+    echo "Download Nodejs..."
+    [ "${IPADDR_COUNTRY}"x == "CN"x ] && DOWN_ADDR_NODE=https://nodejs.org/dist || DOWN_ADDR_NODE=https://mirrors.tuna.tsinghua.edu.cn/nodejs-release
+    src_url=${DOWN_ADDR_NODE}/v${node_ver}/node-v${node_ver}-linux-${SYS_BIT_n}.tar.gz && Download_src
+  fi
+
   # pureftpd
   if [ "${pureftpd_flag}" == 'y' ]; then
     echo "Download pureftpd..."

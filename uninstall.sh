@@ -49,11 +49,12 @@ Show_Help() {
   --memcached                   Uninstall Memcached-server
   --phpmyadmin                  Uninstall phpMyAdmin
   --python                      Uninstall Python (PATH: ${python_install_dir})
+  --node                        Uninstall Nodejs (PATH: ${node_install_dir})
   "
 }
 
 ARG_NUM=$#
-TEMP=`getopt -o hvVq --long help,version,quiet,all,web,mysql,postgresql,mongodb,php,mphp_ver:,allphp,phpcache,php_extensions:,pureftpd,redis,memcached,phpmyadmin,python -- "$@" 2>/dev/null`
+TEMP=`getopt -o hvVq --long help,version,quiet,all,web,mysql,postgresql,mongodb,php,mphp_ver:,allphp,phpcache,php_extensions:,pureftpd,redis,memcached,phpmyadmin,python,node -- "$@" 2>/dev/null`
 [ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && Show_Help && exit 1
 eval set -- "${TEMP}"
 while :; do
@@ -74,6 +75,7 @@ while :; do
       postgresql_flag=y
       mongodb_flag=y
       allphp_flag=y
+      node_flag=y
       pureftpd_flag=y
       redis_flag=y
       memcached_flag=y
@@ -126,6 +128,9 @@ while :; do
       [ -n "`echo ${php_extensions} | grep -w mongodb`" ] && pecl_mongodb=1
       [ -n "`echo ${php_extensions} | grep -w swoole`" ] && pecl_swoole=1
       [ -n "`echo ${php_extensions} | grep -w xdebug`" ] && pecl_xdebug=1
+      ;;
+    --node)
+      node_flag=y; shift 1
       ;;
     --pureftpd)
       pureftpd_flag=y; shift 1
@@ -564,6 +569,11 @@ Print_Python() {
   [ -d "${python_install_dir}" ] && echo ${python_install_dir}
 }
 
+Print_Node() {
+  [ -e "${node_install_dir}" ] && echo ${node_install_dir}
+  [ -e "/etc/profile.d/node.sh" ] && echo /etc/profile.d/node.sh
+}
+
 Menu() {
 while :; do
   printf "
@@ -581,12 +591,13 @@ What Are You Doing?
 \t${CMSG}10${CEND}. Uninstall Memcached
 \t${CMSG}11${CEND}. Uninstall phpMyAdmin
 \t${CMSG}12${CEND}. Uninstall Python (PATH: ${python_install_dir})
+\t${CMSG}13${CEND}. Uninstall Nodejs (PATH: ${node_install_dir})
 \t${CMSG} q${CEND}. Exit
 "
   echo
   read -e -p "Please input the correct option: " Number
-  if [[ ! "${Number}" =~ ^[0-9,q]$|^1[0-2]$ ]]; then
-    echo "${CWARNING}input error! Please only input 0~12 and q${CEND}"
+  if [[ ! "${Number}" =~ ^[0-9,q]$|^1[0-3]$ ]]; then
+    echo "${CWARNING}input error! Please only input 0~13 and q${CEND}"
   else
     case "$Number" in
     0)
@@ -602,6 +613,7 @@ What Are You Doing?
       Print_openssl
       Print_phpMyAdmin
       Print_Python
+      Print_Node
       Uninstall_status
       if [ "${uninstall_flag}" == 'y' ]; then
         Uninstall_Web
@@ -615,6 +627,7 @@ What Are You Doing?
         Uninstall_openssl
         Uninstall_phpMyAdmin
         . include/python.sh; Uninstall_Python
+        . include/node.sh; Uninstall_Node
       else
         exit
       fi
@@ -682,6 +695,11 @@ What Are You Doing?
       Uninstall_status
       [ "${uninstall_flag}" == 'y' ] && { . include/python.sh; Uninstall_Python; } || exit
       ;;
+    13)
+      Print_Node
+      Uninstall_status
+      [ "${uninstall_flag}" == 'y' ] && { . include/node.sh; Uninstall_Node; } || exit
+      ;;
     q)
       exit
       ;;
@@ -708,6 +726,7 @@ else
   [ "${memcached_flag}" == 'y' ] && Print_Memcached_server
   [ "${phpmyadmin_flag}" == 'y' ] && Print_phpMyAdmin
   [ "${python_flag}" == 'y' ] && Print_Python
+  [ "${node_flag}" == 'y' ] && Print_Node
   [ "${all_flag}" == 'y' ] && Print_openssl
   Uninstall_status
   if [ "${uninstall_flag}" == 'y' ]; then
@@ -730,6 +749,7 @@ else
     [ "${memcached_flag}" == 'y' ] && Uninstall_Memcached_server
     [ "${phpmyadmin_flag}" == 'y' ] && Uninstall_phpMyAdmin
     [ "${python_flag}" == 'y' ] && { . include/python.sh; Uninstall_Python; }
+    [ "${node_flag}" == 'y' ] && { . include/node.sh; Uninstall_Node; }
     [ "${all_flag}" == 'y' ] && Uninstall_openssl
   fi
 fi

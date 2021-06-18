@@ -42,7 +42,7 @@ Upgrade_DB() {
   else
     [ "${IPADDR_COUNTRY}"x == "CN"x ] && DOWN_ADDR=http://mirrors.ustc.edu.cn/mysql-ftp/Downloads || DOWN_ADDR=http://cdn.mysql.com/Downloads
     DB=MySQL
-    OLD_db_ver=${OLD_db_ver_tmp}
+    OLD_db_ver=${OLD_db_ver_tmp%%-log}
   fi
 
   #backup

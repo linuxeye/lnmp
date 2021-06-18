@@ -2,7 +2,7 @@
 # Web
 nginx_ver=1.20.1
 tengine_ver=2.3.3
-openresty_ver=1.19.3.1
+openresty_ver=1.19.3.2
 openssl11_ver=1.1.1k
 openssl_ver=1.0.2u
 
@@ -11,7 +11,7 @@ tomcat9_ver=9.0.46
 tomcat8_ver=8.5.66
 tomcat7_ver=7.0.109
 
-apache_ver=2.4.46
+apache_ver=2.4.48
 pcre_ver=8.44
 apr_ver=1.7.0
 apr_util_ver=1.6.1
@@ -52,11 +52,14 @@ php70_ver=7.0.33
 php71_ver=7.1.33
 php72_ver=7.2.34
 php73_ver=7.3.28
-php74_ver=7.4.19
-php80_ver=8.0.6
+php74_ver=7.4.20
+php80_ver=8.0.7
+
+# Nodejs
+node_ver=14.17.0
 
 libiconv_ver=1.16
-curl_ver=7.76.1
+curl_ver=7.77.0
 libmcrypt_ver=2.5.8
 mcrypt_ver=2.6.8
 mhash_ver=0.9.9.9
@@ -88,7 +91,7 @@ xdebug_oldver=2.5.5
 pureftpd_ver=1.0.49
 
 # Redis
-redis_ver=6.2.3
+redis_ver=6.2.4
 redis_oldver=5.0.9
 pecl_redis_ver=5.3.4
 pecl_redis_oldver=4.3.0
@@ -106,7 +109,7 @@ pecl_mongodb_ver=1.9.1
 pecl_mongo_ver=1.6.16
 
 # phpMyadmin
-phpmyadmin_ver=5.1.0
+phpmyadmin_ver=5.1.1
 phpmyadmin_oldver=4.4.15.10
 
 # jemalloc

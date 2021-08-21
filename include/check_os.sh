@@ -40,11 +40,13 @@ command -v lsb_release >/dev/null 2>&1 || { echo "${CFAILURE}${PM} source failed
 
 # Get OS Version
 OS=$(lsb_release -is)
-if [[ "${OS}" =~ ^CentOS$|^CentOSStream$|^RedHat$|^Rocky$|^Fedora$|^Amazon$|^Alibaba$|^Aliyun$|^EulerOS$|^openEuler$ ]]; then
+if [[ "${OS}" =~ ^CentOS$|^CentOSStream$|^RedHat$|^Rocky$|^Fedora$|^Amazon$|^AlibabaCloud\(AliyunLinux\)$|^EulerOS$|^openEuler$ ]]; then
   LikeOS=CentOS
   CentOS_ver=$(lsb_release -rs | awk -F. '{print $1}' | awk '{print $1}')
   [[ "${OS}" =~ ^Fedora$ ]] && [ ${CentOS_ver} -ge 19 >/dev/null 2>&1 ] && { CentOS_ver=7; Fedora_ver=$(lsb_release -rs); }
-  [[ "${OS}" =~ ^Amazon$|^Alibaba$|^Aliyun$|^EulerOS$|^openEuler$ ]] && CentOS_ver=7
+  [[ "${OS}" =~ ^Amazon$|^EulerOS$|^openEuler$ ]] && CentOS_ver=7
+  [[ "${OS}" =~ ^AlibabaCloud\(AliyunLinux\)$ ]] && [[ "${CentOS_ver}" =~ ^2$ ]] && CentOS_ver=7
+  [[ "${OS}" =~ ^AlibabaCloud\(AliyunLinux\)$ ]] && [[ "${CentOS_ver}" =~ ^3$ ]] && CentOS_ver=8
 elif [[ "${OS}" =~ ^Debian$|^Deepin$|^Uos$|^Kali$ ]]; then
   LikeOS=Debian
   Debian_ver=$(lsb_release -rs | awk -F. '{print $1}' | awk '{print $1}')

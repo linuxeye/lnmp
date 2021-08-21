@@ -17,8 +17,8 @@ Install_MariaDB105() {
   mkdir -p ${mariadb_data_dir};chown mysql.mysql -R ${mariadb_data_dir}
 
   if [ "${dbinstallmethod}" == "1" ]; then
-    tar zxf mariadb-${mariadb105_ver}-linux-${SYS_BIT_b}.tar.gz
-    mv mariadb-${mariadb105_ver}-linux-${SYS_BIT_b}/* ${mariadb_install_dir}
+    tar zxf mariadb-${mariadb105_ver}-linux-systemd-${SYS_BIT_b}.tar.gz
+    mv mariadb-${mariadb105_ver}-linux-systemd-${SYS_BIT_b}/* ${mariadb_install_dir}
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mariadb_install_dir}/bin/mysqld_safe
     sed -i "s@/usr/local/mysql@${mariadb_install_dir}@g" ${mariadb_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then
@@ -52,7 +52,7 @@ Install_MariaDB105() {
     sed -i "s+^dbrootpwd.*+dbrootpwd='${dbrootpwd}'+" ../options.conf
     echo "${CSUCCESS}MariaDB installed successfully! ${CEND}"
     if [ "${dbinstallmethod}" == "1" ]; then
-      rm -rf mariadb-${mariadb105_ver}-linux-${SYS_BIT_b}
+      rm -rf mariadb-${mariadb105_ver}-linux-systemd-${SYS_BIT_b}
     elif [ "${dbinstallmethod}" == "2" ]; then
       rm -rf mariadb-${mariadb105_ver} boost_${boostVersion2}
     fi
@@ -139,12 +139,10 @@ innodb_open_files = 500
 innodb_buffer_pool_size = 64M
 innodb_write_io_threads = 4
 innodb_read_io_threads = 4
-innodb_thread_concurrency = 0
 innodb_purge_threads = 1
 innodb_flush_log_at_trx_commit = 2
 innodb_log_buffer_size = 2M
 innodb_log_file_size = 32M
-innodb_log_files_in_group = 3
 innodb_max_dirty_pages_pct = 90
 innodb_lock_wait_timeout = 120
 
@@ -206,7 +204,7 @@ EOF
 
   ${mariadb_install_dir}/bin/mysql -e "grant all privileges on *.* to root@'127.0.0.1' identified by \"${dbrootpwd}\" with grant option;"
   ${mariadb_install_dir}/bin/mysql -e "grant all privileges on *.* to root@'localhost' identified by \"${dbrootpwd}\" with grant option;"
-  ${mariadb_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "delete from mysql.user where Password='' where User not like 'mariadb.%';"
+  ${mariadb_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "delete from mysql.user where Password='' and User not like 'mariadb.%';"
   ${mariadb_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "delete from mysql.db where User='';"
   ${mariadb_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "delete from mysql.proxies_priv where Host!='localhost';"
   ${mariadb_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "drop database test;"

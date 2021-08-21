@@ -14,15 +14,15 @@ Install_pecl_xdebug() {
     phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
     PHP_detail_ver=$(${php_install_dir}/bin/php-config --version)
     PHP_main_ver=${PHP_detail_ver%.*}
-    if [[ "${PHP_main_ver}" =~ ^5.[5-6]$|^7.[0-4]$ ]]; then
-      if [[ "${PHP_main_ver}" =~ ^7.[0-4]$ ]]; then
-        src_url=https://pecl.php.net/get/xdebug-${xdebug_ver}.tgz && Download_src
-        tar xzf xdebug-${xdebug_ver}.tgz
-        pushd xdebug-${xdebug_ver} > /dev/null
-      elif [[ "${PHP_main_ver}" =~ ^5.[5-6]$ ]]; then
+    if [[ "${PHP_main_ver}" =~ ^7.[0-4]$|^80$ ]]; then
+      if [[ "${PHP_main_ver}" =~ ^7.[0-1]$ ]]; then
         src_url=https://pecl.php.net/get/xdebug-${xdebug_oldver}.tgz && Download_src
         tar xzf xdebug-${xdebug_oldver}.tgz
         pushd xdebug-${xdebug_oldver} > /dev/null
+      else
+        src_url=https://pecl.php.net/get/xdebug-${xdebug_ver}.tgz && Download_src
+        tar xzf xdebug-${xdebug_ver}.tgz
+        pushd xdebug-${xdebug_ver} > /dev/null
       fi
       ${php_install_dir}/bin/phpize
       ./configure --with-php-config=${php_install_dir}/bin/php-config

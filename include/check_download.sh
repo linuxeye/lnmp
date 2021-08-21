@@ -132,8 +132,8 @@ checkDownload() {
           DOWN_ADDR_MYSQL_BK=http://mirrors.tuna.tsinghua.edu.cn/mysql/Downloads/MySQL-8.0
           DOWN_ADDR_MYSQL_BK2=http://mirrors.huaweicloud.com/repository/toolkit/mysql/Downloads/MySQL-8.0
         else
-          DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-8.0
-          DOWN_ADDR_MYSQL_BK=http://mysql.he.net/Downloads/MySQL-8.0
+          DOWN_ADDR_MYSQL=https://cdn.mysql.com/Downloads/MySQL-8.0
+          DOWN_ADDR_MYSQL_BK=https://mirrors.dotsrc.org/mysql/Downloads/MySQL-8.0
         fi
 
         if [ "${dbinstallmethod}" == '1' ]; then
@@ -167,8 +167,8 @@ checkDownload() {
           DOWN_ADDR_MYSQL_BK=http://mirrors.tuna.tsinghua.edu.cn/mysql/Downloads/MySQL-5.7
           DOWN_ADDR_MYSQL_BK2=http://mirrors.huaweicloud.com/repository/toolkit/mysql/Downloads/MySQL-5.7
         else
-          DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.7
-          DOWN_ADDR_MYSQL_BK=http://mysql.he.net/Downloads/MySQL-5.7
+          DOWN_ADDR_MYSQL=https://cdn.mysql.com/Downloads/MySQL-5.7
+          DOWN_ADDR_MYSQL_BK=https://mirrors.dotsrc.org/mysql/Downloads/MySQL-5.7
         fi
 
         if [ "${dbinstallmethod}" == '1' ]; then
@@ -202,8 +202,8 @@ checkDownload() {
           DOWN_ADDR_MYSQL_BK=http://mirrors.tuna.tsinghua.edu.cn/mysql/Downloads/MySQL-5.6
           DOWN_ADDR_MYSQL_BK2=http://mirrors.huaweicloud.com/repository/toolkit/mysql/Downloads/MySQL-5.6
         else
-          DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.6
-          DOWN_ADDR_MYSQL_BK=http://mysql.he.net/Downloads/MySQL-5.6
+          DOWN_ADDR_MYSQL=https://cdn.mysql.com/Downloads/MySQL-5.6
+          DOWN_ADDR_MYSQL_BK=https://mirrors.dotsrc.org/mysql/Downloads/MySQL-5.6
         fi
 
         if [ "${dbinstallmethod}" == '1' ]; then
@@ -237,8 +237,8 @@ checkDownload() {
           DOWN_ADDR_MYSQL_BK=http://mirrors.tuna.tsinghua.edu.cn/mysql/Downloads/MySQL-5.5
           DOWN_ADDR_MYSQL_BK2=http://mirrors.huaweicloud.com/repository/toolkit/mysql/Downloads/MySQL-5.5
         else
-          DOWN_ADDR_MYSQL=http://cdn.mysql.com/Downloads/MySQL-5.5
-          DOWN_ADDR_MYSQL_BK=http://mysql.he.net/Downloads/MySQL-5.5
+          DOWN_ADDR_MYSQL=https://cdn.mysql.com/Downloads/MySQL-5.5
+          DOWN_ADDR_MYSQL_BK=https://mirrors.dotsrc.org/mysql/Downloads/MySQL-5.5
         fi
 
         if [ "${dbinstallmethod}" == '1' ]; then
@@ -269,13 +269,13 @@ checkDownload() {
       [5-8])
 	case "${db_option}" in
           5)
-            mariadb_ver=${mariadb105_ver}
+            mariadb_ver=${mariadb106_ver}
 	    ;;
           6)
-            mariadb_ver=${mariadb104_ver}
+            mariadb_ver=${mariadb105_ver}
 	    ;;
           7)
-            mariadb_ver=${mariadb103_ver}
+            mariadb_ver=${mariadb104_ver}
 	    ;;
           8)
             mariadb_ver=${mariadb55_ver}
@@ -284,13 +284,13 @@ checkDownload() {
 
         if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download MariaDB ${mariadb_ver} binary package..."
-          FILE_NAME=mariadb-${mariadb_ver}-linux-${SYS_BIT_b}.tar.gz
+          FILE_NAME=mariadb-${mariadb_ver}-linux-systemd-${SYS_BIT_b}.tar.gz
           if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            DOWN_ADDR_MARIADB=http://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb_ver}/bintar-linux-${SYS_BIT_a}
-            DOWN_ADDR_MARIADB_BK=http://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb_ver}/bintar-linux-${SYS_BIT_a}
+            DOWN_ADDR_MARIADB=http://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb_ver}/bintar-linux-systemd-${SYS_BIT_a}
+            DOWN_ADDR_MARIADB_BK=http://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb_ver}/bintar-linux-systemd-${SYS_BIT_a}
           else
-            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb_ver}/bintar-linux-${SYS_BIT_a}
-            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb_ver}/bintar-linux-${SYS_BIT_a}
+            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb_ver}/bintar-linux-systemd-${SYS_BIT_a}
+            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb_ver}/bintar-linux-systemd-${SYS_BIT_a}
           fi
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download MariaDB ${mariadb_ver} source package..."
@@ -627,7 +627,11 @@ checkDownload() {
     echo "Download ImageMagick..."
     src_url=${mirrorLink}/ImageMagick-${imagemagick_ver}.tar.gz && Download_src
     echo "Download imagick..."
-    src_url=https://pecl.php.net/get/imagick-${imagick_ver}.tgz && Download_src
+    if [[ "${php_option}" =~ ^1$ ]]; then
+      src_url=https://pecl.php.net/get/imagick-${imagick_oldver}.tgz && Download_src
+    else
+      src_url=https://pecl.php.net/get/imagick-${imagick_ver}.tgz && Download_src
+    fi
   fi
 
   # graphicsmagick

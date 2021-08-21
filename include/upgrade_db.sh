@@ -58,8 +58,8 @@ Upgrade_DB() {
     [ "${db_flag}" != 'y' ] && read -e -p "Please input upgrade ${DB} Version(example: ${OLD_db_ver}): " NEW_db_ver
     if [ `echo ${NEW_db_ver} | awk -F. '{print $1"."$2}'` == `echo ${OLD_db_ver} | awk -F. '{print $1"."$2}'` ]; then
       if [ "${DB}" == 'MariaDB' ]; then
-        DB_filename=mariadb-${NEW_db_ver}-linux-${SYS_BIT_b}
-        DB_URL=${DOWN_ADDR}/mariadb-${NEW_db_ver}/bintar-linux-${SYS_BIT_a}/${DB_filename}.tar.gz
+        DB_filename=mariadb-${NEW_db_ver}-linux-systemd-${SYS_BIT_b}
+        DB_URL=${DOWN_ADDR}/mariadb-${NEW_db_ver}/bintar-linux-systemd-${SYS_BIT_a}/${DB_filename}.tar.gz
       elif [ "${DB}" == 'Percona' ]; then
         if [[ "`echo ${NEW_db_ver} | awk -F. '{print $1"."$2}'`" =~ ^5.[5-6]$ ]]; then
           perconaVerStr1=$(echo ${NEW_db_ver} | sed "s@-@-rel@")

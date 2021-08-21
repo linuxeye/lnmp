@@ -2,13 +2,13 @@
 # Web
 nginx_ver=1.20.1
 tengine_ver=2.3.3
-openresty_ver=1.19.3.2
+openresty_ver=1.19.9.1
 openssl11_ver=1.1.1k
 openssl_ver=1.0.2u
 
-tomcat10_ver=10.0.6
-tomcat9_ver=9.0.46
-tomcat8_ver=8.5.66
+tomcat10_ver=10.0.10
+tomcat9_ver=9.0.52
+tomcat8_ver=8.5.69
 tomcat7_ver=7.0.109
 
 apache_ver=2.4.48
@@ -18,28 +18,28 @@ apr_util_ver=1.6.1
 nghttp2_ver=1.42.0
 
 # DB
-mysql80_ver=8.0.25
-mysql57_ver=5.7.34
+mysql80_ver=8.0.26
+mysql57_ver=5.7.35
 mysql56_ver=5.6.50
 mysql55_ver=5.5.62
 
-mariadb105_ver=10.5.10
-mariadb104_ver=10.4.19
-mariadb103_ver=10.3.29
+mariadb106_ver=10.6.4
+mariadb105_ver=10.5.12
+mariadb104_ver=10.4.21
 mariadb55_ver=5.5.68
 
-percona80_ver=8.0.23-14
+percona80_ver=8.0.25-15
 percona57_ver=5.7.34-37
 percona56_ver=5.6.51-91.0
 percona55_ver=5.5.62-38.14
 
 pgsql_ver=12.7
 
-mongodb_ver=4.0.16
+mongodb_ver=4.0.26
 
 # JDK
-jdk110_ver=11.0.10
-jdk18_ver=1.8.0_291
+jdk110_ver=11.0.12
+jdk18_ver=1.8.0_301
 jdk17_ver=1.7.0_80
 jdk16_ver=1.6.0_45
 
@@ -51,12 +51,12 @@ php56_ver=5.6.40
 php70_ver=7.0.33
 php71_ver=7.1.33
 php72_ver=7.2.34
-php73_ver=7.3.28
-php74_ver=7.4.20
-php80_ver=8.0.7
+php73_ver=7.3.29
+php74_ver=7.4.22
+php80_ver=8.0.9
 
 # Nodejs
-node_ver=14.17.0
+node_ver=14.17.1
 
 libiconv_ver=1.16
 curl_ver=7.77.0
@@ -68,10 +68,11 @@ icu4c_ver=63_1
 libsodium_ver=1.0.18
 libzip_ver=1.2.0
 argon2_ver=20171227
-imagemagick_ver=7.0.11-14
-imagick_ver=3.4.4
+imagemagick_ver=7.1.0-4
+imagick_ver=3.5.0
+imagick_oldver=3.4.4
 graphicsmagick_ver=1.3.36
-gmagick_ver=2.0.5RC1
+gmagick_ver=2.0.6RC1
 gmagick_oldver=1.1.7RC3
 zendopcache_ver=7.0.5
 xcache_ver=3.2.0
@@ -84,20 +85,20 @@ yaf_ver=3.3.2
 yar_ver=2.2.0
 swoole_ver=4.6.7
 swoole_oldver=4.5.2
-xdebug_ver=2.9.5
-xdebug_oldver=2.5.5
+xdebug_ver=3.0.4
+xdebug_oldver=2.9.8
 
 # Ftp
 pureftpd_ver=1.0.49
 
 # Redis
-redis_ver=6.2.4
+redis_ver=6.2.5
 redis_oldver=5.0.9
 pecl_redis_ver=5.3.4
 pecl_redis_oldver=4.3.0
 
 # Memcached
-memcached_ver=1.6.9
+memcached_ver=1.6.10
 libmemcached_ver=1.0.18
 pecl_memcached_ver=3.1.5
 pecl_memcached_oldver=2.2.0
@@ -105,7 +106,8 @@ pecl_memcache_ver=4.0.5.2
 pecl_memcache_oldver=3.0.8
 
 # MongoDB
-pecl_mongodb_ver=1.9.1
+pecl_mongodb_ver=1.10.0
+pecl_mongodb_oldver=1.9.2
 pecl_mongo_ver=1.6.16
 
 # phpMyadmin
@@ -121,12 +123,12 @@ boost_percona_ver=1.73.0
 boost_oldver=1.59.0
 
 # Others
-lua_nginx_module_ver=0.10.19
+lua_nginx_module_ver=0.10.20
 luajit2_ver=2.1-20210510
-lua_resty_core_ver=0.1.21
-lua_resty_lrucache_ver=0.10
+lua_resty_core_ver=0.1.22
+lua_resty_lrucache_ver=0.11
 lua_cjson_ver=2.1.0.8
 python_ver=3.6.13
 setuptools_ver=57.0.0
-pip_ver=21.1.2
+pip_ver=21.2.3
 fail2ban_ver=0.11.2

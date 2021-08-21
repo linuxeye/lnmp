@@ -28,9 +28,15 @@ Install_pecl_mongodb() {
         echo "${CFAILURE}PHP mongo module install failed, Please contact the author! ${CEND}" && lsb_release -a
       fi
     else
-      src_url=https://pecl.php.net/get/mongodb-${pecl_mongodb_ver}.tgz && Download_src
-      tar xzf mongodb-${pecl_mongodb_ver}.tgz
-      pushd mongodb-${pecl_mongodb_ver} > /dev/null
+      if [[ "$(${php_install_dir}/bin/php-config --version | awk -F. '{print $1$2}')" =~ ^70$ ]]; then
+        src_url=https://pecl.php.net/get/mongodb-${pecl_mongodb_oldver}.tgz && Download_src
+        tar xzf mongodb-${pecl_mongodb_oldver}.tgz
+        pushd mongodb-${pecl_mongodb_oldver} > /dev/null
+      else
+        src_url=https://pecl.php.net/get/mongodb-${pecl_mongodb_ver}.tgz && Download_src
+        tar xzf mongodb-${pecl_mongodb_ver}.tgz
+        pushd mongodb-${pecl_mongodb_ver} > /dev/null
+      fi
       ${php_install_dir}/bin/phpize
       ./configure --with-php-config=${php_install_dir}/bin/php-config
       make -j ${THREAD} && make install
@@ -38,7 +44,7 @@ Install_pecl_mongodb() {
       if [ -f "${phpExtensionDir}/mongodb.so" ]; then
         echo 'extension=mongodb.so' > ${php_install_dir}/etc/php.d/07-mongodb.ini
         echo "${CSUCCESS}PHP mongodb module installed successfully! ${CEND}"
-        rm -rf mongodb-${pecl_mongodb_ver}
+        rm -rf mongodb-${pecl_mongodb_oldver} mongodb-${pecl_mongodb_ver}
       else
         echo "${CFAILURE}PHP mongodb module install failed, Please contact the author! ${CEND}" && lsb_release -a
       fi

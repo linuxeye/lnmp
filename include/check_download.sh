@@ -283,26 +283,27 @@ checkDownload() {
         esac
 
         if [ "${dbinstallmethod}" == '1' ]; then
-          echo "Download MariaDB ${mariadb_ver} binary package..."
           FILE_NAME=mariadb-${mariadb_ver}-linux-systemd-${SYS_BIT_b}.tar.gz
-          if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            DOWN_ADDR_MARIADB=http://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb_ver}/bintar-linux-systemd-${SYS_BIT_a}
-            DOWN_ADDR_MARIADB_BK=http://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb_ver}/bintar-linux-systemd-${SYS_BIT_a}
-          else
-            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb_ver}/bintar-linux-systemd-${SYS_BIT_a}
-            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb_ver}/bintar-linux-systemd-${SYS_BIT_a}
-          fi
+	  FILE_TYPE=bintar-linux-systemd-${SYS_BIT_a}
         elif [ "${dbinstallmethod}" == '2' ]; then
-          echo "Download MariaDB ${mariadb_ver} source package..."
           FILE_NAME=mariadb-${mariadb_ver}.tar.gz
-          if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
-            DOWN_ADDR_MARIADB=http://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb_ver}/source
-            DOWN_ADDR_MARIADB_BK=http://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb_ver}/source
-          else
-            DOWN_ADDR_MARIADB=http://ftp.osuosl.org/pub/mariadb/mariadb-${mariadb_ver}/source
-            DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb_ver}/source
-          fi
+	  FILE_TYPE=source
         fi
+
+        if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
+          DOWN_ADDR_MARIADB=http://mirrors.tuna.tsinghua.edu.cn/mariadb/mariadb-${mariadb_ver}/${FILE_TYPE}
+          DOWN_ADDR_MARIADB_BK=http://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb_ver}/${FILE_TYPE}
+        else
+          DOWN_ADDR_MARIADB=https://archive.mariadb.org/mariadb-${mariadb_ver}/${FILE_TYPE}
+          DOWN_ADDR_MARIADB_BK=http://mirror.nodesdirect.com/mariadb/mariadb-${mariadb_ver}/${FILE_TYPE}
+        fi
+
+        if [ "${db_option}" == '8' ]; then
+          DOWN_ADDR_MARIADB=https://archive.mariadb.org/mariadb-${mariadb_ver}/${FILE_TYPE}
+          DOWN_ADDR_MARIADB_BK=${DOWN_ADDR_MARIADB}
+        fi
+
+        echo "Download MariaDB ${FILE_NAME} package..."
         src_url=${DOWN_ADDR_MARIADB}/${FILE_NAME} && Download_src
         wget --tries=6 -c --no-check-certificate ${DOWN_ADDR_MARIADB}/md5sums.txt -O ${FILE_NAME}.md5
         MARAIDB_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
@@ -652,7 +653,7 @@ checkDownload() {
     echo "Download redis-server..."
     src_url=http://download.redis.io/releases/redis-${redis_ver}.tar.gz && Download_src
     if [ "${PM}" == 'yum' ]; then
-      echo "Download start-stop-daemon.c for CentOS..."
+      echo "Download start-stop-daemon.c for RHEL..."
       src_url=${mirrorLink}/start-stop-daemon.c && Download_src
     fi
   fi
@@ -731,9 +732,9 @@ checkDownload() {
     fi
   fi
 
-  # autoconf for CentOS6
-  if [ "${downloadDepsSrc}" == '1' ] && [ "${CentOS_ver}" == '6' ]; then
-    echo "Download autoconf rpm for CentOS6..."
+  # autoconf for RHEL6
+  if [ "${downloadDepsSrc}" == '1' ] && [ "${RHEL_ver}" == '6' ]; then
+    echo "Download autoconf rpm for RHEL6..."
     src_url=${mirrorLink}/autoconf-2.69-12.2.noarch.rpm && Download_src
   fi
 

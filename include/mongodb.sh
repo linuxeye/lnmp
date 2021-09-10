@@ -20,7 +20,7 @@ Install_MongoDB() {
     sed -i "s@=/usr/local/mongodb@=${mongo_install_dir}@g" /lib/systemd/system/mongod.service
     systemctl enable mongod 
   else
-    [ "${PM}" == 'yum' ] && { /bin/cp ../init.d/MongoDB-init-CentOS /etc/init.d/mongod; sed -i "s@/usr/local/mongodb@${mongo_install_dir}@g" /etc/init.d/mongod; chkconfig --add mongod; chkconfig mongod on; }
+    [ "${PM}" == 'yum' ] && { /bin/cp ../init.d/MongoDB-init-RHEL /etc/init.d/mongod; sed -i "s@/usr/local/mongodb@${mongo_install_dir}@g" /etc/init.d/mongod; chkconfig --add mongod; chkconfig mongod on; }
     [ "${PM}" == 'apt-get' ] && { /bin/cp ../init.d/MongoDB-init-Ubuntu /etc/init.d/mongod; sed -i "s@/usr/local/mongodb@${mongo_install_dir}@g" /etc/init.d/mongod; update-rc.d mongod defaults; }
   fi
 

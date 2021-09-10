@@ -54,12 +54,12 @@ installDepsDebian() {
   done
 }
 
-installDepsCentOS() {
+installDepsRHEL() {
   [ -e '/etc/yum.conf' ] && sed -i 's@^exclude@#exclude@' /etc/yum.conf
   # Uninstall the conflicting packages
   echo "${CMSG}Removing the conflicting packages...${CEND}"
   [ -z "`grep -w epel /etc/yum.repos.d/*.repo`" ] && yum -y install epel-release
-  if [ "${CentOS_ver}" == '8' ]; then
+  if [ "${RHEL_ver}" == '8' ]; then
     if grep -qw "^\[PowerTools\]" /etc/yum.repos.d/*.repo; then
       dnf -y --enablerepo=PowerTools install chrony oniguruma-devel rpcgen
     else
@@ -67,14 +67,14 @@ installDepsCentOS() {
     fi
     systemctl enable chronyd
     systemctl stop firewalld && systemctl mask firewalld.service
-  elif [ "${CentOS_ver}" == '7' ]; then
+  elif [ "${RHEL_ver}" == '7' ]; then
     yum -y groupremove "Basic Web Server" "MySQL Database server" "MySQL Database client"
     systemctl stop firewalld && systemctl mask firewalld.service
-  elif [ "${CentOS_ver}" == '6' ]; then
+  elif [ "${RHEL_ver}" == '6' ]; then
     yum -y groupremove "FTP Server" "PostgreSQL Database client" "PostgreSQL Database server" "MySQL Database server" "MySQL Database client" "Web Server"
   fi
 
-  if [ ${CentOS_ver} -ge 7 >/dev/null 2>&1 ] && [ "${iptables_flag}" == 'y' ]; then
+  if [ ${RHEL_ver} -ge 7 >/dev/null 2>&1 ] && [ "${iptables_flag}" == 'y' ]; then
     yum -y install iptables-services
     systemctl enable iptables.service
     systemctl enable ip6tables.service
@@ -86,7 +86,7 @@ installDepsCentOS() {
   for Package in ${pkgList}; do
     yum -y install ${Package}
   done
-  [ ${CentOS_ver} -lt 8 >/dev/null 2>&1 ] && yum -y install cmake3
+  [ ${RHEL_ver} -lt 8 >/dev/null 2>&1 ] && yum -y install cmake3
 
   yum -y update bash openssl glibc
 }
@@ -131,8 +131,8 @@ installDepsUbuntu() {
 
 installDepsBySrc() {
   pushd ${oneinstack_dir}/src > /dev/null
-  if [ "${LikeOS}" == 'CentOS' ] && [ "${CentOS_ver}" == '6' ]; then
-    # upgrade autoconf for CentOS6
+  if [ "${LikeOS}" == 'RHEL' ] && [ "${RHEL_ver}" == '6' ]; then
+    # upgrade autoconf for RHEL6
     rpm -Uvh autoconf-2.69-12.2.noarch.rpm
   fi
 

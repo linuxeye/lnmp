@@ -40,13 +40,13 @@ command -v lsb_release >/dev/null 2>&1 || { echo "${CFAILURE}${PM} source failed
 
 # Get OS Version
 OS=$(lsb_release -is)
-if [[ "${OS}" =~ ^CentOS$|^CentOSStream$|^RedHat$|^Rocky$|^Fedora$|^Amazon$|^AlibabaCloud\(AliyunLinux\)$|^EulerOS$|^openEuler$ ]]; then
-  LikeOS=CentOS
-  CentOS_ver=$(lsb_release -rs | awk -F. '{print $1}' | awk '{print $1}')
-  [[ "${OS}" =~ ^Fedora$ ]] && [ ${CentOS_ver} -ge 19 >/dev/null 2>&1 ] && { CentOS_ver=7; Fedora_ver=$(lsb_release -rs); }
-  [[ "${OS}" =~ ^Amazon$|^EulerOS$|^openEuler$ ]] && CentOS_ver=7
-  [[ "${OS}" =~ ^AlibabaCloud\(AliyunLinux\)$ ]] && [[ "${CentOS_ver}" =~ ^2$ ]] && CentOS_ver=7
-  [[ "${OS}" =~ ^AlibabaCloud\(AliyunLinux\)$ ]] && [[ "${CentOS_ver}" =~ ^3$ ]] && CentOS_ver=8
+if [[ "${OS}" =~ ^CentOS$|^CentOSStream$|^RedHat$|^Rocky$|^Fedora$|^Amazon$|^AlibabaCloud$|^AlibabaCloud\(AliyunLinux\)$|^EulerOS$|^openEuler$ ]]; then
+  LikeOS=RHEL
+  RHEL_ver=$(lsb_release -rs | awk -F. '{print $1}' | awk '{print $1}')
+  [[ "${OS}" =~ ^Fedora$ ]] && [ ${RHEL_ver} -ge 19 >/dev/null 2>&1 ] && { RHEL_ver=7; Fedora_ver=$(lsb_release -rs); }
+  [[ "${OS}" =~ ^Amazon$|^EulerOS$|^openEuler$ ]] && RHEL_ver=7
+  [[ "${OS}" =~ ^AlibabaCloud$|^AlibabaCloud\(AliyunLinux\)$ ]] && [[ "${RHEL_ver}" =~ ^2$ ]] && RHEL_ver=7
+  [[ "${OS}" =~ ^AlibabaCloud$|^AlibabaCloud\(AliyunLinux\)$ ]] && [[ "${RHEL_ver}" =~ ^3$ ]] && RHEL_ver=8
 elif [[ "${OS}" =~ ^Debian$|^Deepin$|^Uos$|^Kali$ ]]; then
   LikeOS=Debian
   Debian_ver=$(lsb_release -rs | awk -F. '{print $1}' | awk '{print $1}')
@@ -67,7 +67,7 @@ elif [[ "${OS}" =~ ^Ubuntu$|^LinuxMint$|^elementary$ ]]; then
 fi
 
 # Check OS Version
-if [ ${CentOS_ver} -lt 6 >/dev/null 2>&1 ] || [ ${Debian_ver} -lt 8 >/dev/null 2>&1 ] || [ ${Ubuntu_ver} -lt 16 >/dev/null 2>&1 ]; then
+if [ ${RHEL_ver} -lt 6 >/dev/null 2>&1 ] || [ ${Debian_ver} -lt 8 >/dev/null 2>&1 ] || [ ${Ubuntu_ver} -lt 16 >/dev/null 2>&1 ]; then
   echo "${CFAILURE}Does not support this OS, Please install CentOS 6+,Debian 8+,Ubuntu 16+ ${CEND}"
   kill -9 $$
 fi
@@ -119,13 +119,13 @@ THREAD=$(grep 'processor' /proc/cpuinfo | sort -u | wc -l)
 # Percona binary: https://www.percona.com/doc/percona-server/5.7/installation.html#installing-percona-server-from-a-binary-tarball
 if [ ${Debian_ver} -lt 9 >/dev/null 2>&1 ]; then
   sslLibVer=ssl100
-elif [[ "${CentOS_ver}" =~ ^[6-7]$ ]] && [ "${OS}" != 'Fedora' ]; then
+elif [[ "${RHEL_ver}" =~ ^[6-7]$ ]] && [ "${OS}" != 'Fedora' ]; then
   sslLibVer=ssl101
 elif [ ${Debian_ver} -ge 9 >/dev/null 2>&1 ] || [ ${Ubuntu_ver} -ge 16 >/dev/null 2>&1 ]; then
   sslLibVer=ssl102
 elif [ ${Fedora_ver} -ge 27 >/dev/null 2>&1 ]; then
   sslLibVer=ssl102
-elif [ "${CentOS_ver}" == '8' ]; then
+elif [ "${RHEL_ver}" == '8' ]; then
   sslLibVer=ssl1:111
 else
   sslLibVer=unknown

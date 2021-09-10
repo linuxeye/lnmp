@@ -24,7 +24,7 @@ Install_memcached_server() {
     echo "${CSUCCESS}memcached installed successfully! ${CEND}"
     rm -rf memcached-${memcached_ver}
     ln -s ${memcached_install_dir}/bin/memcached /usr/bin/memcached
-    [ "${PM}" == 'yum' ] && { /bin/cp ../init.d/Memcached-init-CentOS /etc/init.d/memcached; chkconfig --add memcached; chkconfig memcached on; }
+    [ "${PM}" == 'yum' ] && { /bin/cp ../init.d/Memcached-init-RHEL /etc/init.d/memcached; chkconfig --add memcached; chkconfig memcached on; }
     [ "${PM}" == 'apt-get' ] && { /bin/cp ../init.d/Memcached-init-Ubuntu /etc/init.d/memcached; update-rc.d memcached defaults; }
     sed -i "s@/usr/local/memcached@${memcached_install_dir}@g" /etc/init.d/memcached
     let memcachedCache="${Mem}/8"

@@ -649,15 +649,15 @@ if [ ${ARG_NUM} == 0 ]; then
   fi
 
   # check Nodejs
-  #while :; do echo
-  #  read -e -p "Do you want to install Nodejs? [y/n]: " node_flag
-  #  if [[ ! ${node_flag} =~ ^[y,n]$ ]]; then
-  #    echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
-  #  else
-  #    [ "${node_flag}" == 'y' -a -e "${node_install_dir}/bin/node" ] && { echo "${CWARNING}Nodejs already installed! ${CEND}"; unset node_flag; }
-  #    break
-  #  fi
-  #done
+  while :; do echo
+    read -e -p "Do you want to install Nodejs? [y/n]: " node_flag
+    if [[ ! ${node_flag} =~ ^[y,n]$ ]]; then
+      echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
+    else
+      [ "${node_flag}" == 'y' -a -e "${node_install_dir}/bin/node" ] && { echo "${CWARNING}Nodejs already installed! ${CEND}"; unset node_flag; }
+      break
+    fi
+  done
 
   # check Pureftpd
   while :; do echo
@@ -718,7 +718,7 @@ if [ ! -e ~/.oneinstack ]; then
   [ "${PM}" == 'apt-get' ] && apt-get -y update > /dev/null
   [ "${PM}" == 'yum' ] && yum clean all
   ${PM} -y install wget gcc curl python
-  [ "${CentOS_ver}" == '8' ] && { yum -y install python36; sudo alternatives --set python /usr/bin/python3; }
+  [ "${RHEL_ver}" == '8' ] && { yum -y install python36; sudo alternatives --set python /usr/bin/python3; }
   clear
 fi
 
@@ -743,9 +743,9 @@ if [ ! -e ~/.oneinstack ]; then
   # Check binary dependencies packages
   . ./include/check_sw.sh
   case "${LikeOS}" in
-    "CentOS")
-      installDepsCentOS 2>&1 | tee ${oneinstack_dir}/install.log
-      . include/init_CentOS.sh 2>&1 | tee -a ${oneinstack_dir}/install.log
+    "RHEL")
+      installDepsRHEL 2>&1 | tee ${oneinstack_dir}/install.log
+      . include/init_RHEL.sh 2>&1 | tee -a ${oneinstack_dir}/install.log
       ;;
     "Debian")
       installDepsDebian 2>&1 | tee ${oneinstack_dir}/install.log
@@ -778,7 +778,7 @@ fi
 # Database
 case "${db_option}" in
   1)
-    [ "${LikeOS}" == 'CentOS' ] && [ ${CentOS_ver} -le 6 >/dev/null 2>&1 ] && dbinstallmethod=1 && checkDownload
+    [ "${LikeOS}" == 'RHEL' ] && [ ${RHEL_ver} -le 6 >/dev/null 2>&1 ] && dbinstallmethod=1 && checkDownload
     . include/mysql-8.0.sh
     Install_MySQL80 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
@@ -811,8 +811,8 @@ case "${db_option}" in
     Install_MariaDB55 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   9)
-    [ "${LikeOS}" == 'CentOS' ] && [ ${CentOS_ver} -le 6 >/dev/null 2>&1 ] && dbinstallmethod=1 && checkDownload
-    [ "${LikeOS}" == 'CentOS' ] && [ "${CentOS_ver}" == '8' ] && dbinstallmethod=2 && checkDownload
+    [ "${LikeOS}" == 'RHEL' ] && [ ${RHEL_ver} -le 6 >/dev/null 2>&1 ] && dbinstallmethod=1 && checkDownload
+    [ "${LikeOS}" == 'RHEL' ] && [ "${RHEL_ver}" == '8' ] && dbinstallmethod=2 && checkDownload
     . include/percona-8.0.sh
     Install_Percona80 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;

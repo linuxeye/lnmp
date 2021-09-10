@@ -44,7 +44,7 @@ Install_Tengine() {
     sed -i "s@/usr/local/nginx@${tengine_install_dir}@g" /lib/systemd/system/nginx.service
     systemctl enable nginx
   else
-    [ "${PM}" == 'yum' ] && { /bin/cp ../init.d/Nginx-init-CentOS /etc/init.d/nginx; sed -i "s@/usr/local/nginx@${tengine_install_dir}@g" /etc/init.d/nginx; chkconfig --add nginx; chkconfig nginx on; }
+    [ "${PM}" == 'yum' ] && { /bin/cp ../init.d/Nginx-init-RHEL /etc/init.d/nginx; sed -i "s@/usr/local/nginx@${tengine_install_dir}@g" /etc/init.d/nginx; chkconfig --add nginx; chkconfig nginx on; }
     [ "${PM}" == 'apt-get' ] && { /bin/cp ../init.d/Nginx-init-Ubuntu /etc/init.d/nginx; sed -i "s@/usr/local/nginx@${tengine_install_dir}@g" /etc/init.d/nginx; update-rc.d nginx defaults; }
   fi
 

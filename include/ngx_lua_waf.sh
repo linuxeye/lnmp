@@ -156,6 +156,7 @@ enable_lua_waf() {
   rm -f ngx_lua_waf.tar.gz
   src_url=http://mirrors.linuxeye.com/oneinstack/src/ngx_lua_waf.tar.gz && Download_src
   tar xzf ngx_lua_waf.tar.gz -C ${web_install_dir}/conf
+  [ -e "${web_install_dir}/conf/resty" ] && /bin/mv ${web_install_dir}/conf/resty{,_bak}
   sed -i "s@/usr/local/nginx@${web_install_dir}@g" ${web_install_dir}/conf/waf.conf
   sed -i "s@/usr/local/nginx@${web_install_dir}@" ${web_install_dir}/conf/waf/config.lua
   sed -i "s@/data/wwwlogs@${wwwlogs_dir}@" ${web_install_dir}/conf/waf/config.lua

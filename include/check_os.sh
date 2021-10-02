@@ -19,11 +19,7 @@ if [ -e "/usr/bin/yum" ]; then
     if [ -e "/etc/euleros-release" ]; then
       yum -y install euleros-lsb
     elif [ -e "/etc/openEuler-release" -o -e "/etc/openeuler-release" ]; then
-      if [ -n "$(grep -w '"20.03"' /etc/os-release)" ]; then
-        rpm -Uvh https://repo.openeuler.org/openEuler-20.03-LTS-SP1/everything/aarch64/Packages/openeuler-lsb-5.0-1.oe1.aarch64.rpm
-      else
-        yum -y install openeuler-lsb
-      fi
+      yum -y install openeuler-lsb
     else
       yum -y install redhat-lsb-core
     fi
@@ -36,15 +32,17 @@ if [ -e "/usr/bin/apt-get" ]; then
   command -v lsb_release >/dev/null 2>&1 || { apt-get -y update > /dev/null; apt-get -y install lsb-release; clear; }
 fi
 
-command -v lsb_release >/dev/null 2>&1 || { echo "${CFAILURE}${PM} source failed! ${CEND}"; kill -9 $$; }
+command -v lsb_release >/dev/null 2>&1 || { echo "${CFAILURE}${PM} source failed! ${CEND}"; kill -9 $$; exit 1; }
+[ -e "/etc/anolis-release" ] && { command -v lsb_release >/dev/null 2>&1 || yum -y install system-lsb-core; }
 
 # Get OS Version
 OS=$(lsb_release -is)
-if [[ "${OS}" =~ ^CentOS$|^CentOSStream$|^RedHat$|^Rocky$|^Fedora$|^Amazon$|^AlibabaCloud$|^AlibabaCloud\(AliyunLinux\)$|^EulerOS$|^openEuler$ ]]; then
+if [[ "${OS}" =~ ^CentOS$|^CentOSStream$|^RedHat$|^Rocky$|^Fedora$|^Amazon$|^AlibabaCloud$|^AlibabaCloud\(AliyunLinux\)$|^AnolisOS$|^EulerOS$|^openEuler$ ]]; then
   LikeOS=RHEL
   RHEL_ver=$(lsb_release -rs | awk -F. '{print $1}' | awk '{print $1}')
   [[ "${OS}" =~ ^Fedora$ ]] && [ ${RHEL_ver} -ge 19 >/dev/null 2>&1 ] && { RHEL_ver=7; Fedora_ver=$(lsb_release -rs); }
   [[ "${OS}" =~ ^Amazon$|^EulerOS$|^openEuler$ ]] && RHEL_ver=7
+  [[ "${OS}" =~ ^openEuler$ ]] && [[ "${RHEL_ver}" =~ ^21$ ]] && RHEL_ver=8
   [[ "${OS}" =~ ^AlibabaCloud$|^AlibabaCloud\(AliyunLinux\)$ ]] && [[ "${RHEL_ver}" =~ ^2$ ]] && RHEL_ver=7
   [[ "${OS}" =~ ^AlibabaCloud$|^AlibabaCloud\(AliyunLinux\)$ ]] && [[ "${RHEL_ver}" =~ ^3$ ]] && RHEL_ver=8
 elif [[ "${OS}" =~ ^Debian$|^Deepin$|^Uos$|^Kali$ ]]; then
@@ -69,7 +67,7 @@ fi
 # Check OS Version
 if [ ${RHEL_ver} -lt 6 >/dev/null 2>&1 ] || [ ${Debian_ver} -lt 8 >/dev/null 2>&1 ] || [ ${Ubuntu_ver} -lt 16 >/dev/null 2>&1 ]; then
   echo "${CFAILURE}Does not support this OS, Please install CentOS 6+,Debian 8+,Ubuntu 16+ ${CEND}"
-  kill -9 $$
+  kill -9 $$; exit 1;
 fi
 
 command -v gcc > /dev/null 2>&1 || $PM -y install gcc

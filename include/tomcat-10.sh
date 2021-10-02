@@ -34,7 +34,7 @@ Install_Tomcat10() {
   if [ ! -e "${tomcat_install_dir}/conf/server.xml" ]; then
     rm -rf ${tomcat_install_dir}
     echo "${CFAILURE}Tomcat install failed, Please contact the author! ${CEND}" && lsb_release -a
-    kill -9 $$
+    kill -9 $$; exit 1;
   fi
 
   #[ ! -d "${tomcat_install_dir}/lib/catalina" ] && mkdir ${tomcat_install_dir}/lib/catalina

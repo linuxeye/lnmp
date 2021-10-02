@@ -55,7 +55,7 @@ Install_MySQL56() {
   else
     rm -rf ${mysql_install_dir}
     echo "${CFAILURE}MySQL install failed, Please contact the author! ${CEND}" && lsb_release -a
-    kill -9 $$
+    kill -9 $$; exit 1;
   fi
 
   /bin/cp ${mysql_install_dir}/support-files/mysql.server /etc/init.d/mysqld

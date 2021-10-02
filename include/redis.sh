@@ -52,7 +52,7 @@ Install_redis_server() {
   else
     rm -rf ${redis_install_dir}
     echo "${CFAILURE}Redis-server install failed, Please contact the author! ${CEND}" && lsb_release -a
-    kill -9 $$
+    kill -9 $$; exit 1;
   fi
   popd > /dev/null
 }

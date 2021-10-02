@@ -21,7 +21,7 @@ EOF
     echo "${CSUCCESS}Nodejs installed successfully! ${CEND}"
   else
     echo "${CFAILURE}Nodejs install failed, Please contact the author! ${CEND}" && lsb_release -a
-    kill -9 $$
+    kill -9 $$; exit 1;
   fi
   popd > /dev/null
 }

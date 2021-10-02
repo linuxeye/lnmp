@@ -131,11 +131,12 @@ Install_PHP80() {
   make install
 
   if [ -e "${php_install_dir}/bin/phpize" ]; then
+    [ ! -e "${php_install_dir}/etc/php.d" ] && mkdir -p ${php_install_dir}/etc/php.d
     echo "${CSUCCESS}PHP installed successfully! ${CEND}"
   else
     rm -rf ${php_install_dir}
     echo "${CFAILURE}PHP install failed, Please Contact the author! ${CEND}"
-    kill -9 $$
+    kill -9 $$; exit 1;
   fi
 
   [ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=${php_install_dir}/bin:\$PATH" >> /etc/profile
@@ -145,7 +146,6 @@ Install_PHP80() {
   # wget -c http://pear.php.net/go-pear.phar
   # ${php_install_dir}/bin/php go-pear.phar
 
-  [ ! -e "${php_install_dir}/etc/php.d" ] && mkdir -p ${php_install_dir}/etc/php.d
   /bin/cp php.ini-production ${php_install_dir}/etc/php.ini
 
   sed -i "s@^memory_limit.*@memory_limit = ${Memory_limit}M@" ${php_install_dir}/etc/php.ini

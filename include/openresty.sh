@@ -33,7 +33,7 @@ Install_OpenResty() {
   else
     rm -rf ${openresty_install_dir}
     echo "${CFAILURE}OpenResty install failed, Please Contact the author! ${CEND}"
-    kill -9 $$
+    kill -9 $$; exit 1;
   fi
 
   [ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=${openresty_install_dir}/nginx/sbin:\$PATH" >> /etc/profile
@@ -52,11 +52,11 @@ Install_OpenResty() {
   mv ${openresty_install_dir}/nginx/conf/nginx.conf{,_bk}
   if [ "${apache_flag}" == 'y' ] || [ -e "${apache_install_dir}/bin/httpd" ]; then
     /bin/cp ../config/nginx_apache.conf ${openresty_install_dir}/nginx/conf/nginx.conf 
-  elif { [[ ${tomcat_option} =~ ^[1-4]$ ]] || [ -e "${tomcat_install_dir}/conf/server.xml" ]; } && { [[ ! ${php_option} =~ ^[1-9]$|^10$ ]] && [ ! -e "${php_install_dir}/bin/php" ]; }; then
+  elif { [[ ${tomcat_option} =~ ^[1-4]$ ]] || [ -e "${tomcat_install_dir}/conf/server.xml" ]; } && { [[ ! ${php_option} =~ ^[1-9]$|^1[0-1]$ ]] && [ ! -e "${php_install_dir}/bin/php" ]; }; then
     /bin/cp ../config/nginx_tomcat.conf ${openresty_install_dir}/nginx/conf/nginx.conf 
   else
     /bin/cp ../config/nginx.conf ${openresty_install_dir}/nginx/conf/nginx.conf
-    [[ "${php_option}" =~ ^[1-9]$|^10$ ]] && [ -z "`grep '/php-fpm_status' ${openresty_install_dir}/nginx/conf/nginx.conf`" ] &&  sed -i "s@index index.html index.php;@index index.html index.php;\n    location ~ /php-fpm_status {\n        #fastcgi_pass remote_php_ip:9000;\n        fastcgi_pass unix:/dev/shm/php-cgi.sock;\n        fastcgi_index index.php;\n        include fastcgi.conf;\n        allow 127.0.0.1;\n        deny all;\n        }@" ${openresty_install_dir}/nginx/conf/nginx.conf
+    [[ "${php_option}" =~ ^[1-9]$|^1[0-1]$ ]] && [ -z "`grep '/php-fpm_status' ${openresty_install_dir}/nginx/conf/nginx.conf`" ] &&  sed -i "s@index index.html index.php;@index index.html index.php;\n    location ~ /php-fpm_status {\n        #fastcgi_pass remote_php_ip:9000;\n        fastcgi_pass unix:/dev/shm/php-cgi.sock;\n        fastcgi_index index.php;\n        include fastcgi.conf;\n        allow 127.0.0.1;\n        deny all;\n        }@" ${openresty_install_dir}/nginx/conf/nginx.conf
   fi
   cat > ${openresty_install_dir}/nginx/conf/proxy.conf << EOF
 proxy_connect_timeout 300s;

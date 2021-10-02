@@ -17,23 +17,23 @@ checkDownload() {
   fi
 
   # General system utils
-  if [[ ${tomcat_option} =~ ^[1-4]$ ]] || [ "${apache_flag}" == 'y' ] || [[ ${php_option} =~ ^[1-9]$|^10$ ]]; then
+  if [[ ${tomcat_option} =~ ^[1-4]$ ]] || [ "${apache_flag}" == 'y' ] || [[ ${php_option} =~ ^[1-9]$|^1[0-1]$ ]]; then
     echo "Download openSSL..."
     src_url=https://www.openssl.org/source/old/1.0.2/openssl-${openssl_ver}.tar.gz && Download_src
     echo "Download cacert.pem..."
     src_url=https://curl.se/ca/cacert.pem && Download_src
   fi
 
-  # jemalloc
-  if [[ ${nginx_option} =~ ^[1-3]$ ]] || [[ "${db_option}" =~ ^[1-9]$|^1[0-2]$ ]]; then
-    echo "Download jemalloc..."
-    src_url=${mirrorLink}/jemalloc-${jemalloc_ver}.tar.bz2 && Download_src
-  fi
-
   # openssl1.1
   if [[ ${nginx_option} =~ ^[1-3]$ ]]; then
       echo "Download openSSL1.1..."
       src_url=https://www.openssl.org/source/openssl-${openssl11_ver}.tar.gz && Download_src
+  fi
+
+  # jemalloc
+  if [[ ${nginx_option} =~ ^[1-3]$ ]] || [[ "${db_option}" =~ ^[1-9]$|^1[0-2]$ ]]; then
+    echo "Download jemalloc..."
+    src_url=${mirrorLink}/jemalloc-${jemalloc_ver}.tar.bz2 && Download_src
   fi
 
   # nginx/tengine/openresty
@@ -157,7 +157,7 @@ checkDownload() {
         done
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
-          kill -9 $$
+          kill -9 $$; exit 1;
         fi
         ;;
       2)
@@ -192,7 +192,7 @@ checkDownload() {
         done
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
-          kill -9 $$
+          kill -9 $$; exit 1;
         fi
         ;;
       3)
@@ -227,7 +227,7 @@ checkDownload() {
         done
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
-          kill -9 $$
+          kill -9 $$; exit 1;
         fi
         ;;
       4)
@@ -263,7 +263,7 @@ checkDownload() {
         done
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
-          kill -9 $$
+          kill -9 $$; exit 1;
         fi
         ;;
       [5-8])
@@ -316,7 +316,7 @@ checkDownload() {
         done
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
-          kill -9 $$
+          kill -9 $$; exit 1;
         fi
         ;;
       9)
@@ -348,7 +348,7 @@ checkDownload() {
         done
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
-          kill -9 $$
+          kill -9 $$; exit 1;
         fi
         ;;
       10)
@@ -380,7 +380,7 @@ checkDownload() {
         done
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
-          kill -9 $$
+          kill -9 $$; exit 1;
         fi
         ;;
       11)
@@ -413,7 +413,7 @@ checkDownload() {
         done
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
-          kill -9 $$
+          kill -9 $$; exit 1;
         fi
         ;;
       12)
@@ -446,7 +446,7 @@ checkDownload() {
         done
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
-          kill -9 $$
+          kill -9 $$; exit 1;
         fi
         ;;
       13)
@@ -470,7 +470,7 @@ checkDownload() {
         done
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
-          kill -9 $$
+          kill -9 $$; exit 1;
         fi
         ;;
       14)
@@ -494,14 +494,14 @@ checkDownload() {
         done
         if [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
-          kill -9 $$
+          kill -9 $$; exit 1;
         fi
         ;;
     esac
   fi
 
   # PHP
-  if [[ "${php_option}" =~ ^[1-9]$|^10$ ]] || [[ "${mphp_ver}" =~ ^5[3-6]$|^7[0-4]$|^80$ ]]; then
+  if [[ "${php_option}" =~ ^[1-9]$|^1[0-1]$ ]] || [[ "${mphp_ver}" =~ ^5[3-6]$|^7[0-4]$|^8[0-1]$ ]]; then
     echo "PHP common..."
     src_url=${mirrorLink}/libiconv-${libiconv_ver}.tar.gz && Download_src
     src_url=https://curl.haxx.se/download/curl-${curl_ver}.tar.gz && Download_src
@@ -543,6 +543,11 @@ checkDownload() {
     src_url=http://mirrors.linuxeye.com/oneinstack/src/libzip-${libzip_ver}.tar.gz && Download_src
   elif [ "${php_option}" == '10' ] || [ "${mphp_ver}" == '80' ]; then
     src_url=https://secure.php.net/distributions/php-${php80_ver}.tar.gz && Download_src
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
+    src_url=http://mirrors.linuxeye.com/oneinstack/src/libzip-${libzip_ver}.tar.gz && Download_src
+  elif [ "${php_option}" == '11' ] || [ "${mphp_ver}" == '81' ]; then
+    src_url=https://secure.php.net/distributions/php-${php81_ver}.tar.gz && Download_src
     src_url=http://mirrors.linuxeye.com/oneinstack/src/argon2-${argon2_ver}.tar.gz && Download_src
     src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
     src_url=http://mirrors.linuxeye.com/oneinstack/src/libzip-${libzip_ver}.tar.gz && Download_src
@@ -725,7 +730,7 @@ checkDownload() {
   # phpMyAdmin
   if [ "${phpmyadmin_flag}" == 'y' ]; then
     echo "Download phpMyAdmin..."
-    if [[ "${php_option}" =~ ^[1-5]$ ]]; then
+    if [[ "${php_option}" =~ ^[1-5]$ ]] || [[ "${mphp_ver}" =~ ^5[3-6]$|^70$ ]]; then
       src_url=https://files.phpmyadmin.net/phpMyAdmin/${phpmyadmin_oldver}/phpMyAdmin-${phpmyadmin_oldver}-all-languages.tar.gz && Download_src
     else
       src_url=https://files.phpmyadmin.net/phpMyAdmin/${phpmyadmin_ver}/phpMyAdmin-${phpmyadmin_ver}-all-languages.tar.gz && Download_src

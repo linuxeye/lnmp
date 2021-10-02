@@ -51,7 +51,7 @@ Install_PostgreSQL() {
   else
     rm -rf ${pgsql_install_dir} ${pgsql_data_dir}
     echo "${CFAILURE}PostgreSQL install failed, Please contact the author! ${CEND}" && lsb_release -a
-    kill -9 $$
+    kill -9 $$; exit 1;
   fi
   popd
   [ -z "$(grep ^'export PATH=' /etc/profile)" ] && echo "export PATH=${pgsql_install_dir}/bin:\$PATH" >> /etc/profile

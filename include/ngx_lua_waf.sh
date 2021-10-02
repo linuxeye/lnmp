@@ -17,7 +17,7 @@ Nginx_lua_waf() {
     tar xzf luajit2-${luajit2_ver}.tar.gz
     pushd luajit2-${luajit2_ver}
     make && make install
-    [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ] && { echo "${CFAILURE}LuaJIT install failed! ${CEND}"; kill -9 $$; }
+    [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ] && { echo "${CFAILURE}LuaJIT install failed! ${CEND}"; kill -9 $$; exit 1; }
     popd > /dev/null
     rm -rf luajit2-${luajit2_ver}
   fi
@@ -44,7 +44,7 @@ Nginx_lua_waf() {
     pushd lua-cjson-${lua_cjson_ver}
     sed -i 's@^LUA_INCLUDE_DIR.*@&/luajit-2.1@' Makefile
     make && make install
-    [ ! -e "/usr/local/lib/lua/5.1/cjson.so" ] && { echo "${CFAILURE}lua-cjson install failed! ${CEND}"; kill -9 $$; }
+    [ ! -e "/usr/local/lib/lua/5.1/cjson.so" ] && { echo "${CFAILURE}lua-cjson install failed! ${CEND}"; kill -9 $$; exit 1; }
     popd > /dev/null
   fi
   ${nginx_install_dir}/sbin/nginx -V &> $$
@@ -81,7 +81,7 @@ Nginx_lua_waf() {
       rm -rf nginx-${nginx_ver}
     else
       echo "${CFAILURE}lua-nginx-module install failed! ${CEND}"
-      kill -9 $$
+      kill -9 $$; exit 1;
     fi
   fi
   popd > /dev/null
@@ -96,7 +96,7 @@ Tengine_lua_waf() {
     tar xzf luajit2-${luajit2_ver}.tar.gz
     pushd luajit2-${luajit2_ver}
     make && make install
-    [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ] && { echo "${CFAILURE}LuaJIT install failed! ${CEND}"; kill -9 $$; }
+    [ ! -e "/usr/local/lib/libluajit-5.1.so.2.1.0" ] && { echo "${CFAILURE}LuaJIT install failed! ${CEND}"; kill -9 $$; exit 1; }
     popd > /dev/null
   fi
   if [ ! -e "/usr/local/lib/lua/5.1/cjson.so" ]; then
@@ -105,7 +105,7 @@ Tengine_lua_waf() {
     pushd lua-cjson-${lua_cjson_ver}
     sed -i 's@^LUA_INCLUDE_DIR.*@&/luajit-2.1@' Makefile
     make && make install
-    [ ! -e "/usr/local/lib/lua/5.1/cjson.so" ] && { echo "${CFAILURE}lua-cjson install failed! ${CEND}"; kill -9 $$; }
+    [ ! -e "/usr/local/lib/lua/5.1/cjson.so" ] && { echo "${CFAILURE}lua-cjson install failed! ${CEND}"; kill -9 $$; exit 1; }
     popd > /dev/null
   fi
   ${tengine_install_dir}/sbin/nginx -V &> $$
@@ -144,7 +144,7 @@ Tengine_lua_waf() {
       rm -rf tengine-${tengine_ver}
     else
       echo "${CFAILURE}lua_module install failed! ${CEND}"
-      kill -9 $$
+      kill -9 $$; exit 1;
     fi
   fi
   popd > /dev/null

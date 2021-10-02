@@ -71,7 +71,7 @@ Install_Percona80() {
   else
     rm -rf ${percona_install_dir}
     echo "${CFAILURE}Percona install failed, Please contact the author! ${CEND}" && lsb_release -a
-    kill -9 $$
+    kill -9 $$; exit 1;
   fi
 
   /bin/cp ${percona_install_dir}/support-files/mysql.server /etc/init.d/mysqld

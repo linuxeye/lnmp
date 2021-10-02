@@ -8,7 +8,7 @@
 #       https://oneinstack.com
 #       https://github.com/oneinstack/oneinstack
 
-Install_PHP53() {
+Install_PHP81() {
   pushd ${oneinstack_dir}/src > /dev/null
   if [ -e "${apache_install_dir}/bin/httpd" ];then
     [ "$(${apache_install_dir}/bin/httpd -v | awk -F'.' /version/'{print $2}')" == '4' ] && Apache_main_ver=24
@@ -21,6 +21,7 @@ Install_PHP53() {
     make -j ${THREAD} && make install
     popd > /dev/null
     rm -rf libiconv-${libiconv_ver}
+    ln -s ${libiconv_install_dir}/lib/libiconv.so.2 /usr/lib64/libiconv.so.2
   fi
 
   if [ ! -e "${curl_install_dir}/lib/libcurl.la" ]; then
@@ -45,18 +46,30 @@ Install_PHP53() {
     rm -rf freetype-${freetype_ver}
   fi
 
-  if [ ! -e "/usr/local/bin/libmcrypt-config" -a ! -e "/usr/bin/libmcrypt-config" ]; then
-    tar xzf libmcrypt-${libmcrypt_ver}.tar.gz
-    pushd libmcrypt-${libmcrypt_ver} > /dev/null
+  if [ ! -e "/usr/lib/libargon2.a" ]; then
+    tar xzf argon2-${argon2_ver}.tar.gz
+    pushd argon2-${argon2_ver} > /dev/null
+    make -j ${THREAD} && make install
+    popd > /dev/null
+    rm -rf argon2-${argon2_ver}
+  fi
+
+  if [ ! -e "/usr/local/lib/libsodium.la" ]; then
+    tar xzf libsodium-${libsodium_ver}.tar.gz
+    pushd libsodium-${libsodium_ver} > /dev/null
+    ./configure --disable-dependency-tracking --enable-minimal
+    make -j ${THREAD} && make install
+    popd > /dev/null
+    rm -rf libsodium-${libsodium_ver}
+  fi
+
+  if [ ! -e "/usr/local/lib/libzip.la" ]; then
+    tar xzf libzip-${libzip_ver}.tar.gz
+    pushd libzip-${libzip_ver} > /dev/null
     ./configure
     make -j ${THREAD} && make install
-    ldconfig
-    pushd libltdl > /dev/null
-    ./configure --enable-ltdl-install
-    make -j ${THREAD} && make install
     popd > /dev/null
-    popd > /dev/null
-    rm -rf libmcrypt-${libmcrypt_ver}
+    rm -rf libzip-${libzip_ver}
   fi
 
   if [ ! -e "/usr/local/include/mhash.h" -a ! -e "/usr/include/mhash.h" ]; then
@@ -72,7 +85,6 @@ Install_PHP53() {
   ldconfig
 
   if [ "${PM}" == 'yum' ]; then
-    [ ! -e "/usr/bin/libmcrypt-config" ] && ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config
     if [ "${OS_BIT}" == '64' ]; then
       [ ! -e "/lib64/libpcre.so.1" ] && ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1
       [ ! -e "/usr/lib/libc-client.so" ] && ln -s /usr/lib64/libc-client.so /usr/lib/libc-client.so
@@ -81,54 +93,41 @@ Install_PHP53() {
     fi
   fi
 
-  if [ ! -e "/usr/local/bin/mcrypt" -a ! -e "/usr/bin/mcrypt" ]; then
-    tar xzf mcrypt-${mcrypt_ver}.tar.gz
-    pushd mcrypt-${mcrypt_ver} > /dev/null
-    ldconfig
-    ./configure
-    make -j ${THREAD} && make install
-    popd > /dev/null
-    rm -rf mcrypt-${mcrypt_ver}
-  fi
-
   id -g ${run_group} >/dev/null 2>&1
   [ $? -ne 0 ] && groupadd ${run_group}
   id -u ${run_user} >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -g ${run_group} -M -s /sbin/nologin ${run_user}
 
-  tar xzf php-${php53_ver}.tar.gz
-  patch -d php-${php53_ver} -p0 < fpm-race-condition.patch
-  pushd php-${php53_ver} > /dev/null
-  patch -p1 < ../php5.3patch
-  patch -p1 < ../debian_patches_disable_SSLv2_for_openssl_1_0_0.patch
+  tar xzf php-${php81_ver}.tar.gz
+  pushd php-${php81_ver} > /dev/null
   make clean
+  export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig/:$PKG_CONFIG_PATH
   [ ! -d "${php_install_dir}" ] && mkdir -p ${php_install_dir}
-  { [ ${Debian_ver} -ge 10 >/dev/null 2>&1 ] || [ ${Ubuntu_ver} -ge 19 >/dev/null 2>&1 ]; } || intl_modules_options='--enable-intl'
+  [ "${phpcache_option}" == '1' ] && phpcache_arg='--enable-opcache' || phpcache_arg='--disable-opcache'
   if [ "${Apache_main_ver}" == '22' ] || [ "${apache_mode_option}" == '2' ]; then
     ./configure --prefix=${php_install_dir} --with-config-file-path=${php_install_dir}/etc \
     --with-config-file-scan-dir=${php_install_dir}/etc/php.d \
-    --with-apxs2=${apache_install_dir}/bin/apxs --disable-fileinfo \
-    --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
-    --with-iconv-dir=${libiconv_install_dir} --with-freetype-dir=${freetype_install_dir} --with-jpeg-dir --with-png-dir --with-zlib \
-    --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
-    --enable-sysvsem --enable-inline-optimization --with-curl=${curl_install_dir} --enable-mbregex \
-    --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl=${openssl_install_dir} \
-    --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --with-xsl ${intl_modules_options} \
-    --with-gettext --enable-zip --enable-soap --disable-debug ${php_modules_options}
+    --with-apxs2=${apache_install_dir}/bin/apxs ${phpcache_arg} --disable-fileinfo \
+    --enable-mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
+    --with-iconv --with-freetype --with-jpeg --with-zlib \
+    --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
+    --enable-sysvsem --with-curl=${curl_install_dir} --enable-mbregex \
+    --enable-mbstring --with-password-argon2 --with-sodium=/usr/local --enable-gd --with-openssl=${openssl_install_dir} \
+    --with-mhash --enable-pcntl --enable-sockets --enable-ftp --enable-intl --with-xsl \
+    --with-gettext --with-zip=/usr/local --enable-soap --disable-debug ${php_modules_options}
   else
     ./configure --prefix=${php_install_dir} --with-config-file-path=${php_install_dir}/etc \
     --with-config-file-scan-dir=${php_install_dir}/etc/php.d \
-    --with-fpm-user=${run_user} --with-fpm-group=${run_group} --enable-fpm --disable-fileinfo \
-    --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
-    --with-iconv-dir=${libiconv_install_dir} --with-freetype-dir=${freetype_install_dir} --with-jpeg-dir --with-png-dir --with-zlib \
-    --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
-    --enable-sysvsem --enable-inline-optimization --with-curl=${curl_install_dir} --enable-mbregex \
-    --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl=${openssl_install_dir} \
-    --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --with-xsl ${intl_modules_options} \
-    --with-gettext --enable-zip --enable-soap --disable-debug ${php_modules_options}
+    --with-fpm-user=${run_user} --with-fpm-group=${run_group} --enable-fpm ${phpcache_arg} --disable-fileinfo \
+    --enable-mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
+    --with-iconv --with-freetype --with-jpeg --with-zlib \
+    --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
+    --enable-sysvsem --with-curl=${curl_install_dir} --enable-mbregex \
+    --enable-mbstring --with-password-argon2 --with-sodium=/usr/local --enable-gd --with-openssl=${openssl_install_dir} \
+    --with-mhash --enable-pcntl --enable-sockets --enable-ftp --enable-intl --with-xsl \
+    --with-gettext --with-zip=/usr/local --enable-soap --disable-debug ${php_modules_options}
   fi
-  { [ ${Debian_ver} -ge 10 >/dev/null 2>&1 ] || [ ${Ubuntu_ver} -ge 19 >/dev/null 2>&1 ]; } || sed -i '/^BUILD_/ s/\$(CC)/\$(CXX)/g' Makefile
-  make ZEND_EXTRA_LIBS='-liconv' -j ${THREAD}
+  make ZEND_EXTRA_LIBS="-L${libiconv_install_dir}/lib/ -liconv" -j ${THREAD}
   make install
 
   if [ -e "${php_install_dir}/bin/phpize" ]; then
@@ -158,9 +157,30 @@ Install_PHP53() {
   sed -i "s@^;date.timezone.*@date.timezone = ${timezone}@" ${php_install_dir}/etc/php.ini
   sed -i 's@^post_max_size.*@post_max_size = 100M@' ${php_install_dir}/etc/php.ini
   sed -i 's@^upload_max_filesize.*@upload_max_filesize = 50M@' ${php_install_dir}/etc/php.ini
-  sed -i 's@^max_execution_time.*@max_execution_time = 5@' ${php_install_dir}/etc/php.ini
+  sed -i 's@^max_execution_time.*@max_execution_time = 600@' ${php_install_dir}/etc/php.ini
+  sed -i 's@^;realpath_cache_size.*@realpath_cache_size = 2M@' ${php_install_dir}/etc/php.ini
   sed -i 's@^disable_functions.*@disable_functions = passthru,exec,system,chroot,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_restore,dl,readlink,symlink,popepassthru,stream_socket_server,fsocket,popen@' ${php_install_dir}/etc/php.ini
   [ -e /usr/sbin/sendmail ] && sed -i 's@^;sendmail_path.*@sendmail_path = /usr/sbin/sendmail -t -i@' ${php_install_dir}/etc/php.ini
+  sed -i "s@^;curl.cainfo.*@curl.cainfo = \"${openssl_install_dir}/cert.pem\"@" ${php_install_dir}/etc/php.ini
+  sed -i "s@^;openssl.cafile.*@openssl.cafile = \"${openssl_install_dir}/cert.pem\"@" ${php_install_dir}/etc/php.ini
+  sed -i "s@^;openssl.capath.*@openssl.capath = \"${openssl_install_dir}/cert.pem\"@" ${php_install_dir}/etc/php.ini
+
+  [ "${phpcache_option}" == '1' ] && cat > ${php_install_dir}/etc/php.d/02-opcache.ini << EOF
+[opcache]
+zend_extension=opcache.so
+opcache.enable=1
+opcache.enable_cli=1
+opcache.memory_consumption=${Memory_limit}
+opcache.interned_strings_buffer=8
+opcache.max_accelerated_files=100000
+opcache.max_wasted_percentage=5
+opcache.use_cwd=1
+opcache.validate_timestamps=1
+opcache.revalidate_freq=60
+;opcache.save_comments=0
+opcache.consistency_checks=0
+;opcache.optimization_level=0
+EOF
 
   if [ ! -e "${apache_install_dir}/bin/apxs" -o "${Apache_main_ver}" == '24' ] && [ "${apache_mode_option}" != '2' ]; then
     # php-fpm Init Script
@@ -264,6 +284,6 @@ EOF
     service httpd restart
   fi
   popd > /dev/null
-  [ -e "${php_install_dir}/bin/phpize" ] && rm -rf php-${php53_ver}
+  [ -e "${php_install_dir}/bin/phpize" ] && rm -rf php-${php81_ver}
   popd > /dev/null
 }

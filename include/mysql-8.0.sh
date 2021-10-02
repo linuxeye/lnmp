@@ -38,6 +38,8 @@ Install_MySQL80() {
     -DWITH_MYISAM_STORAGE_ENGINE=1 \
     -DENABLED_LOCAL_INFILE=1 \
     -DFORCE_INSOURCE_BUILD=1 \
+    -DCMAKE_C_COMPILER=/usr/bin/gcc \
+    -DCMAKE_CXX_COMPILER=/usr/bin/g++ \
     -DDEFAULT_CHARSET=utf8mb4
     make -j ${THREAD}
     make install
@@ -60,7 +62,7 @@ Install_MySQL80() {
   else
     rm -rf ${mysql_install_dir}
     echo "${CFAILURE}MySQL install failed, Please contact the author! ${CEND}" && lsb_release -a
-    kill -9 $$
+    kill -9 $$; exit 1;
   fi
 
   /bin/cp ${mysql_install_dir}/support-files/mysql.server /etc/init.d/mysqld

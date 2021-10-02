@@ -53,9 +53,14 @@ Install_Apache() {
     rm -rf nghttp2-${nghttp2_ver}
   fi
 
+  if openssl version | grep -Eqi 'OpenSSL 1.1'; then
+    with_ssl="--with-ssl"
+  else
+    with_old_ssl_flag='y'
+    with_ssl="--with-ssl=${openssl_install_dir}"
+  fi
   pushd httpd-${apache_ver} > /dev/null
-  [ ! -d "${apache_install_dir}" ] && mkdir -p ${apache_install_dir}
-  LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} --enable-mpms-shared=all --with-pcre --with-apr=${apr_install_dir} --with-apr-util=${apr_install_dir} --enable-headers --enable-mime-magic --enable-deflate --enable-proxy --enable-so --enable-dav --enable-rewrite --enable-remoteip --enable-expires --enable-static-support --enable-suexec --enable-mods-shared=most --enable-nonportable-atomics=yes --enable-ssl --with-ssl=${openssl_install_dir} --enable-http2 --with-nghttp2=/usr/local
+  LDFLAGS=-ldl ./configure --prefix=${apache_install_dir} --enable-mpms-shared=all --with-pcre --with-apr=${apr_install_dir} --with-apr-util=${apr_install_dir} --enable-headers --enable-mime-magic --enable-deflate --enable-proxy --enable-so --enable-dav --enable-rewrite --enable-remoteip --enable-expires --enable-static-support --enable-suexec --enable-mods-shared=most --enable-nonportable-atomics=yes --enable-ssl ${with_ssl} --enable-http2 --with-nghttp2=/usr/local
   make -j ${THREAD} && make install
   popd > /dev/null
   unset LDFLAGS
@@ -65,7 +70,7 @@ Install_Apache() {
   else
     rm -rf ${apache_install_dir}
     echo "${CFAILURE}Apache install failed, Please contact the author! ${CEND}" && lsb_release -a
-    kill -9 $$
+    kill -9 $$; exit 1;
   fi
 
   [ -z "`grep ^'export PATH=' /etc/profile`" ] && echo "export PATH=${apache_install_dir}/bin:\$PATH" >> /etc/profile
@@ -194,6 +199,7 @@ EOF
     sed -i "s@LogFormat \"%h %l@LogFormat \"%h %a %l@g" ${apache_install_dir}/conf/httpd.conf
   fi
   ldconfig
+  [ "${with_old_ssl_flag}" == 'y' ] && sed -i "s@^export LD_LIBRARY_PATH.*@export LD_LIBRARY_PATH=${openssl_install_dir}/lib:\$LD_LIBRARY_PATH@" ${apache_install_dir}/bin/envvars
   service httpd start
   popd > /dev/null
 }

@@ -75,7 +75,7 @@ EOF
   else
     rm -rf ${mongo_install_dir} ${mongo_data_dir}
     echo "${CFAILURE}MongoDB install failed, Please contact the author! ${CEND}" && lsb_release -a
-    kill -9 $$
+    kill -9 $$; exit 1;
   fi
   popd
   [ -z "$(grep ^'export PATH=' /etc/profile)" ] && echo "export PATH=${mongo_install_dir}/bin:\$PATH" >> /etc/profile

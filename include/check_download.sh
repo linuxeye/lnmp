@@ -563,19 +563,18 @@ checkDownload() {
       fi
       ;;
     2)
-      if [[ "${php_option}" =~ ^[1-4]$ ]]; then
-        # php 5.3 5.4 5.5 5.6
-        echo "Download xcache..."
-        src_url=http://xcache.lighttpd.net/pub/Releases/${xcache_ver}/xcache-${xcache_ver}.tar.gz && Download_src
-      fi
-      ;;
-    3)
-      # php 5.3 ~ 7.4
       echo "Download apcu..."
       if [[ "${php_option}" =~ ^[1-4]$ ]]; then
         src_url=https://pecl.php.net/get/apcu-${apcu_oldver}.tgz && Download_src
       else
         src_url=https://pecl.php.net/get/apcu-${apcu_ver}.tgz && Download_src
+      fi
+      ;;
+    3)
+      if [[ "${php_option}" =~ ^[1-4]$ ]]; then
+        # php 5.3 5.4 5.5 5.6
+        echo "Download xcache..."
+        src_url=http://xcache.lighttpd.net/pub/Releases/${xcache_ver}/xcache-${xcache_ver}.tar.gz && Download_src
       fi
       ;;
     4)

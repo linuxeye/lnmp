@@ -510,8 +510,8 @@ if [ ${ARG_NUM} == 0 ]; then
             while :; do
               echo 'Please select a opcode cache of the PHP:'
               echo -e "\t${CMSG}1${CEND}. Install Zend OPcache"
-              echo -e "\t${CMSG}2${CEND}. Install XCache"
-              echo -e "\t${CMSG}3${CEND}. Install APCU"
+              echo -e "\t${CMSG}2${CEND}. Install APCU"
+              echo -e "\t${CMSG}3${CEND}. Install XCache"
               echo -e "\t${CMSG}4${CEND}. Install eAccelerator-0.9"
               read -e -p "Please input a number:(Default 1 press Enter) " phpcache_option
               phpcache_option=${phpcache_option:-1}
@@ -526,8 +526,8 @@ if [ ${ARG_NUM} == 0 ]; then
             while :; do
               echo 'Please select a opcode cache of the PHP:'
               echo -e "\t${CMSG}1${CEND}. Install Zend OPcache"
-              echo -e "\t${CMSG}2${CEND}. Install XCache"
-              echo -e "\t${CMSG}3${CEND}. Install APCU"
+              echo -e "\t${CMSG}2${CEND}. Install APCU"
+              echo -e "\t${CMSG}3${CEND}. Install XCache"
               echo -e "\t${CMSG}4${CEND}. Install eAccelerator-1.0-dev"
               read -e -p "Please input a number:(Default 1 press Enter) " phpcache_option
               phpcache_option=${phpcache_option:-1}
@@ -542,8 +542,8 @@ if [ ${ARG_NUM} == 0 ]; then
             while :; do
               echo 'Please select a opcode cache of the PHP:'
               echo -e "\t${CMSG}1${CEND}. Install Zend OPcache"
-              echo -e "\t${CMSG}2${CEND}. Install XCache"
-              echo -e "\t${CMSG}3${CEND}. Install APCU"
+              echo -e "\t${CMSG}2${CEND}. Install APCU"
+              echo -e "\t${CMSG}3${CEND}. Install XCache"
               read -e -p "Please input a number:(Default 1 press Enter) " phpcache_option
               phpcache_option=${phpcache_option:-1}
               if [[ ! ${phpcache_option} =~ ^[1-3]$ ]]; then
@@ -572,11 +572,11 @@ if [ ${ARG_NUM} == 0 ]; then
             while :; do
               echo 'Please select a opcode cache of the PHP:'
               echo -e "\t${CMSG}1${CEND}. Install Zend OPcache"
-              echo -e "\t${CMSG}3${CEND}. Install APCU"
+              echo -e "\t${CMSG}2${CEND}. Install APCU"
               read -e -p "Please input a number:(Default 1 press Enter) " phpcache_option
               phpcache_option=${phpcache_option:-1}
-              if [[ ! ${phpcache_option} =~ ^[1,3]$ ]]; then
-                echo "${CWARNING}input error! Please only input number 1,3${CEND}"
+              if [[ ! ${phpcache_option} =~ ^[1-2]$ ]]; then
+                echo "${CWARNING}input error! Please only input number 1~2${CEND}"
               else
                 break
               fi
@@ -587,7 +587,7 @@ if [ ${ARG_NUM} == 0 ]; then
       fi
     done
     # set xcache passwd
-    if [ "${phpcache_option}" == '2' ]; then
+    if [ "${phpcache_option}" == '3' ]; then
       while :; do
         read -e -p "Please input xcache admin password: " xcachepwd
         (( ${#xcachepwd} >= 5 )) && { xcachepwd_md5=$(echo -n "${xcachepwd}" | md5sum | awk '{print $1}') ; break ; } || echo "${CFAILURE}xcache admin password least 5 characters! ${CEND}"
@@ -919,12 +919,12 @@ PHP_addons() {
       Install_ZendOPcache 2>&1 | tee -a ${oneinstack_dir}/install.log
       ;;
     2)
-      . include/xcache.sh
-      Install_XCache 2>&1 | tee -a ${oneinstack_dir}/install.log
-      ;;
-    3)
       . include/apcu.sh
       Install_APCU 2>&1 | tee -a ${oneinstack_dir}/install.log
+      ;;
+    3)
+      . include/xcache.sh
+      Install_XCache 2>&1 | tee -a ${oneinstack_dir}/install.log
       ;;
     4)
       . include/eaccelerator.sh
@@ -1172,10 +1172,10 @@ echo "Total OneinStack Install Time: ${CQUESTION}${installTime}${CEND} minutes"
 [ "${db_option}" == '14' ] && echo "$(printf "%-32s" "MongoDB password:")${CMSG}${dbmongopwd}${CEND}"
 [[ "${php_option}" =~ ^[1-9]$|^1[0-1]$ ]] && echo -e "\n$(printf "%-32s" "PHP install dir:")${CMSG}${php_install_dir}${CEND}"
 [ "${phpcache_option}" == '1' ] && echo "$(printf "%-32s" "Opcache Control Panel URL:")${CMSG}http://${IPADDR}/ocp.php${CEND}"
-[ "${phpcache_option}" == '2' -a -e "${php_install_dir}/etc/php.d/04-xcache.ini" ] && echo "$(printf "%-32s" "xcache Control Panel URL:")${CMSG}http://${IPADDR}/xcache${CEND}"
-[ "${phpcache_option}" == '2' -a -e "${php_install_dir}/etc/php.d/04-xcache.ini" ] && echo "$(printf "%-32s" "xcache user:")${CMSG}admin${CEND}"
-[ "${phpcache_option}" == '2' -a -e "${php_install_dir}/etc/php.d/04-xcache.ini" ] && echo "$(printf "%-32s" "xcache password:")${CMSG}${xcachepwd}${CEND}"
-[ "${phpcache_option}" == '3' ] && echo "$(printf "%-32s" "APC Control Panel URL:")${CMSG}http://${IPADDR}/apc.php${CEND}"
+[ "${phpcache_option}" == '2' ] && echo "$(printf "%-32s" "APC Control Panel URL:")${CMSG}http://${IPADDR}/apc.php${CEND}"
+[ "${phpcache_option}" == '3' -a -e "${php_install_dir}/etc/php.d/04-xcache.ini" ] && echo "$(printf "%-32s" "xcache Control Panel URL:")${CMSG}http://${IPADDR}/xcache${CEND}"
+[ "${phpcache_option}" == '3' -a -e "${php_install_dir}/etc/php.d/04-xcache.ini" ] && echo "$(printf "%-32s" "xcache user:")${CMSG}admin${CEND}"
+[ "${phpcache_option}" == '3' -a -e "${php_install_dir}/etc/php.d/04-xcache.ini" ] && echo "$(printf "%-32s" "xcache password:")${CMSG}${xcachepwd}${CEND}"
 [ "${phpcache_option}" == '4' -a -e "${php_install_dir}/etc/php.d/02-eaccelerator.ini" ] && echo "$(printf "%-32s" "eAccelerator Control Panel URL:")${CMSG}http://${IPADDR}/control.php${CEND}"
 [ "${phpcache_option}" == '4' -a -e "${php_install_dir}/etc/php.d/02-eaccelerator.ini" ] && echo "$(printf "%-32s" "eAccelerator user:")${CMSG}admin${CEND}"
 [ "${phpcache_option}" == '4' -a -e "${php_install_dir}/etc/php.d/02-eaccelerator.ini" ] && echo "$(printf "%-32s" "eAccelerator password:")${CMSG}eAccelerator${CEND}"

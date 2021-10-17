@@ -6,12 +6,12 @@ openresty_ver=1.19.9.1
 openssl11_ver=1.1.1k
 openssl_ver=1.0.2u
 
-tomcat10_ver=10.0.11
-tomcat9_ver=9.0.53
-tomcat8_ver=8.5.71
+tomcat10_ver=10.0.12
+tomcat9_ver=9.0.54
+tomcat8_ver=8.5.72
 tomcat7_ver=7.0.109
 
-apache_ver=2.4.49
+apache_ver=2.4.51
 pcre_ver=8.45
 apr_ver=1.7.0
 apr_util_ver=1.6.1
@@ -54,10 +54,10 @@ php72_ver=7.2.34
 php73_ver=7.3.31
 php74_ver=7.4.24
 php80_ver=8.0.11
-php81_ver=8.1.0RC3
+php81_ver=8.1.0RC4
 
 # Nodejs
-node_ver=14.17.6
+node_ver=14.18.1
 
 libiconv_ver=1.16
 curl_ver=7.79.1
@@ -69,16 +69,16 @@ icu4c_ver=63_1
 libsodium_ver=1.0.18
 libzip_ver=1.2.0
 argon2_ver=20171227
-imagemagick_ver=7.1.0-8
+imagemagick_ver=7.1.0-10
 imagick_ver=3.5.1
 imagick_oldver=3.4.4
 graphicsmagick_ver=1.3.36
 gmagick_ver=2.0.6RC1
 gmagick_oldver=1.1.7RC3
 zendopcache_ver=7.0.5
-xcache_ver=3.2.0
-apcu_ver=5.1.20
+apcu_ver=5.1.21
 apcu_oldver=4.0.11
+xcache_ver=3.2.0
 eaccelerator_ver=0.9.6.1
 phalcon_ver=4.1.2
 phalcon_oldver=3.4.5
@@ -93,13 +93,13 @@ xdebug_oldver=2.9.8
 pureftpd_ver=1.0.49
 
 # Redis
-redis_ver=6.2.5
-redis_oldver=5.0.9
+redis_ver=6.2.6
+redis_oldver=5.0.14
 pecl_redis_ver=5.3.4
 pecl_redis_oldver=4.3.0
 
 # Memcached
-memcached_ver=1.6.10
+memcached_ver=1.6.12
 libmemcached_ver=1.0.18
 pecl_memcached_ver=3.1.5
 pecl_memcached_oldver=2.2.0

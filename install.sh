@@ -56,7 +56,7 @@ Show_Help() {
   --php_extensions [ext name] Install PHP extensions, include zendguardloader,ioncube,
                               sourceguardian,imagick,gmagick,fileinfo,imap,ldap,calendar,phalcon,
                               yaf,yar,redis,memcached,memcache,mongodb,swoole,xdebug
-  --node                      Install Nodejs
+  --nodejs                    Install Nodejs
   --tomcat_option [1-4]       Install Tomcat version
   --jdk_option [1-4]          Install JDK version
   --db_option [1-14]          Install DB version
@@ -73,7 +73,7 @@ Show_Help() {
   "
 }
 ARG_NUM=$#
-TEMP=`getopt -o hvV --long help,version,nginx_option:,apache,apache_mode_option:,apache_mpm_option:,php_option:,mphp_ver:,mphp_addons,phpcache_option:,php_extensions:,node,tomcat_option:,jdk_option:,db_option:,dbrootpwd:,dbinstallmethod:,pureftpd,redis,memcached,phpmyadmin,python,ssh_port:,iptables,reboot -- "$@" 2>/dev/null`
+TEMP=`getopt -o hvV --long help,version,nginx_option:,apache,apache_mode_option:,apache_mpm_option:,php_option:,mphp_ver:,mphp_addons,phpcache_option:,php_extensions:,nodejs,tomcat_option:,jdk_option:,db_option:,dbrootpwd:,dbinstallmethod:,pureftpd,redis,memcached,phpmyadmin,python,ssh_port:,iptables,reboot -- "$@" 2>/dev/null`
 [ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && Show_Help && exit 1
 eval set -- "${TEMP}"
 while :; do
@@ -140,9 +140,9 @@ while :; do
       [ -n "`echo ${php_extensions} | grep -w swoole`" ] && pecl_swoole=1
       [ -n "`echo ${php_extensions} | grep -w xdebug`" ] && pecl_xdebug=1
       ;;
-    --node)
-      node_flag=y; shift 1
-      [ -e "${node_install_dir}/bin/node" ] && { echo "${CWARNING}Nodejs already installed! ${CEND}"; unset node_flag; }
+    --nodejs)
+      nodejs_flag=y; shift 1
+      [ -e "${nodejs_install_dir}/bin/node" ] && { echo "${CWARNING}Nodejs already installed! ${CEND}"; unset nodejs_flag; }
       ;;
     --tomcat_option)
       tomcat_option=$2; shift 2
@@ -478,7 +478,7 @@ if [ ${ARG_NUM} == 0 ]; then
           echo -e "\t${CMSG} 8${CEND}. Install php-7.3"
           echo -e "\t${CMSG} 9${CEND}. Install php-7.4"
           echo -e "\t${CMSG}10${CEND}. Install php-8.0"
-          #echo -e "\t${CMSG}11${CEND}. Install php-8.1"
+          echo -e "\t${CMSG}11${CEND}. Install php-8.1"
           read -e -p "Please input a number:(Default 7 press Enter) " php_option
           php_option=${php_option:-7}
           if [[ ! ${php_option} =~ ^[1-9]$|^1[0-1]$ ]]; then
@@ -651,11 +651,11 @@ if [ ${ARG_NUM} == 0 ]; then
 
   # check Nodejs
   while :; do echo
-    read -e -p "Do you want to install Nodejs? [y/n]: " node_flag
-    if [[ ! ${node_flag} =~ ^[y,n]$ ]]; then
+    read -e -p "Do you want to install Nodejs? [y/n]: " nodejs_flag
+    if [[ ! ${nodejs_flag} =~ ^[y,n]$ ]]; then
       echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
-      [ "${node_flag}" == 'y' -a -e "${node_install_dir}/bin/node" ] && { echo "${CWARNING}Nodejs already installed! ${CEND}"; unset node_flag; }
+      [ "${nodejs_flag}" == 'y' -a -e "${nodejs_install_dir}/bin/node" ] && { echo "${CWARNING}Nodejs already installed! ${CEND}"; unset nodejs_flag; }
       break
     fi
   done
@@ -1098,9 +1098,9 @@ case "${tomcat_option}" in
 esac
 
 # Nodejs
-if [ "${node_flag}" == 'y' ]; then
-  . include/node.sh
-  Install_Node 2>&1 | tee -a ${oneinstack_dir}/install.log
+if [ "${nodejs_flag}" == 'y' ]; then
+  . include/nodejs.sh
+  Install_Nodejs 2>&1 | tee -a ${oneinstack_dir}/install.log
 fi
 
 # Pure-FTPd

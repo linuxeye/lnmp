@@ -604,6 +604,9 @@ server {
   location ~ /(\.user\.ini|\.ht|\.git|\.svn|\.project|LICENSE|README\.md) {
     deny all;
   }
+  location /.well-known {
+    allow all;
+  }
   ${NGX_CONF}
 }
 EOF
@@ -699,6 +702,9 @@ server {
   }
   location ~ /(\.user\.ini|\.ht|\.git|\.svn|\.project|LICENSE|README\.md) {
     deny all;
+  }
+  location /.well-known {
+    allow all;
   }
 }
 EOF
@@ -798,6 +804,9 @@ server {
   }
   location ~ /(\.user\.ini|\.ht|\.git|\.svn|\.project|LICENSE|README\.md) {
     deny all;
+  }
+  location /.well-known {
+    allow all;
   }
 }
 EOF
@@ -963,6 +972,9 @@ server {
   }
   location ~ /(\.user\.ini|\.ht|\.git|\.svn|\.project|LICENSE|README\.md) {
     deny all;
+  }
+  location /.well-known {
+    allow all;
   }
 }
 EOF

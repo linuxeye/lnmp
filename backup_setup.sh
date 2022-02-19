@@ -182,27 +182,29 @@ fi
 
 if [ -n "`echo ${desc_bk} | grep -w 3`" ]; then
   if [ ! -e "/usr/local/bin/ossutil" ]; then
-    wget -qc https://gosspublic.alicdn.com/ossutil/1.7.3/ossutil${OS_BIT} -O /usr/local/bin/ossutil
+    wget -qc https://gosspublic.alicdn.com/ossutil/1.7.8/ossutil${OS_BIT} -O /usr/local/bin/ossutil
     chmod +x /usr/local/bin/ossutil
   fi
   while :; do echo
     echo 'Please select your backup aliyun datacenter:'
-    echo -e "\t ${CMSG}1${CEND}. cn-hangzhou-华东 1 (杭州)         ${CMSG}2${CEND}. cn-shanghai-华东 2 (上海)"
-    echo -e "\t ${CMSG}3${CEND}. cn-qingdao-华北 1 (青岛)          ${CMSG}4${CEND}. cn-beijing-华北 2 (北京)"
-    echo -e "\t ${CMSG}5${CEND}. cn-zhangjiakou-华北 3 (张家口)    ${CMSG}6${CEND}. cn-huhehaote-华北 5(呼和浩特)"
-    echo -e "\t ${CMSG}7${CEND}. cn-shenzhen-华南 1 (深圳)         ${CMSG}8${CEND}. cn-chengdu-西南 1（成都）"
-    echo -e "\t ${CMSG}9${CEND}. cn-hongkong-香港                 ${CMSG}10${CEND}. us-west-美西 1 (硅谷)"
-    echo -e "\t${CMSG}11${CEND}. us-east-美东 1 (弗吉尼亚)        ${CMSG}12${CEND}. ap-southeast-亚太东南 1 (新加坡)"
-    echo -e "\t${CMSG}13${CEND}. ap-southeast-亚太东南 2 (悉尼)   ${CMSG}14${CEND}. ap-southeast-亚太东南 3 (吉隆坡)"
-    echo -e "\t${CMSG}15${CEND}. ap-southeast-亚太东南 5 (雅加达) ${CMSG}16${CEND}. ap-northeast-亚太东北 1 (日本)"
-    echo -e "\t${CMSG}17${CEND}. ap-south-亚太南部 1 (孟买)       ${CMSG}18${CEND}. eu-central-欧洲中部 1 (法兰克福)"
-    echo -e "\t${CMSG}19${CEND}. eu-west-英国（伦敦）             ${CMSG}20${CEND}. me-east-中东东部 1 (迪拜)"
+    echo -e "\t ${CMSG}1${CEND}. cn-hangzhou-华东1 (杭州)          ${CMSG}2${CEND}. cn-shanghai-华东2 (上海)"
+    echo -e "\t ${CMSG}3${CEND}. cn-qingdao-华北1 (青岛)           ${CMSG}4${CEND}. cn-beijing-华北2 (北京)"
+    echo -e "\t ${CMSG}5${CEND}. cn-zhangjiakou-华北3 (张家口)     ${CMSG}6${CEND}. cn-huhehaote-华北5(呼和浩特)"
+    echo -e "\t ${CMSG}7${CEND}. cn-wulanchabu-华北6（乌兰察布）   ${CMSG}8${CEND}. cn-shenzhen-华南1（深圳）"
+    echo -e "\t ${CMSG}9${CEND}. cn-heyuan-华南2（河源）	  ${CMSG}10${CEND}. cn-guangzhou-华南3（广州）"
+    echo -e "\t${CMSG}11${CEND}. cn-chengdu-西南1（成都）         ${CMSG}12${CEND}. cn-hongkong-香港"
+    echo -e "\t${CMSG}13${CEND}. us-west-1-美国（硅谷）           ${CMSG}14${CEND}. us-east-1-美国（弗吉尼亚）"
+    echo -e "\t${CMSG}15${CEND}. ap-southeast-1-新加坡            ${CMSG}16${CEND}. ap-southeast-2-澳大利亚（悉尼）"
+    echo -e "\t${CMSG}17${CEND}. ap-southeast-3-马来西亚（吉隆坡）${CMSG}18${CEND}. ap-southeast-5-印度尼西亚（雅加达）"
+    echo -e "\t${CMSG}19${CEND}. ap-northeast-1-日本（东京）      ${CMSG}20${CEND}. ap-south-1-印度（孟买）"
+    echo -e "\t${CMSG}21${CEND}. eu-central-1-德国（法兰克福）    ${CMSG}22${CEND}. eu-west-1-英国（伦敦）"
+    echo -e "\t${CMSG}23${CEND}. me-east-1-中东东部 (迪拜)        ${CMSG}24${CEND}. ap-southeast-6-菲律宾（马尼拉）"
     read -e -p "Please input a number:(Default 1 press Enter) " Location
     Location=${Location:-1}
-    if [[ "${Location}" =~ ^[1-9]$|^1[0-9]$|^20$ ]]; then
+    if [[ "${Location}" =~ ^[1-9]$|^1[0-9]$|^24$ ]]; then
       break
     else
-      echo "${CWARNING}input error! Please only input number 1~20${CEND}"
+      echo "${CWARNING}input error! Please only input number 1~24${CEND}"
     fi
   done
   [ "${Location}" == '1' ] && Host=oss-cn-hangzhou-internal.aliyuncs.com
@@ -211,20 +213,24 @@ if [ -n "`echo ${desc_bk} | grep -w 3`" ]; then
   [ "${Location}" == '4' ] && Host=oss-cn-beijing-internal.aliyuncs.com
   [ "${Location}" == '5' ] && Host=oss-cn-zhangjiakou-internal.aliyuncs.com
   [ "${Location}" == '6' ] && Host=oss-cn-huhehaote-internal.aliyuncs.com
-  [ "${Location}" == '7' ] && Host=oss-cn-shenzhen-internal.aliyuncs.com
-  [ "${Location}" == '8' ] && Host=oss-cn-chengdu-internal.aliyuncs.com
-  [ "${Location}" == '9' ] && Host=oss-cn-hongkong-internal.aliyuncs.com
-  [ "${Location}" == '10' ] && Host=oss-us-west-1-internal.aliyuncs.com
-  [ "${Location}" == '11' ] && Host=oss-us-east-1-internal.aliyuncs.com
-  [ "${Location}" == '12' ] && Host=oss-ap-southeast-1-internal.aliyuncs.com
-  [ "${Location}" == '13' ] && Host=oss-ap-southeast-2-internal.aliyuncs.com
-  [ "${Location}" == '14' ] && Host=oss-ap-southeast-3-internal.aliyuncs.com
-  [ "${Location}" == '15' ] && Host=oss-ap-southeast-5-internal.aliyuncs.com
-  [ "${Location}" == '16' ] && Host=oss-ap-northeast-1-internal.aliyuncs.com
-  [ "${Location}" == '17' ] && Host=oss-ap-south-1-internal.aliyuncs.com
-  [ "${Location}" == '18' ] && Host=oss-eu-central-1-internal.aliyuncs.com
-  [ "${Location}" == '19' ] && Host=oss-eu-west-1-internal.aliyuncs.com
-  [ "${Location}" == '20' ] && Host=oss-me-east-1-internal.aliyuncs.com
+  [ "${Location}" == '7' ] && Host=oss-cn-wulanchabu-internal.aliyuncs.com
+  [ "${Location}" == '8' ] && Host=oss-cn-shenzhen-internal.aliyuncs.com
+  [ "${Location}" == '9' ] && Host=oss-cn-heyuan-internal.aliyuncs.com
+  [ "${Location}" == '10' ] && Host=oss-cn-guangzhou-internal.aliyuncs.com
+  [ "${Location}" == '11' ] && Host=oss-cn-chengdu-internal.aliyuncs.com
+  [ "${Location}" == '12' ] && Host=oss-cn-hongkong-internal.aliyuncs.com
+  [ "${Location}" == '13' ] && Host=oss-us-west-1-internal.aliyuncs.com
+  [ "${Location}" == '14' ] && Host=oss-us-east-1-internal.aliyuncs.com
+  [ "${Location}" == '15' ] && Host=oss-ap-southeast-1-internal.aliyuncs.com
+  [ "${Location}" == '16' ] && Host=oss-ap-southeast-2-internal.aliyuncs.com
+  [ "${Location}" == '17' ] && Host=oss-ap-southeast-3-internal.aliyuncs.com
+  [ "${Location}" == '18' ] && Host=oss-ap-southeast-5-internal.aliyuncs.com
+  [ "${Location}" == '19' ] && Host=oss-ap-northeast-1-internal.aliyuncs.com
+  [ "${Location}" == '20' ] && Host=oss-ap-south-1-internal.aliyuncs.com
+  [ "${Location}" == '21' ] && Host=oss-eu-central-1-internal.aliyuncs.com
+  [ "${Location}" == '22' ] && Host=oss-eu-west-1-internal.aliyuncs.com
+  [ "${Location}" == '23' ] && Host=oss-me-east-1-internal.aliyuncs.com
+  [ "${Location}" == '24' ] && Host=oss-ap-southeast-6-internal.aliyuncs.com
   [ "$(./include/check_port.py ${Host} 80)" == "False" ] && Host=`echo ${Host} | sed 's@-internal@@g'`
   [ -e "/root/.ossutilconfig" ] && rm -f /root/.ossutilconfig
   while :; do echo
@@ -258,43 +264,48 @@ if [ -n "`echo ${desc_bk} | grep -w 4`" ]; then
   while :; do echo
     echo 'Please select your backup qcloud datacenter:'
     echo -e "\t ${CMSG} 1${CEND}. ap-beijing-1-北京一区(华北)  ${CMSG}2${CEND}. ap-beijing-北京"
-    echo -e "\t ${CMSG} 3${CEND}. ap-shanghai-上海(华东)       ${CMSG}4${CEND}. ap-guangzhou-广州(华南)"
-    echo -e "\t ${CMSG} 5${CEND}. ap-chengdu-成都(西南)        ${CMSG}6${CEND}. ap-chongqing-重庆"
-    echo -e "\t ${CMSG} 7${CEND}. ap-shenzhen-fsi-深圳金融     ${CMSG}8${CEND}. ap-shanghai-fsi-上海金融"
-    echo -e "\t ${CMSG} 9${CEND}. ap-beijing-fsi-北京金融     ${CMSG}10${CEND}. ap-hongkong-香港"
-    echo -e "\t ${CMSG}11${CEND}. ap-singapore-新加坡         ${CMSG}12${CEND}. ap-mumbai-孟买"
-    echo -e "\t ${CMSG}13${CEND}. ap-seoul-首尔               ${CMSG}14${CEND}. ap-bangkok-曼谷"
-    echo -e "\t ${CMSG}15${CEND}. ap-tokyo-东京               ${CMSG}16${CEND}. na-siliconvalley-硅谷"
-    echo -e "\t ${CMSG}17${CEND}. na-ashburn-弗吉尼亚         ${CMSG}18${CEND}. na-toronto-多伦多"
-    echo -e "\t ${CMSG}19${CEND}. eu-frankfurt-法兰克福       ${CMSG}20${CEND}. eu-moscow-莫斯科"
+    echo -e "\t ${CMSG} 3${CEND}. ap-nanjing-南京              ${CMSG}4${CEND}. ap-shanghai-上海"
+    echo -e "\t ${CMSG} 5${CEND}. ap-guangzhou-广州            ${CMSG}6${CEND}. ap-chengdu-成都"
+    echo -e "\t ${CMSG} 7${CEND}. ap-chongqing-重庆            ${CMSG}8${CEND}. ap-shenzhen-fsi-深圳金融"
+    echo -e "\t ${CMSG} 9${CEND}. ap-shanghai-fsi-上海金融    ${CMSG}10${CEND}. ap-beijing-fsi-北京金融"
+    echo -e "\t ${CMSG}11${CEND}. ap-hongkong-香港            ${CMSG}11${CEND}. ap-singapore-新加坡"
+    echo -e "\t ${CMSG}13${CEND}. ap-mumbai-孟买              ${CMSG}14${CEND}. ap-jakarta-雅加达"
+    echo -e "\t ${CMSG}15${CEND}. ap-seoul-首尔               ${CMSG}16${CEND}. ap-bangkok-曼谷"
+    echo -e "\t ${CMSG}17${CEND}. ap-tokyo-东京               ${CMSG}18${CEND}. na-siliconvalley-硅谷（美西）"
+    echo -e "\t ${CMSG}19${CEND}. na-ashburn-弗吉尼亚（美东） ${CMSG}20${CEND}. na-toronto-多伦多"
+    echo -e "\t ${CMSG}21${CEND}. sa-saopaulo-圣保罗	      ${CMSG}22${CEND}. eu-frankfurt-法兰克福"
+    echo -e "\t ${CMSG}23${CEND}. eu-moscow-莫斯科"
     read -e -p "Please input a number:(Default 1 press Enter) " Location
     Location=${Location:-1}
-    if [[ "${Location}" =~ ^[1-9]$|^1[0-9]$|^20$ ]]; then
+    if [[ "${Location}" =~ ^[1-9]$|^1[0-9]$|^2[0-3]$ ]]; then
       break
     else
-      echo "${CWARNING}input error! Please only input number 1~17${CEND}"
+      echo "${CWARNING}input error! Please only input number 1~23${CEND}"
     fi
   done
   [ "${Location}" == '1' ] && REGION='ap-beijing-1'
   [ "${Location}" == '2' ] && REGION='ap-beijing'
-  [ "${Location}" == '3' ] && REGION='ap-shanghai'
-  [ "${Location}" == '4' ] && REGION='ap-guangzhou'
-  [ "${Location}" == '5' ] && REGION='ap-chengdu'
-  [ "${Location}" == '6' ] && REGION='ap-chongqing'
-  [ "${Location}" == '7' ] && REGION='ap-shenzhen-fsi'
-  [ "${Location}" == '8' ] && REGION='ap-shanghai-fsi'
-  [ "${Location}" == '9' ] && REGION='ap-beijing-fsi'
-  [ "${Location}" == '10' ] && REGION='ap-hongkong'
-  [ "${Location}" == '11' ] && REGION='ap-singapore'
-  [ "${Location}" == '12' ] && REGION='ap-mumbai'
-  [ "${Location}" == '13' ] && REGION='ap-seoul'
-  [ "${Location}" == '14' ] && REGION='ap-bangkok'
-  [ "${Location}" == '15' ] && REGION='ap-tokyo'
-  [ "${Location}" == '16' ] && REGION='na-siliconvalley'
-  [ "${Location}" == '17' ] && REGION='na-ashburn'
-  [ "${Location}" == '18' ] && REGION='na-toronto'
-  [ "${Location}" == '19' ] && REGION='eu-frankfurt'
-  [ "${Location}" == '20' ] && REGION='eu-moscow'
+  [ "${Location}" == '3' ] && REGION='ap-nanjing'
+  [ "${Location}" == '4' ] && REGION='ap-shanghai'
+  [ "${Location}" == '5' ] && REGION='ap-guangzhou'
+  [ "${Location}" == '6' ] && REGION='ap-chengdu'
+  [ "${Location}" == '7' ] && REGION='ap-chongqing'
+  [ "${Location}" == '8' ] && REGION='ap-shenzhen-fsi'
+  [ "${Location}" == '9' ] && REGION='ap-shanghai-fsi'
+  [ "${Location}" == '10' ] && REGION='ap-beijing-fsi'
+  [ "${Location}" == '11' ] && REGION='ap-hongkong'
+  [ "${Location}" == '12' ] && REGION='ap-singapore'
+  [ "${Location}" == '13' ] && REGION='ap-mumbai'
+  [ "${Location}" == '14' ] && REGION='ap-jakarta'
+  [ "${Location}" == '15' ] && REGION='ap-seoul'
+  [ "${Location}" == '16' ] && REGION='ap-bangkok'
+  [ "${Location}" == '17' ] && REGION='ap-tokyo'
+  [ "${Location}" == '18' ] && REGION='na-siliconvalley'
+  [ "${Location}" == '19' ] && REGION='na-ashburn'
+  [ "${Location}" == '20' ] && REGION='na-toronto'
+  [ "${Location}" == '21' ] && REGION='sa-saopaulo'
+  [ "${Location}" == '22' ] && REGION='eu-frankfurt'
+  [ "${Location}" == '23' ] && REGION='eu-moscow'
   while :; do echo
     read -e -p "Please enter the Qcloud COS APPID: " APPID
     [[ ! "${APPID}" =~ ^[0-9]+$ ]] && { echo "${CWARNING}input error, must be a number${CEND}"; continue; }
@@ -336,11 +347,11 @@ fi
 if [ -n "`echo ${desc_bk} | grep -w 5`" ]; then
   if [ ! -e "/usr/local/bin/upx" ]; then
     if [ "${OS_BIT}" == '64' ]; then
-      wget -qc http://collection.b0.upaiyun.com/softwares/upx/upx_0.3.5_linux_x86_64.tar.gz -O /tmp/upx_0.3.5_linux_x86_64.tar.gz
-      tar xzf /tmp/upx_0.3.5_linux_x86_64.tar.gz -C /tmp/
+      wget -qc http://collection.b0.upaiyun.com/softwares/upx/upx_0.3.6_linux_x86_64.tar.gz -O /tmp/upx_0.3.6_linux_x86_64.tar.gz
+      tar xzf /tmp/upx_0.3.6_linux_x86_64.tar.gz -C /tmp/
     elif [ "${OS_BIT}" == '32' ]; then
-      wget -qc http://collection.b0.upaiyun.com/softwares/upx/upx_0.3.5_linux_i386.tar.gz -O /tmp/upx_0.3.5_linux_i386.tar.gz 
-      tar xzf /tmp/upx_0.3.5_linux_i386.tar.gz -C /tmp/
+      wget -qc http://collection.b0.upaiyun.com/softwares/upx/upx_0.3.6_linux_i386.tar.gz -O /tmp/upx_0.3.6_linux_i386.tar.gz
+      tar xzf /tmp/upx_0.3.6_linux_i386.tar.gz -C /tmp/
     fi
     /bin/mv /tmp/upx /usr/local/bin/upx
     chmod +x /usr/local/bin/upx
@@ -381,7 +392,7 @@ if [ -n "`echo ${desc_bk} | grep -w 6`" ]; then
       wget -qc https://devtools.qiniu.com/qshell-v2.5.0-linux-amd64.tar.gz -O /tmp/qshell-v2.5.0-linux-amd64.tar.gz
       tar xzf /tmp/qshell-v2.5.0-linux-amd64.tar.gz -C /usr/local/bin/
     elif [ "${OS_BIT}" == '32' ]; then
-      wget -qc https://devtools.qiniu.com/qshell-v2.5.0-linux-386.tar.gz -O /tmp/qshell-v2.5.0-linux-386.tar.gz 
+      wget -qc https://devtools.qiniu.com/qshell-v2.5.0-linux-386.tar.gz -O /tmp/qshell-v2.5.0-linux-386.tar.gz
       tar xzf /tmp/qshell-v2.5.0-linux-386.tar.gz -C /usr/local/bin/
     fi
     chmod +x /usr/local/bin/qshell

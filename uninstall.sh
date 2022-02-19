@@ -49,7 +49,7 @@ Show_Help() {
   --memcached                   Uninstall Memcached-server
   --phpmyadmin                  Uninstall phpMyAdmin
   --python                      Uninstall Python (PATH: ${python_install_dir})
-  --node                        Uninstall Nodejs (PATH: ${node_install_dir})
+  --node                        Uninstall Nodejs (PATH: ${nodejs_install_dir})
   "
 }
 
@@ -75,7 +75,7 @@ while :; do
       postgresql_flag=y
       mongodb_flag=y
       allphp_flag=y
-      node_flag=y
+      nodejs_flag=y
       pureftpd_flag=y
       redis_flag=y
       memcached_flag=y
@@ -130,7 +130,7 @@ while :; do
       [ -n "`echo ${php_extensions} | grep -w xdebug`" ] && pecl_xdebug=1
       ;;
     --node)
-      node_flag=y; shift 1
+      nodejs_flag=y; shift 1
       ;;
     --pureftpd)
       pureftpd_flag=y; shift 1
@@ -569,9 +569,9 @@ Print_Python() {
   [ -d "${python_install_dir}" ] && echo ${python_install_dir}
 }
 
-Print_Node() {
-  [ -e "${node_install_dir}" ] && echo ${node_install_dir}
-  [ -e "/etc/profile.d/node.sh" ] && echo /etc/profile.d/node.sh
+Print_Nodejs() {
+  [ -e "${nodejs_install_dir}" ] && echo ${nodejs_install_dir}
+  [ -e "/etc/profile.d/nodejs.sh" ] && echo /etc/profile.d/nodejs.sh
 }
 
 Menu() {
@@ -591,7 +591,7 @@ What Are You Doing?
 \t${CMSG}10${CEND}. Uninstall Memcached
 \t${CMSG}11${CEND}. Uninstall phpMyAdmin
 \t${CMSG}12${CEND}. Uninstall Python (PATH: ${python_install_dir})
-\t${CMSG}13${CEND}. Uninstall Nodejs (PATH: ${node_install_dir})
+\t${CMSG}13${CEND}. Uninstall Nodejs (PATH: ${nodejs_install_dir})
 \t${CMSG} q${CEND}. Exit
 "
   echo
@@ -613,7 +613,7 @@ What Are You Doing?
       Print_openssl
       Print_phpMyAdmin
       Print_Python
-      Print_Node
+      Print_Nodejs
       Uninstall_status
       if [ "${uninstall_flag}" == 'y' ]; then
         Uninstall_Web
@@ -627,7 +627,7 @@ What Are You Doing?
         Uninstall_openssl
         Uninstall_phpMyAdmin
         . include/python.sh; Uninstall_Python
-        . include/node.sh; Uninstall_Node
+        . include/nodejs.sh; Uninstall_Nodejs
       else
         exit
       fi
@@ -696,9 +696,9 @@ What Are You Doing?
       [ "${uninstall_flag}" == 'y' ] && { . include/python.sh; Uninstall_Python; } || exit
       ;;
     13)
-      Print_Node
+      Print_Nodejs
       Uninstall_status
-      [ "${uninstall_flag}" == 'y' ] && { . include/node.sh; Uninstall_Node; } || exit
+      [ "${uninstall_flag}" == 'y' ] && { . include/nodejs.sh; Uninstall_Nodejs; } || exit
       ;;
     q)
       exit
@@ -726,7 +726,7 @@ else
   [ "${memcached_flag}" == 'y' ] && Print_Memcached_server
   [ "${phpmyadmin_flag}" == 'y' ] && Print_phpMyAdmin
   [ "${python_flag}" == 'y' ] && Print_Python
-  [ "${node_flag}" == 'y' ] && Print_Node
+  [ "${nodejs_flag}" == 'y' ] && Print_Nodejs
   [ "${all_flag}" == 'y' ] && Print_openssl
   Uninstall_status
   if [ "${uninstall_flag}" == 'y' ]; then
@@ -749,7 +749,7 @@ else
     [ "${memcached_flag}" == 'y' ] && Uninstall_Memcached_server
     [ "${phpmyadmin_flag}" == 'y' ] && Uninstall_phpMyAdmin
     [ "${python_flag}" == 'y' ] && { . include/python.sh; Uninstall_Python; }
-    [ "${node_flag}" == 'y' ] && { . include/node.sh; Uninstall_Node; }
+    [ "${nodejs_flag}" == 'y' ] && { . include/nodejs.sh; Uninstall_Nodejs; }
     [ "${all_flag}" == 'y' ] && Uninstall_openssl
   fi
 fi

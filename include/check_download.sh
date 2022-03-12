@@ -80,7 +80,6 @@ checkDownload() {
     3)
       echo "Download tomcat 8..."
       src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat8_ver}/apache-tomcat-${tomcat8_ver}.tar.gz && Download_src
-      src_url=http://mirrors.linuxeye.com/apache/tomcat/v${tomcat8_ver}/catalina-jmx-remote.jar && Download_src
       ;;
     4)
       echo "Download tomcat 7..."

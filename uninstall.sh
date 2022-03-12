@@ -297,7 +297,6 @@ Print_ALLPHP() {
   [ -e "${gmagick_install_dir}" ] && echo ${gmagick_install_dir}
   [ -e "${curl_install_dir}" ] && echo ${curl_install_dir}
   [ -e "${freetype_install_dir}" ] && echo ${freetype_install_dir}
-  [ -e "${libiconv_install_dir}" ] && echo ${libiconv_install_dir}
 }
 
 Uninstall_PHP() {
@@ -329,7 +328,6 @@ Uninstall_ALLPHP() {
   [ -e "${gmagick_install_dir}" ] && rm -rf ${gmagick_install_dir}
   [ -e "${curl_install_dir}" ] && rm -rf ${curl_install_dir}
   [ -e "${freetype_install_dir}" ] && rm -rf ${freetype_install_dir}
-  [ -e "${libiconv_install_dir}" ] && rm -rf ${libiconv_install_dir}
 }
 
 Uninstall_PHPcache() {

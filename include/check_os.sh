@@ -37,7 +37,7 @@ command -v lsb_release >/dev/null 2>&1 || { echo "${CFAILURE}${PM} source failed
 
 # Get OS Version
 OS=$(lsb_release -is)
-if [[ "${OS}" =~ ^CentOS$|^CentOSStream$|^RedHat$|^Rocky$|^Fedora$|^Amazon$|^AlibabaCloud$|^AlibabaCloud\(AliyunLinux\)$|^AnolisOS$|^EulerOS$|^openEuler$ ]]; then
+if [[ "${OS}" =~ ^CentOS$|^CentOSStream$|^RedHat$|^Rocky$|^AlmaLinux$|^Fedora$|^Amazon$|^AlibabaCloud$|^AlibabaCloud\(AliyunLinux\)$|^AnolisOS$|^EulerOS$|^openEuler$ ]]; then
   LikeOS=RHEL
   RHEL_ver=$(lsb_release -rs | awk -F. '{print $1}' | awk '{print $1}')
   [[ "${OS}" =~ ^Fedora$ ]] && [ ${RHEL_ver} -ge 19 >/dev/null 2>&1 ] && { RHEL_ver=7; Fedora_ver=$(lsb_release -rs); }

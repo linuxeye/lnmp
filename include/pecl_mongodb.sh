@@ -28,7 +28,7 @@ Install_pecl_mongodb() {
         echo "${CFAILURE}PHP mongo module install failed, Please contact the author! ${CEND}" && lsb_release -a
       fi
     else
-      if [[ "$(${php_install_dir}/bin/php-config --version | awk -F. '{print $1$2}')" =~ ^70$ ]]; then
+      if [[ "$(${php_install_dir}/bin/php-config --version | awk -F. '{print $1$2}')" =~ ^7[0-2]$ ]]; then
         src_url=https://pecl.php.net/get/mongodb-${pecl_mongodb_oldver}.tgz && Download_src
         tar xzf mongodb-${pecl_mongodb_oldver}.tgz
         pushd mongodb-${pecl_mongodb_oldver} > /dev/null

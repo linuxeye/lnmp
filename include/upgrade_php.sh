@@ -44,8 +44,9 @@ Upgrade_PHP() {
     patch -d php-${NEW_php_ver} -p0 < fpm-race-condition.patch
     pushd php-${NEW_php_ver}
     make clean
+    export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig/:$PKG_CONFIG_PATH
     ${php_install_dir}/bin/php -i |grep 'Configure Command' | awk -F'=>' '{print $2}' | bash
-    make ZEND_EXTRA_LIBS='-liconv'
+    make ZEND_EXTRA_LIBS='-liconv' -j ${THREAD}
     if [ -e "${apache_install_dir}/bin/httpd" ]; then
       echo "Stoping apache..."
       service httpd stop

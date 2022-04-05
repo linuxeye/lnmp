@@ -17,8 +17,8 @@ Install_MySQL80() {
   mkdir -p ${mysql_data_dir};chown mysql.mysql -R ${mysql_data_dir}
 
   if [ "${dbinstallmethod}" == "1" ]; then
-    tar xJf mysql-${mysql80_ver}-linux-glibc2.12-${SYS_BIT_b}.tar.xz
-    mv mysql-${mysql80_ver}-linux-glibc2.12-${SYS_BIT_b}/* ${mysql_install_dir}
+    tar xJf mysql-${mysql80_ver}-linux-glibc2.12-x86_64.tar.xz
+    mv mysql-${mysql80_ver}-linux-glibc2.12-x86_64/* ${mysql_install_dir}
     sed -i "s@/usr/local/mysql@${mysql_install_dir}@g" ${mysql_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then
     boostVersion2=$(echo ${boost_ver} | awk -F. '{print $1"_"$2"_"$3}')
@@ -55,7 +55,7 @@ Install_MySQL80() {
     sed -i "s+^dbrootpwd.*+dbrootpwd='${dbrootpwd}'+" ../options.conf
     echo "${CSUCCESS}MySQL installed successfully! ${CEND}"
     if [ "${dbinstallmethod}" == "1" ]; then
-      rm -rf mysql-${mysql80_ver}-*-${SYS_BIT_b}
+      rm -rf mysql-${mysql80_ver}-*-x86_64
     elif [ "${dbinstallmethod}" == "2" ]; then
       rm -rf mysql-${mysql80_ver} boost_${boostVersion2}
     fi

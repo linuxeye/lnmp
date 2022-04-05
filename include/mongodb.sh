@@ -13,8 +13,8 @@ Install_MongoDB() {
   id -u mongod >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -s /sbin/nologin mongod
   mkdir -p ${mongo_data_dir};chown mongod.mongod -R ${mongo_data_dir}
-  tar xzf mongodb-linux-${SYS_BIT_b}-${mongodb_ver}.tgz
-  /bin/mv mongodb-linux-${SYS_BIT_b}-${mongodb_ver} ${mongo_install_dir}
+  tar xzf mongodb-linux-x86_64-${mongodb_ver}.tgz
+  /bin/mv mongodb-linux-x86_64-${mongodb_ver} ${mongo_install_dir}
   if [ -e /bin/systemctl ]; then
     /bin/cp ${oneinstack_dir}/init.d/mongod.service /lib/systemd/system/
     sed -i "s@=/usr/local/mongodb@=${mongo_install_dir}@g" /lib/systemd/system/mongod.service
@@ -71,7 +71,7 @@ EOF
   if [ -e "${mongo_install_dir}/bin/mongo" ]; then
     sed -i "s+^dbmongopwd.*+dbmongopwd='$dbmongopwd'+" ../options.conf
     echo "${CSUCCESS}MongoDB installed successfully! ${CEND}"
-    rm -rf mongodb-linux-${SYS_BIT_b}-${mongodb_ver}
+    rm -rf mongodb-linux-x86_64-${mongodb_ver}
   else
     rm -rf ${mongo_install_dir} ${mongo_data_dir}
     echo "${CFAILURE}MongoDB install failed, Please contact the author! ${CEND}" && lsb_release -a

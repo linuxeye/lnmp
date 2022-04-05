@@ -98,11 +98,7 @@ net.netfilter.nf_conntrack_tcp_timeout_established = 3600
 EOF
 sysctl -p
 
-if [ "${RHEL_ver}" == '6' ]; then
-  sed -i 's@^ACTIVE_CONSOLES.*@ACTIVE_CONSOLES=/dev/tty[1-2]@' /etc/sysconfig/init
-  sed -i 's@^start@#start@' /etc/init/control-alt-delete.conf
-  sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/sysconfig/i18n
-elif [ ${RHEL_ver} -ge 7 >/dev/null 2>&1 ]; then
+if [ ${RHEL_ver} -ge 7 >/dev/null 2>&1 ]; then
   sed -i 's@LANG=.*$@LANG="en_US.UTF-8"@g' /etc/locale.conf
 fi
 

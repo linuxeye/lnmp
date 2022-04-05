@@ -90,12 +90,6 @@ LANG=en_US.UTF-8
 LANGUAGE=en_US:en
 EOF
 
-# Update time
-if [ -e "$(which ntpdate)" ]; then
-  ntpdate -u pool.ntp.org
-  [ ! -e "/var/spool/cron/crontabs/root" -o -z "$(grep ntpdate /var/spool/cron/crontabs/root 2>/dev/null)" ] && { echo "*/20 * * * * $(which ntpdate) -u pool.ntp.org > /dev/null 2>&1" >> /var/spool/cron/crontabs/root;chmod 600 /var/spool/cron/crontabs/root; }
-fi
-
 # iptables
 if [ "${iptables_flag}" == 'y' ]; then
   apt-get -y install debconf-utils

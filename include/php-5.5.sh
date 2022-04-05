@@ -73,12 +73,8 @@ Install_PHP55() {
 
   if [ "${PM}" == 'yum' ]; then
     [ ! -e "/usr/bin/libmcrypt-config" ] && ln -s /usr/local/bin/libmcrypt-config /usr/bin/libmcrypt-config
-    if [ "${OS_BIT}" == '64' ]; then
-      [ ! -e "/lib64/libpcre.so.1" ] && ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1
-      [ ! -e "/usr/lib/libc-client.so" ] && ln -s /usr/lib64/libc-client.so /usr/lib/libc-client.so
-    else
-      [ ! -e "/lib/libpcre.so.1" ] && ln -s /lib/libpcre.so.0.0.1 /lib/libpcre.so.1
-    fi
+    [ ! -e "/lib64/libpcre.so.1" ] && ln -s /lib64/libpcre.so.0.0.1 /lib64/libpcre.so.1
+    [ ! -e "/usr/lib/libc-client.so" ] && ln -s /usr/lib64/libc-client.so /usr/lib/libc-client.so
   fi
 
   if [ ! -e "/usr/local/bin/mcrypt" -a ! -e "/usr/bin/mcrypt" ]; then

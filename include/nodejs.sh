@@ -10,8 +10,8 @@
 
 Install_Nodejs() {
   pushd ${oneinstack_dir}/src > /dev/null
-  tar xzf node-v${nodejs_ver}-linux-${SYS_BIT_n}.tar.gz
-  /bin/mv node-v${nodejs_ver}-linux-${SYS_BIT_n} ${nodejs_install_dir}
+  tar xzf node-v${nodejs_ver}-linux-${SYS_ARCH_n}.tar.gz
+  /bin/mv node-v${nodejs_ver}-linux-${SYS_ARCH_n} ${nodejs_install_dir}
   if [ -e "${nodejs_install_dir}/bin/node" ]; then
     cat > /etc/profile.d/nodejs.sh << EOF
 export NODE_HOME=${nodejs_install_dir}

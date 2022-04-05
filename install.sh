@@ -58,7 +58,7 @@ Show_Help() {
                               yaf,yar,redis,memcached,memcache,mongodb,swoole,xdebug
   --nodejs                    Install Nodejs
   --tomcat_option [1-4]       Install Tomcat version
-  --jdk_option [1-4]          Install JDK version
+  --jdk_option [1-2]          Install JDK version
   --db_option [1-14]          Install DB version
   --dbinstallmethod [1-2]     DB install method, default: 1 binary install
   --dbrootpwd [password]      DB super password
@@ -151,7 +151,7 @@ while :; do
       ;;
     --jdk_option)
       jdk_option=$2; shift 2
-      [[ ! ${jdk_option} =~ ^[1-4]$ ]] && { echo "${CWARNING}jdk_option input error! Please only input number 1~4${CEND}"; exit 1; }
+      [[ ! ${jdk_option} =~ ^[1-2]$ ]] && { echo "${CWARNING}jdk_option input error! Please only input number 1~2${CEND}"; exit 1; }
       ;;
     --db_option)
       db_option=$2; shift 2
@@ -324,28 +324,14 @@ if [ ${ARG_NUM} == 0 ]; then
         #    echo "${CWARNING}input error! Please only input number 1~5${CEND}"
         #  else
         #    [ "${tomcat_option}" != '5' -a -e "$tomcat_install_dir/conf/server.xml" ] && { echo "${CWARNING}Tomcat already installed! ${CEND}" ; unset tomcat_option; }
-        #    if [[ "${tomcat_option}" =~ ^[1-2]$ ]]; then
+        #    if [[ "${tomcat_option}" =~ ^[1-3]$ ]]; then
         #      while :; do echo
         #        echo 'Please select JDK version:'
-        #        echo -e "\t${CMSG}1${CEND}. Install JDK-11.0"
-        #        echo -e "\t${CMSG}2${CEND}. Install JDK-1.8"
+        #        echo -e "\t${CMSG}1${CEND}. Install openjdk-8-jdk"
+        #        echo -e "\t${CMSG}2${CEND}. Install openjdk-11-jdk"
         #        read -e -p "Please input a number:(Default 1 press Enter) " jdk_option
         #        jdk_option=${jdk_option:-1}
         #        if [[ ! ${jdk_option} =~ ^[1-2]$ ]]; then
-        #          echo "${CWARNING}input error! Please only input number 1~2${CEND}"
-        #        else
-        #          break
-        #        fi
-        #      done
-        #    elif [ "${tomcat_option}" == '3' ]; then
-        #      while :; do echo
-        #        echo 'Please select JDK version:'
-        #        echo -e "\t${CMSG}1${CEND}. Install JDK-11.0"
-        #        echo -e "\t${CMSG}2${CEND}. Install JDK-1.8"
-        #        echo -e "\t${CMSG}3${CEND}. Install JDK-1.7"
-        #        read -e -p "Please input a number:(Default 2 press Enter) " jdk_option
-        #        jdk_option=${jdk_option:-2}
-        #        if [[ ! ${jdk_option} =~ ^[1-3]$ ]]; then
         #          echo "${CWARNING}input error! Please only input number 1~3${CEND}"
         #        else
         #          break
@@ -354,13 +340,11 @@ if [ ${ARG_NUM} == 0 ]; then
         #    elif [ "${tomcat_option}" == '4' ]; then
         #      while :; do echo
         #        echo 'Please select JDK version:'
-        #        echo -e "\t${CMSG}2${CEND}. Install JDK-1.8"
-        #        echo -e "\t${CMSG}3${CEND}. Install JDK-1.7"
-        #        echo -e "\t${CMSG}4${CEND}. Install JDK-1.6"
-        #        read -e -p "Please input a number:(Default 3 press Enter) " jdk_option
-        #        jdk_option=${jdk_option:-3}
-        #        if [[ ! ${jdk_option} =~ ^[2-4]$ ]]; then
-        #          echo "${CWARNING}input error! Please only input number 2~4${CEND}"
+        #        echo -e "\t${CMSG}1${CEND}. Install openjdk-8-jdk"
+        #        read -e -p "Please input a number:(Default 1 press Enter) " jdk_option
+        #        jdk_option=${jdk_option:-1}
+        #        if [[ ! ${jdk_option} =~ ^1$ ]]; then
+        #          echo "${CWARNING}input error! Please only input number 1${CEND}"
         #        else
         #          break
         #        fi
@@ -399,7 +383,6 @@ if [ ${ARG_NUM} == 0 ]; then
           echo -e "\t${CMSG}14${CEND}. Install MongoDB"
           read -e -p "Please input a number:(Default 2 press Enter) " db_option
           db_option=${db_option:-2}
-          [[ "${db_option}" =~ ^9$|^14$ ]] && [ "${OS_BIT}" == '32' ] && { echo "${CWARNING}By not supporting 32-bit! ${CEND}"; continue; }
           if [[ "${db_option}" =~ ^[1-9]$|^1[0-4]$ ]]; then
             if [ "${db_option}" == '13' ]; then
               [ -e "${pgsql_install_dir}/bin/psql" ] && { echo "${CWARNING}PostgreSQL already installed! ${CEND}"; unset db_option; break; }
@@ -779,7 +762,6 @@ fi
 # Database
 case "${db_option}" in
   1)
-    [ "${LikeOS}" == 'RHEL' ] && [ ${RHEL_ver} -le 6 >/dev/null 2>&1 ] && dbinstallmethod=1 && checkDownload
     . include/mysql-8.0.sh
     Install_MySQL80 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
@@ -812,7 +794,6 @@ case "${db_option}" in
     Install_MariaDB55 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   9)
-    [ "${LikeOS}" == 'RHEL' ] && [ ${RHEL_ver} -le 6 >/dev/null 2>&1 ] && dbinstallmethod=1 && checkDownload
     [ "${LikeOS}" == 'RHEL' ] && [ "${RHEL_ver}" == '8' ] && dbinstallmethod=2 && checkDownload
     . include/percona-8.0.sh
     Install_Percona80 2>&1 | tee -a ${oneinstack_dir}/install.log
@@ -1061,20 +1042,12 @@ fi
 # JDK
 case "${jdk_option}" in
   1)
-    . include/jdk-11.0.sh
-    Install_JDK110 2>&1 | tee -a ${oneinstack_dir}/install.log
+    . include/openjdk-8.sh
+    Install_OpenJDK8 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   2)
-    . include/jdk-1.8.sh
-    Install_JDK18 2>&1 | tee -a ${oneinstack_dir}/install.log
-    ;;
-  3)
-    . include/jdk-1.7.sh
-    Install_JDK17 2>&1 | tee -a ${oneinstack_dir}/install.log
-    ;;
-  4)
-    . include/jdk-1.6.sh
-    Install_JDK16 2>&1 | tee -a ${oneinstack_dir}/install.log
+    . include/openjdk-11.sh
+    Install_OpenJDK11 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
 esac
 

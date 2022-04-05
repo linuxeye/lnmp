@@ -18,10 +18,10 @@ Install_Percona56() {
 
   if [ "${dbinstallmethod}" == "1" ]; then
     perconaVerStr1=$(echo ${percona56_ver} | sed "s@-@-rel@")
-    tar xzf ./Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.${sslLibVer}.tar.gz
-    mv Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.${sslLibVer}/* ${percona_install_dir}
+    tar xzf ./Percona-Server-${perconaVerStr1}-Linux.x86_64.${sslLibVer}.tar.gz
+    mv Percona-Server-${perconaVerStr1}-Linux.x86_64.${sslLibVer}/* ${percona_install_dir}
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${percona_install_dir}/bin/mysqld_safe
-    sed -i "s@/usr/local/Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.${sslLibVer}@${percona_install_dir}@g" ${percona_install_dir}/bin/mysqld_safe
+    sed -i "s@/usr/local/Percona-Server-${perconaVerStr1}-Linux.x86_64.${sslLibVer}@${percona_install_dir}@g" ${percona_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then
     tar xzf percona-server-${percona56_ver}.tar.gz
     pushd percona-server-${percona56_ver}
@@ -50,7 +50,7 @@ Install_Percona56() {
     sed -i "s+^dbrootpwd.*+dbrootpwd='${dbrootpwd}'+" ../options.conf
     echo "${CSUCCESS}Percona installed successfully! ${CEND}"
     if [ "${dbinstallmethod}" == "1" ]; then
-      rm -rf Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.${sslLibVer}
+      rm -rf Percona-Server-${perconaVerStr1}-Linux.x86_64.${sslLibVer}
     elif [ "${dbinstallmethod}" == "2" ]; then
       rm -rf percona-server-${percona56_ver}
     fi

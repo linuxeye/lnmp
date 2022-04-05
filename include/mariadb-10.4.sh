@@ -17,8 +17,8 @@ Install_MariaDB104() {
   mkdir -p ${mariadb_data_dir};chown mysql.mysql -R ${mariadb_data_dir}
 
   if [ "${dbinstallmethod}" == "1" ]; then
-    tar zxf mariadb-${mariadb104_ver}-linux-systemd-${SYS_BIT_b}.tar.gz
-    mv mariadb-${mariadb104_ver}-linux-systemd-${SYS_BIT_b}/* ${mariadb_install_dir}
+    tar zxf mariadb-${mariadb104_ver}-linux-systemd-x86_64.tar.gz
+    mv mariadb-${mariadb104_ver}-linux-systemd-x86_64/* ${mariadb_install_dir}
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mariadb_install_dir}/bin/mysqld_safe
     sed -i "s@/usr/local/mysql@${mariadb_install_dir}@g" ${mariadb_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then
@@ -52,7 +52,7 @@ Install_MariaDB104() {
     sed -i "s+^dbrootpwd.*+dbrootpwd='${dbrootpwd}'+" ../options.conf
     echo "${CSUCCESS}MariaDB installed successfully! ${CEND}"
     if [ "${dbinstallmethod}" == "1" ]; then
-      rm -rf mariadb-${mariadb104_ver}-linux-systemd-${SYS_BIT_b}
+      rm -rf mariadb-${mariadb104_ver}-linux-systemd-x86_64
     elif [ "${dbinstallmethod}" == "2" ]; then
       rm -rf mariadb-${mariadb104_ver} boost_${boostVersion2}
     fi

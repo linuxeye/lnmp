@@ -28,7 +28,7 @@ mariadb105_ver=10.5.15
 mariadb104_ver=10.4.24
 mariadb55_ver=5.5.68
 
-percona80_ver=8.0.26-17
+percona80_ver=8.0.27-18
 percona57_ver=5.7.36-39
 percona56_ver=5.6.51-91.0
 percona55_ver=5.5.62-38.14
@@ -36,12 +36,6 @@ percona55_ver=5.5.62-38.14
 pgsql_ver=12.7
 
 mongodb_ver=4.0.26
-
-# JDK
-jdk110_ver=11.0.12
-jdk18_ver=1.8.0_301
-jdk17_ver=1.7.0_80
-jdk16_ver=1.6.0_45
 
 # PHP
 php53_ver=5.3.29
@@ -53,11 +47,11 @@ php71_ver=7.1.33
 php72_ver=7.2.34
 php73_ver=7.3.33
 php74_ver=7.4.28
-php80_ver=8.0.16
-php81_ver=8.1.3
+php80_ver=8.0.17
+php81_ver=8.1.4
 
 # Nodejs
-nodejs_ver=16.13.2
+nodejs_ver=16.14.2
 
 libiconv_ver=1.16
 curl_ver=7.82.0
@@ -69,7 +63,7 @@ icu4c_ver=63_1
 libsodium_ver=1.0.18
 libzip_ver=1.2.0
 argon2_ver=20171227
-imagemagick_ver=7.1.0-27
+imagemagick_ver=7.1.0-29
 imagick_ver=3.5.1
 imagick_oldver=3.4.4
 graphicsmagick_ver=1.3.36
@@ -107,7 +101,7 @@ pecl_memcache_ver=4.0.5.2
 pecl_memcache_oldver=3.0.8
 
 # MongoDB
-pecl_mongodb_ver=1.12.1
+pecl_mongodb_ver=1.13.0
 pecl_mongodb_oldver=1.9.2
 pecl_mongo_ver=1.6.16
 
@@ -129,7 +123,7 @@ luajit2_ver=2.1-20220111
 lua_resty_core_ver=0.1.22
 lua_resty_lrucache_ver=0.11
 lua_cjson_ver=2.1.0.8
-python_ver=3.6.13
-setuptools_ver=58.0.4
-pip_ver=21.2.4
+python_ver=3.6.15
+setuptools_ver=61.2.0
+pip_ver=22.0.4
 fail2ban_ver=0.11.2

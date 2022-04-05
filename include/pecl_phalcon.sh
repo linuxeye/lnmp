@@ -28,7 +28,7 @@ Install_pecl_phalcon() {
       tar xzf cphalcon-${phalcon_oldver}.tar.gz
       pushd cphalcon-${phalcon_oldver}/build > /dev/null
       echo "${CMSG}It may take a few minutes... ${CEND}"
-      ./install --phpize ${php_install_dir}/bin/phpize --php-config ${php_install_dir}/bin/php-config --arch ${OS_BIT}bits
+      ./install --phpize ${php_install_dir}/bin/phpize --php-config ${php_install_dir}/bin/php-config --arch 64bits
       popd > /dev/null
     else
       echo "${CWARNING}Your php ${PHP_detail_ver} does not support phalcon! ${CEND}"

@@ -41,11 +41,6 @@ Upgrade_Redis() {
     tar xzf redis-$NEW_redis_ver.tar.gz
     pushd redis-$NEW_redis_ver
     make clean
-    if [ "${OS_BIT}" == '32' ]; then
-      sed -i '1i\CFLAGS= -march=i686' src/Makefile
-      sed -i 's@^OPT=.*@OPT=-O2 -march=i686@' src/.make-settings
-    fi
-
     make -j ${THREAD}
 
     if [ -f "src/redis-server" ]; then

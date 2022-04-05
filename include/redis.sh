@@ -12,10 +12,6 @@ Install_redis_server() {
   pushd ${oneinstack_dir}/src > /dev/null
   tar xzf redis-${redis_ver}.tar.gz
   pushd redis-${redis_ver} > /dev/null
-  if [ "${OS_BIT}" == '32' -a "${armplatform}" != 'y' ]; then
-    sed -i '1i\CFLAGS= -march=i686' src/Makefile
-    sed -i 's@^OPT=.*@OPT=-O2 -march=i686@' src/.make-settings
-  fi
   make -j ${THREAD}
   if [ -f "src/redis-server" ]; then
     mkdir -p ${redis_install_dir}/{bin,etc,var}

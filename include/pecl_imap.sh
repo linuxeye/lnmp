@@ -13,7 +13,7 @@ Install_pecl_imap() {
     pushd ${oneinstack_dir}/src > /dev/null
     if [ "${PM}" == 'yum' ]; then
       yum -y install libc-client-devel
-      [ "${OS_BIT}" == '64' -a ! -e /usr/lib/libc-client.so ] && ln -s /usr/lib64/libc-client.so /usr/lib/libc-client.so
+      [ ! -e /usr/lib/libc-client.so ] && ln -s /usr/lib64/libc-client.so /usr/lib/libc-client.so
     else
       apt-get -y install libc-client2007e-dev
     fi

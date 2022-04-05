@@ -88,27 +88,8 @@ checkDownload() {
       ;;
   esac
 
-  # jdk
-  if [[ "${jdk_option}"  =~ ^[1-4]$ ]]; then
-    case "${jdk_option}" in
-      1)
-        echo "Download JDK 11.0..."
-        JDK_FILE="jdk-${jdk110_ver}_linux-${SYS_BIT_j}_bin.tar.gz"
-        ;;
-      2)
-        echo "Download JDK 1.8..."
-        JDK_FILE="jdk-$(echo ${jdk18_ver} | awk -F. '{print $2}')u$(echo ${jdk18_ver} | awk -F_ '{print $NF}')-linux-${SYS_BIT_j}.tar.gz"
-        ;;
-      3)
-        echo "Download JDK 1.7..."
-        JDK_FILE="jdk-$(echo ${jdk17_ver} | awk -F. '{print $2}')u$(echo ${jdk17_ver} | awk -F_ '{print $NF}')-linux-${SYS_BIT_j}.tar.gz"
-        ;;
-      4)
-        echo "Download JDK 1.6..."
-        JDK_FILE="jdk-$(echo ${jdk16_ver} | awk -F. '{print $2}')u$(echo ${jdk16_ver} | awk -F_ '{print $NF}')-linux-${SYS_BIT_j}.bin"
-        ;;
-    esac
-    src_url=http://mirrors.linuxeye.com/jdk/${JDK_FILE} && Download_src
+  # jdk apr
+  if [[ "${jdk_option}"  =~ ^[1-2]$ ]]; then
     echo "Download apr..."
     src_url=http://archive.apache.org/dist/apr/apr-${apr_ver}.tar.gz && Download_src
   fi
@@ -137,7 +118,7 @@ checkDownload() {
 
         if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download MySQL 8.0 binary package..."
-          FILE_NAME=mysql-${mysql80_ver}-linux-glibc2.12-${SYS_BIT_b}.tar.xz
+          FILE_NAME=mysql-${mysql80_ver}-linux-glibc2.12-x86_64.tar.xz
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download MySQL 8.0 source package..."
           FILE_NAME=mysql-${mysql80_ver}.tar.gz
@@ -172,7 +153,7 @@ checkDownload() {
 
         if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download MySQL 5.7 binary package..."
-          FILE_NAME=mysql-${mysql57_ver}-linux-glibc2.12-${SYS_BIT_b}.tar.gz
+          FILE_NAME=mysql-${mysql57_ver}-linux-glibc2.12-x86_64.tar.gz
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download MySQL 5.7 source package..."
           FILE_NAME=mysql-${mysql57_ver}.tar.gz
@@ -207,7 +188,7 @@ checkDownload() {
 
         if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download MySQL 5.6 binary package..."
-          FILE_NAME=mysql-${mysql56_ver}-linux-glibc2.12-${SYS_BIT_b}.tar.gz
+          FILE_NAME=mysql-${mysql56_ver}-linux-glibc2.12-x86_64.tar.gz
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download MySQL 5.6 source package..."
           FILE_NAME=mysql-${mysql56_ver}.tar.gz
@@ -242,7 +223,7 @@ checkDownload() {
 
         if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download MySQL 5.5 binary package..."
-          FILE_NAME=mysql-${mysql55_ver}-linux-glibc2.12-${SYS_BIT_b}.tar.gz
+          FILE_NAME=mysql-${mysql55_ver}-linux-glibc2.12-x86_64.tar.gz
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download MySQL 5.5 source package..."
           FILE_NAME=mysql-${mysql55_ver}.tar.gz
@@ -282,8 +263,8 @@ checkDownload() {
         esac
 
         if [ "${dbinstallmethod}" == '1' ]; then
-          FILE_NAME=mariadb-${mariadb_ver}-linux-systemd-${SYS_BIT_b}.tar.gz
-	  FILE_TYPE=bintar-linux-systemd-${SYS_BIT_a}
+          FILE_NAME=mariadb-${mariadb_ver}-linux-systemd-x86_64.tar.gz
+	  FILE_TYPE=bintar-linux-systemd-x86_64
         elif [ "${dbinstallmethod}" == '2' ]; then
           FILE_NAME=mariadb-${mariadb_ver}.tar.gz
 	  FILE_TYPE=source
@@ -322,7 +303,7 @@ checkDownload() {
         # Percona 8.0
         if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download Percona 8.0 binary package..."
-          FILE_NAME=Percona-Server-${percona80_ver}-Linux.${SYS_BIT_b}.glibc2.17.tar.gz
+          FILE_NAME=Percona-Server-${percona80_ver}-Linux.x86_64.glibc2.17.tar.gz
           DOWN_ADDR_PERCONA=https://downloads.percona.com/downloads/Percona-Server-8.0/Percona-Server-${percona80_ver}/binary/tarball
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download Percona 8.0 source package..."
@@ -354,7 +335,7 @@ checkDownload() {
         # Precona 5.7
         if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download Percona 5.7 binary package..."
-          FILE_NAME=Percona-Server-${percona57_ver}-Linux.${SYS_BIT_b}.glibc2.12.tar.gz
+          FILE_NAME=Percona-Server-${percona57_ver}-Linux.x86_64.glibc2.12.tar.gz
           DOWN_ADDR_PERCONA=https://downloads.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_ver}/binary/tarball
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download Percona 5.7 source package..."
@@ -387,7 +368,7 @@ checkDownload() {
         if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download Percona 5.6 binary package..."
           perconaVerStr1=$(echo ${percona56_ver} | sed "s@-@-rel@")
-          FILE_NAME=Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.${sslLibVer}.tar.gz
+          FILE_NAME=Percona-Server-${perconaVerStr1}-Linux.x86_64.${sslLibVer}.tar.gz
           DOWN_ADDR_PERCONA=https://downloads.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_ver}/binary/tarball
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download Percona 5.6 source package..."
@@ -420,7 +401,7 @@ checkDownload() {
         if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download Percona 5.5 binary package..."
           perconaVerStr1=$(echo ${percona55_ver} | sed "s@-@-rel@")
-          FILE_NAME=Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.${sslLibVer}.tar.gz
+          FILE_NAME=Percona-Server-${perconaVerStr1}-Linux.x86_64.${sslLibVer}.tar.gz
           DOWN_ADDR_PERCONA=https://downloads.percona.com/downloads/Percona-Server-5.5/Percona-Server-${percona55_ver}/binary/tarball
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download Percona 5.5 source package..."
@@ -475,7 +456,7 @@ checkDownload() {
       14)
         # MongoDB
         echo "Download MongoDB binary package..."
-        FILE_NAME=mongodb-linux-${SYS_BIT_b}-${mongodb_ver}.tgz
+        FILE_NAME=mongodb-linux-x86_64-${mongodb_ver}.tgz
         if [ "${IPADDR_COUNTRY}"x == "CN"x ]; then
           DOWN_ADDR_MongoDB=${mirrorLink}
         else
@@ -593,19 +574,19 @@ checkDownload() {
     case "${php_option}" in
       4)
         echo "Download zend loader for php 5.6..."
-        src_url=${mirrorLink}/zend-loader-php5.6-linux-${SYS_BIT_c}.tar.gz && Download_src
+        src_url=${mirrorLink}/zend-loader-php5.6-linux-x86_64.tar.gz && Download_src
         ;;
       3)
         echo "Download zend loader for php 5.5..."
-        src_url=${mirrorLink}/zend-loader-php5.5-linux-${SYS_BIT_c}.tar.gz && Download_src
+        src_url=${mirrorLink}/zend-loader-php5.5-linux-x86_64.tar.gz && Download_src
         ;;
       2)
         echo "Download zend loader for php 5.4..."
-        src_url=${mirrorLink}/ZendGuardLoader-70429-PHP-5.4-linux-glibc23-${SYS_BIT_c}.tar.gz && Download_src
+        src_url=${mirrorLink}/ZendGuardLoader-70429-PHP-5.4-linux-glibc23-x86_64.tar.gz && Download_src
         ;;
       1)
         echo "Download zend loader for php 5.3..."
-        src_url=${mirrorLink}/ZendGuardLoader-php-5.3-linux-glibc23-${SYS_BIT_c}.tar.gz && Download_src
+        src_url=${mirrorLink}/ZendGuardLoader-php-5.3-linux-glibc23-x86_64.tar.gz && Download_src
         ;;
     esac
   fi
@@ -613,17 +594,13 @@ checkDownload() {
   # ioncube
   if [ "${pecl_ioncube}" == '1' ]; then
     echo "Download ioncube..."
-    src_url=https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_${SYS_BIT_d}.tar.gz && Download_src
+    src_url=https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_${SYS_ARCH_i}.tar.gz && Download_src
   fi
 
   # SourceGuardian
   if [ "${pecl_sourceguardian}" == '1' ]; then
     echo "Download SourceGuardian..."
-    if [ "${TARGET_ARCH}" == "armv8" ]; then
-      src_url=https://www.sourceguardian.com/loaders/download/loaders.linux-aarch64.tar.gz && Download_src
-    else
-      src_url=${mirrorLink}/loaders.linux-${SYS_BIT_c}.tar.gz && Download_src
-    fi
+    src_url=${mirrorLink}/loaders.linux-${ARCH}.tar.gz && Download_src
   fi
 
   # imageMagick
@@ -716,7 +693,7 @@ checkDownload() {
   if [ "${nodejs_flag}" == 'y' ]; then
     echo "Download Nodejs..."
     [ "${IPADDR_COUNTRY}"x == "CN"x ] && DOWN_ADDR_NODE=https://nodejs.org/dist || DOWN_ADDR_NODE=https://mirrors.tuna.tsinghua.edu.cn/nodejs-release
-    src_url=${DOWN_ADDR_NODE}/v${nodejs_ver}/node-v${nodejs_ver}-linux-${SYS_BIT_n}.tar.gz && Download_src
+    src_url=${DOWN_ADDR_NODE}/v${nodejs_ver}/node-v${nodejs_ver}-linux-${SYS_ARCH_n}.tar.gz && Download_src
   fi
 
   # pureftpd
@@ -733,12 +710,6 @@ checkDownload() {
     else
       src_url=https://files.phpmyadmin.net/phpMyAdmin/${phpmyadmin_ver}/phpMyAdmin-${phpmyadmin_ver}-all-languages.tar.gz && Download_src
     fi
-  fi
-
-  # autoconf for RHEL6
-  if [ "${downloadDepsSrc}" == '1' ] && [ "${RHEL_ver}" == '6' ]; then
-    echo "Download autoconf rpm for RHEL6..."
-    src_url=${mirrorLink}/autoconf-2.69-12.2.noarch.rpm && Download_src
   fi
 
   popd > /dev/null

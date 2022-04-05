@@ -11,6 +11,7 @@
 Upgrade_DB() {
   pushd ${oneinstack_dir}/src > /dev/null
   [ ! -e "${db_install_dir}/bin/mysql" ] && echo "${CWARNING}MySQL/MariaDB/Percona is not installed on your system! ${CEND}" && exit 1
+  [ "${armplatform}" == 'y' ] && echo "${CWARNING}The arm architecture operating system does not support upgrading MySQL/MariaDB/Percona! ${CEND}" && exit 1
 
   # check db passwd
   while :; do
@@ -58,8 +59,8 @@ Upgrade_DB() {
     [ "${db_flag}" != 'y' ] && read -e -p "Please input upgrade ${DB} Version(example: ${OLD_db_ver}): " NEW_db_ver
     if [ `echo ${NEW_db_ver} | awk -F. '{print $1"."$2}'` == `echo ${OLD_db_ver} | awk -F. '{print $1"."$2}'` ]; then
       if [ "${DB}" == 'MariaDB' ]; then
-        DB_filename=mariadb-${NEW_db_ver}-linux-systemd-${SYS_BIT_b}
-        DB_URL=${DOWN_ADDR}/mariadb-${NEW_db_ver}/bintar-linux-systemd-${SYS_BIT_a}/${DB_filename}.tar.gz
+        DB_filename=mariadb-${NEW_db_ver}-linux-systemd-x86_64
+        DB_URL=${DOWN_ADDR}/mariadb-${NEW_db_ver}/bintar-linux-systemd-x86_64/${DB_filename}.tar.gz
       elif [ "${DB}" == 'Percona' ]; then
         if [[ "`echo ${NEW_db_ver} | awk -F. '{print $1"."$2}'`" =~ ^5.[5-6]$ ]]; then
           perconaVerStr1=$(echo ${NEW_db_ver} | sed "s@-@-rel@")
@@ -67,13 +68,13 @@ Upgrade_DB() {
           perconaVerStr1=${NEW_db_ver}
         fi
         if [[ "`echo ${NEW_db_ver} | awk -F. '{print $1"."$2}'`" =~ ^5.7$|^8.0$ ]]; then
-           DB_filename=Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.glibc2.12
+           DB_filename=Percona-Server-${perconaVerStr1}-Linux.x86_64.glibc2.12
         else
-           DB_filename=Percona-Server-${perconaVerStr1}-Linux.${SYS_BIT_b}.${sslLibVer}
+           DB_filename=Percona-Server-${perconaVerStr1}-Linux.x86_64.${sslLibVer}
         fi
         DB_URL=https://www.percona.com/downloads/Percona-Server-`echo ${NEW_db_ver} | awk -F. '{print $1"."$2}'`/Percona-Server-${NEW_db_ver}/binary/tarball/${DB_filename}.tar.gz
       elif [ "${DB}" == 'MySQL' ]; then
-        DB_filename=mysql-${NEW_db_ver}-linux-glibc2.12-${SYS_BIT_b}
+        DB_filename=mysql-${NEW_db_ver}-linux-glibc2.12-x86_64
         if [ `echo ${OLD_db_ver} | awk -F. '{print $1"."$2}'` == '8.0' ]; then
           DB_URL=${DOWN_ADDR}/MySQL-`echo ${NEW_db_ver} | awk -F. '{print $1"."$2}'`/${DB_filename}.tar.xz
         else

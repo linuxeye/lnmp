@@ -18,14 +18,13 @@ Install_pecl_ldap() {
     pushd php-${PHP_detail_ver}/ext/ldap > /dev/null
     if [ "${PM}" == 'yum' ]; then
       yum -y install openldap-devel
-      [ "${OS_BIT}" == '64' ] && With_libdir='--with-libdir=lib64'
     else
       apt-get -y install libldap2-dev
-      ln -s /usr/lib/${SYS_BIT_c}-linux-gnu/libldap.so /usr/lib/
-      ln -s /usr/lib/${SYS_BIT_c}-linux-gnu/liblber.so /usr/lib/
+      ln -s /usr/lib/${ARCH}-linux-gnu/libldap.so /usr/lib/
+      ln -s /usr/lib/${ARCH}-linux-gnu/liblber.so /usr/lib/
     fi
     ${php_install_dir}/bin/phpize
-    ./configure --with-php-config=${php_install_dir}/bin/php-config --with-ldap ${With_libdir}
+    ./configure --with-php-config=${php_install_dir}/bin/php-config --with-ldap --with-libdir=lib64
     make -j ${THREAD} && make install
     popd > /dev/null
     if [ -f "${phpExtensionDir}/ldap.so" ]; then

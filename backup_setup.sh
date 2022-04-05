@@ -182,7 +182,11 @@ fi
 
 if [ -n "`echo ${desc_bk} | grep -w 3`" ]; then
   if [ ! -e "/usr/local/bin/ossutil" ]; then
-    wget -qc https://gosspublic.alicdn.com/ossutil/1.7.8/ossutil${OS_BIT} -O /usr/local/bin/ossutil
+    if [ "${armplatform}" == 'y' ]; then
+      wget -qc https://gosspublic.alicdn.com/ossutil/1.7.10/ossutilarm64 -O /usr/local/bin/ossutil
+    else
+      wget -qc https://gosspublic.alicdn.com/ossutil/1.7.10/ossutil64 -O /usr/local/bin/ossutil
+    fi
     chmod +x /usr/local/bin/ossutil
   fi
   while :; do echo
@@ -346,12 +350,12 @@ fi
 
 if [ -n "`echo ${desc_bk} | grep -w 5`" ]; then
   if [ ! -e "/usr/local/bin/upx" ]; then
-    if [ "${OS_BIT}" == '64' ]; then
+    if [ "${armplatform}" == 'y' ]; then
+      wget -qc http://collection.b0.upaiyun.com/softwares/upx/upx_0.3.6_linux_arm64.tar.gz -O /tmp/upx_0.3.6_linux_arm64.tar.gz
+      tar xzf /tmp/upx_0.3.6_linux_arm64.tar.gz -C /tmp/
+    else
       wget -qc http://collection.b0.upaiyun.com/softwares/upx/upx_0.3.6_linux_x86_64.tar.gz -O /tmp/upx_0.3.6_linux_x86_64.tar.gz
       tar xzf /tmp/upx_0.3.6_linux_x86_64.tar.gz -C /tmp/
-    elif [ "${OS_BIT}" == '32' ]; then
-      wget -qc http://collection.b0.upaiyun.com/softwares/upx/upx_0.3.6_linux_i386.tar.gz -O /tmp/upx_0.3.6_linux_i386.tar.gz
-      tar xzf /tmp/upx_0.3.6_linux_i386.tar.gz -C /tmp/
     fi
     /bin/mv /tmp/upx /usr/local/bin/upx
     chmod +x /usr/local/bin/upx
@@ -379,21 +383,13 @@ if [ -n "`echo ${desc_bk} | grep -w 5`" ]; then
 fi
 
 if [ -n "`echo ${desc_bk} | grep -w 6`" ]; then
-  if [ ! -e "/usr/local/bin/qrsctl" ]; then
-    if [ "${OS_BIT}" == '64' ]; then
-      wget -qc http://devtools.qiniu.com/linux/amd64/qrsctl -O /usr/local/bin/qrsctl
-    elif [ "${OS_BIT}" == '32' ]; then
-      wget -qc http://devtools.qiniu.com/linux/386/qrsctl -O /usr/local/bin/qrsctl
-    fi
-    chmod +x /usr/local/bin/qrsctl
-  fi
   if [ ! -e "/usr/local/bin/qshell" ]; then
-    if [ "${OS_BIT}" == '64' ]; then
-      wget -qc https://devtools.qiniu.com/qshell-v2.5.0-linux-amd64.tar.gz -O /tmp/qshell-v2.5.0-linux-amd64.tar.gz
-      tar xzf /tmp/qshell-v2.5.0-linux-amd64.tar.gz -C /usr/local/bin/
-    elif [ "${OS_BIT}" == '32' ]; then
-      wget -qc https://devtools.qiniu.com/qshell-v2.5.0-linux-386.tar.gz -O /tmp/qshell-v2.5.0-linux-386.tar.gz
-      tar xzf /tmp/qshell-v2.5.0-linux-386.tar.gz -C /usr/local/bin/
+    if [ "${armplatform}" == 'y' ]; then
+      wget -qc https://devtools.qiniu.com/qshell-v2.6.2-linux-arm64.tar.gz -O /tmp/qshell-v2.6.2-linux-arm64.tar.gz
+      tar xzf /tmp/qshell-v2.6.2-linux-arm64.tar.gz -C /usr/local/bin/
+    else
+      wget -qc https://devtools.qiniu.com/qshell-v2.6.2-linux-amd64.tar.gz -O /tmp/qshell-v2.6.2-linux-amd64.tar.gz
+      tar xzf /tmp/qshell-v2.6.2-linux-amd64.tar.gz -C /usr/local/bin/
     fi
     chmod +x /usr/local/bin/qshell
     rm -f /tmp/qshell*
@@ -402,13 +398,13 @@ if [ -n "`echo ${desc_bk} | grep -w 6`" ]; then
     echo 'Please select your backup qiniu datacenter:'
     echo -e "\t ${CMSG} 1${CEND}. 华东            ${CMSG}2${CEND}. 华北"
     echo -e "\t ${CMSG} 3${CEND}. 华南            ${CMSG}4${CEND}. 北美"
-    echo -e "\t ${CMSG} 5${CEND}. 东南亚"
+    echo -e "\t ${CMSG} 5${CEND}. 东南亚          ${CMSG}6${CEND}. 华东-浙江2"
     read -e -p "Please input a number:(Default 1 press Enter) " Location
     Location=${Location:-1}
-    if [[ "${Location}" =~ ^[1-5]$ ]]; then
+    if [[ "${Location}" =~ ^[1-6]$ ]]; then
       break
     else
-      echo "${CWARNING}input error! Please only input number 1~5${CEND}"
+      echo "${CWARNING}input error! Please only input number 1~6${CEND}"
     fi
   done
   [ "${Location}" == '1' ] && zone='z0'
@@ -416,6 +412,7 @@ if [ -n "`echo ${desc_bk} | grep -w 6`" ]; then
   [ "${Location}" == '3' ] && zone='z2'
   [ "${Location}" == '4' ] && zone='na0'
   [ "${Location}" == '5' ] && zone='as0'
+  [ "${Location}" == '6' ] && zone='cn-east-2'
   while :; do echo
     read -e -p "Please enter the qiniu AccessKey: " AccessKey
     [ -z "${AccessKey}" ] && continue
@@ -427,21 +424,13 @@ if [ -n "`echo ${desc_bk} | grep -w 6`" ]; then
     [ -z "${QINIU_BUCKET}" ] && continue
     echo
     /usr/local/bin/qshell account ${AccessKey} ${SecretKey} backup
-    /usr/local/bin/qrsctl login ${AccessKey} ${SecretKey}
-    if /usr/local/bin/qrsctl bucketinfo ${QINIU_BUCKET} > /dev/null 2>&1; then
+    if /usr/local/bin/qshell buckets | grep -w ${QINIU_BUCKET} > /dev/null 2>&1; then
       sed -i "s@^qiniu_bucket=.*@qiniu_bucket=${QINIU_BUCKET}@" ./options.conf
-      echo "${CMSG}AccessKey/SecretKey OK${CEND}"
-      echo
-      break
-    elif /usr/local/bin/qrsctl mkbucket ${QINIU_BUCKET} ${zone} > /dev/null 2>&1; then
-      /usr/local/bin/qrsctl private ${QINIU_BUCKET} 1
-      echo "${CMSG}Bucket ${QINIU_BUCKET} created${CEND}"
-      sed -i "s@^qiniu_bucket=.*@qiniu_bucket=${QINIU_BUCKET}@" ./options.conf
-      echo "${CMSG}AccessKey/SecretKey OK${CEND}"
+      echo "${CMSG}AccessKey/SecretKey/Bucket OK${CEND}"
       echo
       break
     else
-      echo "${CWARNING}input error! AccessKey/SecretKey invalid${CEND}"
+      echo "${CWARNING}input error! AccessKey/SecretKey/Bucket invalid${CEND}"
     fi
   done
 fi
@@ -531,7 +520,9 @@ fi
 
 if [ -n "`echo ${desc_bk} | grep -w 8`" ]; then
   if [ ! -e "/usr/local/bin/dbxcli" ]; then
-    if [ "${OS_BIT}" == '64' ]; then
+    if [ "${armplatform}" == 'y' ]; then
+      wget -qc http://mirrors.linuxeye.com/oneinstack/src/dbxcli-linux-arm -O /usr/local/bin/dbxcli
+    else
       wget -qc http://mirrors.linuxeye.com/oneinstack/src/dbxcli-linux-amd64 -O /usr/local/bin/dbxcli
     fi
     chmod +x /usr/local/bin/dbxcli

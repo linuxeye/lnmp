@@ -15,7 +15,7 @@ Install_SourceGuardian() {
     PHP_main_ver=${PHP_detail_ver%.*}
     phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
     [ ! -e sourceguardian ] && mkdir sourceguardian
-    [ -e "loaders.linux-${SYS_BIT_c}.tar.gz" ] && tar xzf loaders.linux-${SYS_BIT_c}.tar.gz -C sourceguardian
+    [ -e "loaders.linux-${ARCH}.tar.gz" ] && tar xzf loaders.linux-${ARCH}.tar.gz -C sourceguardian
   
     if [ -e "sourceguardian/ixed.${PHP_main_ver}.lin" ]; then
       [ ! -d "${phpExtensionDir}" ] && mkdir -p ${phpExtensionDir}

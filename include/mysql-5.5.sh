@@ -17,8 +17,8 @@ Install_MySQL55() {
   mkdir -p ${mysql_data_dir};chown mysql.mysql -R ${mysql_data_dir}
 
   if [ "${dbinstallmethod}" == "1" ]; then
-    tar xzf mysql-${mysql55_ver}-linux-glibc2.12-${SYS_BIT_b}.tar.gz
-    mv mysql-${mysql55_ver}-linux-glibc2.12-${SYS_BIT_b}/* ${mysql_install_dir}
+    tar xzf mysql-${mysql55_ver}-linux-glibc2.12-x86_64.tar.gz
+    mv mysql-${mysql55_ver}-linux-glibc2.12-x86_64/* ${mysql_install_dir}
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mysql_install_dir}/bin/mysqld_safe
     sed -i "s@/usr/local/mysql@${mysql_install_dir}@g" ${mysql_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then
@@ -50,7 +50,7 @@ Install_MySQL55() {
     sed -i "s+^dbrootpwd.*+dbrootpwd='${dbrootpwd}'+" ../options.conf
     echo "${CSUCCESS}MySQL installed successfully! ${CEND}"
     if [ "${dbinstallmethod}" == "1" ]; then
-      rm -rf mysql-${mysql55_ver}-*-${SYS_BIT_b}
+      rm -rf mysql-${mysql55_ver}-*-x86_64
     elif [ "${dbinstallmethod}" == "2" ]; then
       rm -rf mysql-${mysql55_ver}
     fi

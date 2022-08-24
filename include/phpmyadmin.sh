@@ -13,7 +13,7 @@ Install_phpMyAdmin() {
     pushd ${oneinstack_dir}/src > /dev/null
     PHP_detail_ver=`${php_install_dir}/bin/php-config --version`
     PHP_main_ver=${PHP_detail_ver%.*}
-    if [[ "${PHP_main_ver}" =~ ^5.[3-6]$|^7.0$ ]]; then
+    if [[ "${PHP_main_ver}" =~ ^5.[3-6]$|^7.[0-1]$ ]]; then
       tar xzf phpMyAdmin-${phpmyadmin_oldver}-all-languages.tar.gz
       /bin/mv phpMyAdmin-${phpmyadmin_oldver}-all-languages ${wwwroot_dir}/default/phpMyAdmin
     else

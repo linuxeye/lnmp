@@ -9,28 +9,28 @@
 #       https://github.com/oneinstack/oneinstack
 
 Install_OpenJDK11() {
-  if [ "${LikeOS}" == 'RHEL' ]; then
+  if [ "${Family}" == 'RHEL' ]; then
     yum -y install java-11-openjdk-devel
     JAVA_HOME=/usr/lib/jvm/java-11-openjdk
-  elif [ "${LikeOS}" == 'Debian' ]; then
+  elif [ "${Family}" == 'Debian' ]; then
     if [[ "${Debian_ver}" =~ ^8$ ]]; then
-      #wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add -
-      cat ${oneinstack_dir}/src/adoptopenjdk.key | sudo apt-key add -
-      apt-add-repository --yes https://mirrors.tuna.tsinghua.edu.cn/AdoptOpenJDK/deb
+      #wget -qO - https://packages.adoptium.net/artifactory/api/gpg/key/public | apt-key add -
+      cat ${oneinstack_dir}/src/adoptium.key | sudo apt-key add -
+      apt-add-repository --yes https://mirrors.tuna.tsinghua.edu.cn/Adoptium/deb
       apt -y update
-      apt-get --no-install-recommends -y install adoptopenjdk-11-hotspot
-      JAVA_HOME=/usr/lib/jvm/adoptopenjdk-11-hotspot-${SYS_ARCH}
+      apt-get --no-install-recommends -y install temurin-11-jdk
+      JAVA_HOME=/usr/lib/jvm/temurin-11-jdk-${SYS_ARCH}
     else
       apt-get --no-install-recommends -y install openjdk-11-jdk
       JAVA_HOME=/usr/lib/jvm/java-11-openjdk-${SYS_ARCH}
     fi
-  elif [ "${LikeOS}" == 'Ubuntu' ]; then
+  elif [ "${Family}" == 'Ubuntu' ]; then
     if [[ "${Ubuntu_ver}" =~ ^16$ ]]; then
-      cat ${oneinstack_dir}/src/adoptopenjdk.key | sudo apt-key add -
-      apt-add-repository --yes https://mirrors.tuna.tsinghua.edu.cn/AdoptOpenJDK/deb
+      cat ${oneinstack_dir}/src/adoptium.key | sudo apt-key add -
+      apt-add-repository --yes https://mirrors.tuna.tsinghua.edu.cn/Adoptium/deb
       apt -y update
-      apt-get --no-install-recommends -y install adoptopenjdk-11-hotspot
-      JAVA_HOME=/usr/lib/jvm/adoptopenjdk-11-hotspot-${SYS_ARCH}
+      apt-get --no-install-recommends -y install temurin-11-jdk
+      JAVA_HOME=/usr/lib/jvm/temurin-11-jdk-${SYS_ARCH}
     else
       apt-get --no-install-recommends -y install openjdk-11-jdk
       JAVA_HOME=/usr/lib/jvm/java-11-openjdk-${SYS_ARCH}

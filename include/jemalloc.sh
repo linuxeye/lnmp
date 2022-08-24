@@ -17,7 +17,7 @@ Install_Jemalloc() {
     make -j ${THREAD} && make install
     popd > /dev/null
     if [ -f "/usr/local/lib/libjemalloc.so" ]; then
-      if [ "${LikeOS}" == 'RHEL' ]; then
+      if [ "${Family}" == 'RHEL' ]; then
         ln -s /usr/local/lib/libjemalloc.so.2 /usr/lib64/libjemalloc.so.1
       else
         ln -s /usr/local/lib/libjemalloc.so.2 /usr/lib/libjemalloc.so.1

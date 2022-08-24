@@ -14,7 +14,6 @@ Install_MPHP() {
       echo "${CWARNING}PHP${mphp_ver} already installed! ${CEND}"
     else
       [ -e "/lib/systemd/system/php-fpm.service" ] && /bin/mv /lib/systemd/system/php-fpm.service{,_bk}
-      [ -e "/etc/init.d/php-fpm" ] && /bin/mv /etc/init.d/php-fpm{,_bk}
       php_install_dir=${php_install_dir}${mphp_ver}
       case "${mphp_ver}" in
         53)
@@ -63,21 +62,14 @@ Install_MPHP() {
           ;;
       esac
       if [ -e "${php_install_dir}/sbin/php-fpm" ]; then
-        service php-fpm stop
+        systemctl stop php-fpm
         sed -i "s@/dev/shm/php-cgi.sock@/dev/shm/php${mphp_ver}-cgi.sock@" ${php_install_dir}/etc/php-fpm.conf
         [ -e "/lib/systemd/system/php-fpm.service" ] && /bin/mv /lib/systemd/system/php-fpm.service /lib/systemd/system/php${mphp_ver}-fpm.service
-        [ -e "/etc/init.d/php-fpm" ] && /bin/mv /etc/init.d/php-fpm /etc/init.d/php${mphp_ver}-fpm
         [ -e "/lib/systemd/system/php-fpm.service_bk" ] && /bin/mv /lib/systemd/system/php-fpm.service{_bk,}
-        [ -e "/etc/init.d/php-fpm_bk" ] && /bin/mv /etc/init.d/php-fpm{_bk,}
-        if [ -e /bin/systemctl ]; then
-          systemctl enable php${mphp_ver}-fpm
-          systemctl enable php-fpm
-        else
-          [ "${PM}" == 'yum' ] && { chkconfig --add php-fpm; chkconfig --add php${mphp_ver}-fpm; chkconfig php-fpm on; chkconfig php${mphp_ver}-fpm on; }
-          [ "${PM}" == 'apt-get' ] && { update-rc.d php-fpm defaults; update-rc.d php${mphp_ver}-fpm defaults; }
-        fi
-        service php-fpm start
-        service php${mphp_ver}-fpm start
+        systemctl enable php${mphp_ver}-fpm
+        systemctl enable php-fpm
+        systemctl start php-fpm
+        systemctl start php${mphp_ver}-fpm
         sed -i "s@${php_install_dir}/bin:@@" /etc/profile
       fi
     fi

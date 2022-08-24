@@ -9,22 +9,22 @@
 #       https://github.com/oneinstack/oneinstack
 
 Install_OpenJDK8() {
-  if [ "${LikeOS}" == 'RHEL' ]; then
+  if [ "${Family}" == 'RHEL' ]; then
     yum -y install java-1.8.0-openjdk-devel
     JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
-  elif [ "${LikeOS}" == 'Debian' ]; then
+  elif [ "${Family}" == 'Debian' ]; then
     if [[ "${Debian_ver}" =~ ^8$|^10$|^11$ ]]; then
-      #wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add -
-      cat ${oneinstack_dir}/src/adoptopenjdk.key | sudo apt-key add -
-      apt-add-repository --yes https://mirrors.tuna.tsinghua.edu.cn/AdoptOpenJDK/deb
+      #wget -qO - https://packages.adoptium.net/artifactory/api/gpg/key/public | apt-key add -
+      cat ${oneinstack_dir}/src/adoptium.key | sudo apt-key add -
+      apt-add-repository --yes https://mirrors.tuna.tsinghua.edu.cn/Adoptium/deb
       apt -y update
-      apt-get --no-install-recommends -y install adoptopenjdk-8-hotspot
-      JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-${SYS_ARCH}
+      apt-get --no-install-recommends -y install temurin-8-jdk
+      JAVA_HOME=/usr/lib/jvm/temurin-8-jdk-${SYS_ARCH}
     elif [[ "${Debian_ver}" =~ ^9$ ]]; then
       apt-get --no-install-recommends -y install openjdk-8-jdk
       JAVA_HOME=/usr/lib/jvm/java-8-openjdk-${SYS_ARCH}
     fi
-  elif [ "${LikeOS}" == 'Ubuntu' ]; then
+  elif [ "${Family}" == 'Ubuntu' ]; then
     apt-get --no-install-recommends -y install openjdk-8-jdk
     JAVA_HOME=/usr/lib/jvm/java-8-openjdk-${SYS_ARCH}
   fi

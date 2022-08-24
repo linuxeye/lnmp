@@ -726,7 +726,7 @@ checkDownload 2>&1 | tee -a ${oneinstack_dir}/install.log
 if [ ! -e ~/.oneinstack ]; then
   # Check binary dependencies packages
   . ./include/check_sw.sh
-  case "${LikeOS}" in
+  case "${Family}" in
     "RHEL")
       installDepsRHEL 2>&1 | tee ${oneinstack_dir}/install.log
       . include/init_RHEL.sh 2>&1 | tee -a ${oneinstack_dir}/install.log
@@ -760,6 +760,7 @@ if [[ ${tomcat_option} =~ ^[1-4]$ ]] || [ "${apache_flag}" == 'y' ] || [[ ${php_
 fi
 
 # Database
+[ "${Family}" == 'RHEL' ] && [ "${RHEL_ver}" == '9' ] && dbinstallmethod=2 && checkDownload
 case "${db_option}" in
   1)
     . include/mysql-8.0.sh
@@ -794,7 +795,7 @@ case "${db_option}" in
     Install_MariaDB55 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
   9)
-    [ "${LikeOS}" == 'RHEL' ] && [ "${RHEL_ver}" == '8' ] && dbinstallmethod=2 && checkDownload
+    [ "${Family}" == 'RHEL' ] && [ "${RHEL_ver}" == '8' ] && dbinstallmethod=2 && checkDownload
     . include/percona-8.0.sh
     Install_Percona80 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;

@@ -18,17 +18,21 @@ Install_pecl_swoole() {
       src_url=https://pecl.php.net/get/swoole-1.10.5.tgz && Download_src
       tar xzf swoole-1.10.5.tgz
       pushd swoole-1.10.5 > /dev/null
+      ${php_install_dir}/bin/phpize
+      ./configure --with-php-config=${php_install_dir}/bin/php-config --enable-openssl --with-openssl-dir=${openssl_install_dir}
     elif [[ "${PHP_main_ver}" =~ ^7.[0-1]$ ]]; then
       src_url=https://pecl.php.net/get/swoole-${swoole_oldver}.tgz && Download_src
       tar xzf swoole-${swoole_oldver}.tgz
       pushd swoole-${swoole_oldver} > /dev/null
+      ${php_install_dir}/bin/phpize
+      ./configure --with-php-config=${php_install_dir}/bin/php-config --enable-openssl --with-openssl-dir=${openssl_install_dir}
     else
       src_url=https://pecl.php.net/get/swoole-${swoole_ver}.tgz && Download_src
       tar xzf swoole-${swoole_ver}.tgz
       pushd swoole-${swoole_ver} > /dev/null
+      ${php_install_dir}/bin/phpize
+      ./configure --with-php-config=${php_install_dir}/bin/php-config --enable-openssl --with-openssl-dir=${openssl_install_dir} --enable-http2 --enable-swoole-json --enable-swoole-curl
     fi
-    ${php_install_dir}/bin/phpize
-    ./configure --with-php-config=${php_install_dir}/bin/php-config --enable-openssl --with-openssl-dir=${openssl_install_dir}
     make -j ${THREAD} && make install
     popd > /dev/null
     if [ -f "${phpExtensionDir}/swoole.so" ]; then

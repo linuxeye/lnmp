@@ -303,7 +303,7 @@ checkDownload() {
         # Percona 8.0
         if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download Percona 8.0 binary package..."
-          FILE_NAME=Percona-Server-${percona80_ver}-Linux.x86_64.glibc2.17.tar.gz
+          FILE_NAME=Percona-Server-${percona80_ver}-Linux.x86_64.glibc2.27.tar.gz
           DOWN_ADDR_PERCONA=https://downloads.percona.com/downloads/Percona-Server-8.0/Percona-Server-${percona80_ver}/binary/tarball
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download Percona 8.0 source package..."
@@ -692,7 +692,7 @@ checkDownload() {
   # nodejs
   if [ "${nodejs_flag}" == 'y' ]; then
     echo "Download Nodejs..."
-    [ "${IPADDR_COUNTRY}"x == "CN"x ] && DOWN_ADDR_NODE=https://nodejs.org/dist || DOWN_ADDR_NODE=https://mirrors.tuna.tsinghua.edu.cn/nodejs-release
+    [ "${IPADDR_COUNTRY}"x == "CN"x ] && DOWN_ADDR_NODE=https://mirrors.tuna.tsinghua.edu.cn/nodejs-release || DOWN_ADDR_NODE=https://nodejs.org/dist
     src_url=${DOWN_ADDR_NODE}/v${nodejs_ver}/node-v${nodejs_ver}-linux-${SYS_ARCH_n}.tar.gz && Download_src
   fi
 

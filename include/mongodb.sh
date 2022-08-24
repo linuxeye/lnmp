@@ -15,14 +15,9 @@ Install_MongoDB() {
   mkdir -p ${mongo_data_dir};chown mongod.mongod -R ${mongo_data_dir}
   tar xzf mongodb-linux-x86_64-${mongodb_ver}.tgz
   /bin/mv mongodb-linux-x86_64-${mongodb_ver} ${mongo_install_dir}
-  if [ -e /bin/systemctl ]; then
-    /bin/cp ${oneinstack_dir}/init.d/mongod.service /lib/systemd/system/
-    sed -i "s@=/usr/local/mongodb@=${mongo_install_dir}@g" /lib/systemd/system/mongod.service
-    systemctl enable mongod 
-  else
-    [ "${PM}" == 'yum' ] && { /bin/cp ../init.d/MongoDB-init-RHEL /etc/init.d/mongod; sed -i "s@/usr/local/mongodb@${mongo_install_dir}@g" /etc/init.d/mongod; chkconfig --add mongod; chkconfig mongod on; }
-    [ "${PM}" == 'apt-get' ] && { /bin/cp ../init.d/MongoDB-init-Ubuntu /etc/init.d/mongod; sed -i "s@/usr/local/mongodb@${mongo_install_dir}@g" /etc/init.d/mongod; update-rc.d mongod defaults; }
-  fi
+  /bin/cp ${oneinstack_dir}/init.d/mongod.service /lib/systemd/system/
+  sed -i "s@=/usr/local/mongodb@=${mongo_install_dir}@g" /lib/systemd/system/mongod.service
+  systemctl enable mongod
 
   cat > /etc/mongod.conf << EOF
 # mongod.conf
@@ -64,7 +59,7 @@ net:
 #replication:
 #sharding:
 EOF
-  service mongod start
+  systemctl start mongod
   echo ${mongo_install_dir}/bin/mongo 127.0.0.1/admin --eval \"db.createUser\(\{user:\'root\',pwd:\'$dbmongopwd\',roles:[\'userAdminAnyDatabase\']\}\)\" | bash
   sed -i 's@^#security:@security:@' /etc/mongod.conf
   sed -i 's@^#  authorization:@  authorization:@' /etc/mongod.conf

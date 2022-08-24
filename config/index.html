@@ -253,25 +253,25 @@
 			<section class="section" id="manage_section">	
 	          <h2 class="mt-5" id="manage">How to manage service?</h2>
 	         	<p class="mt-4">Nginx/Tengine/OpenResty:</p>
-				<div class="alert alert-primary" role="alert"><code>service nginx {start<span class="pl-k">|</span>stop<span class="pl-k">|</span>status<span class="pl-k">|</span>restart<span class="pl-k">|</span>reload<span class="pl-k">|</span>configtest}</code></div>
-				<p class="mt-4">MySQL/MariaDB/Percona:</p>
-				<div class="alert alert-primary" role="alert"><code>service mysqld {start<span class="pl-k">|</span>stop<span class="pl-k">|</span>restart<span class="pl-k">|</span>reload<span class="pl-k">|</span>status}</code></div>
-				<p class="mt-4">PostgreSQL:</p>
-				<div class="alert alert-primary" role="alert"><code>service postgresql {start|stop|restart|status}</code></div>
-				<p class="mt-4">MongoDB:</p>
-				<div class="alert alert-primary" role="alert"><code>service mongod {start|stop|status|restart|reload}</code></div>
-				<p class="mt-4">PHP:</p>
-				<div class="alert alert-primary" role="alert"><code>service php-fpm {start<span class="pl-k">|</span>stop<span class="pl-k">|</span>restart<span class="pl-k">|</span>reload<span class="pl-k">|</span>status}</code></div>
-				<p class="mt-4">Apache:</p>
-				<div class="alert alert-primary" role="alert"><code>service httpd {start|restart|stop}</code></div>
-				<p class="mt-4">Tomcat:</p>
-				<div class="alert alert-primary" role="alert"><code>service tomcat {start|stop|status|restart}</code></div>
-				<p class="mt-4">Pure-Ftpd:</p>
-				<div class="alert alert-primary" role="alert"><code>service pureftpd {start|stop|restart|status}</code></div>
-				<p class="mt-4">Redis:</p>
-				<div class="alert alert-primary" role="alert"><code>service redis-server {start|stop|status|restart}</code></div>
-				<p class="mt-4">Memcached:</p>
-				<div class="alert alert-primary" role="alert"><code>service memcached {start|stop|status|restart|reload}</code></div>
+			<div class="alert alert-primary" role="alert"><code>systemctl {start|stop|status|restart|reload} nginx</code></div>
+			<p class="mt-4">MySQL/MariaDB/Percona:</p>
+			<div class="alert alert-primary" role="alert"><code>systemctl {start|stop|restart|reload|status} mysqld</code></div>
+			<p class="mt-4">PostgreSQL:</p>
+			<div class="alert alert-primary" role="alert"><code>systemctl {start|stop|restart|status} postgresql</code></div>
+			<p class="mt-4">MongoDB:</p>
+			<div class="alert alert-primary" role="alert"><code>systemctl {start|stop|status|restart|reload} mongod</code></div>
+			<p class="mt-4">PHP:</p>
+			<div class="alert alert-primary" role="alert"><code>systemctl {start|stop|restart|reload|status} php-fpm</code></div>
+			<p class="mt-4">Apache:</p>
+			<div class="alert alert-primary" role="alert"><code>systemctl {start|restart|stop} httpd</code></div>
+			<p class="mt-4">Tomcat:</p>
+			<div class="alert alert-primary" role="alert"><code>systemctl {start|stop|status|restart} tomcat</code></div>
+			<p class="mt-4">Pure-Ftpd:</p>
+			<div class="alert alert-primary" role="alert"><code>systemctl {start|stop|restart|status} pureftpd</code></div>
+			<p class="mt-4">Redis:</p>
+			<div class="alert alert-primary" role="alert"><code>systemctl {start|stop|status|restart|reload} redis-server</code></div>
+			<p class="mt-4">Memcached:</p>
+			<div class="alert alert-primary" role="alert"><code>systemctl {start|stop|status|restart|reload} memcached</code></div>
 			</section>
 
 			<section class="section" id="upgrade_section">			

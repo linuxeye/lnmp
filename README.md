@@ -40,12 +40,12 @@ apt-get -y install wget screen
 ```bash
 wget http://mirrors.linuxeye.com/oneinstack-full.tar.gz
 tar xzf oneinstack-full.tar.gz
-cd oneinstack 
+cd oneinstack
 ```
 
-If you disconnect during installation, you can execute the command `screen -r lnmp` to reconnect to the install window
+If you disconnect during installation, you can execute the command `screen -r oneinstack` to reconnect to the install window
 ```bash
-screen -S oneinstack 
+screen -S oneinstack
 ```
 
 If you need to modify the directory (installation, data storage, Nginx logs), modify `options.conf` file before running install.sh
@@ -98,43 +98,43 @@ crontab -l    // Can be added to scheduled tasks, such as automatic backups ever
 
 Nginx/Tengine/OpenResty:
 ```bash
-service nginx {start|stop|status|restart|reload|configtest}
+systemctl {start|stop|status|restart|reload} nginx
 ```
 MySQL/MariaDB/Percona:
 ```bash
-service mysqld {start|stop|restart|reload|status}
+systemctl {start|stop|restart|reload|status} mysqld
 ```
 PostgreSQL:
 ```bash
-service postgresql {start|stop|restart|status}
+systemctl {start|stop|restart|status} postgresql
 ```
 MongoDB:
 ```bash
-service mongod {start|stop|status|restart|reload}
+systemctl {start|stop|status|restart|reload} mongod
 ```
 PHP:
 ```bash
-service php-fpm {start|stop|restart|reload|status}
+systemctl {start|stop|restart|reload|status} php-fpm
 ```
 Apache:
 ```bash
-service httpd {start|restart|stop}
+systemctl {start|restart|stop} httpd
 ```
 Tomcat:
 ```bash
-service tomcat {start|stop|status|restart}
+systemctl {start|stop|status|restart} tomcat
 ```
 Pure-FTPd:
 ```bash
-service pureftpd {start|stop|restart|status}
+systemctl {start|stop|restart|status} pureftpd
 ```
 Redis:
 ```bash
-service redis-server {start|stop|status|restart|reload}
+systemctl {start|stop|status|restart|reload} redis-server
 ```
 Memcached:
 ```bash
-service memcached {start|stop|status|restart|reload}
+systemctl {start|stop|status|restart|reload} memcached
 ```
 
 ## How to upgrade

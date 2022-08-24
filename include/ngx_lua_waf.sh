@@ -21,22 +21,21 @@ Nginx_lua_waf() {
     popd > /dev/null
     rm -rf luajit2-${luajit2_ver}
   fi
-  if [ ! -e "/usr/local/lib/lua/resty/core.lua" ]; then
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/lua-resty-core-${lua_resty_core_ver}.tar.gz && Download_src
-    tar xzf lua-resty-core-${lua_resty_core_ver}.tar.gz
-    pushd lua-resty-core-${lua_resty_core_ver}
-    make install
-    popd > /dev/null
-    rm -rf lua-resty-core-${lua_resty_core_ver}
-  fi
-  if [ ! -e "/usr/local/lib/lua/resty/lrucache.lua" ]; then
-    src_url=http://mirrors.linuxeye.com/oneinstack/src/lua-resty-lrucache-${lua_resty_lrucache_ver}.tar.gz && Download_src
-    tar xzf lua-resty-lrucache-${lua_resty_lrucache_ver}.tar.gz
-    pushd lua-resty-lrucache-${lua_resty_lrucache_ver}
-    make install
-    popd > /dev/null
-    rm -rf lua-resty-lrucache-${lua_resty_lrucache_ver}
-  fi
+
+  src_url=http://mirrors.linuxeye.com/oneinstack/src/lua-resty-core-${lua_resty_core_ver}.tar.gz && Download_src
+  tar xzf lua-resty-core-${lua_resty_core_ver}.tar.gz
+  pushd lua-resty-core-${lua_resty_core_ver}
+  make install
+  popd > /dev/null
+  rm -rf lua-resty-core-${lua_resty_core_ver}
+
+  src_url=http://mirrors.linuxeye.com/oneinstack/src/lua-resty-lrucache-${lua_resty_lrucache_ver}.tar.gz && Download_src
+  tar xzf lua-resty-lrucache-${lua_resty_lrucache_ver}.tar.gz
+  pushd lua-resty-lrucache-${lua_resty_lrucache_ver}
+  make install
+  popd > /dev/null
+  rm -rf lua-resty-lrucache-${lua_resty_lrucache_ver}
+
   [ ! -h "/usr/local/share/lua/5.1" ] && { rm -rf /usr/local/share/lua/5.1 ; ln -s /usr/local/lib/lua /usr/local/share/lua/5.1; }
   if [ ! -e "/usr/local/lib/lua/5.1/cjson.so" ]; then
     src_url=http://mirrors.linuxeye.com/oneinstack/src/lua-cjson-${lua_cjson_ver}.tar.gz && Download_src

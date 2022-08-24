@@ -253,7 +253,7 @@ EOF
     fi
     if [ -s ~/.acme.sh/${domain}/fullchain.cer ]; then
       [ -e "${PATH_SSL}/${domain}.crt" ] && rm -f ${PATH_SSL}/${domain}.{crt,key}
-      [ -e /bin/systemctl -a -e /lib/systemd/system/nginx.service ] && Nginx_cmd='/bin/systemctl restart nginx' || Nginx_cmd='/etc/init.d/nginx force-reload'
+      Nginx_cmd="/bin/systemctl restart nginx"
       Apache_cmd="${apache_install_dir}/bin/apachectl -k graceful"
       if [ -e "${web_install_dir}/sbin/nginx" -a -e "${apache_install_dir}/bin/httpd" ]; then
         Command="${Nginx_cmd};${Apache_cmd}"

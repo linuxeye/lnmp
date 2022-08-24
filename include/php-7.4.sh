@@ -109,7 +109,7 @@ Install_PHP74() {
     --with-iconv-dir=/usr/local --with-freetype --with-jpeg --with-zlib \
     --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
     --enable-sysvsem --enable-inline-optimization --with-curl=${curl_install_dir} --enable-mbregex \
-    --enable-mbstring --with-password-argon2 --with-sodium=/usr/local --enable-gd --with-openssl=${openssl_install_dir} \
+    --enable-mbstring --with-password-argon2 --with-sodium=/usr/local --enable-gd --with-openssl-dir=${openssl_install_dir} \
     --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
     --with-gettext --with-zip=/usr/local --enable-soap --disable-debug ${php_modules_options}
   else
@@ -120,7 +120,7 @@ Install_PHP74() {
     --with-iconv-dir=/usr/local --with-freetype --with-jpeg --with-zlib \
     --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
     --enable-sysvsem --enable-inline-optimization --with-curl=${curl_install_dir} --enable-mbregex \
-    --enable-mbstring --with-password-argon2 --with-sodium=/usr/local --enable-gd --with-openssl=${openssl_install_dir} \
+    --enable-mbstring --with-password-argon2 --with-sodium=/usr/local --enable-gd --with-openssl-dir=${openssl_install_dir} \
     --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
     --with-gettext --with-zip=/usr/local --enable-soap --disable-debug ${php_modules_options}
   fi
@@ -181,16 +181,9 @@ EOF
 
   if [ ! -e "${apache_install_dir}/bin/apxs" -o "${Apache_main_ver}" == '24' ] && [ "${apache_mode_option}" != '2' ]; then
     # php-fpm Init Script
-    if [ -e /bin/systemctl ]; then
-      /bin/cp ${oneinstack_dir}/init.d/php-fpm.service /lib/systemd/system/
-      sed -i "s@/usr/local/php@${php_install_dir}@g" /lib/systemd/system/php-fpm.service
-      systemctl enable php-fpm
-    else
-      /bin/cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
-      chmod +x /etc/init.d/php-fpm
-      [ "${PM}" == 'yum' ] && { chkconfig --add php-fpm; chkconfig php-fpm on; }
-      [ "${PM}" == 'apt-get' ] && update-rc.d php-fpm defaults
-    fi
+    /bin/cp ${oneinstack_dir}/init.d/php-fpm.service /lib/systemd/system/
+    sed -i "s@/usr/local/php@${php_install_dir}@g" /lib/systemd/system/php-fpm.service
+    systemctl enable php-fpm
 
     cat > ${php_install_dir}/etc/php-fpm.conf <<EOF
 ;;;;;;;;;;;;;;;;;;;;;
@@ -275,10 +268,10 @@ EOF
       sed -i "s@^pm.max_spare_servers.*@pm.max_spare_servers = 80@" ${php_install_dir}/etc/php-fpm.conf
     fi
 
-    service php-fpm start
+    systemctl start php-fpm
 
   elif [ "${Apache_main_ver}" == '22' ] || [ "${apache_mode_option}" == '2' ]; then
-    service httpd restart
+    systemctl restart httpd
   fi
   popd > /dev/null
   [ -e "${php_install_dir}/bin/phpize" ] && rm -rf php-${php74_ver}

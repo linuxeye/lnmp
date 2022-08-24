@@ -17,10 +17,10 @@ Install_Percona80() {
   mkdir -p ${percona_data_dir};chown mysql.mysql -R ${percona_data_dir}
 
   if [ "${dbinstallmethod}" == "1" ]; then
-    tar xzf ./Percona-Server-${percona80_ver}-Linux.x86_64.glibc2.17.tar.gz
-    mv Percona-Server-${percona80_ver}-Linux.x86_64.glibc2.17/* ${percona_install_dir}
+    tar xzf ./Percona-Server-${percona80_ver}-Linux.x86_64.glibc2.27.tar.gz
+    mv Percona-Server-${percona80_ver}-Linux.x86_64.glibc2.27/* ${percona_install_dir}
     #sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${percona_install_dir}/bin/mysqld_safe
-    sed -i "s@/usr/local/Percona-Server-${percona80_ver}-Linux.x86_64.glibc2.17@${percona_install_dir}@g" ${percona_install_dir}/bin/mysqld_safe
+    sed -i "s@/usr/local/Percona-Server-${percona80_ver}-Linux.x86_64.glibc2.27@${percona_install_dir}@g" ${percona_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then
     boostVersion2=$(echo ${boost_percona_ver} | awk -F. '{print $1"_"$2"_"$3}')
     tar xzf boost_${boostVersion2}.tar.gz
@@ -159,7 +159,6 @@ innodb_lock_wait_timeout = 120
 bulk_insert_buffer_size = 8M
 myisam_sort_buffer_size = 8M
 myisam_max_sort_file_size = 10G
-myisam_repair_threads = 1
 
 interactive_timeout = 28800
 wait_timeout = 28800

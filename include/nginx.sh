@@ -28,7 +28,7 @@ Install_Nginx() {
   sed -i 's@CFLAGS="$CFLAGS -g"@#CFLAGS="$CFLAGS -g"@' auto/cc/gcc
 
   [ ! -d "${nginx_install_dir}" ] && mkdir -p ${nginx_install_dir}
-  ./configure --prefix=${nginx_install_dir} --user=${run_user} --group=${run_group} --with-http_stub_status_module --with-http_sub_module --with-http_v2_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-openssl=../openssl-${openssl11_ver} --with-pcre=../pcre-${pcre_ver} --with-pcre-jit --with-ld-opt='-ljemalloc' ${nginx_modules_options}
+  ./configure --prefix=${nginx_install_dir} --user=${run_user} --group=${run_group} --with-http_stub_status_module --with-http_sub_module --with-http_v2_module --with-http_ssl_module --with-stream --with-stream_ssl_preread_module --with-stream_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_flv_module --with-http_mp4_module --with-openssl=../openssl-${openssl11_ver} --with-pcre=../pcre-${pcre_ver} --with-pcre-jit --with-ld-opt='-ljemalloc' ${nginx_modules_options}
   make -j ${THREAD} && make install
   if [ -e "${nginx_install_dir}/conf/nginx.conf" ]; then
     popd > /dev/null
@@ -44,14 +44,9 @@ Install_Nginx() {
   [ -n "`grep ^'export PATH=' /etc/profile`" -a -z "`grep ${nginx_install_dir} /etc/profile`" ] && sed -i "s@^export PATH=\(.*\)@export PATH=${nginx_install_dir}/sbin:\1@" /etc/profile
   . /etc/profile
 
-  if [ -e /bin/systemctl ]; then
-    /bin/cp ../init.d/nginx.service /lib/systemd/system/
-    sed -i "s@/usr/local/nginx@${nginx_install_dir}@g" /lib/systemd/system/nginx.service
-    systemctl enable nginx
-  else
-    [ "${PM}" == 'yum' ] && { /bin/cp ../init.d/Nginx-init-RHEL /etc/init.d/nginx; sed -i "s@/usr/local/nginx@${nginx_install_dir}@g" /etc/init.d/nginx; chkconfig --add nginx; chkconfig nginx on; }
-    [ "${PM}" == 'apt-get' ] && { /bin/cp ../init.d/Nginx-init-Ubuntu /etc/init.d/nginx; sed -i "s@/usr/local/nginx@${nginx_install_dir}@g" /etc/init.d/nginx; update-rc.d nginx defaults; }
-  fi
+  /bin/cp ../init.d/nginx.service /lib/systemd/system/
+  sed -i "s@/usr/local/nginx@${nginx_install_dir}@g" /lib/systemd/system/nginx.service
+  systemctl enable nginx
 
   mv ${nginx_install_dir}/conf/nginx.conf{,_bk}
   if [ "${apache_flag}" == 'y' ] || [ -e "${apache_install_dir}/bin/httpd" ]; then
@@ -100,5 +95,5 @@ ${wwwlogs_dir}/*nginx.log {
 EOF
   popd > /dev/null
   ldconfig
-  service nginx start
+  systemctl start nginx
 }

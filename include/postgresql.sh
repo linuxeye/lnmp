@@ -20,22 +20,13 @@ Install_PostgreSQL() {
   make install
   chmod 755 ${pgsql_install_dir}
   chown -R postgres.postgres ${pgsql_install_dir}
-  if [ -e /bin/systemctl ]; then
-    /bin/cp ${oneinstack_dir}/init.d/postgresql.service /lib/systemd/system/
-    sed -i "s@=/usr/local/pgsql@=${pgsql_install_dir}@g" /lib/systemd/system/postgresql.service
-    sed -i "s@PGDATA=.*@PGDATA=${pgsql_data_dir}@" /lib/systemd/system/postgresql.service
-    systemctl enable postgresql
-  else
-    /bin/cp ./contrib/start-scripts/linux /etc/init.d/postgresql
-    sed -i "s@^prefix=.*@prefix=${pgsql_install_dir}@" /etc/init.d/postgresql
-    sed -i "s@^PGDATA=.*@PGDATA=${pgsql_data_dir}@" /etc/init.d/postgresql
-    chmod +x /etc/init.d/postgresql
-    [ "${PM}" == 'yum' ] && { chkconfig --add postgresql; chkconfig postgresql on; }
-    [ "${PM}" == 'apt-get' ] && update-rc.d postgresql defaults
-  fi
+  /bin/cp ${oneinstack_dir}/init.d/postgresql.service /lib/systemd/system/
+  sed -i "s@=/usr/local/pgsql@=${pgsql_install_dir}@g" /lib/systemd/system/postgresql.service
+  sed -i "s@PGDATA=.*@PGDATA=${pgsql_data_dir}@" /lib/systemd/system/postgresql.service
+  systemctl enable postgresql
   popd
   su - postgres -c "${pgsql_install_dir}/bin/initdb -D ${pgsql_data_dir}"
-  service postgresql start
+  systemctl start postgresql
   sleep 5
   su - postgres -c "${pgsql_install_dir}/bin/psql -c \"alter user postgres with password '$dbpostgrespwd';\""
   sed -i 's@^host.*@#&@g' ${pgsql_data_dir}/pg_hba.conf
@@ -43,7 +34,7 @@ Install_PostgreSQL() {
   echo 'local   all             all                                     md5' >> ${pgsql_data_dir}/pg_hba.conf
   echo 'host    all             all             0.0.0.0/0               md5' >> ${pgsql_data_dir}/pg_hba.conf
   sed -i "s@^#listen_addresses.*@listen_addresses = '*'@" ${pgsql_data_dir}/postgresql.conf
-  service postgresql reload
+  systemctl reload postgresql
 
   if [ -e "${pgsql_install_dir}/bin/psql" ]; then
     sed -i "s+^dbpostgrespwd.*+dbpostgrespwd='$dbpostgrespwd'+" ../options.conf

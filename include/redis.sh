@@ -32,19 +32,12 @@ Install_redis_server() {
     [ $? -ne 0 ] && useradd -M -s /sbin/nologin redis
     chown -R redis:redis ${redis_install_dir}/{var,etc}
 
-    if [ -e /bin/systemctl ]; then
-      /bin/cp ../init.d/redis-server.service /lib/systemd/system/
-      sed -i "s@/usr/local/redis@${redis_install_dir}@g" /lib/systemd/system/redis-server.service
-      systemctl enable redis-server
-    else
-      /bin/cp ../init.d/Redis-server-init /etc/init.d/redis-server
-      sed -i "s@/usr/local/redis@${redis_install_dir}@g" /etc/init.d/redis-server
-      [ "${PM}" == 'yum' ] && { cc start-stop-daemon.c -o /sbin/start-stop-daemon; chkconfig --add redis-server; chkconfig redis-server on; }
-      [ "${PM}" == 'apt-get' ] && update-rc.d redis-server defaults
-    fi
+    /bin/cp ../init.d/redis-server.service /lib/systemd/system/
+    sed -i "s@/usr/local/redis@${redis_install_dir}@g" /lib/systemd/system/redis-server.service
+    systemctl enable redis-server
     #[ -z "`grep 'vm.overcommit_memory' /etc/sysctl.conf`" ] && echo 'vm.overcommit_memory = 1' >> /etc/sysctl.conf
     #sysctl -p
-    service redis-server start
+    systemctl start redis-server
   else
     rm -rf ${redis_install_dir}
     echo "${CFAILURE}Redis-server install failed, Please contact the author! ${CEND}" && lsb_release -a

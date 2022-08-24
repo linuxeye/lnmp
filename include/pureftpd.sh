@@ -22,17 +22,9 @@ Install_PureFTPd() {
   make -j ${THREAD} && make install
   popd > /dev/null
   if [ -e "${pureftpd_install_dir}/sbin/pure-ftpwho" ]; then
-    if [ -e /bin/systemctl ]; then
-      /bin/cp ../init.d/pureftpd.service /lib/systemd/system/
-      sed -i "s@/usr/local/pureftpd@${pureftpd_install_dir}@g" /lib/systemd/system/pureftpd.service
-      systemctl enable pureftpd
-    else
-      /bin/cp ../init.d/Pureftpd-init /etc/init.d/pureftpd
-      sed -i "s@/usr/local/pureftpd@${pureftpd_install_dir}@g" /etc/init.d/pureftpd
-      chmod +x /etc/init.d/pureftpd
-      [ "${PM}" == 'yum' ] && { chkconfig --add pureftpd; chkconfig pureftpd on; }
-      [ "${PM}" == 'apt-get' ] && { sed -i 's@^. /etc/rc.d/init.d/functions@. /lib/lsb/init-functions@' /etc/init.d/pureftpd; update-rc.d pureftpd defaults; }
-    fi
+    /bin/cp ../init.d/pureftpd.service /lib/systemd/system/
+    sed -i "s@/usr/local/pureftpd@${pureftpd_install_dir}@g" /lib/systemd/system/pureftpd.service
+    systemctl enable pureftpd
 
     [ ! -e "${pureftpd_install_dir}/etc" ] && mkdir ${pureftpd_install_dir}/etc
     /bin/cp ../config/pure-ftpd.conf ${pureftpd_install_dir}/etc
@@ -47,7 +39,7 @@ Install_PureFTPd() {
     sed -i "s@^# TLS.*@&\nTLSCipherSuite             HIGH:MEDIUM:+TLSv1:\!SSLv2:\!SSLv3@" ${pureftpd_install_dir}/etc/pure-ftpd.conf
     sed -i "s@^# TLS.*@TLS                        1@" ${pureftpd_install_dir}/etc/pure-ftpd.conf
     ulimit -s unlimited
-    service pureftpd start
+    systemctl start pureftpd
 
     # iptables Ftp
     if [ "${PM}" == 'yum' ]; then

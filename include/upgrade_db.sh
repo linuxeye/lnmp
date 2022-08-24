@@ -49,8 +49,8 @@ Upgrade_DB() {
   #backup
   echo
   echo "${CSUCCESS}Starting ${DB} backup${CEND}......"
-  ${db_install_dir}/bin/mysqldump -uroot -p${dbrootpwd} --opt --all-databases > DB_all_backup_$(date +"%Y%m%d").sql
-  [ -f "DB_all_backup_$(date +"%Y%m%d").sql" ] && echo "${DB} backup success, Backup file: ${MSG}`pwd`/DB_all_backup_$(date +"%Y%m%d").sql${CEND}"
+  ${db_install_dir}/bin/mysqldump -uroot -p${dbrootpwd} --opt --all-databases > DB_all_backup_$(date +"%Y%m%d_%H%M%S").sql
+  [ -f "DB_all_backup_$(date +"%Y%m%d_%H%M%S").sql" ] && echo "${DB} backup success, Backup file: ${MSG}`pwd`/DB_all_backup_$(date +"%Y%m%d_%H%M%S").sql${CEND}"
 
   #upgrade
   echo
@@ -67,8 +67,10 @@ Upgrade_DB() {
         else
           perconaVerStr1=${NEW_db_ver}
         fi
-        if [[ "`echo ${NEW_db_ver} | awk -F. '{print $1"."$2}'`" =~ ^5.7$|^8.0$ ]]; then
-           DB_filename=Percona-Server-${perconaVerStr1}-Linux.x86_64.glibc2.12
+        if [[ "`echo ${NEW_db_ver} | awk -F. '{print $1"."$2}'`" =~ ^8.0$ ]]; then
+           DB_filename=Percona-Server-${perconaVerStr1}-Linux.x86_64.glibc2.27
+        elif [[ "`echo ${NEW_db_ver} | awk -F. '{print $1"."$2}'`" =~ ^5.7$ ]]; then
+           DB_filename=Percona-Server-${perconaVerStr1}-Linux.x86_64.glibc2.17
         else
            DB_filename=Percona-Server-${perconaVerStr1}-Linux.x86_64.${sslLibVer}
         fi

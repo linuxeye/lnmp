@@ -16,16 +16,9 @@ Install_Panel() {
   ${python_install_dir}/bin/pip3 install -r requirements.txt
   ${python_install_dir}/bin/python3 manage.py makemigrations
   ${python_install_dir}/bin/python3 manage.py migrate
-  if [ -e /bin/systemctl ]; then
-    /bin/cp ${oneinstack_dir}/init.d/panel.service /lib/systemd/system/
-    sed -i "s@/root/git/repo/panel@`pwd`@g" /lib/systemd/system/panel.service
-    systemctl enable panel
-  else
-    /bin/cp ${oneinstack_dir}/init.d/Panel-init /etc/init.d/panel
-    sed -i "s@/root/git/repo/panel@`pwd`@g" /etc/init.d/panel
-    [ "${PM}" == 'yum' ] && { chkconfig --add panel; chkconfig panel on; }
-    [ "${PM}" == 'apt-get' ] && update-rc.d panel defaults
-  fi
+  /bin/cp ${oneinstack_dir}/init.d/panel.service /lib/systemd/system/
+  sed -i "s@/root/git/repo/panel@`pwd`@g" /lib/systemd/system/panel.service
+  systemctl enable panel
 
   # Panel iptables
   Panel_port=`cat data/port.conf`
@@ -54,7 +47,7 @@ Install_Panel() {
 
   popd > /dev/null
   popd > /dev/null
-  service panel start
+  systemctl start panel
 }
 
 Upgrade_Panel() {
@@ -64,11 +57,11 @@ Upgrade_Panel() {
   ${python_install_dir}/bin/python3 manage.py makemigrations
   ${python_install_dir}/bin/python3 manage.py migrate
   popd > /dev/null
-  service panel reload
+  systemctl reload panel
 }
 
 Uninstall_Panel() {
-  service panel stop
+  systemctl stop panel
   pushd ${oneinstack_dir}/../ > /dev/null
   rm -rf panel
   popd > /dev/null

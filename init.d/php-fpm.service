@@ -1,0 +1,16 @@
+[Unit]
+Description=The PHP FastCGI Process Manager
+Documentation=http://php.net/docs.php
+After=network.target
+
+[Service]
+Type=simple
+PIDFile=/usr/local/php/var/run/php-fpm.pid
+ExecStart=/usr/local/php/sbin/php-fpm --nodaemonize --fpm-config /usr/local/php/etc/php-fpm.conf
+ExecReload=/bin/kill -USR2 $MAINPID
+LimitNOFILE=1000000
+LimitNPROC=1000000
+LimitCORE=1000000
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,23 @@
+[Unit]
+Description=Redis In-Memory Data Store
+After=network.target
+
+[Service]
+Type=forking
+PIDFile=/var/run/redis/redis.pid
+User=redis
+Group=redis
+
+Environment=statedir=/var/run/redis
+PermissionsStartOnly=true
+ExecStartPre=/bin/mkdir -p ${statedir}
+ExecStartPre=/bin/chown -R redis:redis ${statedir}
+ExecStart=/usr/local/redis/bin/redis-server /usr/local/redis/etc/redis.conf
+ExecStop=/bin/kill -s TERM $MAINPID
+Restart=always
+LimitNOFILE=1000000
+LimitNPROC=1000000
+LimitCORE=1000000
+
+[Install]
+WantedBy=multi-user.target

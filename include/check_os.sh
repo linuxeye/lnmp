@@ -31,6 +31,7 @@ if [[ "${Platform}" =~ ^centos$|^rhel$|^almalinux$|^rocky$|^fedora$|^amzn$|^ol$|
   elif [[ "${Platform}" =~ ^amzn$|^alinux$|^tencentos$|^euleros$ ]]; then
     [[ "${VERSION_MAIN_ID}" =~ ^2$ ]] && RHEL_ver=7
     [[ "${VERSION_MAIN_ID}" =~ ^3$ ]] && RHEL_ver=8
+    [[ "${VERSION_MAIN_ID}" =~ ^4$ ]] && RHEL_ver=9
   elif [[ "${Platform}" =~ ^openeuler$ ]]; then
     [[ "${RHEL_ver}" =~ ^20$ ]] && RHEL_ver=7
     [[ "${RHEL_ver}" =~ ^2[1,2]$ ]] && RHEL_ver=8

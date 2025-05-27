@@ -83,7 +83,7 @@ checkDownload() {
   esac
 
   # jdk apr
-  if [[ "${jdk_option}"  =~ ^[1-2]$ ]]; then
+  if [[ "${jdk_option}"  =~ ^[1-3]$ ]]; then
     echo "Download apr..."
     src_url=http://archive.apache.org/dist/apr/apr-${apr_ver}.tar.gz && Download_src
   fi
@@ -100,6 +100,33 @@ checkDownload() {
 
     case "${db_option}" in
       1)
+        # MySQL 8.4
+        DOWN_ADDR_MYSQL=https://cdn.mysql.com/Downloads/MySQL-8.4
+        if [ "${dbinstallmethod}" == '1' ]; then
+          echo "Download MySQL 8.4 binary package..."
+          FILE_NAME=mysql-${mysql84_ver}-linux-glibc2.28-x86_64.tar.xz
+        elif [ "${dbinstallmethod}" == '2' ]; then
+          echo "Download MySQL 8.4 source package..."
+          FILE_NAME=mysql-${mysql84_ver}.tar.gz
+        fi
+        # start download
+        src_url=${DOWN_ADDR_MYSQL}/${FILE_NAME} && Download_src
+        src_url=${DOWN_ADDR_MYSQL}/${FILE_NAME}.md5 && Download_src
+        # verifying download
+        MYSQL_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
+        [ -z "${MYSQL_TAR_MD5}" ] && MYSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_MYSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
+        tryDlCount=0
+        while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${MYSQL_TAR_MD5}" ]; do
+          wget -c --no-check-certificate ${DOWN_ADDR_MYSQL}/${FILE_NAME};sleep 1
+          let "tryDlCount++"
+          [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${MYSQL_TAR_MD5}" -o "${tryDlCount}" == '6' ] && break || continue
+        done
+        if [ "${tryDlCount}" == '6' ]; then
+          echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
+          kill -9 $$; exit 1;
+        fi
+        ;;
+      2)
         # MySQL 8.0
         DOWN_ADDR_MYSQL=https://cdn.mysql.com/Downloads/MySQL-8.0
         if [ "${dbinstallmethod}" == '1' ]; then
@@ -126,7 +153,7 @@ checkDownload() {
           kill -9 $$; exit 1;
         fi
         ;;
-      2)
+      3)
         # MySQL 5.7
         DOWN_ADDR_MYSQL=https://cdn.mysql.com/Downloads/MySQL-5.7
         if [ "${dbinstallmethod}" == '1' ]; then
@@ -135,33 +162,6 @@ checkDownload() {
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download MySQL 5.7 source package..."
           FILE_NAME=mysql-${mysql57_ver}.tar.gz
-        fi
-        # start download
-        src_url=${DOWN_ADDR_MYSQL}/${FILE_NAME} && Download_src
-        src_url=${DOWN_ADDR_MYSQL}/${FILE_NAME}.md5 && Download_src
-        # verifying download
-        MYSQL_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
-        [ -z "${MYSQL_TAR_MD5}" ] && MYSQL_TAR_MD5=$(curl -s ${DOWN_ADDR_MYSQL}/${FILE_NAME}.md5 | grep ${FILE_NAME} | awk '{print $1}')
-        tryDlCount=0
-        while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${MYSQL_TAR_MD5}" ]; do
-          wget -c --no-check-certificate ${DOWN_ADDR_MYSQL}/${FILE_NAME};sleep 1
-          let "tryDlCount++"
-          [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${MYSQL_TAR_MD5}" -o "${tryDlCount}" == '6' ] && break || continue
-        done
-        if [ "${tryDlCount}" == '6' ]; then
-          echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
-          kill -9 $$; exit 1;
-        fi
-        ;;
-      3)
-        # MySQL 5.6
-        DOWN_ADDR_MYSQL=http://mirrors.aliyun.com/mysql/MySQL-5.6
-        if [ "${dbinstallmethod}" == '1' ]; then
-          echo "Download MySQL 5.6 binary package..."
-          FILE_NAME=mysql-${mysql56_ver}-linux-glibc2.12-x86_64.tar.gz
-        elif [ "${dbinstallmethod}" == '2' ]; then
-          echo "Download MySQL 5.6 source package..."
-          FILE_NAME=mysql-${mysql56_ver}.tar.gz
         fi
         # start download
         src_url=${DOWN_ADDR_MYSQL}/${FILE_NAME} && Download_src
@@ -211,13 +211,13 @@ checkDownload() {
       [5-8])
 	case "${db_option}" in
           5)
-            mariadb_ver=${mariadb1011_ver}
+            mariadb_ver=${mariadb114_ver}
 	    ;;
           6)
-            mariadb_ver=${mariadb105_ver}
+            mariadb_ver=${mariadb1011_ver}
 	    ;;
           7)
-            mariadb_ver=${mariadb104_ver}
+            mariadb_ver=${mariadb105_ver}
 	    ;;
           8)
             mariadb_ver=${mariadb55_ver}
@@ -262,10 +262,42 @@ checkDownload() {
         fi
         ;;
       9)
+        # Percona 8.4
+        if [ "${dbinstallmethod}" == '1' ]; then
+          echo "Download Percona 8.4 binary package..."
+          FILE_NAME=Percona-Server-${percona84_ver}-Linux.x86_64.glibc2.35.tar.gz
+          DOWN_ADDR_PERCONA=https://downloads.percona.com/downloads/Percona-Server-8.4/Percona-Server-${percona84_ver}/binary/tarball
+        elif [ "${dbinstallmethod}" == '2' ]; then
+          echo "Download Percona 8.4 source package..."
+          FILE_NAME=percona-server-${percona84_ver}.tar.gz
+          if [ "${OUTIP_STATE}"x == "China"x ]; then
+            DOWN_ADDR_PERCONA=${mirror_link}/src
+          else
+            DOWN_ADDR_PERCONA=https://downloads.percona.com/downloads/Percona-Server-8.4/Percona-Server-${percona84_ver}/source/tarball
+          fi
+        fi
+        # start download
+        src_url=${DOWN_ADDR_PERCONA}/${FILE_NAME} && Download_src
+        src_url=${mirror_link}/src/${FILE_NAME}.md5sum && Download_src
+        # verifying download
+        PERCONA_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5sum)
+        [ -z "${PERCONA_TAR_MD5}" ] && PERCONA_TAR_MD5=$(curl -s ${mirror_link}/src/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}')
+        tryDlCount=0
+        while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${PERCONA_TAR_MD5}" ]; do
+          wget -c --no-check-certificate ${DOWN_ADDR_PERCONA}/${FILE_NAME}; sleep 1
+          let "tryDlCount++"
+          [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${PERCONA_TAR_MD5}" -o "${tryDlCount}" == '6' ] && break || continue
+        done
+        if [ "${tryDlCount}" == '6' ]; then
+          echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
+          kill -9 $$; exit 1;
+        fi
+        ;;
+      10)
         # Percona 8.0
         if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download Percona 8.0 binary package..."
-          FILE_NAME=Percona-Server-${percona80_ver}-Linux.x86_64.glibc2.17.tar.gz
+          FILE_NAME=Percona-Server-${percona80_ver}-Linux.x86_64.glibc2.35.tar.gz
           DOWN_ADDR_PERCONA=https://downloads.percona.com/downloads/Percona-Server-8.0/Percona-Server-${percona80_ver}/binary/tarball
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download Percona 8.0 source package..."
@@ -293,11 +325,11 @@ checkDownload() {
           kill -9 $$; exit 1;
         fi
         ;;
-      10)
+      11)
         # Precona 5.7
         if [ "${dbinstallmethod}" == '1' ]; then
           echo "Download Percona 5.7 binary package..."
-          FILE_NAME=Percona-Server-${percona57_ver}-Linux.x86_64.glibc2.17.tar.gz
+          FILE_NAME=Percona-Server-${percona57_ver}-Linux.x86_64.glibc2.35.tar.gz
           DOWN_ADDR_PERCONA=https://downloads.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_ver}/binary/tarball
         elif [ "${dbinstallmethod}" == '2' ]; then
           echo "Download Percona 5.7 source package..."
@@ -306,39 +338,6 @@ checkDownload() {
             DOWN_ADDR_PERCONA=${mirror_link}/src
           else
             DOWN_ADDR_PERCONA=https://downloads.percona.com/downloads/Percona-Server-5.7/Percona-Server-${percona57_ver}/source/tarball
-          fi
-        fi
-        # start download
-        src_url=${DOWN_ADDR_PERCONA}/${FILE_NAME} && Download_src
-        src_url=${mirror_link}/src/${FILE_NAME}.md5sum && Download_src
-        # verifying download
-        PERCONA_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5sum)
-        [ -z "${PERCONA_TAR_MD5}" ] && PERCONA_TAR_MD5=$(curl -s ${mirror_link}/src/${FILE_NAME}.md5sum | grep ${FILE_NAME} | awk '{print $1}')
-        tryDlCount=0
-        while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${PERCONA_TAR_MD5}" ]; do
-          wget -c --no-check-certificate ${DOWN_ADDR_PERCONA}/${FILE_NAME}; sleep 1
-          let "tryDlCount++"
-          [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${PERCONA_TAR_MD5}" -o "${tryDlCount}" == '6' ] && break || continue
-        done
-        if [ "${tryDlCount}" == '6' ]; then
-          echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
-          kill -9 $$; exit 1;
-        fi
-        ;;
-      11)
-        # Precona 5.6
-        if [ "${dbinstallmethod}" == '1' ]; then
-          echo "Download Percona 5.6 binary package..."
-          perconaVerStr1=$(echo ${percona56_ver} | sed "s@-@-rel@")
-          FILE_NAME=Percona-Server-${perconaVerStr1}-Linux.x86_64.${sslLibVer}.tar.gz
-          DOWN_ADDR_PERCONA=https://downloads.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_ver}/binary/tarball
-        elif [ "${dbinstallmethod}" == '2' ]; then
-          echo "Download Percona 5.6 source package..."
-          FILE_NAME=percona-server-${percona56_ver}.tar.gz
-          if [ "${OUTIP_STATE}"x == "China"x ]; then
-            DOWN_ADDR_PERCONA=${mirror_link}/src
-          else
-            DOWN_ADDR_PERCONA=https://downloads.percona.com/downloads/Percona-Server-5.6/Percona-Server-${percona56_ver}/source/tarball
           fi
         fi
         # start download

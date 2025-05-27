@@ -1,11 +1,11 @@
 # newest software version
 # Web
-nginx_ver=1.26.3
+nginx_ver=1.28.0
 tengine_ver=3.1.0
 openresty_ver=1.27.1.1
 openssl_ver=3.4.1
 
-tomcat10_ver=10.1.39
+tomcat10_ver=10.1.41
 tomcat9_ver=9.0.102
 tomcat8_ver=8.5.100
 tomcat7_ver=7.0.109
@@ -17,19 +17,19 @@ apr_util_ver=1.6.3
 nghttp2_ver=1.42.0
 
 # DB
-mysql80_ver=8.0.41
+mysql84_ver=8.4.5
+mysql80_ver=8.0.42
 mysql57_ver=5.7.44
-mysql56_ver=5.6.51
 mysql55_ver=5.5.62
 
-mariadb1011_ver=10.11.11
-mariadb105_ver=10.5.28
-mariadb104_ver=10.4.34
+mariadb114_ver=11.4.7
+mariadb1011_ver=10.11.13
+mariadb105_ver=10.5.29
 mariadb55_ver=5.5.68
 
-percona80_ver=8.0.40-31
+percona84_ver=8.4.4-4
+percona80_ver=8.0.42-33
 percona57_ver=5.7.44-48
-percona56_ver=5.6.51-91.0
 percona55_ver=5.5.62-38.14
 
 pgsql_ver=12.7
@@ -49,8 +49,8 @@ php74_ver=7.4.33
 php80_ver=8.0.30
 php81_ver=8.1.32
 php82_ver=8.2.28
-php83_ver=8.3.19
-php84_ver=8.4.5
+php83_ver=8.3.21
+php84_ver=8.4.7
 
 # Nodejs
 nodejs_ver=20.17.0
@@ -66,7 +66,7 @@ libsodium_ver=1.0.20
 libzip_ver=1.2.0
 argon2_ver=20171227
 binutils_ver=2.42
-imagemagick_ver=7.1.1-46
+imagemagick_ver=7.1.1-47
 imagick_ver=3.7.0
 graphicsmagick_ver=1.3.40
 gmagick_ver=2.0.6RC1

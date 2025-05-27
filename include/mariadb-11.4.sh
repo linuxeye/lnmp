@@ -2,32 +2,34 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://linuxeye.com
 
-Install_Percona56() {
+Install_MariaDB114() {
   pushd ${current_dir}/src > /dev/null
   id -u mysql >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin mysql
 
-  [ ! -d "${percona_install_dir}" ] && mkdir -p ${percona_install_dir}
-  mkdir -p ${percona_data_dir};chown mysql:mysql -R ${percona_data_dir}
+  [ ! -d "${mariadb_install_dir}" ] && mkdir -p ${mariadb_install_dir}
+  mkdir -p ${mariadb_data_dir};chown mysql:mysql -R ${mariadb_data_dir}
 
   if [ "${dbinstallmethod}" == "1" ]; then
-    perconaVerStr1=$(echo ${percona56_ver} | sed "s@-@-rel@")
-    tar xzf ./Percona-Server-${perconaVerStr1}-Linux.x86_64.${sslLibVer}.tar.gz
-    mv Percona-Server-${perconaVerStr1}-Linux.x86_64.${sslLibVer}/* ${percona_install_dir}
-    sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${percona_install_dir}/bin/mysqld_safe
-    sed -i "s@/usr/local/Percona-Server-${perconaVerStr1}-Linux.x86_64.${sslLibVer}@${percona_install_dir}@g" ${percona_install_dir}/bin/mysqld_safe
+    tar zxf mariadb-${mariadb114_ver}-linux-systemd-x86_64.tar.gz
+    mv mariadb-${mariadb114_ver}-linux-systemd-x86_64/* ${mariadb_install_dir}
+    sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mariadb_install_dir}/bin/mysqld_safe
+    sed -i "s@/usr/local/mysql@${mariadb_install_dir}@g" ${mariadb_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then
-    tar xzf percona-server-${percona56_ver}.tar.gz
-    pushd percona-server-${percona56_ver}
-    cmake . -DCMAKE_INSTALL_PREFIX=${percona_install_dir} \
-    -DMYSQL_DATADIR=${percona_data_dir} \
+    boostVersion2=$(echo ${boost_oldver} | awk -F. '{print $1"_"$2"_"$3}')
+    tar xzf boost_${boostVersion2}.tar.gz
+    tar xzf mariadb-${mariadb114_ver}.tar.gz
+    pushd mariadb-${mariadb114_ver}
+    cmake . -DCMAKE_INSTALL_PREFIX=${mariadb_install_dir} \
+    -DMYSQL_DATADIR=${mariadb_data_dir} \
+    -DDOWNLOAD_BOOST=1 \
+    -DWITH_BOOST=../boost_${boostVersion2} \
     -DSYSCONFDIR=/etc \
     -DWITH_INNOBASE_STORAGE_ENGINE=1 \
     -DWITH_PARTITION_STORAGE_ENGINE=1 \
     -DWITH_FEDERATED_STORAGE_ENGINE=1 \
     -DWITH_BLACKHOLE_STORAGE_ENGINE=1 \
     -DWITH_MYISAM_STORAGE_ENGINE=1 \
-    -DWITH_ARCHIVE_STORAGE_ENGINE=1 \
     -DWITH_EMBEDDED_SERVER=1 \
     -DENABLE_DTRACE=0 \
     -DENABLED_LOCAL_INFILE=1 \
@@ -40,23 +42,23 @@ Install_Percona56() {
     popd
   fi
 
-  if [ -d "${percona_install_dir}/support-files" ]; then
+  if [ -d "${mariadb_install_dir}/support-files" ]; then
     sed -i "s+^dbrootpwd.*+dbrootpwd='${dbrootpwd}'+" ../options.conf
-    echo "${CSUCCESS}Percona installed successfully! ${CEND}"
+    echo "${CSUCCESS}MariaDB installed successfully! ${CEND}"
     if [ "${dbinstallmethod}" == "1" ]; then
-      rm -rf Percona-Server-${perconaVerStr1}-Linux.x86_64.${sslLibVer}
+      rm -rf mariadb-${mariadb114_ver}-linux-systemd-x86_64
     elif [ "${dbinstallmethod}" == "2" ]; then
-      rm -rf percona-server-${percona56_ver}
+      rm -rf mariadb-${mariadb114_ver} boost_${boostVersion2}
     fi
   else
-    rm -rf ${percona_install_dir}
-    echo "${CFAILURE}Percona install failed, Please contact the author! ${CEND}" && grep -Ew 'NAME|ID|ID_LIKE|VERSION_ID|PRETTY_NAME' /etc/os-release
+    rm -rf ${mariadb_install_dir}
+    echo "${CFAILURE}MariaDB install failed, Please contact the author! ${CEND}" && grep -Ew 'NAME|ID|ID_LIKE|VERSION_ID|PRETTY_NAME' /etc/os-release
     kill -9 $$; exit 1;
   fi
 
-  /bin/cp ${percona_install_dir}/support-files/mysql.server /etc/init.d/mysqld
-  sed -i "s@^basedir=.*@basedir=${percona_install_dir}@" /etc/init.d/mysqld
-  sed -i "s@^datadir=.*@datadir=${percona_data_dir}@" /etc/init.d/mysqld
+  /bin/cp ${mariadb_install_dir}/support-files/mysql.server /etc/init.d/mysqld
+  sed -i "s@^basedir=.*@basedir=${mariadb_install_dir}@" /etc/init.d/mysqld
+  sed -i "s@^datadir=.*@datadir=${mariadb_data_dir}@" /etc/init.d/mysqld
   chmod +x /etc/init.d/mysqld
   [ "${PM}" == 'yum' ] && { chkconfig --add mysqld; chkconfig mysqld on; }
   [ "${PM}" == 'apt-get' ] && update-rc.d mysqld defaults
@@ -67,18 +69,15 @@ Install_Percona56() {
 [client]
 port = 3306
 socket = /tmp/mysql.sock
-
-[mysql]
-prompt="Percona [\\d]> "
-no-auto-rehash
+default-character-set = utf8mb4
 
 [mysqld]
 port = 3306
 socket = /tmp/mysql.sock
 
-basedir = ${percona_install_dir}
-datadir = ${percona_data_dir}
-pid-file = ${percona_data_dir}/mysql.pid
+basedir = ${mariadb_install_dir}
+datadir = ${mariadb_data_dir}
+pid-file = ${mariadb_data_dir}/mysql.pid
 user = mysql
 bind-address = 0.0.0.0
 server-id = 1
@@ -117,13 +116,12 @@ log_bin = mysql-bin
 binlog_format = mixed
 expire_logs_days = 7
 
-log_error = ${percona_data_dir}/mysql-error.log
+log_error = ${mariadb_data_dir}/mysql-error.log
 slow_query_log = 1
 long_query_time = 1
-slow_query_log_file = ${percona_data_dir}/mysql-slow.log
+slow_query_log_file = ${mariadb_data_dir}/mysql-slow.log
 
 performance_schema = 0
-explicit_defaults_for_timestamp
 
 #lower_case_table_names = 1
 
@@ -135,19 +133,16 @@ innodb_open_files = 500
 innodb_buffer_pool_size = 64M
 innodb_write_io_threads = 4
 innodb_read_io_threads = 4
-innodb_thread_concurrency = 0
 innodb_purge_threads = 1
 innodb_flush_log_at_trx_commit = 2
 innodb_log_buffer_size = 2M
 innodb_log_file_size = 32M
-innodb_log_files_in_group = 3
 innodb_max_dirty_pages_pct = 90
 innodb_lock_wait_timeout = 120
 
 bulk_insert_buffer_size = 8M
 myisam_sort_buffer_size = 8M
 myisam_max_sort_file_size = 10G
-myisam_repair_threads = 1
 
 interactive_timeout = 28800
 wait_timeout = 28800
@@ -190,25 +185,25 @@ EOF
     sed -i 's@^table_open_cache.*@table_open_cache = 1024@' /etc/my.cnf
   fi
 
-  ${percona_install_dir}/scripts/mysql_install_db --user=mysql --basedir=${percona_install_dir} --datadir=${percona_data_dir}
+  ${mariadb_install_dir}/scripts/mysql_install_db --user=mysql --basedir=${mariadb_install_dir} --datadir=${mariadb_data_dir}
 
   [ "${Wsl}" == true ] && chmod 600 /etc/my.cnf
-  chown mysql:mysql -R ${percona_data_dir}
+  chown mysql:mysql -R ${mariadb_data_dir}
   [ -d "/etc/mysql" ] && /bin/mv /etc/mysql{,_bk}
   service mysqld start
-  [ -z "$(grep ^'export PATH=' /etc/profile)" ] && echo "export PATH=${percona_install_dir}/bin:\$PATH" >> /etc/profile
-  [ -n "$(grep ^'export PATH=' /etc/profile)" -a -z "$(grep ${percona_install_dir} /etc/profile)" ] && sed -i "s@^export PATH=\(.*\)@export PATH=${percona_install_dir}/bin:\1@" /etc/profile
+  [ -z "$(grep ^'export PATH=' /etc/profile)" ] && echo "export PATH=${mariadb_install_dir}/bin:\$PATH" >> /etc/profile
+  [ -n "$(grep ^'export PATH=' /etc/profile)" -a -z "$(grep ${mariadb_install_dir} /etc/profile)" ] && sed -i "s@^export PATH=\(.*\)@export PATH=${mariadb_install_dir}/bin:\1@" /etc/profile
   . /etc/profile
 
-  ${percona_install_dir}/bin/mysql -e "grant all privileges on *.* to root@'127.0.0.1' identified by \"${dbrootpwd}\" with grant option;"
-  ${percona_install_dir}/bin/mysql -e "grant all privileges on *.* to root@'localhost' identified by \"${dbrootpwd}\" with grant option;"
-  ${percona_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "delete from mysql.user where Password='' and User not like 'mysql.%';"
-  ${percona_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "delete from mysql.db where User='';"
-  ${percona_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "delete from mysql.proxies_priv where Host!='localhost';"
-  ${percona_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "drop database test;"
-  ${percona_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "reset master;"
+  ${mariadb_install_dir}/bin/mariadb -e "grant all privileges on *.* to root@'127.0.0.1' identified by \"${dbrootpwd}\" with grant option;"
+  ${mariadb_install_dir}/bin/mariadb -e "grant all privileges on *.* to root@'localhost' identified by \"${dbrootpwd}\" with grant option;"
+  ${mariadb_install_dir}/bin/mariadb -uroot -p${dbrootpwd} -e "delete from mysql.user where Password='' and User not like 'mariadb.%';"
+  ${mariadb_install_dir}/bin/mariadb -uroot -p${dbrootpwd} -e "delete from mysql.db where User='';"
+  ${mariadb_install_dir}/bin/mariadb -uroot -p${dbrootpwd} -e "delete from mysql.proxies_priv where Host!='localhost';"
+  ${mariadb_install_dir}/bin/mariadb -uroot -p${dbrootpwd} -e "drop database test;"
+  ${mariadb_install_dir}/bin/mariadb -uroot -p${dbrootpwd} -e "reset master;"
   rm -rf /etc/ld.so.conf.d/{mysql,mariadb,percona}*.conf
-  echo "${percona_install_dir}/lib" > /etc/ld.so.conf.d/z-percona.conf
+  echo "${mariadb_install_dir}/lib" > /etc/ld.so.conf.d/z-mariadb.conf
   ldconfig
   service mysqld stop
 }

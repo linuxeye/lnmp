@@ -94,7 +94,7 @@ Reset_force_dbrootpwd() {
   while [ -z "`ps -ef | grep 'mysqld ' | grep -v grep | awk '{print $2}'`" ]; do
     sleep 1
   done
-  if echo "${DB_Ver}" | grep -Eqi '^8.0.|^5.7.|^10.[4-5].|^10.11.'; then
+  if echo "${DB_Ver}" | grep -Eqi '^8.4.|^8.0.|^5.7.|^10.[4-5].|^11.4.|^10.11.'; then
     ${db_install_dir}/bin/mysql -uroot -hlocalhost << EOF
 flush privileges;
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY "${New_dbrootpwd}";

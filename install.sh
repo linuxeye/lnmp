@@ -404,17 +404,17 @@ if [ ${ARG_NUM} == 0 ]; then
       if [ "${db_flag}" == 'y' ]; then
         while :; do echo
           echo 'Please select a version of the Database:'
-          echo -e "\t${CMSG} 1${CEND}. Install MySQL-8.0"
-          echo -e "\t${CMSG} 2${CEND}. Install MySQL-5.7"
-          echo -e "\t${CMSG} 3${CEND}. Install MySQL-5.6"
+          echo -e "\t${CMSG} 1${CEND}. Install MySQL-8.4"
+          echo -e "\t${CMSG} 2${CEND}. Install MySQL-8.0"
+          echo -e "\t${CMSG} 3${CEND}. Install MySQL-5.7"
           echo -e "\t${CMSG} 4${CEND}. Install MySQL-5.5"
-          echo -e "\t${CMSG} 5${CEND}. Install MariaDB-10.11"
-          echo -e "\t${CMSG} 6${CEND}. Install MariaDB-10.5"
-          echo -e "\t${CMSG} 7${CEND}. Install MariaDB-10.4"
+          echo -e "\t${CMSG} 5${CEND}. Install MariaDB-11.4"
+          echo -e "\t${CMSG} 6${CEND}. Install MariaDB-10.11"
+          echo -e "\t${CMSG} 7${CEND}. Install MariaDB-10.5"
           echo -e "\t${CMSG} 8${CEND}. Install MariaDB-5.5"
-          echo -e "\t${CMSG} 9${CEND}. Install Percona-8.0"
-          echo -e "\t${CMSG}10${CEND}. Install Percona-5.7"
-          echo -e "\t${CMSG}11${CEND}. Install Percona-5.6"
+          echo -e "\t${CMSG} 9${CEND}. Install Percona-8.4"
+          echo -e "\t${CMSG}10${CEND}. Install Percona-8.0"
+          echo -e "\t${CMSG}11${CEND}. Install Percona-5.7"
           echo -e "\t${CMSG}12${CEND}. Install Percona-5.5"
           echo -e "\t${CMSG}13${CEND}. Install PostgreSQL"
           echo -e "\t${CMSG}14${CEND}. Install MongoDB"
@@ -796,32 +796,32 @@ fi
 # Database
 case "${db_option}" in
   1)
+    . include/mysql-8.4.sh
+    Install_MySQL84 2>&1 | tee -a ${current_dir}/install.log
+    ;;
+  2)
     . include/mysql-8.0.sh
     Install_MySQL80 2>&1 | tee -a ${current_dir}/install.log
     ;;
-  2)
+  3)
     . include/mysql-5.7.sh
     Install_MySQL57 2>&1 | tee -a ${current_dir}/install.log
-    ;;
-  3)
-    . include/mysql-5.6.sh
-    Install_MySQL56 2>&1 | tee -a ${current_dir}/install.log
     ;;
   4)
     . include/mysql-5.5.sh
     Install_MySQL55 2>&1 | tee -a ${current_dir}/install.log
     ;;
   5)
+    . include/mariadb-11.4.sh
+    Install_MariaDB114 2>&1 | tee -a ${current_dir}/install.log
+    ;;
+  6)
     . include/mariadb-10.11.sh
     Install_MariaDB1011 2>&1 | tee -a ${current_dir}/install.log
     ;;
-  6)
+  7)
     . include/mariadb-10.5.sh
     Install_MariaDB105 2>&1 | tee -a ${current_dir}/install.log
-    ;;
-  7)
-    . include/mariadb-10.4.sh
-    Install_MariaDB104 2>&1 | tee -a ${current_dir}/install.log
     ;;
   8)
     . include/mariadb-5.5.sh
@@ -829,16 +829,17 @@ case "${db_option}" in
     ;;
   9)
     [ "${Family}" == 'rhel' ] && [ "${RHEL_ver}" == '8' ] && dbinstallmethod=2 && checkDownload
+    . include/percona-8.4.sh
+    Install_Percona84 2>&1 | tee -a ${current_dir}/install.log
+    ;;
+  10)
+    [ "${Family}" == 'rhel' ] && [ "${RHEL_ver}" == '8' ] && dbinstallmethod=2 && checkDownload
     . include/percona-8.0.sh
     Install_Percona80 2>&1 | tee -a ${current_dir}/install.log
     ;;
-  10)
+  11)
     . include/percona-5.7.sh
     Install_Percona57 2>&1 | tee -a ${current_dir}/install.log
-    ;;
-  11)
-    . include/percona-5.6.sh
-    Install_Percona56 2>&1 | tee -a ${current_dir}/install.log
     ;;
   12)
     . include/percona-5.5.sh

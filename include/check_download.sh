@@ -211,13 +211,13 @@ checkDownload() {
       [5-8])
 	case "${db_option}" in
           5)
-            mariadb_ver=${mariadb114_ver}
+            mariadb_ver=${mariadb118_ver}
 	    ;;
           6)
-            mariadb_ver=${mariadb1011_ver}
+            mariadb_ver=${mariadb114_ver}
 	    ;;
           7)
-            mariadb_ver=${mariadb105_ver}
+            mariadb_ver=${mariadb1011_ver}
 	    ;;
           8)
             mariadb_ver=${mariadb55_ver}

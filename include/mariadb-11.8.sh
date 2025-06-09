@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://linuxeye.com
 
-Install_MariaDB105() {
+Install_MariaDB118() {
   pushd ${current_dir}/src > /dev/null
   id -u mysql >/dev/null 2>&1
   [ $? -ne 0 ] && useradd -M -s /sbin/nologin mysql
@@ -11,15 +11,15 @@ Install_MariaDB105() {
   mkdir -p ${mariadb_data_dir};chown mysql:mysql -R ${mariadb_data_dir}
 
   if [ "${dbinstallmethod}" == "1" ]; then
-    tar zxf mariadb-${mariadb105_ver}-linux-systemd-x86_64.tar.gz
-    mv mariadb-${mariadb105_ver}-linux-systemd-x86_64/* ${mariadb_install_dir}
+    tar zxf mariadb-${mariadb118_ver}-linux-systemd-x86_64.tar.gz
+    mv mariadb-${mariadb118_ver}-linux-systemd-x86_64/* ${mariadb_install_dir}
     sed -i 's@executing mysqld_safe@executing mysqld_safe\nexport LD_PRELOAD=/usr/local/lib/libjemalloc.so@' ${mariadb_install_dir}/bin/mysqld_safe
     sed -i "s@/usr/local/mysql@${mariadb_install_dir}@g" ${mariadb_install_dir}/bin/mysqld_safe
   elif [ "${dbinstallmethod}" == "2" ]; then
     boostVersion2=$(echo ${boost_oldver} | awk -F. '{print $1"_"$2"_"$3}')
     tar xzf boost_${boostVersion2}.tar.gz
-    tar xzf mariadb-${mariadb105_ver}.tar.gz
-    pushd mariadb-${mariadb105_ver}
+    tar xzf mariadb-${mariadb118_ver}.tar.gz
+    pushd mariadb-${mariadb118_ver}
     cmake . -DCMAKE_INSTALL_PREFIX=${mariadb_install_dir} \
     -DMYSQL_DATADIR=${mariadb_data_dir} \
     -DDOWNLOAD_BOOST=1 \
@@ -46,9 +46,9 @@ Install_MariaDB105() {
     sed -i "s+^dbrootpwd.*+dbrootpwd='${dbrootpwd}'+" ../options.conf
     echo "${CSUCCESS}MariaDB installed successfully! ${CEND}"
     if [ "${dbinstallmethod}" == "1" ]; then
-      rm -rf mariadb-${mariadb105_ver}-linux-systemd-x86_64
+      rm -rf mariadb-${mariadb118_ver}-linux-systemd-x86_64
     elif [ "${dbinstallmethod}" == "2" ]; then
-      rm -rf mariadb-${mariadb105_ver} boost_${boostVersion2}
+      rm -rf mariadb-${mariadb118_ver} boost_${boostVersion2}
     fi
   else
     rm -rf ${mariadb_install_dir}
@@ -195,13 +195,13 @@ EOF
   [ -n "$(grep ^'export PATH=' /etc/profile)" -a -z "$(grep ${mariadb_install_dir} /etc/profile)" ] && sed -i "s@^export PATH=\(.*\)@export PATH=${mariadb_install_dir}/bin:\1@" /etc/profile
   . /etc/profile
 
-  ${mariadb_install_dir}/bin/mysql -e "grant all privileges on *.* to root@'127.0.0.1' identified by \"${dbrootpwd}\" with grant option;"
-  ${mariadb_install_dir}/bin/mysql -e "grant all privileges on *.* to root@'localhost' identified by \"${dbrootpwd}\" with grant option;"
-  ${mariadb_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "delete from mysql.user where Password='' and User not like 'mariadb.%';"
-  ${mariadb_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "delete from mysql.db where User='';"
-  ${mariadb_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "delete from mysql.proxies_priv where Host!='localhost';"
-  ${mariadb_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "drop database test;"
-  ${mariadb_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "reset master;"
+  ${mariadb_install_dir}/bin/mariadb -e "grant all privileges on *.* to root@'127.0.0.1' identified by \"${dbrootpwd}\" with grant option;"
+  ${mariadb_install_dir}/bin/mariadb -e "grant all privileges on *.* to root@'localhost' identified by \"${dbrootpwd}\" with grant option;"
+  ${mariadb_install_dir}/bin/mariadb -uroot -p${dbrootpwd} -e "delete from mysql.user where Password='' and User not like 'mariadb.%';"
+  ${mariadb_install_dir}/bin/mariadb -uroot -p${dbrootpwd} -e "delete from mysql.db where User='';"
+  ${mariadb_install_dir}/bin/mariadb -uroot -p${dbrootpwd} -e "delete from mysql.proxies_priv where Host!='localhost';"
+  ${mariadb_install_dir}/bin/mariadb -uroot -p${dbrootpwd} -e "drop database test;"
+  ${mariadb_install_dir}/bin/mariadb -uroot -p${dbrootpwd} -e "reset master;"
   rm -rf /etc/ld.so.conf.d/{mysql,mariadb,percona}*.conf
   echo "${mariadb_install_dir}/lib" > /etc/ld.so.conf.d/z-mariadb.conf
   ldconfig

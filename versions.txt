@@ -22,9 +22,9 @@ mysql80_ver=8.0.42
 mysql57_ver=5.7.44
 mysql55_ver=5.5.62
 
+mariadb118_ver=11.8.2
 mariadb114_ver=11.4.7
 mariadb1011_ver=10.11.13
-mariadb105_ver=10.5.29
 mariadb55_ver=5.5.68
 
 percona84_ver=8.4.4-4

@@ -5,8 +5,8 @@ tengine_ver=3.1.0
 openresty_ver=1.27.1.1
 openssl_ver=3.4.1
 
-tomcat10_ver=10.1.41
-tomcat9_ver=9.0.102
+tomcat10_ver=10.1.42
+tomcat9_ver=9.0.106
 tomcat8_ver=8.5.100
 tomcat7_ver=7.0.109
 
@@ -49,8 +49,8 @@ php74_ver=7.4.33
 php80_ver=8.0.30
 php81_ver=8.1.32
 php82_ver=8.2.28
-php83_ver=8.3.21
-php84_ver=8.4.7
+php83_ver=8.3.22
+php84_ver=8.4.8
 
 # Nodejs
 nodejs_ver=20.17.0

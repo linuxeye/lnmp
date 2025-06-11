@@ -86,6 +86,7 @@ Install_PHP53() {
   pushd php-${php53_ver} > /dev/null
   patch -p1 < ../php5.3patch
   patch -p1 < ../debian_patches_disable_SSLv2_for_openssl_1_0_0.patch
+  patch -p1 < ../php-5.3.29-fileinfo.patch
   make clean
   [ ! -d "${php_install_dir}" ] && mkdir -p ${php_install_dir}
   { [ ${RHEL_ver} -ge 9 >/dev/null 2>&1 ] || [ ${Debian_ver} -ge 10 >/dev/null 2>&1 ] || [ ${Ubuntu_ver} -ge 19 >/dev/null 2>&1 ]; } || intl_modules_options='--enable-intl'

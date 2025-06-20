@@ -588,6 +588,8 @@ checkDownload() {
     echo "Download imagick..."
     if [[ "${php_option}" =~ ^1$ ]]; then
       src_url=https://pecl.php.net/get/imagick-3.4.4.tgz && Download_src
+    elif [[ "${php_option}" =~ ^[2-3]$ ]]; then
+      src_url=https://pecl.php.net/get/imagick-3.7.0.tgz && Download_src
     else
       src_url=https://pecl.php.net/get/imagick-${imagick_ver}.tgz && Download_src
     fi

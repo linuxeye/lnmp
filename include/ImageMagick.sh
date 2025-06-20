@@ -36,9 +36,15 @@ Install_pecl_imagick() {
     PHP_main_ver=${PHP_detail_ver%.*}
     phpExtensionDir=`${php_install_dir}/bin/php-config --extension-dir`
     if [[ "${PHP_main_ver}" =~ ^5.3$ ]]; then
+      src_url=https://pecl.php.net/get/imagick-3.4.4.tgz && Download_src
       tar xzf imagick-3.4.4.tgz
       pushd imagick-3.4.4 > /dev/null
+    elif [[ "${PHP_main_ver}" =~ ^5.[4-5]$ ]]; then
+      src_url=https://pecl.php.net/get/imagick-3.7.0.tgz && Download_src
+      tar xzf imagick-3.7.0.tgz
+      pushd imagick-3.7.0 > /dev/null
     else
+      src_url=https://pecl.php.net/get/imagick-${imagick_ver}.tgz && Download_src
       tar xzf imagick-${imagick_ver}.tgz
       pushd imagick-${imagick_ver} > /dev/null
     fi
@@ -50,7 +56,7 @@ Install_pecl_imagick() {
     if [ -f "${phpExtensionDir}/imagick.so" ]; then
       echo 'extension=imagick.so' > ${php_install_dir}/etc/php.d/03-imagick.ini
       echo "${CSUCCESS}PHP imagick module installed successfully! ${CEND}"
-      rm -rf imagick-${imagick_ver} imagick-3.4.4
+      rm -rf imagick-${imagick_ver} imagick-3.7.0 imagick-3.4.4
     else
       echo "${CFAILURE}PHP imagick module install failed, Please contact the author! ${CEND}" && grep -Ew 'NAME|ID|ID_LIKE|VERSION_ID|PRETTY_NAME' /etc/os-release
     fi

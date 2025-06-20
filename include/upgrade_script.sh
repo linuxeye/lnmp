@@ -25,11 +25,6 @@ Upgrade_Script() {
     rm -rf /tmp/{lnmp.tar.gz,options.conf}
     [ "${ois_flag}" == "n" ] && rm -f ss.sh LICENSE README.md
     sed -i "s@^script_md5=.*@script_md5=${latest_md5}@" ./options.conf
-    if [ -e "change_jdk_version.sh" ]; then
-      rm -f change_jdk_version.sh
-      wget -qc ${mirror_link}/scripts/change_jdk_version.sh
-      chmod +x change_jdk_version.sh
-    fi
     if [ -e "${php_install_dir}/sbin/php-fpm" ]; then
       [ -n "`grep ^cgi.fix_pathinfo=0 ${php_install_dir}/etc/php.ini`" ] && sed -i 's@^cgi.fix_pathinfo.*@;&@' ${php_install_dir}/etc/php.ini
       [ -e "/usr/local/php53/etc/php.ini" ] && sed -i 's@^cgi.fix_pathinfo=0@;&@' /usr/local/php53/etc/php.ini 2>/dev/null

@@ -26,6 +26,12 @@ Install_pecl_swoole() {
       pushd swoole-4.8.12 > /dev/null
       ${php_install_dir}/bin/phpize
       ./configure --with-php-config=${php_install_dir}/bin/php-config --enable-openssl --with-openssl-dir=${openssl_install_dir} --enable-http2 --enable-swoole-json --enable-swoole-curl
+    elif [[ "${PHP_main_ver}" =~ ^80]$ ]]; then
+      src_url=https://pecl.php.net/get/swoole-5.1.7.tgz && Download_src
+      tar xzf swoole-5.1.7.tgz
+      pushd swoole-5.1.7 > /dev/null
+      ${php_install_dir}/bin/phpize
+      ./configure --with-php-config=${php_install_dir}/bin/php-config --enable-openssl --with-openssl-dir=${openssl_install_dir} --enable-http2 --enable-swoole-json --enable-swoole-curl
     else
       src_url=https://pecl.php.net/get/swoole-${swoole_ver}.tgz && Download_src
       tar xzf swoole-${swoole_ver}.tgz

@@ -8,7 +8,23 @@ Install_pecl_phalcon() {
     PHP_detail_ver=$(${php_install_dir}/bin/php-config --version)
     PHP_main_ver=${PHP_detail_ver%.*}
     phpExtensionDir=$(${php_install_dir}/bin/php-config --extension-dir)
-    if [[ "${PHP_main_ver}" =~ ^7.[2-4]$|^8.3$ ]]; then
+    if [[ "${PHP_main_ver}" =~ ^5.[5-6]$|^7.[0-1]$ ]]; then
+      src_url=${mirror_link}/src/cphalcon-3.4.5.tar.gz && Download_src
+      tar xzf cphalcon-3.4.5.tar.gz
+      pushd cphalcon-3.4.5/build > /dev/null
+      echo "${CMSG}It may take a few minutes... ${CEND}"
+      ./install --phpize ${php_install_dir}/bin/phpize --php-config ${php_install_dir}/bin/php-config --arch 64bits
+      popd > /dev/null
+    elif [[ "${PHP_main_ver}" =~ ^7.[2-4]$ ]]; then
+      src_url=https://pecl.php.net/get/phalcon-5.4.0.tgz && Download_src
+      tar xzf phalcon-5.4.0tgz
+      pushd phalcon-5.4.0 > /dev/null
+      ${php_install_dir}/bin/phpize
+      echo "${CMSG}It may take a few minutes... ${CEND}"
+      ./configure --with-php-config=${php_install_dir}/bin/php-config
+      make -j ${THREAD} && make install
+      popd > /dev/null
+    elif [[ "${PHP_main_ver}" =~ ^8.[0-4]$ ]]; then
       src_url=https://pecl.php.net/get/phalcon-${phalcon_ver}.tgz && Download_src
       tar xzf phalcon-${phalcon_ver}.tgz
       pushd phalcon-${phalcon_ver} > /dev/null
@@ -16,13 +32,6 @@ Install_pecl_phalcon() {
       echo "${CMSG}It may take a few minutes... ${CEND}"
       ./configure --with-php-config=${php_install_dir}/bin/php-config
       make -j ${THREAD} && make install
-      popd > /dev/null
-    elif [[ "${PHP_main_ver}" =~ ^5.[5-6]$|^7.[0-1]$ ]]; then
-      src_url=${mirror_link}/src/cphalcon-3.4.5.tar.gz && Download_src
-      tar xzf cphalcon-3.4.5.tar.gz
-      pushd cphalcon-3.4.5/build > /dev/null
-      echo "${CMSG}It may take a few minutes... ${CEND}"
-      ./install --phpize ${php_install_dir}/bin/phpize --php-config ${php_install_dir}/bin/php-config --arch 64bits
       popd > /dev/null
     else
       echo "${CWARNING}Your php ${PHP_detail_ver} does not support phalcon! ${CEND}"

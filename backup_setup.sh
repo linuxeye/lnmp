@@ -33,10 +33,11 @@ while :; do echo
   echo -e "\t${CMSG}6${CEND}. QINIU"
   echo -e "\t${CMSG}7${CEND}. Amazon S3"
   echo -e "\t${CMSG}8${CEND}. Dropbox"
+  echo -e "\t${CMSG}9${CEND}. DigitalOcean Spaces"
   read -e -p "Please input numbers:(Default 1 press Enter) " desc_bk
   desc_bk=${desc_bk:-'1'}
   array_desc=(${desc_bk})
-  array_all=(1 2 3 4 5 6 7 8)
+  array_all=(1 2 3 4 5 6 7 8 9)
   for v in ${array_desc[@]}
   do
     [ -z "`echo ${array_all[@]} | grep -w ${v}`" ] && desc_flag=1
@@ -59,6 +60,7 @@ done
 [ -n "`echo ${desc_bk} | grep -w 6`" ] && sed -i 's@^backup_destination=.*@&,qiniu@' ./options.conf
 [ -n "`echo ${desc_bk} | grep -w 7`" ] && sed -i 's@^backup_destination=.*@&,s3@' ./options.conf
 [ -n "`echo ${desc_bk} | grep -w 8`" ] && sed -i 's@^backup_destination=.*@&,dropbox@' ./options.conf
+[ -n "`echo ${desc_bk} | grep -w 9`" ] && sed -i 's@^backup_destination=.*@&,dospace@' ./options.conf
 sed -i 's@^backup_destination=,@backup_destination=@' ./options.conf
 
 while :; do echo
@@ -159,7 +161,7 @@ if [ -n "`echo ${desc_bk} | grep -w 2`" ]; then
     [ -e "~/.ssh/known_hosts" ] && grep ${remote_address} ~/.ssh/known_hosts | sed -i "/${remote_address}/d" ~/.ssh/known_hosts
     ./tools/mssh.exp ${IPcode}P ${remote_user} ${PWcode}P ${Portcode}P true 10
     if [ $? -eq 0 ]; then
-      [ -z "`grep ${remote_address} tools/iplist.txt`" ] && echo "${remote_address} ${remote_port} ${remote_user} $remote_password" >> tools/iplist.txt || echo "${CWARNING}${remote_address} has been added! ${CEND}"
+      [ -z "`grep ${remote_address} tools/iplist.txt`" ] && echo "${remote_address} ${remote_port} ${remote_user} $remote_password" >> tools/iplist.txt || echo "${CWARNING}${remote_address} has been added!${CEND}"
       while :; do
         read -e -p "Do you want to add more host ? [y/n]: " morehost_flag
         if [[ ! ${morehost_flag} =~ ^[y,n]$ ]]; then
@@ -495,10 +497,10 @@ if [ -n "`echo ${desc_bk} | grep -w 7`" ]; then
   [ "${Location}" == '30' ] && REGION='cn-north-1'
   [ "${Location}" == '31' ] && REGION='cn-northwest-1'
   while :; do echo
-    read -e -p "Please enter the AWS Access Key: " ACCESS_KEY
+    read -e -p "Please enter the AWS Access Key ID: " ACCESS_KEY
     [ -z "${ACCESS_KEY}" ] && continue
     echo
-    read -e -p "Please enter the AWS Access Key: " SECRET_KEY
+    read -e -p "Please enter the AWS Secret Key: " SECRET_KEY
     [ -z "${SECRET_KEY}" ] && continue
     aws configure set aws_access_key_id ${ACCESS_KEY}
     aws configure set aws_secret_access_key ${SECRET_KEY}
@@ -529,6 +531,126 @@ if [ -n "`echo ${desc_bk} | grep -w 7`" ]; then
       break
     else
       echo "${CWARNING}input error! ACCESS_KEY/SECRET_KEY invalid${CEND}"
+      continue
+    fi
+  done
+fi
+
+# DigitalOcean Spaces
+# https://docs.digitalocean.com/products/spaces/how-to/use-aws-sdks/
+if [ -n "`echo ${desc_bk} | grep -w 9`" ]; then
+  # Ensure AWS CLI exists
+  if [ ! -e "/usr/local/bin/aws" ] && [ ! -e "/usr/bin/aws" ]; then
+    wget -qc https://awscli.amazonaws.com/awscli-exe-linux-$(arch).zip -O /tmp/awscliv2.zip
+    unzip /tmp/awscliv2.zip -d /tmp/
+    /tmp/aws/install
+    rm -rf /tmp/{awscliv2.zip,aws}
+  fi
+
+  while :; do echo
+    echo 'Please select your DigitalOcean Spaces region:'
+    echo -e "\t ${CMSG}1${CEND}. nyc3   (New York 3)       ${CMSG}2${CEND}. sfo2   (San Francisco 2)"
+    echo -e "\t ${CMSG}3${CEND}. sgp1   (Singapore 1)       ${CMSG}4${CEND}. fra1   (Frankfurt 1)"
+    echo -e "\t ${CMSG}5${CEND}. ams3   (Amsterdam 3)       ${CMSG}6${CEND}. sfo3   (San Francisco 3)"
+    echo -e "\t ${CMSG}7${CEND}. tor1   (Toronto 1)         ${CMSG}8${CEND}. blr1   (Bangalore 1)"
+    read -e -p "Please input a number:(Default 1 press Enter) " DOLOC
+    DOLOC=${DOLOC:-1}
+    if [[ "${DOLOC}" =~ ^[1-8]$ ]]; then
+      break
+    else
+      echo "${CWARNING}input error! Please only input number 1~8${CEND}"
+    fi
+  done
+  [ "${DOLOC}" == '1' ] && DO_REGION='nyc3'
+  [ "${DOLOC}" == '2' ] && DO_REGION='sfo2'
+  [ "${DOLOC}" == '3' ] && DO_REGION='sgp1'
+  [ "${DOLOC}" == '4' ] && DO_REGION='fra1'
+  [ "${DOLOC}" == '5' ] && DO_REGION='ams3'
+  [ "${DOLOC}" == '6' ] && DO_REGION='sfo3'
+  [ "${DOLOC}" == '7' ] && DO_REGION='tor1'
+  [ "${DOLOC}" == '8' ] && DO_REGION='blr1'
+
+  DO_ENDPOINT="https://${DO_REGION}.digitaloceanspaces.com"
+
+  while :; do echo
+    read -e -p "Please enter the DigitalOcean Spaces Access Key ID: " DO_ACCESS_KEY_ID
+    [ -z "${DO_ACCESS_KEY_ID}" ] && continue
+    echo
+    read -e -p "Please enter the DigitalOcean Spaces Access Key Secret: " DO_ACCESS_KEY_SECRET
+    [ -z "${DO_ACCESS_KEY_SECRET}" ] && continue
+
+    # Always use a dedicated profile for Spaces to avoid clobbering AWS defaults
+    aws configure set aws_access_key_id "${DO_ACCESS_KEY_ID}" --profile dospace
+    aws configure set aws_secret_access_key "${DO_ACCESS_KEY_SECRET}" --profile dospace
+    # Per DigitalOcean docs, use us-east-1 for SDK/CLI region while targeting Spaces via endpoint
+    aws configure set region "us-east-1" --profile dospace
+
+    # Verify credentials by listing with endpoint
+    aws --profile dospace --endpoint-url "${DO_ENDPOINT}" s3 ls > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+      echo "${CMSG}Access Key ID/Access Key Secret OK${CEND}"
+      while :; do echo
+        read -e -p "Please enter the DigitalOcean Spaces bucket: " DO_BUCKET
+        [ -z "${DO_BUCKET}" ] && continue
+        aws --profile dospace --endpoint-url "${DO_ENDPOINT}" s3 ls s3://${DO_BUCKET} > /dev/null 2>&1
+        if [ $? -eq 0 ]; then
+          echo "${CMSG}Bucket s3://${DO_BUCKET}/ existed on ${DO_REGION}${CEND}"
+          # Persist configs
+          if grep -q '^do_space_bucket=' ./options.conf; then
+            sed -i "s@^do_space_bucket=.*@do_space_bucket=${DO_BUCKET}@" ./options.conf
+          else
+            echo "do_space_bucket=${DO_BUCKET}" >> ./options.conf
+          fi
+          if grep -q '^do_space_endpoint=' ./options.conf; then
+            sed -i "s@^do_space_endpoint=.*@do_space_endpoint=${DO_ENDPOINT}@" ./options.conf
+          else
+            echo "do_space_endpoint=${DO_ENDPOINT}" >> ./options.conf
+          fi
+          if grep -q '^do_space_region=' ./options.conf; then
+            sed -i "s@^do_space_region=.*@do_space_region=${DO_REGION}@" ./options.conf
+          else
+            echo "do_space_region=${DO_REGION}" >> ./options.conf
+          fi
+          if grep -q '^do_space_profile=' ./options.conf; then
+            sed -i "s@^do_space_profile=.*@do_space_profile=dospace@" ./options.conf
+          else
+            echo "do_space_profile=dospace" >> ./options.conf
+          fi
+          break
+        else
+          aws --profile dospace --endpoint-url "${DO_ENDPOINT}" s3 mb s3://${DO_BUCKET} > /dev/null 2>&1
+          if [ $? -eq 0 ]; then
+            echo "${CMSG}Bucket s3://${DO_BUCKET}/ created on ${DO_REGION}${CEND}"
+            if grep -q '^do_space_bucket=' ./options.conf; then
+              sed -i "s@^do_space_bucket=.*@do_space_bucket=${DO_BUCKET}@" ./options.conf
+            else
+              echo "do_space_bucket=${DO_BUCKET}" >> ./options.conf
+            fi
+            if grep -q '^do_space_endpoint=' ./options.conf; then
+              sed -i "s@^do_space_endpoint=.*@do_space_endpoint=${DO_ENDPOINT}@" ./options.conf
+            else
+              echo "do_space_endpoint=${DO_ENDPOINT}" >> ./options.conf
+            fi
+            if grep -q '^do_space_region=' ./options.conf; then
+              sed -i "s@^do_space_region=.*@do_space_region=${DO_REGION}@" ./options.conf
+            else
+              echo "do_space_region=${DO_REGION}" >> ./options.conf
+            fi
+            if grep -q '^do_space_profile=' ./options.conf; then
+              sed -i "s@^do_space_profile=.*@do_space_profile=dospace@" ./options.conf
+            else
+              echo "do_space_profile=dospace" >> ./options.conf
+            fi
+            break
+          else
+            echo "${CWARNING}Bucket name not available on DigitalOcean Spaces. Please try a different name.${CEND}"
+            continue
+          fi
+        fi
+      done
+      break
+    else
+      echo "${CWARNING}input error! Access Key ID/Access Key Secret invalid for DigitalOcean Spaces${CEND}"
       continue
     fi
   done

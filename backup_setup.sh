@@ -536,7 +536,7 @@ if [ -n "`echo ${desc_bk} | grep -w 7`" ]; then
   done
 fi
 
-# DigitalOcean Spaces
+# DigitalOcean Spaces (S3-compatible)
 # https://docs.digitalocean.com/products/spaces/how-to/use-aws-sdks/
 if [ -n "`echo ${desc_bk} | grep -w 9`" ]; then
   # Ensure AWS CLI exists
@@ -549,29 +549,34 @@ if [ -n "`echo ${desc_bk} | grep -w 9`" ]; then
 
   while :; do echo
     echo 'Please select your DigitalOcean Spaces region:'
-    echo -e "\t ${CMSG}1${CEND}. nyc3   (New York 3)       ${CMSG}2${CEND}. sfo2   (San Francisco 2)"
-    echo -e "\t ${CMSG}3${CEND}. sgp1   (Singapore 1)       ${CMSG}4${CEND}. fra1   (Frankfurt 1)"
-    echo -e "\t ${CMSG}5${CEND}. ams3   (Amsterdam 3)       ${CMSG}6${CEND}. sfo3   (San Francisco 3)"
-    echo -e "\t ${CMSG}7${CEND}. tor1   (Toronto 1)         ${CMSG}8${CEND}. blr1   (Bangalore 1)"
+    echo -e "\t ${CMSG} 1${CEND}. nyc3   (New York 3)       ${CMSG} 2${CEND}. ams3   (Amsterdam 3)"
+    echo -e "\t ${CMSG} 3${CEND}. sfo2   (San Francisco 2)  ${CMSG} 4${CEND}. sfo3   (San Francisco 3)"
+    echo -e "\t ${CMSG} 5${CEND}. sgp1   (Singapore 1)      ${CMSG} 6${CEND}. lon1   (London 1)"
+    echo -e "\t ${CMSG} 7${CEND}. fra1   (Frankfurt 1)      ${CMSG} 8${CEND}. tor1   (Toronto 1)"
+    echo -e "\t ${CMSG} 9${CEND}. blr1   (Bangalore 1)      ${CMSG}10${CEND}. syd1   (Sydney 1)"
+    echo -e "\t ${CMSG}11${CEND}. atl1   (Atlanta 1)"
     read -e -p "Please input a number:(Default 1 press Enter) " DOLOC
     DOLOC=${DOLOC:-1}
-    if [[ "${DOLOC}" =~ ^[1-8]$ ]]; then
+    if [[ "${DOLOC}" =~ ^[1-9]$|^1[0-1]$ ]]; then
       break
     else
-      echo "${CWARNING}input error! Please only input number 1~8${CEND}"
+      echo "${CWARNING}input error! Please only input number 1~11${CEND}"
     fi
   done
   [ "${DOLOC}" == '1' ] && DO_REGION='nyc3'
-  [ "${DOLOC}" == '2' ] && DO_REGION='sfo2'
-  [ "${DOLOC}" == '3' ] && DO_REGION='sgp1'
-  [ "${DOLOC}" == '4' ] && DO_REGION='fra1'
-  [ "${DOLOC}" == '5' ] && DO_REGION='ams3'
-  [ "${DOLOC}" == '6' ] && DO_REGION='sfo3'
-  [ "${DOLOC}" == '7' ] && DO_REGION='tor1'
-  [ "${DOLOC}" == '8' ] && DO_REGION='blr1'
-
+  [ "${DOLOC}" == '2' ] && DO_REGION='ams3'
+  [ "${DOLOC}" == '3' ] && DO_REGION='sfo2'
+  [ "${DOLOC}" == '4' ] && DO_REGION='sfo3'
+  [ "${DOLOC}" == '5' ] && DO_REGION='sgp1'
+  [ "${DOLOC}" == '6' ] && DO_REGION='lon1'
+  [ "${DOLOC}" == '7' ] && DO_REGION='fra1'
+  [ "${DOLOC}" == '8' ] && DO_REGION='tor1'
+  [ "${DOLOC}" == '9' ] && DO_REGION='blr1'
+  [ "${DOLOC}" == '10' ] && DO_REGION='syd1'
+  [ "${DOLOC}" == '11' ] && DO_REGION='atl1'
   DO_ENDPOINT="https://${DO_REGION}.digitaloceanspaces.com"
 
+  # Credentials for DigitalOcean Spaces
   while :; do echo
     read -e -p "Please enter the DigitalOcean Spaces Access Key ID: " DO_ACCESS_KEY_ID
     [ -z "${DO_ACCESS_KEY_ID}" ] && continue
@@ -585,74 +590,75 @@ if [ -n "`echo ${desc_bk} | grep -w 9`" ]; then
     # Per DigitalOcean docs, use us-east-1 for SDK/CLI region while targeting Spaces via endpoint
     aws configure set region "us-east-1" --profile dospace
 
-    # Verify credentials by listing with endpoint
-    aws --profile dospace --endpoint-url "${DO_ENDPOINT}" s3 ls > /dev/null 2>&1
-    if [ $? -eq 0 ]; then
-      echo "${CMSG}Access Key ID/Access Key Secret OK${CEND}"
-      while :; do echo
-        read -e -p "Please enter the DigitalOcean Spaces bucket: " DO_BUCKET
-        [ -z "${DO_BUCKET}" ] && continue
-        aws --profile dospace --endpoint-url "${DO_ENDPOINT}" s3 ls s3://${DO_BUCKET} > /dev/null 2>&1
-        if [ $? -eq 0 ]; then
-          echo "${CMSG}Bucket s3://${DO_BUCKET}/ existed on ${DO_REGION}${CEND}"
-          # Persist configs
-          if grep -q '^do_space_bucket=' ./options.conf; then
-            sed -i "s@^do_space_bucket=.*@do_space_bucket=${DO_BUCKET}@" ./options.conf
-          else
-            echo "do_space_bucket=${DO_BUCKET}" >> ./options.conf
-          fi
-          if grep -q '^do_space_endpoint=' ./options.conf; then
-            sed -i "s@^do_space_endpoint=.*@do_space_endpoint=${DO_ENDPOINT}@" ./options.conf
-          else
-            echo "do_space_endpoint=${DO_ENDPOINT}" >> ./options.conf
-          fi
-          if grep -q '^do_space_region=' ./options.conf; then
-            sed -i "s@^do_space_region=.*@do_space_region=${DO_REGION}@" ./options.conf
-          else
-            echo "do_space_region=${DO_REGION}" >> ./options.conf
-          fi
-          if grep -q '^do_space_profile=' ./options.conf; then
-            sed -i "s@^do_space_profile=.*@do_space_profile=dospace@" ./options.conf
-          else
-            echo "do_space_profile=dospace" >> ./options.conf
-          fi
-          break
-        else
-          aws --profile dospace --endpoint-url "${DO_ENDPOINT}" s3 mb s3://${DO_BUCKET} > /dev/null 2>&1
-          if [ $? -eq 0 ]; then
-            echo "${CMSG}Bucket s3://${DO_BUCKET}/ created on ${DO_REGION}${CEND}"
-            if grep -q '^do_space_bucket=' ./options.conf; then
-              sed -i "s@^do_space_bucket=.*@do_space_bucket=${DO_BUCKET}@" ./options.conf
-            else
-              echo "do_space_bucket=${DO_BUCKET}" >> ./options.conf
-            fi
-            if grep -q '^do_space_endpoint=' ./options.conf; then
-              sed -i "s@^do_space_endpoint=.*@do_space_endpoint=${DO_ENDPOINT}@" ./options.conf
-            else
-              echo "do_space_endpoint=${DO_ENDPOINT}" >> ./options.conf
-            fi
-            if grep -q '^do_space_region=' ./options.conf; then
-              sed -i "s@^do_space_region=.*@do_space_region=${DO_REGION}@" ./options.conf
-            else
-              echo "do_space_region=${DO_REGION}" >> ./options.conf
-            fi
-            if grep -q '^do_space_profile=' ./options.conf; then
-              sed -i "s@^do_space_profile=.*@do_space_profile=dospace@" ./options.conf
-            else
-              echo "do_space_profile=dospace" >> ./options.conf
-            fi
-            break
-          else
-            echo "${CWARNING}Bucket name not available on DigitalOcean Spaces. Please try a different name.${CEND}"
-            continue
-          fi
+    # Ask for bucket first and validate on that bucket
+    while :; do echo
+      read -e -p "Please enter the DigitalOcean Spaces bucket: " DO_BUCKET
+      [ -z "${DO_BUCKET}" ] && continue
+
+      TMP_KEY=".lnmp_bk_test_$(date +%s)_$RANDOM"
+
+      # 1) Try write to bucket (test if the bucket exists)
+      echo test | aws --profile dospace --endpoint-url "${DO_ENDPOINT}" s3 cp - "s3://${DO_BUCKET}/${TMP_KEY}" > /dev/null 2>&1
+      if [ $? -ne 0 ]; then
+        # Write failed. If bucket does not exist, then create it
+        aws --profile dospace --endpoint-url "${DO_ENDPOINT}" s3 mb "s3://${DO_BUCKET}" > /dev/null 2>&1
+        if [ $? -ne 0 ]; then
+          echo "${CWARNING}Cannot access or create bucket [${DO_BUCKET}] on ${DO_REGION}. Check permissions or bucket region.${CEND}"
+          continue
         fi
-      done
+        # Re-try write after creating bucket
+        echo test | aws --profile dospace --endpoint-url "${DO_ENDPOINT}" s3 cp - "s3://${DO_BUCKET}/${TMP_KEY}" > /dev/null 2>&1
+        if [ $? -ne 0 ]; then
+          echo "${CWARNING}Write test still failed on bucket [${DO_BUCKET}]. Please verify Access Key permissions.${CEND}"
+          continue
+        fi
+      fi
+
+      # 2) Read (list specific key) test - needs ListBucket on that prefix
+      aws --profile dospace --endpoint-url "${DO_ENDPOINT}" s3 ls "s3://${DO_BUCKET}/${TMP_KEY}" > /dev/null 2>&1
+      if [ $? -ne 0 ]; then
+        echo "${CWARNING}Read/List test failed on [${DO_BUCKET}/${TMP_KEY}]. Backups may upload but pruning may fail.${CEND}"
+      fi
+
+      # 3) Delete test - needed for pruning old backups
+      aws --profile dospace --endpoint-url "${DO_ENDPOINT}" s3 rm "s3://${DO_BUCKET}/${TMP_KEY}" > /dev/null 2>&1
+      if [ $? -ne 0 ]; then
+        echo "${CWARNING}Delete test failed on [${DO_BUCKET}]. You won't be able to prune old backups.${CEND}"
+        continue
+      fi
+
+      # Optional: check listing on bucket root;
+      aws --profile dospace --endpoint-url "${DO_ENDPOINT}" s3 ls "s3://${DO_BUCKET}/" > /dev/null 2>&1
+      if [ $? -ne 0 ]; then
+        echo "${CWARNING}List permission on bucket root seems missing; pruning old backups (rm -r) may fail. Consider granting ListBucket.${CEND}"
+      fi
+
+      # Persist configs
+      if grep -q '^do_space_bucket=' ./options.conf; then
+        sed -i "s@^do_space_bucket=.*@do_space_bucket=${DO_BUCKET}@" ./options.conf
+      else
+        echo "do_space_bucket=${DO_BUCKET}" >> ./options.conf
+      fi
+      if grep -q '^do_space_endpoint=' ./options.conf; then
+        sed -i "s@^do_space_endpoint=.*@do_space_endpoint=${DO_ENDPOINT}@" ./options.conf
+      else
+        echo "do_space_endpoint=${DO_ENDPOINT}" >> ./options.conf
+      fi
+      if grep -q '^do_space_region=' ./options.conf; then
+        sed -i "s@^do_space_region=.*@do_space_region=${DO_REGION}@" ./options.conf
+      else
+        echo "do_space_region=${DO_REGION}" >> ./options.conf
+      fi
+      if grep -q '^do_space_profile=' ./options.conf; then
+        sed -i "s@^do_space_profile=.*@do_space_profile=dospace@" ./options.conf
+      else
+        echo "do_space_profile=dospace" >> ./options.conf
+      fi
+
+      echo "${CMSG}Bucket s3://${DO_BUCKET}/ on ${DO_REGION} is ready (write/read/delete verified).${CEND}"
       break
-    else
-      echo "${CWARNING}input error! Access Key ID/Access Key Secret invalid for DigitalOcean Spaces${CEND}"
-      continue
-    fi
+    done
+    break
   done
 fi
 

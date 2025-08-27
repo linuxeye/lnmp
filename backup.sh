@@ -104,6 +104,25 @@ DB_S3_BK() {
   done
 }
 
+# DigitalOcean Spaces (S3-compatible, cp mode)
+DB_DOSPACE_BK() {
+  local PROFILE ENDPOINT BUCKET
+  PROFILE="${do_space_profile:-dospace}"
+  ENDPOINT="${do_space_endpoint}"
+  BUCKET="${do_space_bucket}"
+  for D in `echo ${db_name} | tr ',' ' '`
+  do
+    ./db_bk.sh ${D}
+    DB_GREP="DB_${D}_\`date +%Y%m%d\`"
+    DB_FILE=\`ls -lrt \${backup_dir} | grep \${DB_GREP} | tail -1 | awk '{print \$NF}'\`
+    aws --profile "\${PROFILE}" --endpoint-url "\${ENDPOINT}" s3 cp "\${backup_dir}/\${DB_FILE}" "s3://\${BUCKET}/\`date +%F\`/\${DB_FILE}"
+    if [ \$? -eq 0 ]; then
+      aws --profile "\${PROFILE}" --endpoint-url "\${ENDPOINT}" s3 rm -r "s3://\${BUCKET}/\`date +%F --date=\"\${expired_days} days ago\"\`" > /dev/null 2>&1
+      [ -z "\`echo \${backup_destination} | grep -ow 'local'\`" ] && rm -f "\${backup_dir}/\${DB_FILE}"
+    fi
+  done
+}
+
 DB_DROPBOX_BK() {
   for D in `echo ${db_name} | tr ',' ' '`
   do
@@ -235,6 +254,29 @@ WEB_S3_BK() {
   done
 }
 
+WEB_DOSPACE_BK() {
+  local PROFILE ENDPOINT BUCKET
+  PROFILE="${do_space_profile:-dospace}"
+  ENDPOINT="${do_space_endpoint}"
+  BUCKET="${do_space_bucket}"
+  for W in `echo ${website_name} | tr ',' ' '`
+  do
+    [ ! -e "${wwwroot_dir}/${WebSite}" ] && { echo "[${wwwroot_dir}/${WebSite}] not exist"; break; }
+    [ ! -e "${backup_dir}" ] && mkdir -p "${backup_dir}"
+    PUSH_FILE="${backup_dir}/Web_${W}_$(date +%Y%m%d_%H).tgz"
+    if [ ! -e "${PUSH_FILE}" ]; then
+      pushd "${wwwroot_dir}" > /dev/null
+      tar czf "${PUSH_FILE}" ./"$W"
+      popd > /dev/null
+    fi
+    aws --profile "${PROFILE}" --endpoint-url "${ENDPOINT}" s3 cp "${PUSH_FILE}" "s3://${BUCKET}/`date +%F`/${PUSH_FILE##*/}"
+    if [ $? -eq 0 ]; then
+      aws --profile "${PROFILE}" --endpoint-url "${ENDPOINT}" s3 rm -r "s3://${BUCKET}/`date +%F --date="${expired_days} days ago"`" > /dev/null 2>&1
+      [ -z "`echo ${backup_destination} | grep -ow 'local'`" ] && rm -f "${PUSH_FILE}"
+    fi
+  done
+}
+
 WEB_DROPBOX_BK() {
   for W in `echo ${website_name} | tr ',' ' '`
   do
@@ -285,6 +327,10 @@ do
   if [ "${DEST}" == 's3' ]; then
     [ -n "`echo ${backup_content} | grep -ow db`" ] && DB_S3_BK
     [ -n "`echo ${backup_content} | grep -ow web`" ] && WEB_S3_BK
+  fi
+  if [ "${DEST}" == 'dospace' ]; then
+    [ -n "`echo ${backup_content} | grep -ow db`" ] && DB_DOSPACE_BK
+    [ -n "`echo ${backup_content} | grep -ow web`" ] && WEB_DOSPACE_BK
   fi
   if [ "${DEST}" == 'dropbox' ]; then
     [ -n "`echo ${backup_content} | grep -ow db`" ] && DB_DROPBOX_BK

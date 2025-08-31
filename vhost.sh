@@ -1050,8 +1050,30 @@ EOF
   Print_SSL
 }
 
+
+Prompt_Proxy_Mode() {
+  while :; do echo
+    echo "Please choose site mode:"
+    echo -e "	${CMSG}1${CEND}. Website Mode (default)"
+    echo -e "	${CMSG}2${CEND}. Reverse Proxy Mode"
+    read -e -p "Please input a number:(Default 1 press Enter) " PROXY_MODE_OPT
+    PROXY_MODE_OPT=${PROXY_MODE_OPT:-1}
+    if [[ ! ${PROXY_MODE_OPT} =~ ^[1-2]$ ]]; then
+      echo "${CWARNING}input error! Please only input number 1~2${CEND}"
+    else
+      break
+    fi
+  done
+  [ "${PROXY_MODE_OPT}" == '2' ] && proxy_flag='y'
+}
+
 Add_Vhost() {
-  if [ -e "${web_install_dir}/sbin/nginx" -a ! -e "${apache_install_dir}/bin/httpd" ]; then
+  
+  # --- Interactive: Website vs Proxy ---
+  if [ "${ARG_NUM}" = "0" ] && [[ -z ${proxy_flag} || "${proxy_flag}" != 'y' ]]; then
+    Prompt_Proxy_Mode
+  fi
+if [ -e "${web_install_dir}/sbin/nginx" -a ! -e "${apache_install_dir}/bin/httpd" ]; then
     Choose_ENV
     Input_Add_domain
     Nginx_anti_hotlinking

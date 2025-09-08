@@ -13,7 +13,7 @@ fi
 Platform=${ID,,}
 VERSION_MAIN_ID=${VERSION_ID%%.*}
 ARCH=$(arch)
-if [[ "${Platform}" =~ ^centos$|^rhel$|^almalinux$|^rocky$|^fedora$|^amzn$|^ol$|^alinux$|^anolis$|^tencentos$|^opencloudos$|^euleros$|^openeuler$|^kylin$|^uos$|^kylinsecos$ ]]; then
+if [[ "${Platform}" =~ ^centos$|^rhel$|^almalinux$|^rocky$|^fedora$|^amzn$|^ol$|^alinux$|^anolis$|^tencentos$|^opencloudos$|^hce$|^openeuler$|^kylin$|^uos$|^kylinsecos$ ]]; then
   PM=yum
   Family=rhel
   RHEL_ver=${VERSION_MAIN_ID}
@@ -28,13 +28,15 @@ if [[ "${Platform}" =~ ^centos$|^rhel$|^almalinux$|^rocky$|^fedora$|^amzn$|^ol$|
     [ ${VERSION_MAIN_ID} -ge 19 ] && [ ${VERSION_MAIN_ID} -lt 28 ] && RHEL_ver=7
     [ ${VERSION_MAIN_ID} -ge 28 ] && [ ${VERSION_MAIN_ID} -lt 34 ] && RHEL_ver=8
     [ ${VERSION_MAIN_ID} -ge 34 ] && RHEL_ver=9
-  elif [[ "${Platform}" =~ ^amzn$|^alinux$|^tencentos$|^euleros$ ]]; then
+  elif [[ "${Platform}" =~ ^amzn$|^alinux$|^tencentos$ ]]; then
     [[ "${VERSION_MAIN_ID}" =~ ^2$ ]] && RHEL_ver=7
     [[ "${VERSION_MAIN_ID}" =~ ^3$ ]] && RHEL_ver=8
     [[ "${VERSION_MAIN_ID}" =~ ^4$ ]] && RHEL_ver=9
   elif [[ "${Platform}" =~ ^openeuler$ ]]; then
     [[ "${RHEL_ver}" =~ ^20$ ]] && RHEL_ver=7
     [[ "${RHEL_ver}" =~ ^2[1,2]$ ]] && RHEL_ver=8
+  elif [[ "${Platform}" =~ ^hce$ ]]; then
+    [[ "${VERSION_MAIN_ID}" =~ ^2$ ]] && RHEL_ver=8
   elif [[ "${Platform}" =~ ^kylin$ ]]; then
     [[ "${RHEL_ver}" =~ ^V10$ ]] && RHEL_ver=7
   elif [[ "${Platform}" =~ ^uos$ ]]; then

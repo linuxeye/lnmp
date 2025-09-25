@@ -21,9 +21,9 @@ alias grep='grep --color'
 alias egrep='egrep --color'
 alias fgrep='fgrep --color'
 EOF
-[[ "${Platform}" =~ ^euleros$|^openeuler$ ]] && sed -i '/HISTTIMEFORMAT=/d' /etc/profile.d/lnmp.sh
+[[ "${Platform}" =~ ^hce$|^openeuler$ ]] && sed -i '/HISTTIMEFORMAT=/d' /etc/profile.d/lnmp.sh
 
-[[ ! "${Platform}" =~ ^euleros$|^openeuler$ ]] && [ -z "$(grep ^'PROMPT_COMMAND=' /etc/bashrc)" ] && cat >> /etc/bashrc << EOF
+[[ ! "${Platform}" =~ ^hce$|^openeuler$ ]] && [ -z "$(grep ^'PROMPT_COMMAND=' /etc/bashrc)" ] && cat >> /etc/bashrc << EOF
 PROMPT_COMMAND='{ msg=\$(history 1 | { read x y; echo \$y; });logger "[euid=\$(whoami)]":\$(who am i):[\`pwd\`]"\$msg"; }'
 EOF
 

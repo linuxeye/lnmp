@@ -7,8 +7,16 @@ Install_OpenJDK11() {
     yum -y install java-11-openjdk-devel
     JAVA_HOME=/usr/lib/jvm/java-11-openjdk
   elif [ "${Family}" == 'debian' ]; then
-    apt-get --no-install-recommends -y install openjdk-11-jdk
-    JAVA_HOME=/usr/lib/jvm/java-11-openjdk-${SYS_ARCH}
+    if [[ "${Debian_ver}" =~ ^12$ ]]; then
+      cat ${current_dir}/src/adoptium.key | sudo apt-key add -
+      apt-add-repository --yes https://mirrors.tuna.tsinghua.edu.cn/Adoptium/deb
+      apt -y update
+      apt-get --no-install-recommends -y install temurin-11-jdk
+      JAVA_HOME=/usr/lib/jvm/temurin-11-jdk-${SYS_ARCH}
+    else
+      apt-get --no-install-recommends -y install openjdk-11-jdk
+      JAVA_HOME=/usr/lib/jvm/java-11-openjdk-${SYS_ARCH}
+    fi
   elif [ "${Family}" == 'ubuntu' ]; then
     if [[ "${Ubuntu_ver}" =~ ^16$ ]]; then
       cat ${current_dir}/src/adoptium.key | sudo apt-key add -

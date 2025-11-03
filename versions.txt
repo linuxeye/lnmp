@@ -1,0 +1,115 @@
+# newest software version
+# Web
+nginx_ver=1.28.0
+tengine_ver=3.1.0
+openresty_ver=1.27.1.2
+openssl_ver=3.4.1
+
+tomcat10_ver=10.1.48
+tomcat9_ver=9.0.111
+tomcat8_ver=8.5.100
+tomcat7_ver=7.0.109
+
+apache_ver=2.4.65
+pcre_ver=8.45
+apr_ver=1.7.5
+apr_util_ver=1.6.3
+nghttp2_ver=1.59.0
+
+# DB
+mysql84_ver=8.4.7
+mysql80_ver=8.0.44
+mysql57_ver=5.7.44
+mysql55_ver=5.5.62
+
+mariadb118_ver=11.8.3
+mariadb114_ver=11.4.8
+mariadb1011_ver=10.11.14
+mariadb55_ver=5.5.68
+
+percona84_ver=8.4.6-6
+percona80_ver=8.0.43-34
+percona57_ver=5.7.44-48
+percona55_ver=5.5.62-38.14
+
+pgsql_ver=12.7
+
+mongodb_ver=4.0.26
+
+# PHP
+php53_ver=5.3.29
+php54_ver=5.4.45
+php55_ver=5.5.38
+php56_ver=5.6.40
+php70_ver=7.0.33
+php71_ver=7.1.33
+php72_ver=7.2.34
+php73_ver=7.3.33
+php74_ver=7.4.33
+php80_ver=8.0.30
+php81_ver=8.1.33
+php82_ver=8.2.29
+php83_ver=8.3.27
+php84_ver=8.4.14
+
+# Nodejs
+nodejs_ver=20.17.0
+
+libiconv_ver=1.16
+curl_ver=8.14.1
+libmcrypt_ver=2.5.8
+mcrypt_ver=2.6.8
+mhash_ver=0.9.9.9
+freetype_ver=2.10.1
+icu4c_ver=63_1
+libsodium_ver=1.0.20
+libzip_ver=1.2.0
+argon2_ver=20171227
+binutils_ver=2.42
+imagemagick_ver=7.1.2-7
+imagick_ver=3.8.0
+graphicsmagick_ver=1.3.40
+gmagick_ver=2.0.6RC1
+zendopcache_ver=7.0.5
+apcu_ver=5.1.24
+eaccelerator_ver=0.9.6.1
+phalcon_ver=5.9.3
+yaf_ver=3.3.6
+yar_ver=2.2.3
+swoole_ver=6.0.2
+xdebug_ver=3.1.2
+
+# Ftp
+pureftpd_ver=1.0.52
+
+# Redis
+redis_ver=7.4.6
+pecl_redis_ver=6.2.0
+
+# Memcached
+memcached_ver=1.6.39
+libmemcached_ver=1.0.18
+pecl_memcached_ver=3.3.0
+pecl_memcache_ver=8.2
+
+# MongoDB
+pecl_mongodb_ver=1.20.1
+
+# phpMyadmin
+phpmyadmin_ver=5.2.3
+
+# jemalloc
+jemalloc_ver=5.3.0
+
+# boost
+boost_ver=1.77.0
+boost_percona_ver=1.77.0
+boost_oldver=1.59.0
+
+# Others
+lua_nginx_module_ver=0.10.28
+luajit2_ver=2.1-20250117
+lua_resty_core_ver=0.1.31
+lua_resty_lrucache_ver=0.15
+lua_cjson_ver=2.1.0.14
+fail2ban_ver=master

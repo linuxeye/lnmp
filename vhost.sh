@@ -198,6 +198,7 @@ If you enter '.', the field will be left blank.
       done
       ~/.acme.sh/acme.sh --register-account -m ${EMAIL}
     fi
+    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
     if [ "${moredomain}" == "*.${domain}" -o "${dnsapi_flag}" == 'y' ]; then
       while :; do echo
         echo 'Please select DNS provider:'

@@ -90,7 +90,7 @@ Install_PHP71() {
   make clean
   [ ! -d "${php_install_dir}" ] && mkdir -p ${php_install_dir}
   [ "${phpcache_option}" == '1' ] && phpcache_arg='--enable-opcache' || phpcache_arg='--disable-opcache'
-  intl_modules_options='--enable-intl'
+  [ ${RHEL_ver:-0} -ge 9 >/dev/null 2>&1 ] || intl_modules_options='--enable-intl'
   [[ "${Platform}" =~ ^hce$ ]] && unset intl_modules_options
   if [ "${apache_mode_option}" == '2' ]; then
     ./configure --prefix=${php_install_dir} --with-config-file-path=${php_install_dir}/etc \

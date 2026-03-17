@@ -84,6 +84,7 @@ Install_PHP73() {
   make clean
   [ ! -d "${php_install_dir}" ] && mkdir -p ${php_install_dir}
   [ "${phpcache_option}" == '1' ] && phpcache_arg='--enable-opcache' || phpcache_arg='--disable-opcache'
+  [ ${RHEL_ver:-0} -ge 9 >/dev/null 2>&1 ] || intl_modules_options='--enable-intl'
   if [ "${apache_mode_option}" == '2' ]; then
     ./configure --prefix=${php_install_dir} --with-config-file-path=${php_install_dir}/etc \
     --with-config-file-scan-dir=${php_install_dir}/etc/php.d \
@@ -93,7 +94,7 @@ Install_PHP73() {
     --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
     --enable-sysvsem --enable-inline-optimization ${php73_with_curl} --enable-mbregex \
     --enable-mbstring --with-password-argon2 --with-sodium=/usr/local --with-gd ${php73_with_openssl} \
-    --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
+    --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --with-xsl ${intl_modules_options} \
     --with-gettext --enable-zip --without-libzip --enable-soap --disable-debug ${php_modules_options}
   else
     ./configure --prefix=${php_install_dir} --with-config-file-path=${php_install_dir}/etc \
@@ -104,7 +105,7 @@ Install_PHP73() {
     --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-exif \
     --enable-sysvsem --enable-inline-optimization ${php73_with_curl} --enable-mbregex \
     --enable-mbstring --with-password-argon2 --with-sodium=/usr/local --with-gd ${php73_with_openssl} \
-    --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --enable-intl --with-xsl \
+    --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --with-xsl ${intl_modules_options} \
     --with-gettext --enable-zip --without-libzip --enable-soap --disable-debug ${php_modules_options}
   fi
   make ZEND_EXTRA_LIBS='-liconv' -j ${THREAD}

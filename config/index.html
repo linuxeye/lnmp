@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LNMP - LEMP stack/LAMP stack/LNMP stack installation scripts for CentOS/Redhat Debian and Ubuntu</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f7fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #3498db;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        .language-switch {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+        }
+
+        .tools {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .tools a {
+            margin: 0 1rem;
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .tools a:hover {
+            text-decoration: underline;
+        }
+
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 2rem auto;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: #fff;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            font-family: monospace;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="language-switch">
+            <button class="btn" @click="toggleLanguage">{{ currentLanguage === 'en' ? '中文' : 'English' }}</button>
+        </div>
+
+        <div class="container">
+            <header class="header">
+                <h1 class="logo">LNMP</h1>
+                <p>{{ translations[currentLanguage].subtitle }}</p>
+            </header>
+
+            <div class="warning">
+                {{ translations[currentLanguage].demoWarning }}
+            </div>
+
+            <div class="features">
+                <div v-for="(feature, index) in translations[currentLanguage].features" :key="index"
+                    class="feature-card">
+                    <div class="feature-icon">{{ feature.icon }}</div>
+                    <h3>{{ feature.title }}</h3>
+                    <p>{{ feature.description }}</p>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <a href="https://github.com/linuxeye/lnmp" class="btn" target="_blank" rel="noopener noreferrer">
+                    {{ translations[currentLanguage].getStarted }}
+                </a>
+            </div>
+
+            <div class="tools">
+                <a v-if="hasPMA" href="phpMyAdmin" target="_blank" rel="noopener noreferrer">phpMyAdmin</a>
+                <a v-if="hasPhpInfo" href="phpinfo.php" target="_blank" rel="noopener noreferrer">PHP Info</a>
+                <a v-if="hasXprober" href="xprober.php" target="_blank" rel="noopener noreferrer">PHP Prober</a>
+                <a v-if="hasOcp" href="ocp.php" target="_blank" rel="noopener noreferrer">Opcache</a>
+                <a v-if="hasApc" href="apc.php" target="_blank" rel="noopener noreferrer">APC</a>
+                <a v-if="haseAccelerator" href="control.php" target="_blank" rel="noopener noreferrer">eAccelerator</a>
+            </div>
+            <div class="tools">
+                <iframe src="https://linuxeye.com/ad_buttom.html" width="475" frameborder="0" scrolling="no" title="Advertisement"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue
+
+        createApp({
+            data() {
+                return {
+                    currentLanguage: navigator.language.startsWith('zh') ? 'zh' : 'en',
+                    hasPMA: false,
+                    hasPhpInfo: false,
+                    hasXprober: false,
+                    hasOcp: false,
+                    hasApc: false,
+                    haseAccelerator: false,
+                    translations: {
+                        en: {
+                            subtitle: 'Simple & Efficient Server Management Panel',
+                            getStarted: 'Get Started',
+                            demoWarning: 'This is a demo page, you can delete /data/wwwroot/default/index.html',
+                            features: [
+                                {
+                                    icon: '🚀',
+                                    title: 'Easy Installation',
+                                    description: 'Quick and simple installation process for your server management needs.'
+                                },
+                                {
+                                    icon: '🛡️',
+                                    title: 'Secure',
+                                    description: 'Built with security in mind, protecting your server and data.'
+                                },
+                                {
+                                    icon: '⚡',
+                                    title: 'Performance',
+                                    description: 'Optimized for high performance and minimal resource usage.'
+                                },
+                                {
+                                    icon: '🔧',
+                                    title: 'Customizable',
+                                    description: 'Flexible configuration options to meet your specific needs.'
+                                }
+                            ]
+                        },
+                        zh: {
+                            subtitle: '适用于 CentOS/Redhat/Debian/Ubuntu 的 LNMP/LAMP/LEMP 堆栈安装脚本',
+                            getStarted: '入门指南',
+                            demoWarning: '这是一个演示页面，您可以删除 /data/wwwroot/default/index.html',
+                            features: [
+                                {
+                                    icon: '🚀',
+                                    title: '简易安装',
+                                    description: '快速简单的安装过程，轻松搭建服务器管理环境。'
+                                },
+                                {
+                                    icon: '🛡️',
+                                    title: '安全可靠',
+                                    description: '注重安全设计，保护您的服务器和数据安全。'
+                                },
+                                {
+                                    icon: '⚡',
+                                    title: '性能优异',
+                                    description: '优化的性能表现，最小化资源占用。'
+                                },
+                                {
+                                    icon: '🔧',
+                                    title: '灵活定制',
+                                    description: '灵活的配置选项，满足您的具体需求。'
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            methods: {
+                toggleLanguage() {
+                    this.currentLanguage = this.currentLanguage === 'en' ? 'zh' : 'en'
+                },
+                async checkFiles() {
+                    try {
+                        const pmaResponse = await fetch('phpMyAdmin/index.php', { method: 'HEAD' });
+                        this.hasPMA = pmaResponse.ok;
+                    } catch (e) {
+                        this.hasPMA = false;
+                    }
+
+                    try {
+                        const phpinfoResponse = await fetch('phpinfo.php', { method: 'HEAD' });
+                        this.hasPhpInfo = phpinfoResponse.ok;
+                    } catch (e) {
+                        this.hasPhpInfo = false;
+                    }
+
+                    try {
+                        const xproberResponse = await fetch('xprober.php', { method: 'HEAD' });
+                        this.hasXprober = xproberResponse.ok;
+                    } catch (e) {
+                        this.hasXprober = false;
+                    }
+
+                    try {
+                        const ocpResponse = await fetch('ocp.php', { method: 'HEAD' });
+                        this.hasOcp = ocpResponse.ok;
+                    } catch (e) {
+                        this.hasOcp = false;
+                    }
+
+                    try {
+                        const apcResponse = await fetch('apc.php', { method: 'HEAD' });
+                        this.hasApc = apcResponse.ok;
+                    } catch (e) {
+                        this.hasApc = false;
+                    }
+
+                    try {
+                        const acceleratorResponse = await fetch('control.php', { method: 'HEAD' });
+                        this.haseAccelerator = acceleratorResponse.ok;
+                    } catch (e) {
+                        this.haseAccelerator = false;
+                    }
+                }
+            },
+            mounted() {
+                this.checkFiles();
+            }
+        }).mount('#app')
+    </script>
+</body>
+
+</html>

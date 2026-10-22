@@ -1,0 +1,18 @@
+[Unit]
+Description=The Apache HTTP Server
+After=network.target
+
+[Service]
+Type=forking
+PIDFile=/var/run/httpd.pid
+ExecStartPre=/usr/local/apache/bin/apachectl -t
+ExecStart=/usr/local/apache/bin/apachectl -k start
+ExecReload=/usr/local/apache/bin/apachectl -k graceful
+ExecStop=/usr/local/apache/bin/apachectl -k graceful-stop
+PrivateTmp=true
+LimitNOFILE=1000000
+LimitNPROC=1000000
+LimitCORE=1000000
+
+[Install]
+WantedBy=multi-user.target

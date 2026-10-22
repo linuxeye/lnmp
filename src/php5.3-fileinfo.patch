@@ -1,0 +1,35 @@
+--- a/ext/fileinfo/fileinfo.c	2025-06-11 15:20:52.077008458 +0800
++++ b/ext/fileinfo/fileinfo.c	2025-06-11 15:21:48.711442786 +0800
+@@ -18,6 +18,13 @@
+ 
+ /* $Id$ */
+ 
++#ifndef uint
++typedef unsigned int uint;
++#endif
++#ifndef ulong
++typedef unsigned long ulong;
++#endif
++
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+--- a/ext/fileinfo/libmagic/apprentice.c	2025-06-11 15:24:18.831594049 +0800
++++ b/ext/fileinfo/libmagic/apprentice.c	2025-06-11 15:24:58.509898340 +0800
+@@ -40,6 +40,7 @@ FILE_RCSID("@(#)$File: apprentice.c,v 1.
+ #include "magic.h"
+ #include "patchlevel.h"
+ #include <stdlib.h>
++#include <ctype.h>
+ 
+ #if defined(__hpux) && !defined(HAVE_STRTOULL)
+ #if SIZEOF_LONG == 8
+@@ -778,7 +779,7 @@ apprentice_load(struct magic_set *ms, st
+  		int mflen;
+  		char mfn[MAXPATHLEN];
+  
+- 		dir = php_stream_opendir(fn, REPORT_ERRORS, NULL);
++ 		dir = php_stream_opendir((char *)fn, REPORT_ERRORS, NULL); 
+ 		if (!dir) {
+ 			errs++;
+ 			goto out;

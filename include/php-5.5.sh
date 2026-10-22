@@ -83,6 +83,7 @@ Install_PHP55() {
   tar xzf php-${php55_ver}.tar.gz
   patch -d php-${php55_ver} -p0 < fpm-race-condition.patch
   pushd php-${php55_ver} > /dev/null
+  patch -p1 < ../5.5-CVE-2026-109618-109619.patch
   [ ! -d "${php_install_dir}" ] && mkdir -p ${php_install_dir}
   { [ ${RHEL_ver:-0} -ge 9 >/dev/null 2>&1 ] || [ ${Debian_ver:-0} -ge 10 >/dev/null 2>&1 ] || [ ${Ubuntu_ver:-0} -ge 19 >/dev/null 2>&1 ]; } || intl_modules_options='--enable-intl'
   [[ "${Platform}" =~ ^hce$ ]] && unset intl_modules_options

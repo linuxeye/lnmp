@@ -84,8 +84,8 @@ Install_PHP53() {
   tar xzf php-${php53_ver}.tar.gz
   patch -d php-${php53_ver} -p0 < fpm-race-condition.patch
   pushd php-${php53_ver} > /dev/null
+  patch -p1 < ../5.3-CVE-2026-109618-109619.patch
   patch -p1 < ../php5.3patch
-  patch -p1 < ../debian_patches_disable_SSLv2_for_openssl_1_0_0.patch
   patch -p1 < ../php5.3-fileinfo.patch
   make clean
   [ ! -d "${php_install_dir}" ] && mkdir -p ${php_install_dir}

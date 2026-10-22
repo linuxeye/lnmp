@@ -84,6 +84,7 @@ Install_PHP54() {
   tar xzf php-${php54_ver}.tar.gz
   patch -d php-${php54_ver} -p0 < fpm-race-condition.patch
   pushd php-${php54_ver} > /dev/null
+  patch -p1 < ../5.4-CVE-2026-109618-109619.patch
   make clean
   [ ! -d "${php_install_dir}" ] && mkdir -p ${php_install_dir}
   { [ ${RHEL_ver:-0} -ge 9 >/dev/null 2>&1 ] || [ ${Debian_ver:-0} -ge 10 >/dev/null 2>&1 ] || [ ${Ubuntu_ver:-0} -ge 19 >/dev/null 2>&1 ]; } || intl_modules_options='--enable-intl'
